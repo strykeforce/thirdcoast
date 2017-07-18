@@ -1,0 +1,33 @@
+plugins {
+    id "java"
+    id "eclipse"
+    id "idea"
+    id "jaci.openrio.gradle.GradleRIO" version "2017.1.5"
+}
+
+frc {
+    team = "2767"
+    robotClass = "org.strykeforce.sidewinder.robot.Robot"
+    rioHost = "10.27.67.2"
+    deployTimeout = 2
+}
+
+dependencies {
+    compile wpilib()
+    compile talonSrx()
+    compile navx()
+}
+
+def robotManifest = {
+  attributes 'Main-Class': 'edu.wpi.first.wpilibj.RobotBase'
+  attributes 'Robot-Class': frc.robotClass
+}
+
+jar {
+    from configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    manifest robotManifest
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '3.2.1'
+}
