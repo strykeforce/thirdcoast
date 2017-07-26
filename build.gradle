@@ -3,6 +3,12 @@ plugins {
     id "eclipse"
     id "idea"
     id "jaci.openrio.gradle.GradleRIO" version "2017.1.5"
+    id "groovy"
+}
+
+repositories {
+    mavenCentral()
+    maven { url 'https://jitpack.io' }
 }
 
 frc {
@@ -16,11 +22,19 @@ dependencies {
     compile wpilib()
     compile talonSrx()
     compile navx()
+    compile group: 'com.github.TheElectronWill.Night-Config', name: 'core', version: 'v2.1.2'
+    compile group: 'com.github.TheElectronWill.Night-Config', name: 'toml', version: 'v2.1.2'
+
+    testCompile group: 'org.spockframework', name: 'spock-core', version: '1.1-groovy-2.4'
+    testRuntime group: 'net.bytebuddy', name: 'byte-buddy', version: '1.7.1'
+    testRuntime group: 'org.objenesis', name: 'objenesis', version: '2.6'
+
+
 }
 
 def robotManifest = {
-  attributes 'Main-Class': 'edu.wpi.first.wpilibj.RobotBase'
-  attributes 'Robot-Class': frc.robotClass
+    attributes 'Main-Class': 'edu.wpi.first.wpilibj.RobotBase'
+    attributes 'Robot-Class': frc.robotClass
 }
 
 jar {
@@ -28,6 +42,17 @@ jar {
     manifest robotManifest
 }
 
+test {
+    systemProperty("org.strykeforce.sidewinder.toml",
+            "/org/strykeforce/sidewinder/subsystems/testdata/talon.toml")
+}
+
 task wrapper(type: Wrapper) {
     gradleVersion = '3.2.1'
+}
+
+task list {
+    doLast {
+        configurations.archives.collect { relativePath(it) }.sort().each { println it }
+    }
 }

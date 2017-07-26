@@ -1,6 +1,7 @@
 .gradle
 *.iws
 build
+out
 
 # Compiled class file
 *.class

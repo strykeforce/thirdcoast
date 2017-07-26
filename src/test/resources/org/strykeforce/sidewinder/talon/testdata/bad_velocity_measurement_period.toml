@@ -1,0 +1,5 @@
+# should throw IllegalArgumentExeception
+[[TALON]]
+name = "velocity_measurement_period"
+setpoint_max = 1.0
+velocity_measurement_period = 51

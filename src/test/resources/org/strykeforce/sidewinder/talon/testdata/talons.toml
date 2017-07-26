@@ -1,0 +1,56 @@
+###############################################################################
+##
+## TalonTest Configurations
+##
+###############################################################################
+
+[[TALON]]
+name = "test"
+mode = "Voltage"
+feedback_device = "QuadEncoder"
+ticks_per_revolution = 360
+brake_in_neutral = true
+forward_limit_switch = "NormallyOpen"
+reverse_limit_switch = "Disabled"
+forward_soft_limit = 10000.0
+reverse_soft_limit = 12000.0
+encoder_reversed  = true
+output_reversed   = true
+velocity_measurement_period = 5
+velocity_measurement_window = 16
+current_limit     = 50 # amps, 0 disables
+
+
+setpoint_max      = 12.0 # max volts
+voltage_ramp_rate = 0.0 # v/s, 0 disables
+
+[[TALON]]
+name = "all_defaults"
+setpoint_max      = 12.0
+# type = "Voltage"
+# feedback_device = "QuadEncoder"
+# brake_in_neutral = true
+# forward_limit_switch = "Disabled"
+# reverse_limit_switch = "Disabled"
+# forward_soft_limit = (disabled)
+# reverse_soft_limit = (disabled)
+# encoder_reversed  = false
+# output_reversed   = false
+# velocity_measurement_period = 100
+# velocity_measurement_window = 64
+
+# current_limit = 0 (disabled)
+
+[[TALON]]
+name = "😀🕹"
+setpoint_max      = 12.0
+
+[[TALON]]
+name = "truncate_velocity_measurement_window_100"
+setpoint_max      = 12.0
+velocity_measurement_window = 64
+
+[[TALON]]
+name = "truncate_velocity_measurement_window_3"
+setpoint_max      = 12.0
+velocity_measurement_window = 2

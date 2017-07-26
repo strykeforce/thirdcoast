@@ -1,0 +1,3 @@
+# should throw IllegalArgumentExeception
+[[TALON]]
+setpoint_max = 12.0
