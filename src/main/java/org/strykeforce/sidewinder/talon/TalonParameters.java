@@ -1,7 +1,6 @@
 package org.strykeforce.sidewinder.talon;
 
 import com.ctre.CANTalon;
-import com.ctre.CANTalon.FeedbackDevice;
 import com.ctre.CANTalon.VelocityMeasurementPeriod;
 import com.electronwill.nightconfig.toml.TomlConfig;
 import com.electronwill.nightconfig.toml.TomlParser;
@@ -24,11 +23,10 @@ public abstract class TalonParameters {
   // required
   private final String name;
   private final double setpointMax;
+
   // optional
   private final Encoder encoder;
-  //  private final CANTalon.FeedbackDevice feedbackDevice;
   private final boolean isBrakeInNeutral;
-  //  private final boolean isEncoderReversed;
   private final boolean isOutputReversed;
   private final VelocityMeasurementPeriod velocityMeasurementPeriod;
   private final int velocityMeasurementWindow;
@@ -50,12 +48,7 @@ public abstract class TalonParameters {
         toml.getOptionalValue("encoder_reversed"),
         toml.getOptionalValue("ticks_per_revolution"));
 
-//    feedbackDevice = CANTalon.FeedbackDevice.valueOf(
-//        (String) toml.getOptionalValue("feedback_device").orElse("QuadEncoder"));
-
     isBrakeInNeutral = (boolean) toml.getOptionalValue("brake_in_neutral").orElse(true);
-
-//    isEncoderReversed = (boolean) toml.getOptionalValue("encoder_reversed").orElse(false);
     isOutputReversed = (boolean) toml.getOptionalValue("output_reversed").orElse(false);
 
     int vmp = (int) toml.getOptionalValue("velocity_measurement_period").orElse(100);
@@ -135,8 +128,6 @@ public abstract class TalonParameters {
    */
   public void configure(CANTalon talon) {
     encoder.configure(talon);
-//    talon.setFeedbackDevice(encoder.getFeedbackDevice());
-//    talon.reverseSensor(encoder.isReversed());
     talon.enableBrakeMode(isBrakeInNeutral);
     talon.reverseOutput(isOutputReversed);
     talon.SetVelocityMeasurementPeriod(velocityMeasurementPeriod);
