@@ -54,3 +54,21 @@ velocity_measurement_window = 64
 name = "truncate_velocity_measurement_window_3"
 setpoint_max      = 12.0
 velocity_measurement_window = 2
+
+[[TALON]]
+name = "pid"
+mode = "Position"
+setpoint_max = 1.0
+feedback_device = "CtreMagEncoder_Relative"
+output_voltage_max = 12.0
+forward_output_voltage_peak = 5.0
+reverse_output_voltage_peak = -3.0
+forward_output_voltage_nominal = 0.5
+reverse_output_voltage_nominal = -0.3
+allowable_closed_loop_error = 10
+nominal_closed_loop_voltage = 12.0
+P = 0.1
+I = 0.2
+D = 0.3
+F = 0.4
+I_zone = 50

@@ -113,6 +113,7 @@ voltage_ramp_rate = 0.0
 [[TALON]]
 name = "azimuth_teleop"
 mode = "Position"
+setpoint_max = 1.0
 
 # Set the maximum voltage that the Talon will ever output. This can be used to
 # limit the maximum output voltage (positive or negative) in closed-loop modes
@@ -120,11 +121,22 @@ mode = "Position"
 # not specified, defaults to no limit.
 output_voltage_max = 12.0
 
-# Output voltage will be limited to this value. Applies to closed-loop modes.
+# Output voltage will be limited to this value. If not specified, defaults to no
+# limit, Applies to closed-loop modes.
 forward_output_voltage_peak = 5.0
 reverse_output_voltage_peak = 5.0
 
-# Output magnitude between zero and this value is set to this value. Applies to
-# closed-loop modes.
+# Output magnitude between zero and this value is set to this value. If not
+# specified, defaults to zero. Applies to closed-loop modes.
 forward_output_voltage_nominal = 0.0
 reverse_output_voltage_nominal = 0.0
+
+# Within this error range, PID gains are zero, F still in effect. Units are mA
+# for current, talon native units for position and velocity. If not specified,
+# defaults to zero. Applies to closed-loop modes.
+allowable_closed_loop_error = 0
+
+# When set, the output of the Closed Loop mode is compensated for the measured
+# battery voltage. Set to zero to disable. If not specified, defaults to
+# disabled. Applies to closed-loop modes.
+nominal_closed_loop_voltage = 12.0
