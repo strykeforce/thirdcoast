@@ -32,7 +32,21 @@ class PIDTalonParametersTest extends Specification {
         t.iZone == 50
     }
 
-    def "configures voltage mode talon"() {
+    def "configures default parameters"() {
+        when:
+        def t = (PIDTalonParameters) TalonParameters.getInstance("pid_defaults")
+
+        then:
+        t.outputVoltageMax == 0.0
+        t.forwardOutputVoltagePeak == 0.0
+        t.reverseOutputVoltagePeak == 0.0
+        t.forwardOutputVoltageNominal == 0.0
+        t.reverseOutputVoltageNominal == 0.0
+        t.allowableClosedLoopError == 0
+        t.nominalClosedLoopVoltage == 0.0
+    }
+
+    def "configures PID position mode talon"() {
         when:
         def t = TalonParameters.getInstance("pid")
         t.configure(talon)
@@ -47,6 +61,15 @@ class PIDTalonParametersTest extends Specification {
         1 * talon.setPID(0.1, 0.2, 0.3)
         1 * talon.setF(0.4)
         1 * talon.setIZone(50)
+    }
+
+    def "configures speed mode talon"() {
+        when:
+        def t = (SpeedTalonParameters) TalonParameters.getInstance("speed")
+
+        then:
+        t.name == "speed"
+        t.class == SpeedTalonParameters
     }
 
 }

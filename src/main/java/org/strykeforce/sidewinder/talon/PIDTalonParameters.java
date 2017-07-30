@@ -20,18 +20,18 @@ class PIDTalonParameters extends TalonParameters {
 
   PIDTalonParameters(TomlConfig toml) {
     super(toml);
-    outputVoltageMax = (double) toml.getOptionalValue("output_voltage_max").orElse(0);
+    outputVoltageMax = (double) toml.getOptionalValue("output_voltage_max").orElse(0.0);
     forwardOutputVoltagePeak = (double) toml.getOptionalValue("forward_output_voltage_peak")
-        .orElse(0);
+        .orElse(0.0);
     reverseOutputVoltagePeak = (double) toml.getOptionalValue("reverse_output_voltage_peak")
-        .orElse(0);
+        .orElse(0.0);
     forwardOutputVoltageNominal = (double) toml.getOptionalValue("forward_output_voltage_nominal")
-        .orElse(0);
+        .orElse(0.0);
     reverseOutputVoltageNominal = (double) toml.getOptionalValue("reverse_output_voltage_nominal")
-        .orElse(0);
+        .orElse(0.0);
     allowableClosedLoopError = (int) toml.getOptionalValue("allowable_closed_loop_error").orElse(0);
     nominalClosedLoopVoltage = (double) toml.getOptionalValue("nominal_closed_loop_voltage")
-        .orElse(0); // DisableNominalClosedLoopVoltage, SetNominalClosedLoopVoltage
+        .orElse(0.0); // DisableNominalClosedLoopVoltage, SetNominalClosedLoopVoltage
     pGain = (double) toml.getOptionalValue("P").orElse(0.0);
     iGain = (double) toml.getOptionalValue("I").orElse(0.0);
     dGain = (double) toml.getOptionalValue("D").orElse(0.0);

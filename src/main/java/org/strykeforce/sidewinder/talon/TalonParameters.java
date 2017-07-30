@@ -101,6 +101,8 @@ public abstract class TalonParameters {
           talon = new PositionTalonParameters(toml);
           break;
         case Speed:
+          talon = new SpeedTalonParameters(toml);
+          break;
         case Follower:
         case MotionMagic:
         case Current:

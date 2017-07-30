@@ -72,3 +72,13 @@ I = 0.2
 D = 0.3
 F = 0.4
 I_zone = 50
+
+[[TALON]]
+name = "speed"
+mode = "Speed"
+setpoint_max = 1.0
+
+[[TALON]]
+name = "pid_defaults"
+mode = "Speed"
+setpoint_max = 1.0
