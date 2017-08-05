@@ -12,7 +12,12 @@ class PositionTalonParameters extends PIDTalonParameters {
 
   @Override
   public void configure(CANTalon talon) {
+    talon.changeControlMode(TalonControlMode.Position);
     super.configure(talon);
-  talon.changeControlMode(TalonControlMode.Position);
+  }
+
+  @Override
+  public String toString() {
+    return "PositionTalonParameters{} " + super.toString();
   }
 }

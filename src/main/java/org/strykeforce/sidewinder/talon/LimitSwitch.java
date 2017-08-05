@@ -1,6 +1,5 @@
 package org.strykeforce.sidewinder.talon;
 
-import com.ctre.CANTalon;
 import java.util.Optional;
 
 final class LimitSwitch {
@@ -44,27 +43,4 @@ final class LimitSwitch {
         '}';
   }
 
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-
-    LimitSwitch that = (LimitSwitch) o;
-
-    if (isEnabled != that.isEnabled) {
-      return false;
-    }
-    return isNormallyOpen == that.isNormallyOpen;
-  }
-
-  @Override
-  public int hashCode() {
-    int result = (isEnabled ? 1 : 0);
-    result = 31 * result + (isNormallyOpen ? 1 : 0);
-    return result;
-  }
 }

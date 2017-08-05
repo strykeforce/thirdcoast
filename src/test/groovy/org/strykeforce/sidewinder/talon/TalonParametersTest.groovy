@@ -49,21 +49,23 @@ class TalonParametersTest extends Specification {
         t.configure(talon)
 
         then:
-        1 * talon.changeControlMode(CANTalon.TalonControlMode.Voltage)
-        1 * talon.setFeedbackDevice(CANTalon.FeedbackDevice.QuadEncoder)
-        1 * talon.enableBrakeMode(true)
-        1 * talon.reverseSensor(true)
-        1 * talon.reverseOutput(true)
-        1 * talon.SetVelocityMeasurementPeriod(CANTalon.VelocityMeasurementPeriod.Period_5Ms)
-        1 * talon.SetVelocityMeasurementWindow(16)
-        1 * talon.enableLimitSwitch(true, false)
-        1 * talon.ConfigFwdLimitSwitchNormallyOpen(true)
-        0 * talon.ConfigRevLimitSwitchNormallyOpen(true)
-        0 * talon.ConfigRevLimitSwitchNormallyOpen(false)
-        1 * talon.enableForwardSoftLimit(true)
-        1 * talon.setForwardSoftLimit(10_000.0)
-        1 * talon.enableReverseSoftLimit(true)
-        1 * talon.setReverseSoftLimit(12_000.0)
+        with (talon) {
+            1 * changeControlMode(CANTalon.TalonControlMode.Voltage)
+            1 * setFeedbackDevice(CANTalon.FeedbackDevice.QuadEncoder)
+            1 * enableBrakeMode(true)
+            1 * reverseSensor(true)
+            1 * reverseOutput(true)
+            1 * SetVelocityMeasurementPeriod(CANTalon.VelocityMeasurementPeriod.Period_5Ms)
+            1 * SetVelocityMeasurementWindow(16)
+            1 * enableLimitSwitch(true, false)
+            1 * ConfigFwdLimitSwitchNormallyOpen(true)
+            0 * ConfigRevLimitSwitchNormallyOpen(true)
+            0 * ConfigRevLimitSwitchNormallyOpen(false)
+            1 * enableForwardSoftLimit(true)
+            1 * setForwardSoftLimit(10_000.0)
+            1 * enableReverseSoftLimit(true)
+            1 * setReverseSoftLimit(12_000.0)
+        }
     }
 
     def "handles missing name"() {

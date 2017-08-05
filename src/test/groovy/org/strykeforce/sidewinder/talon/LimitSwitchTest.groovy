@@ -47,23 +47,4 @@ class LimitSwitchTest extends Specification {
         thrown(IllegalStateException)
     }
 
-    def "equality and case insensitivity"() {
-        when:
-        def ls1 = new LimitSwitch(Optional.of("NormallyOpen"))
-        def ls2 = new LimitSwitch(Optional.of("nOrMaLlYoPeN"))
-
-        then:
-        ls1 == ls2
-    }
-
-    def "inequality"() {
-        when:
-        def ls1 = new LimitSwitch(Optional.of("NormallyOpen"))
-        def ls2 = new LimitSwitch(Optional.of("NormallyClosed"))
-        def ls3 = new LimitSwitch(Optional.of("Disabled"))
-
-        then:
-        ls1 != ls2
-        ls1 != ls3
-    }
-}
+ }

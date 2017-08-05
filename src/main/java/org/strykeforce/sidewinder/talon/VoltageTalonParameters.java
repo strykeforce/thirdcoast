@@ -15,4 +15,9 @@ class VoltageTalonParameters extends TalonParameters {
     super.configure(talon);
   talon.changeControlMode(TalonControlMode.Voltage);
   }
+
+  @Override
+  public String toString() {
+    return "VoltageTalonParameters{} " + super.toString();
+  }
 }

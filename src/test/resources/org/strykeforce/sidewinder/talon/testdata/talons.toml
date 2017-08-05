@@ -82,3 +82,26 @@ setpoint_max = 1.0
 name = "pid_defaults"
 mode = "Speed"
 setpoint_max = 1.0
+
+[[TALON]]
+name = "drive"
+mode = "Voltage"
+setpoint_max    = 12.0
+feedback_device = "QuadEncoder"
+current_limit   = 50
+
+[[TALON]]
+name = "azimuth"
+mode = "Position"
+setpoint_max     = 4095.0
+feedback_device  = "CtreMagEncoder_Relative"
+brake_in_neutral = false
+
+***REMOVED***
+I =   0.0
+***REMOVED***
+F =   0.0
+I_zone = 0
+
+forward_output_voltage_peak =  6.0
+reverse_output_voltage_peak = -6.0

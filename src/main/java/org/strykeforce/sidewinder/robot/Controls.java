@@ -29,8 +29,8 @@ public class Controls {
 
   private static final Controls instance = new Controls();
 
-  private final Joystick driverController = new Joystick(0);
-  private final Joystick gameController = new Joystick(1);
+  private final Joystick gameController = new Joystick(0);
+  private final Joystick driverController = new Joystick(1);
 
   private Controls() {
   }
@@ -70,4 +70,11 @@ public class Controls {
   public double getAzimuth() {
     return driverController.getRawAxis(DRIVER_RIGHT_X_AXIS);
   }
+
+  /**
+   * Return the "Ch 6. Flaps Gain" knob value.
+   *
+   * @return the know position
+   */
+  public double getTuner() {return driverController.getRawAxis(DRIVER_TUNER_AXIS);}
 }

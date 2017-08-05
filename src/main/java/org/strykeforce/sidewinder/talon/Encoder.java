@@ -2,6 +2,7 @@ package org.strykeforce.sidewinder.talon;
 
 import com.ctre.CANTalon;
 import com.ctre.CANTalon.FeedbackDevice;
+import com.ctre.CANTalon.FeedbackDeviceStatus;
 import java.util.Optional;
 
 public class Encoder {
@@ -26,6 +27,28 @@ public class Encoder {
     if (isUnitScalingEnabled) {
       talon.configEncoderCodesPerRev(ticksPerRevolution);
     }
+    checkEncoder(talon);
+  }
+
+  public void checkEncoder(CANTalon talon) {
+    FeedbackDeviceStatus status = talon.isSensorPresent(feedbackDevice);
+    System.out.print(talon.getDescription() + ": ");
+    if (status == null) {
+      System.out.println("encoder status is null");
+      return;
+    }
+    switch (status) {
+      case FeedbackStatusPresent:
+        System.out.println("encoder is present");
+        break;
+      case FeedbackStatusNotPresent:
+        System.out.println("encoder is MISSING");
+        break;
+      case FeedbackStatusUnknown:
+        System.out.println(
+            "encoder is unknown, only CTRE Mag Encoder or Pulse-Width Encoder supported");
+        break;
+    }
   }
 
   public FeedbackDevice getFeedbackDevice() {
@@ -42,5 +65,15 @@ public class Encoder {
 
   public int getTicksPerRevolution() {
     return ticksPerRevolution;
+  }
+
+  @Override
+  public String toString() {
+    return "Encoder{" +
+        "feedbackDevice=" + feedbackDevice +
+        ", isReversed=" + isReversed +
+        ", isUnitScalingEnabled=" + isUnitScalingEnabled +
+        ", ticksPerRevolution=" + ticksPerRevolution +
+        '}';
   }
 }

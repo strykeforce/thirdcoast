@@ -131,6 +131,7 @@ public abstract class TalonParameters {
    * @param talon the Talon to configure
    */
   public void configure(CANTalon talon) {
+    talon.setSafetyEnabled(false);
     encoder.configure(talon);
     talon.enableBrakeMode(isBrakeInNeutral);
     talon.reverseOutput(isOutputReversed);
@@ -151,6 +152,15 @@ public abstract class TalonParameters {
       talon.enableReverseSoftLimit(true);
       talon.setReverseSoftLimit(reverseSoftLimit.getValue());
     }
+  }
+
+  /**
+   * Print the current state of the Talon.
+   *
+   * @param talon the Talon to print
+   */
+  public static void log(CANTalon talon) {
+    System.out.println("talon = [" + talon + "]");
   }
 
   public String getName() {
@@ -203,7 +213,19 @@ public abstract class TalonParameters {
 
   @Override
   public String toString() {
-    return String.format("TalonParameters = %s", name);
+    return "TalonParameters{" +
+        "name='" + name + '\'' +
+        ", setpointMax=" + setpointMax +
+        ", encoder=" + encoder +
+        ", isBrakeInNeutral=" + isBrakeInNeutral +
+        ", isOutputReversed=" + isOutputReversed +
+        ", velocityMeasurementPeriod=" + velocityMeasurementPeriod +
+        ", velocityMeasurementWindow=" + velocityMeasurementWindow +
+        ", forwardLimitSwitch=" + forwardLimitSwitch +
+        ", reverseLimitSwitch=" + reverseLimitSwitch +
+        ", forwardSoftLimit=" + forwardSoftLimit +
+        ", reverseSoftLimit=" + reverseSoftLimit +
+        ", currentLimit=" + currentLimit +
+        '}';
   }
-
 }

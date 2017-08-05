@@ -41,7 +41,6 @@ class PIDTalonParameters extends TalonParameters {
 
   @Override
   public void configure(CANTalon talon) {
-    super.configure(talon);
     if (outputVoltageMax != 0) {
       talon.configMaxOutputVoltage(outputVoltageMax);
     }
@@ -52,6 +51,7 @@ class PIDTalonParameters extends TalonParameters {
     talon.setPID(pGain, iGain, dGain);
     talon.setF(fGain);
     talon.setIZone(iZone);
+    super.configure(talon);
   }
 
   public double getOutputVoltageMax() {
@@ -100,5 +100,23 @@ class PIDTalonParameters extends TalonParameters {
 
   public int getiZone() {
     return iZone;
+  }
+
+  @Override
+  public String toString() {
+    return "PIDTalonParameters{" +
+        "outputVoltageMax=" + outputVoltageMax +
+        ", forwardOutputVoltagePeak=" + forwardOutputVoltagePeak +
+        ", reverseOutputVoltagePeak=" + reverseOutputVoltagePeak +
+        ", forwardOutputVoltageNominal=" + forwardOutputVoltageNominal +
+        ", reverseOutputVoltageNominal=" + reverseOutputVoltageNominal +
+        ", allowableClosedLoopError=" + allowableClosedLoopError +
+        ", nominalClosedLoopVoltage=" + nominalClosedLoopVoltage +
+        ", pGain=" + pGain +
+        ", iGain=" + iGain +
+        ", dGain=" + dGain +
+        ", fGain=" + fGain +
+        ", iZone=" + iZone +
+        "} " + super.toString();
   }
 }

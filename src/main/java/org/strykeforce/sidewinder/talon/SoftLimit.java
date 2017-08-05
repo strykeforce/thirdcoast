@@ -19,34 +19,7 @@ final class SoftLimit {
   public double getValue() {
     return value;
   }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-
-    SoftLimit softLimit = (SoftLimit) o;
-
-    if (isEnabled != softLimit.isEnabled) {
-      return false;
-    }
-    return Double.compare(softLimit.value, value) == 0;
-  }
-
-  @Override
-  public int hashCode() {
-    int result;
-    long temp;
-    result = (isEnabled ? 1 : 0);
-    temp = Double.doubleToLongBits(value);
-    result = 31 * result + (int) (temp ^ (temp >>> 32));
-    return result;
-  }
-
+  
   @Override
   public String toString() {
     return "SoftLimit{" +
