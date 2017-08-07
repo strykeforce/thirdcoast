@@ -32,10 +32,11 @@ public class Encoder {
 
   public void checkEncoder(CANTalon talon) {
     FeedbackDeviceStatus status = talon.isSensorPresent(feedbackDevice);
-    System.out.print(talon.getDescription() + ": ");
-    if (status == null) {
-      System.out.println("encoder status is null");
-      return;
+
+    if (status != null) {
+      System.out.print(talon.getDescription() + ": ");
+    } else {
+      return; // unit testing
     }
     switch (status) {
       case FeedbackStatusPresent:
