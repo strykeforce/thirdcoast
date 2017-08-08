@@ -5,7 +5,7 @@ import com.ctre.CANTalon.FeedbackDevice;
 import com.ctre.CANTalon.FeedbackDeviceStatus;
 import java.util.Optional;
 
-public class Encoder {
+final class Encoder {
 
   private final CANTalon.FeedbackDevice feedbackDevice;
   private final boolean isReversed;
