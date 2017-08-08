@@ -4,81 +4,125 @@ import com.ctre.CANTalon;
 import org.strykeforce.sidewinder.talon.TalonParameters;
 
 /**
- * Represents a swerve drive wheel azimuth and drive motors.
+ * Controls a swerve driveTalon wheel azimuthTalon and driveTalon motors.
+ *
+ * The swerve-driveTalon inverse kinematics algorithm will always calculate individual wheel angles
+ * as -180 to 180 degrees, measured clockwise with zero being the straight-ahead position. Wheel
+ * speed is calculated as 0 to 1 in the direction of the wheel angle.
+ *
+ * <p>This class will decide how to implement this angle and speed optimally for the azimuthTalon
+ * and driveTalon motors. In some cases it makes sense to reverse wheel speed to avoid driving the
+ * wheel azimuthTalon 180 degrees.
+ *
+ * <p>Hardware assumed by this class includes a CTRE magnetic encoder on the azimuthTalon motor and
+ * no limits on wheel azimuthTalon.
  */
-class Wheel {
+public final class Wheel {
 
-  private final CANTalon azimuth;
-  private final CANTalon drive;
+  private final CANTalon azimuthTalon;
+  private final CANTalon driveTalon;
+
+  private double azimuthSetpoint;
+  private double driveSetpoint;
 
   /**
-   * This designated constructor constructs a wheel by supplying azimuth and drive talons. They are
-   * initialized with Talon configurations named "azimuth" and "drive" respectively. Assumes the
-   * Talon configurations have been registered.
+   * This designated constructor constructs a wheel by supplying azimuthTalon and driveTalon talons.
+   * They are initialized with Talon configurations named "azimuthTalon" and "driveTalon"
+   * respectively. Assumes the Talon configurations have been registered.
    *
-   * @param azimuth the azimuth CANTalon
-   * @param drive the drive CANTalon
+   * @param azimuth the azimuthTalon CANTalon
+   * @param driveTalon the driveTalon CANTalon
    * @see org.strykeforce.sidewinder.talon.TalonParameters#register(String)
    */
-  Wheel(CANTalon azimuth, CANTalon drive) {
+  public Wheel(CANTalon azimuth, CANTalon drive) {
     String AZIMUTH_PARAMETERS = "azimuth";
     String DRIVE_PARAMETERS = "drive";
 
-    this.azimuth = azimuth;
-    this.drive = drive;
+    azimuthTalon = azimuth;
+    driveTalon = drive;
     setAzimuthParameters(AZIMUTH_PARAMETERS);
     setDriveParameters(DRIVE_PARAMETERS);
   }
 
   /**
-   * Convenience constructor for a wheel by specifying the wheel number (0-3).
+   * Convenience constructor for a wheel by specifying the swerve driveTalon wheel number (0-3).
    *
    * @param index the wheel number
    */
-  Wheel(int index) {
+  public Wheel(int index) {
     this(new CANTalon(index), new CANTalon(index + 10));
   }
 
-  void set(double azimuth, double drive) {
-    this.azimuth.set(azimuth);
-    this.drive.set(drive);
+  /**
+   * This method calculates the optimal driveTalon settings and applies them.
+   *
+   * @param azimuth wheel angle as calculated by the inverse-kinematics algorithm
+   * @param drive wheel speed as calculated by the inverse-kinematics algorithm
+   */
+  public void set(double azimuth, double drive) {
+    driveSetpoint = drive;
+
+    double azimuthPosition = azimuthTalon.getPosition();
+    double azimuthError = Math.IEEEremainder(azimuth - azimuthPosition, 1.0);
+    if (Math.abs(azimuthError) > 0.25) {
+      azimuthError -= Math.copySign(0.5, azimuthError);
+      driveSetpoint *= -1.0;
+    }
+    azimuthSetpoint = azimuthPosition + azimuthError;
+
+    azimuthTalon.set(azimuthSetpoint);
+    driveTalon.set(driveSetpoint);
   }
 
-  void stop() {
-    azimuth.set(azimuth.getPosition());
-    drive.set(0);
+  public void stop() {
+    azimuthSetpoint = azimuthTalon.getPosition();
+    azimuthTalon.set(azimuthSetpoint);
+    driveTalon.set(0);
   }
 
-  void setAzimuthParameters(String parameters) {
+  public void setAzimuthParameters(String parameters) {
     TalonParameters talonParameters = TalonParameters.getInstance(parameters);
-    talonParameters.configure(azimuth);
+    talonParameters.configure(azimuthTalon);
   }
 
-  void setDriveParameters(String parameters) {
+  public void setDriveParameters(String parameters) {
     TalonParameters talonParameters = TalonParameters.getInstance(parameters);
-    talonParameters.configure(drive);
+    talonParameters.configure(driveTalon);
   }
 
   /**
-   * Set the azimuth encoder relative to wheel zeroSensors position.
+   * Set the azimuthTalon encoder relative to wheel zeroSensors position.
    *
    * @param zero encoder position (in ticks) where wheel is zeroed.
    */
-  void setAzimuthZero(int zero) {
+  public void setAzimuthZero(int zero) {
     double offset = getAzimuthAbsolutePosition() - zero; // encoder ticks
-    double position = offset / 0xFFF; // wheel rotations
-    azimuth.setPosition(position);
+    azimuthSetpoint = offset / 0xFFF; // wheel rotations
+    azimuthTalon.setPosition(azimuthSetpoint);
+    azimuthTalon.set(azimuthSetpoint);
   }
 
-  int getAzimuthAbsolutePosition() {
-    return azimuth.getPulseWidthPosition() & 0xFFF;
+  public double getAzimuthSetpoint() {
+    return azimuthSetpoint;
   }
 
-  CANTalon getAzimuth() {
-    return azimuth;
+  public double getDriveSetpoint() {
+    return driveSetpoint;
   }
 
-  CANTalon getDrive() {
-    return drive;
+  public boolean isDriveReversed() {
+    return driveSetpoint < 0;
+  }
+
+  public int getAzimuthAbsolutePosition() {
+    return azimuthTalon.getPulseWidthPosition() & 0xFFF;
+  }
+
+  public CANTalon getAzimuthTalon() {
+    return azimuthTalon;
+  }
+
+  public CANTalon getDriveTalon() {
+    return driveTalon;
   }
 }

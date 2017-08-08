@@ -5,7 +5,7 @@ import com.ctre.CANTalon.FeedbackDevice;
 import com.ctre.CANTalon.FeedbackDeviceStatus;
 import java.util.Optional;
 
-public class Encoder {
+final class Encoder {
 
   private final CANTalon.FeedbackDevice feedbackDevice;
   private final boolean isReversed;
@@ -32,10 +32,11 @@ public class Encoder {
 
   public void checkEncoder(CANTalon talon) {
     FeedbackDeviceStatus status = talon.isSensorPresent(feedbackDevice);
-    System.out.print(talon.getDescription() + ": ");
-    if (status == null) {
-      System.out.println("encoder status is null");
-      return;
+
+    if (status != null) {
+      System.out.print(talon.getDescription() + ": ");
+    } else {
+      return; // unit testing
     }
     switch (status) {
       case FeedbackStatusPresent:

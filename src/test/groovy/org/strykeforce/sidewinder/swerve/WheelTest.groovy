@@ -6,6 +6,8 @@ import spock.lang.Specification
 
 class WheelTest extends Specification {
 
+    static final EPSILON = 1e-15
+
     def azimuth = Mock(CANTalon)
     def drive = Mock(CANTalon)
 
@@ -15,10 +17,6 @@ class WheelTest extends Specification {
     }
 
     def "configures azimuth and drive talons"() {
-        setup:
-        azimuth.getDescription() >> "Azimuth"
-        drive.getDescription() >> "Drive"
-
         when:
         new Wheel(azimuth, drive)
 
@@ -64,8 +62,6 @@ class WheelTest extends Specification {
 
     def "gets azimuth absolution position"() {
         setup:
-        azimuth.getDescription() >> "Azimuth"
-        drive.getDescription() >> "Drive"
         azimuth.getPulseWidthPosition() >> 0x1000
 
         when:
@@ -79,7 +75,110 @@ class WheelTest extends Specification {
         wheel.setAzimuthZero(zeroPosition)
 
         then:
-        1 * azimuth.setPosition((double)-zeroPosition / 0xFFF)
+        1 * azimuth.setPosition((double) -zeroPosition / 0xFFF)
     }
 
+    def "azimuth changes are optimized"() {
+        when:
+        azimuth.getPosition() >> start_position
+        def wheel = new Wheel(azimuth, drive)
+        wheel.set(setpoint, 1)
+
+        then:
+        Math.abs(wheel.azimuthSetpoint - end_position) < EPSILON
+        wheel.isDriveReversed() == is_reversed
+
+        where:
+        start_position | setpoint | end_position | is_reversed
+        0              | 0        | 0            | false
+        0              | 0.1      | 0.1          | false
+        0.1            | 0.2      | 0.2          | false
+        0.2            | 0.3      | 0.3          | false
+        0.3            | 0.4      | 0.4          | false
+        0.4            | 0.45     | 0.45         | false
+        0.45           | 0.5      | 0.5          | false
+        0.5            | -0.5     | 0.5          | false
+        -0.5           | -0.45    | -0.45        | false
+        -0.45          | -0.4     | -0.4         | false
+        -0.4           | -0.3     | -0.3         | false
+        -0.3           | -0.2     | -0.2         | false
+        -0.2           | -0.1     | -0.1         | false
+        -0.1           | -0.0     | 0.0          | false
+
+        -0.1           | 0.1      | 0.1          | false
+        0.1            | -0.1     | -0.1         | false
+
+        -0.4           | 0.4      | -0.6         | false
+        -0.6           | 0.3      | -0.7         | false
+        -0.7           | 0.25     | -0.75        | false
+        -0.75          | 0.1      | -0.9         | false
+        -0.9           | -0.1     | -1.1         | false
+
+        0              | 0.5      | 0            | true
+        0              | -0.5     | 0            | true
+        -0.5           | 0.5      | -0.5         | false
+
+        -0.1           | -0.4     | 0.1          | true
+        -0.1           | 0.4      | -0.1         | true
+        -1.1           | -0.4     | -0.9         | true
+        -1.1           | 0.4      | -1.1         | true
+
+        2767.4         | -0.2     | 2767.3       | true
+        -2767.4        | 0.2      | -2767.3      | true
+    }
+
+    // check some wheel-related math
+    def "calculates error between current azimuth and setpoint"() {
+
+        expect:
+        Math.abs(Math.IEEEremainder(setpoint - position, 1.0) - error) < EPSILON
+
+        where:
+        position | setpoint || error
+        0        | 0        || 0
+        0.25     | 0.25     || 0
+        0.25     | 0.5      || 0.25
+        0.25     | -0.25    || -0.5
+        0.25     | -0.5     || 0.25
+        -0.4     | 0.4      || -0.2
+        0.5      | -0.5     || 0
+        -0.5     | 0.5      || 0
+        -0.01    | 0.01     || 0.02
+        -0.4     | 0.2      || -0.4
+        -2.4     | 0.2      || -0.4
+    }
+
+    def "calculate minimal azimuth error with drive direction"() {
+        when:
+        def error = Math.IEEEremainder(setpoint - position, 1.0)
+        def isReversed = false
+        if (Math.abs(error) > 0.25) {
+            error -= Math.copySign(0.5, error)
+            isReversed = true
+        }
+
+        then:
+        Math.abs(error - expected_error) < EPSILON
+        isReversed == expected_reverse
+        Math.abs(position + error - expected_position) < EPSILON
+
+        where:
+        setpoint | position | expected_error | expected_position | expected_reverse
+        0        | 0        | 0              | 0                 | false
+        0.25     | 0.5      | -0.25          | 0.25              | false
+        -0.5     | -0.25    | -0.25          | -0.5              | false
+        0.25     | -0.1     | -0.15          | -0.25             | true
+        -0.5     | 0.5      | 0              | 0.5               | false
+        -0.5     | 0.5      | 0              | 0.5               | false
+        0.49     | -0.5     | -0.01          | -0.51             | false
+        0        | 1.0      | 0              | 1.0               | false
+        0        | 1.1      | -0.1           | 1.0               | false
+        0.4      | -2.4     | -0.2           | -2.6              | false
+        0        | -0.4     | -0.1           | -0.5              | true
+        0.2      | -0.4     | 0.1            | -0.3              | true
+        0.2      | -2.4     | 0.1            | -2.3              | true
+        -0.2     | 0.4      | -0.1           | 0.3               | true
+        -0.2     | 2.4      | -0.1           | 2.3               | true
+
+    }
 }

@@ -65,7 +65,7 @@ public class Controls {
   /**
    * Return the driver controller right stick X-axis position.
    *
-   * * @return  the position, range is -1.0 (full left) to 1.0 (full right)
+   * @return  the position, range is -1.0 (full left) to 1.0 (full right)
    */
   public double getAzimuth() {
     return driverController.getRawAxis(DRIVER_RIGHT_X_AXIS);
@@ -74,7 +74,39 @@ public class Controls {
   /**
    * Return the "Ch 6. Flaps Gain" knob value.
    *
-   * @return the know position
+   * @return the knob position,  range is -1.0 (full left) to 1.0 (full right)
    */
   public double getTuner() {return driverController.getRawAxis(DRIVER_TUNER_AXIS);}
+
+  /**
+   * Return the gamepad "A" button
+   * @return true if the button is pressed
+   */
+  public boolean getGamepadAButton() {
+    return gameController.getRawButton(GAME_A_BUTTON);
+  }
+
+  /**
+   * Return the gamepad "B" button
+   * @return true if the button is pressed
+   */
+  public boolean getGamepadBButton() {
+    return gameController.getRawButton(GAME_B_BUTTON);
+  }
+
+  /**
+   * Return the gamepad "X" button
+   * @return true if the button is pressed
+   */
+  public boolean getGamepadXButton() {
+    return gameController.getRawButton(GAME_X_BUTTON);
+  }
+
+  /**
+   * Return the gamepad "Y" button
+   * @return true if the button is pressed
+   */
+  public boolean getGamepadYButton() {
+    return gameController.getRawButton(GAME_Y_BUTTON);
+  }
 }
