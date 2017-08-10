@@ -7,7 +7,7 @@ import org.strykeforce.sidewinder.talon.TalonParameters;
  * Controls a swerve driveTalon wheel azimuthTalon and driveTalon motors.
  *
  * The swerve-driveTalon inverse kinematics algorithm will always calculate individual wheel angles
- * as -180 to 180 degrees, measured clockwise with zero being the straight-ahead position. Wheel
+ * as -0.5 to 0.5 rotations, measured clockwise with zero being the straight-ahead position. Wheel
  * speed is calculated as 0 to 1 in the direction of the wheel angle.
  *
  * <p>This class will decide how to implement this angle and speed optimally for the azimuthTalon
@@ -15,13 +15,15 @@ import org.strykeforce.sidewinder.talon.TalonParameters;
  * wheel azimuthTalon 180 degrees.
  *
  * <p>Hardware assumed by this class includes a CTRE magnetic encoder on the azimuthTalon motor and
- * no limits on wheel azimuthTalon.
+ * no limits on wheel azimuthTalon. Azimuth Talons have an ID in the range 0-3 with corresponding
+ * drive Talon IDs in the range 10-13.
  */
-public final class Wheel {
+public class Wheel {
 
   private final CANTalon azimuthTalon;
   private final CANTalon driveTalon;
 
+  private double driveSetpointMax;
   private double azimuthSetpoint;
   private double driveSetpoint;
 
@@ -31,12 +33,12 @@ public final class Wheel {
    * respectively. Assumes the Talon configurations have been registered.
    *
    * @param azimuth the azimuthTalon CANTalon
-   * @param driveTalon the driveTalon CANTalon
+   * @param drive the driveTalon CANTalon
    * @see org.strykeforce.sidewinder.talon.TalonParameters#register(String)
    */
   public Wheel(CANTalon azimuth, CANTalon drive) {
-    String AZIMUTH_PARAMETERS = "azimuth";
-    String DRIVE_PARAMETERS = "drive";
+    final String AZIMUTH_PARAMETERS = "azimuth";
+    final String DRIVE_PARAMETERS = "drive";
 
     azimuthTalon = azimuth;
     driveTalon = drive;
@@ -56,11 +58,19 @@ public final class Wheel {
   /**
    * This method calculates the optimal driveTalon settings and applies them.
    *
-   * @param azimuth wheel angle as calculated by the inverse-kinematics algorithm
-   * @param drive wheel speed as calculated by the inverse-kinematics algorithm
+   * @param azimuth -0.5 to 0.5 rotations, measured clockwise with zero being the wheel's zeroed
+   * position
+   * @param drive 0 to 1 in the direction of the wheel azimuth
    */
   public void set(double azimuth, double drive) {
-    driveSetpoint = drive;
+    driveSetpoint = drive * driveSetpointMax;
+    azimuth = -azimuth; // azimuth configuration requires reversing
+
+    // don't reset wheel azimuth in neutral
+    if (driveSetpoint == 0) {
+      driveTalon.set(0);
+      return;
+    }
 
     double azimuthPosition = azimuthTalon.getPosition();
     double azimuthError = Math.IEEEremainder(azimuth - azimuthPosition, 1.0);
@@ -88,6 +98,7 @@ public final class Wheel {
   public void setDriveParameters(String parameters) {
     TalonParameters talonParameters = TalonParameters.getInstance(parameters);
     talonParameters.configure(driveTalon);
+    driveSetpointMax = talonParameters.getSetpointMax();
   }
 
   /**

@@ -14,31 +14,41 @@ public class Robot extends IterativeRobot {
     TalonParameters.register("/org/strykeforce/sidewinder.toml");
   }
 
-  private final SwerveDrive drive = SwerveDrive.getInstance();
+  private final SwerveDrive swerve = SwerveDrive.getInstance();
   private final Controls controls = Controls.getInstance();
 
   @Override
   public void robotInit() {
-    drive.zeroSensors();
+    swerve.zeroSensors();
   }
 
   @Override
   public void teleopInit() {
   }
 
+  private double applyDeadband(double input) {
+    if (Math.abs(input) < 0.05) {
+      return 0;
+    }
+    return input;
+  }
+
   @Override
   public void teleopPeriodic() {
-    double azimuth = controls.getTuner() * 0.5;
-    drive.set(azimuth, 0);
+    double forward = applyDeadband(controls.getForward());
+    double strafe = applyDeadband(controls.getStrafe());
+    double azimuth = applyDeadband(controls.getAzimuth());
+
+    swerve.drive(forward, strafe, azimuth);
   }
 
   @Override
   public void disabledInit() {
-    drive.stop();
+    swerve.stop();
   }
 
   @Override
   public void disabledPeriodic() {
-    drive.stop();
+    swerve.stop();
   }
 }

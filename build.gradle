@@ -16,6 +16,7 @@ frc {
     robotClass = "org.strykeforce.sidewinder.robot.Robot"
     rioHost = "10.27.67.2"
     deployTimeout = 2
+    jvmArguments = "-Xms10m"
 }
 
 dependencies {

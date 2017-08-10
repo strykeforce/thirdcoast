@@ -17,6 +17,8 @@ mode = "Position"
 setpoint_max     = 4095.0
 feedback_device  = "CtreMagEncoder_Relative"
 brake_in_neutral = false
+encoder_reversed = false
+output_reversed = false
 
 ***REMOVED***
 I =   0.0
