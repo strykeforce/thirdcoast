@@ -18,16 +18,6 @@ class WheelTest extends Specification {
 
     def "configures azimuth and drive talons"() {
         when:
-        new Wheel(azimuth, drive)
-
-        then:
-        1 * azimuth.setFeedbackDevice(CANTalon.FeedbackDevice.CtreMagEncoder_Relative)
-        1 * azimuth.setPID(12.0, 0.0, 200.0)
-        1 * drive.setFeedbackDevice(CANTalon.FeedbackDevice.QuadEncoder)
-    }
-
-    def "sets wheel parameters"() {
-        when:
         def wheel = new Wheel(azimuth, drive)
 
         then:
@@ -67,7 +57,7 @@ class WheelTest extends Specification {
         0 * azimuth.changeControlMode(_)
         0 * drive.changeControlMode(_)
     }
-    
+
     def "gets azimuth absolution position"() {
         setup:
         azimuth.getPulseWidthPosition() >> 0x1000
