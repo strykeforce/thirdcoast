@@ -5,7 +5,7 @@ import org.strykeforce.thirdcoast.swerve.Wheel;
 import org.strykeforce.thirdcoast.talon.TalonParameters;
 
 /**
- * Sidewinder test robot.
+ * Third Coast test robot.
  */
 
 public class WheelTestRobot extends IterativeRobot {

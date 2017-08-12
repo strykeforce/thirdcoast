@@ -1,10 +1,10 @@
-# Sidewinder
+# Third Coast
 
-Sidewinder swerve drive and Talon configuration library.
+Third Coast swerve drive and Talon configuration library.
 
 ## Talon Configurations
 
-Sidewinder provides a library for storing any number of Talon configurations in a [TOML](https://github.com/toml-lang/toml) file and applying them to Talons. The configuration file is stored in the robot application JAR and loaded by the class loader.
+Third Coast provides a library for storing any number of Talon configurations in a [TOML](https://github.com/toml-lang/toml) file and applying them to Talons. The configuration file is stored in the robot application JAR and loaded by the class loader.
 
 The structure of a Talon configuration file is:
 
