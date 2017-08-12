@@ -1,7 +1,7 @@
-package org.strykeforce.sidewinder.swerve;
+package org.strykeforce.thirdcoast.swerve;
 
 import com.ctre.CANTalon;
-import org.strykeforce.sidewinder.talon.TalonParameters;
+import org.strykeforce.thirdcoast.talon.TalonParameters;
 
 /**
  * Controls a swerve driveTalon wheel azimuthTalon and driveTalon motors.
@@ -34,7 +34,7 @@ public class Wheel {
    *
    * @param azimuth the azimuthTalon CANTalon
    * @param drive the driveTalon CANTalon
-   * @see org.strykeforce.sidewinder.talon.TalonParameters#register(String)
+   * @see org.strykeforce.thirdcoast.talon.TalonParameters#register(String)
    */
   public Wheel(CANTalon azimuth, CANTalon drive) {
     final String AZIMUTH_PARAMETERS = "azimuth";

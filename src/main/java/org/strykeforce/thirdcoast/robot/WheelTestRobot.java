@@ -1,8 +1,8 @@
-package org.strykeforce.sidewinder.robot;
+package org.strykeforce.thirdcoast.robot;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
-import org.strykeforce.sidewinder.swerve.Wheel;
-import org.strykeforce.sidewinder.talon.TalonParameters;
+import org.strykeforce.thirdcoast.swerve.Wheel;
+import org.strykeforce.thirdcoast.talon.TalonParameters;
 
 /**
  * Sidewinder test robot.
@@ -11,7 +11,7 @@ import org.strykeforce.sidewinder.talon.TalonParameters;
 public class WheelTestRobot extends IterativeRobot {
 
   static {
-    TalonParameters.register("/org/strykeforce/sidewinder.toml");
+    TalonParameters.register("/org/strykeforce/thirdcoast.toml");
   }
 
   private final Wheel wheel = new Wheel(0);

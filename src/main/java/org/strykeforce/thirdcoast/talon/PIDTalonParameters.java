@@ -1,4 +1,4 @@
-package org.strykeforce.sidewinder.talon;
+package org.strykeforce.thirdcoast.talon;
 
 import com.ctre.CANTalon;
 import com.electronwill.nightconfig.toml.TomlConfig;

@@ -1,4 +1,4 @@
-package org.strykeforce.sidewinder.robot;
+package org.strykeforce.thirdcoast.robot;
 
 public interface Subsystem {
 

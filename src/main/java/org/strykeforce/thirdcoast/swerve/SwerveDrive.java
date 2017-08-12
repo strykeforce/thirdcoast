@@ -1,8 +1,8 @@
-package org.strykeforce.sidewinder.swerve;
+package org.strykeforce.thirdcoast.swerve;
 
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.SPI.Port;
-import org.strykeforce.sidewinder.robot.Subsystem;
+import org.strykeforce.thirdcoast.robot.Subsystem;
 
 /**
  * Control a Third Coast swerve drive.

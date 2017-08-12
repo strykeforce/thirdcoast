@@ -1,7 +1,7 @@
-package org.strykeforce.sidewinder.swerve
+package org.strykeforce.thirdcoast.swerve
 
 import com.ctre.CANTalon
-import org.strykeforce.sidewinder.talon.TalonParameters
+import org.strykeforce.thirdcoast.talon.TalonParameters
 import spock.lang.Specification
 
 class WheelTest extends Specification {

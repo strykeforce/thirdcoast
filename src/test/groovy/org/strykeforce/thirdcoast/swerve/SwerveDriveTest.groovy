@@ -1,7 +1,6 @@
-package org.strykeforce.sidewinder.swerve
+package org.strykeforce.thirdcoast.swerve
 
-import com.kauailabs.navx.frc.AHRS
-import org.strykeforce.sidewinder.talon.TalonParameters
+import org.strykeforce.thirdcoast.talon.TalonParameters
 
 class SwerveDriveTest extends spock.lang.Specification {
 

@@ -13,7 +13,7 @@ repositories {
 
 frc {
     team = "2767"
-    robotClass = "org.strykeforce.sidewinder.robot.Robot"
+    robotClass = "org.strykeforce.thirdcoast.robot.Robot"
     rioHost = "10.27.67.2"
     deployTimeout = 2
     jvmArguments = "-Xms10m"
@@ -44,8 +44,8 @@ jar {
 }
 
 test {
-    systemProperty("org.strykeforce.sidewinder.toml",
-            "/org/strykeforce/sidewinder/subsystems/testdata/talon.toml")
+    systemProperty("org.strykeforce.thirdcoast.toml",
+            "/org/strykeforce/thirdcoast/subsystems/testdata/talon.toml")
 }
 
 task wrapper(type: Wrapper) {
