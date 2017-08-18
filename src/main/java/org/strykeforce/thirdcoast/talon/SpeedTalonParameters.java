@@ -2,17 +2,17 @@ package org.strykeforce.thirdcoast.talon;
 
 import com.ctre.CANTalon;
 import com.ctre.CANTalon.TalonControlMode;
-import com.electronwill.nightconfig.toml.TomlConfig;
+import com.electronwill.nightconfig.core.UnmodifiableConfig;
 
 class SpeedTalonParameters extends PIDTalonParameters {
 
-  SpeedTalonParameters(TomlConfig toml) {
-    super(toml);
+  SpeedTalonParameters(UnmodifiableConfig config) {
+    super(config);
   }
 
   @Override
   public void configure(CANTalon talon) {
     super.configure(talon);
-  talon.changeControlMode(TalonControlMode.Speed);
+    talon.changeControlMode(TalonControlMode.Speed);
   }
 }

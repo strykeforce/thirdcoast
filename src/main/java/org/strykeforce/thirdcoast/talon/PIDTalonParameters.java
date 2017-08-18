@@ -1,7 +1,7 @@
 package org.strykeforce.thirdcoast.talon;
 
 import com.ctre.CANTalon;
-import com.electronwill.nightconfig.toml.TomlConfig;
+import com.electronwill.nightconfig.core.UnmodifiableConfig;
 
 class PIDTalonParameters extends TalonParameters {
 
@@ -18,25 +18,25 @@ class PIDTalonParameters extends TalonParameters {
   private final double fGain;
   private final int iZone;
 
-  PIDTalonParameters(TomlConfig toml) {
-    super(toml);
-    outputVoltageMax = (double) toml.getOptionalValue("output_voltage_max").orElse(0.0);
-    forwardOutputVoltagePeak = (double) toml.getOptionalValue("forward_output_voltage_peak")
+  PIDTalonParameters(UnmodifiableConfig config) {
+    super(config);
+    outputVoltageMax = (double) config.getOptional("output_voltage_max").orElse(0.0);
+    forwardOutputVoltagePeak = (double) config.getOptional("forward_output_voltage_peak")
         .orElse(0.0);
-    reverseOutputVoltagePeak = (double) toml.getOptionalValue("reverse_output_voltage_peak")
+    reverseOutputVoltagePeak = (double) config.getOptional("reverse_output_voltage_peak")
         .orElse(0.0);
-    forwardOutputVoltageNominal = (double) toml.getOptionalValue("forward_output_voltage_nominal")
+    forwardOutputVoltageNominal = (double) config.getOptional("forward_output_voltage_nominal")
         .orElse(0.0);
-    reverseOutputVoltageNominal = (double) toml.getOptionalValue("reverse_output_voltage_nominal")
+    reverseOutputVoltageNominal = (double) config.getOptional("reverse_output_voltage_nominal")
         .orElse(0.0);
-    allowableClosedLoopError = (int) toml.getOptionalValue("allowable_closed_loop_error").orElse(0);
-    nominalClosedLoopVoltage = (double) toml.getOptionalValue("nominal_closed_loop_voltage")
+    allowableClosedLoopError = (int) config.getOptional("allowable_closed_loop_error").orElse(0);
+    nominalClosedLoopVoltage = (double) config.getOptional("nominal_closed_loop_voltage")
         .orElse(0.0); // DisableNominalClosedLoopVoltage, SetNominalClosedLoopVoltage
-    pGain = (double) toml.getOptionalValue("P").orElse(0.0);
-    iGain = (double) toml.getOptionalValue("I").orElse(0.0);
-    dGain = (double) toml.getOptionalValue("D").orElse(0.0);
-    fGain = (double) toml.getOptionalValue("F").orElse(0.0);
-    iZone = (int) toml.getOptionalValue("I_zone").orElse(0);
+    pGain = (double) config.getOptional("P").orElse(0.0);
+    iGain = (double) config.getOptional("I").orElse(0.0);
+    dGain = (double) config.getOptional("D").orElse(0.0);
+    fGain = (double) config.getOptional("F").orElse(0.0);
+    iZone = (int) config.getOptional("I_zone").orElse(0);
   }
 
   @Override

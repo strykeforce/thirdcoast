@@ -88,22 +88,22 @@
     <orderEntry type="module-library" scope="PROVIDED">
       <library>
         <CLASSES>
-          <root url="jar:///Users/jeff/.gradle/caches/modules-2/files-2.1/com.github.TheElectronWill.Night-Config/toml/v2.1.2/a4e84009d142c2acdf3542dac62930769a6b4d78/toml-v2.1.2.jar!/"/>
+          <root url="jar:///Users/jeff/.gradle/caches/modules-2/files-2.1/com.github.TheElectronWill.Night-Config/toml/3.0.1/9b957ea2517568f7fb9ba012dd10ca4736b156c8/toml-3.0.1.jar!/"/>
         </CLASSES>
         <JAVADOC/>
         <SOURCES>
-          <root url="jar:///Users/jeff/.gradle/caches/modules-2/files-2.1/com.github.TheElectronWill.Night-Config/toml/v2.1.2/ea89866eec41ad5618b5ebad7c587a89a095a79d/toml-v2.1.2-sources.jar!/"/>
+          <root url="jar:///Users/jeff/.gradle/caches/modules-2/files-2.1/com.github.TheElectronWill.Night-Config/toml/3.0.1/3330288814b486660902dd77d769d6e87c0a1cd4/toml-3.0.1-sources.jar!/"/>
         </SOURCES>
       </library>
     </orderEntry>
     <orderEntry type="module-library" scope="PROVIDED">
       <library>
         <CLASSES>
-          <root url="jar:///Users/jeff/.gradle/caches/modules-2/files-2.1/com.github.TheElectronWill.Night-Config/core/v2.1.2/38b0050c3a96d46f7cb4e56ae0efc2dc56b6f4f3/core-v2.1.2.jar!/"/>
+          <root url="jar:///Users/jeff/.gradle/caches/modules-2/files-2.1/com.github.TheElectronWill.Night-Config/core/3.0.1/920ecc569c9c042b5a644023c57ced711924fa5f/core-3.0.1.jar!/"/>
         </CLASSES>
         <JAVADOC/>
         <SOURCES>
-          <root url="jar:///Users/jeff/.gradle/caches/modules-2/files-2.1/com.github.TheElectronWill.Night-Config/core/v2.1.2/5760641d45077c292e5c8dbd5ec99232c9c43f84/core-v2.1.2-sources.jar!/"/>
+          <root url="jar:///Users/jeff/.gradle/caches/modules-2/files-2.1/com.github.TheElectronWill.Night-Config/core/3.0.1/7a380be80287785aedcca5a30f220835f7e89603/core-3.0.1-sources.jar!/"/>
         </SOURCES>
       </library>
     </orderEntry>
@@ -183,22 +183,22 @@
     <orderEntry type="module-library" scope="RUNTIME">
       <library>
         <CLASSES>
-          <root url="jar:///Users/jeff/.gradle/caches/modules-2/files-2.1/com.github.TheElectronWill.Night-Config/toml/v2.1.2/a4e84009d142c2acdf3542dac62930769a6b4d78/toml-v2.1.2.jar!/"/>
+          <root url="jar:///Users/jeff/.gradle/caches/modules-2/files-2.1/com.github.TheElectronWill.Night-Config/toml/3.0.1/9b957ea2517568f7fb9ba012dd10ca4736b156c8/toml-3.0.1.jar!/"/>
         </CLASSES>
         <JAVADOC/>
         <SOURCES>
-          <root url="jar:///Users/jeff/.gradle/caches/modules-2/files-2.1/com.github.TheElectronWill.Night-Config/toml/v2.1.2/ea89866eec41ad5618b5ebad7c587a89a095a79d/toml-v2.1.2-sources.jar!/"/>
+          <root url="jar:///Users/jeff/.gradle/caches/modules-2/files-2.1/com.github.TheElectronWill.Night-Config/toml/3.0.1/3330288814b486660902dd77d769d6e87c0a1cd4/toml-3.0.1-sources.jar!/"/>
         </SOURCES>
       </library>
     </orderEntry>
     <orderEntry type="module-library" scope="RUNTIME">
       <library>
         <CLASSES>
-          <root url="jar:///Users/jeff/.gradle/caches/modules-2/files-2.1/com.github.TheElectronWill.Night-Config/core/v2.1.2/38b0050c3a96d46f7cb4e56ae0efc2dc56b6f4f3/core-v2.1.2.jar!/"/>
+          <root url="jar:///Users/jeff/.gradle/caches/modules-2/files-2.1/com.github.TheElectronWill.Night-Config/core/3.0.1/920ecc569c9c042b5a644023c57ced711924fa5f/core-3.0.1.jar!/"/>
         </CLASSES>
         <JAVADOC/>
         <SOURCES>
-          <root url="jar:///Users/jeff/.gradle/caches/modules-2/files-2.1/com.github.TheElectronWill.Night-Config/core/v2.1.2/5760641d45077c292e5c8dbd5ec99232c9c43f84/core-v2.1.2-sources.jar!/"/>
+          <root url="jar:///Users/jeff/.gradle/caches/modules-2/files-2.1/com.github.TheElectronWill.Night-Config/core/3.0.1/7a380be80287785aedcca5a30f220835f7e89603/core-3.0.1-sources.jar!/"/>
         </SOURCES>
       </library>
     </orderEntry>
@@ -278,22 +278,22 @@
     <orderEntry type="module-library" scope="TEST">
       <library>
         <CLASSES>
-          <root url="jar:///Users/jeff/.gradle/caches/modules-2/files-2.1/com.github.TheElectronWill.Night-Config/toml/v2.1.2/a4e84009d142c2acdf3542dac62930769a6b4d78/toml-v2.1.2.jar!/"/>
+          <root url="jar:///Users/jeff/.gradle/caches/modules-2/files-2.1/com.github.TheElectronWill.Night-Config/toml/3.0.1/9b957ea2517568f7fb9ba012dd10ca4736b156c8/toml-3.0.1.jar!/"/>
         </CLASSES>
         <JAVADOC/>
         <SOURCES>
-          <root url="jar:///Users/jeff/.gradle/caches/modules-2/files-2.1/com.github.TheElectronWill.Night-Config/toml/v2.1.2/ea89866eec41ad5618b5ebad7c587a89a095a79d/toml-v2.1.2-sources.jar!/"/>
+          <root url="jar:///Users/jeff/.gradle/caches/modules-2/files-2.1/com.github.TheElectronWill.Night-Config/toml/3.0.1/3330288814b486660902dd77d769d6e87c0a1cd4/toml-3.0.1-sources.jar!/"/>
         </SOURCES>
       </library>
     </orderEntry>
     <orderEntry type="module-library" scope="TEST">
       <library>
         <CLASSES>
-          <root url="jar:///Users/jeff/.gradle/caches/modules-2/files-2.1/com.github.TheElectronWill.Night-Config/core/v2.1.2/38b0050c3a96d46f7cb4e56ae0efc2dc56b6f4f3/core-v2.1.2.jar!/"/>
+          <root url="jar:///Users/jeff/.gradle/caches/modules-2/files-2.1/com.github.TheElectronWill.Night-Config/core/3.0.1/920ecc569c9c042b5a644023c57ced711924fa5f/core-3.0.1.jar!/"/>
         </CLASSES>
         <JAVADOC/>
         <SOURCES>
-          <root url="jar:///Users/jeff/.gradle/caches/modules-2/files-2.1/com.github.TheElectronWill.Night-Config/core/v2.1.2/5760641d45077c292e5c8dbd5ec99232c9c43f84/core-v2.1.2-sources.jar!/"/>
+          <root url="jar:///Users/jeff/.gradle/caches/modules-2/files-2.1/com.github.TheElectronWill.Night-Config/core/3.0.1/7a380be80287785aedcca5a30f220835f7e89603/core-3.0.1-sources.jar!/"/>
         </SOURCES>
       </library>
     </orderEntry>

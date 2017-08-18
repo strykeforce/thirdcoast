@@ -30,8 +30,8 @@ dependencies {
     compile wpilib()
     compile talonSrx()
     compile navx()
-    compile group: 'com.github.TheElectronWill.Night-Config', name: 'core', version: 'v2.1.2'
-    compile group: 'com.github.TheElectronWill.Night-Config', name: 'toml', version: 'v2.1.2'
+    compile group: 'com.github.TheElectronWill.Night-Config', name: 'core', version: '3.0.1'
+    compile group: 'com.github.TheElectronWill.Night-Config', name: 'toml', version: '3.0.1'
 
     testCompile group: 'org.spockframework', name: 'spock-core', version: '1.1-groovy-2.4'
     testRuntime group: 'net.bytebuddy', name: 'byte-buddy', version: '1.7.1'

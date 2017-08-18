@@ -2,18 +2,18 @@ package org.strykeforce.thirdcoast.talon;
 
 import com.ctre.CANTalon;
 import com.ctre.CANTalon.TalonControlMode;
-import com.electronwill.nightconfig.toml.TomlConfig;
+import com.electronwill.nightconfig.core.UnmodifiableConfig;
 
 class VoltageTalonParameters extends TalonParameters {
 
-  VoltageTalonParameters(TomlConfig toml) {
-    super(toml);
+  VoltageTalonParameters(UnmodifiableConfig config) {
+    super(config);
   }
 
   @Override
   public void configure(CANTalon talon) {
     super.configure(talon);
-  talon.changeControlMode(TalonControlMode.Voltage);
+    talon.changeControlMode(TalonControlMode.Voltage);
   }
 
   @Override

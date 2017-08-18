@@ -2,9 +2,12 @@ package org.strykeforce.thirdcoast.talon;
 
 import com.ctre.CANTalon;
 import com.ctre.CANTalon.VelocityMeasurementPeriod;
-import com.electronwill.nightconfig.toml.TomlConfig;
-import com.electronwill.nightconfig.toml.TomlParser;
-import java.io.InputStream;
+import com.electronwill.nightconfig.core.Config;
+import com.electronwill.nightconfig.core.UnmodifiableConfig;
+import com.electronwill.nightconfig.core.file.FileConfig;
+import java.io.File;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -36,36 +39,36 @@ public abstract class TalonParameters {
   private final SoftLimit reverseSoftLimit;
   private final int currentLimit;
 
-  TalonParameters(TomlConfig toml) {
-    name = toml.getValue("name");
+  TalonParameters(UnmodifiableConfig toml) {
+    name = toml.get("name");
     try {
-      setpointMax = toml.getValue("setpoint_max");
+      setpointMax = toml.get("setpoint_max");
     } catch (NullPointerException e) {
       throw new IllegalArgumentException("TALON setpoint_max parameter missing in: " + name);
     }
 
-    encoder = new Encoder(toml.getOptionalValue("feedback_device"),
-        toml.getOptionalValue("encoder_reversed"),
-        toml.getOptionalValue("ticks_per_revolution"));
+    encoder = new Encoder(toml.getOptional("feedback_device"),
+        toml.getOptional("encoder_reversed"),
+        toml.getOptional("ticks_per_revolution"));
 
-    isBrakeInNeutral = (boolean) toml.getOptionalValue("brake_in_neutral").orElse(true);
-    isOutputReversed = (boolean) toml.getOptionalValue("output_reversed").orElse(false);
+    isBrakeInNeutral = (boolean) toml.getOptional("brake_in_neutral").orElse(true);
+    isOutputReversed = (boolean) toml.getOptional("output_reversed").orElse(false);
 
-    int vmp = (int) toml.getOptionalValue("velocity_measurement_period").orElse(100);
+    int vmp = (int) toml.getOptional("velocity_measurement_period").orElse(100);
     velocityMeasurementPeriod = VelocityMeasurementPeriod.valueOf(vmp);
     if (velocityMeasurementPeriod == null) {
       throw new IllegalArgumentException("TALON velocity_measurement_period invalid: " + vmp);
     }
-    velocityMeasurementWindow = (int) toml.getOptionalValue("velocity_measurement_window")
+    velocityMeasurementWindow = (int) toml.getOptional("velocity_measurement_window")
         .orElse(64);
 
-    forwardLimitSwitch = new LimitSwitch(toml.getOptionalValue("forward_limit_switch"));
-    reverseLimitSwitch = new LimitSwitch(toml.getOptionalValue("reverse_limit_switch"));
+    forwardLimitSwitch = new LimitSwitch(toml.getOptional("forward_limit_switch"));
+    reverseLimitSwitch = new LimitSwitch(toml.getOptional("reverse_limit_switch"));
 
-    forwardSoftLimit = new SoftLimit(toml.getOptionalValue("forward_soft_limit"));
-    reverseSoftLimit = new SoftLimit(toml.getOptionalValue("reverse_soft_limit"));
+    forwardSoftLimit = new SoftLimit(toml.getOptional("forward_soft_limit"));
+    reverseSoftLimit = new SoftLimit(toml.getOptional("reverse_soft_limit"));
 
-    currentLimit = (int) toml.getOptionalValue("current_limit").orElse(0);
+    currentLimit = (int) toml.getOptional("current_limit").orElse(0);
   }
 
   /**
@@ -76,32 +79,26 @@ public abstract class TalonParameters {
    * @param resourcePath path to TOML file in Jar archive
    */
   public static void register(String resourcePath) {
-    InputStream is = TalonParameters.class.getResourceAsStream(resourcePath);
-    if (is == null) {
-      throw new IllegalArgumentException("No talon parameter resource at " + resourcePath);
-    }
 
-    TomlConfig config = new TomlParser().parse(is);
+    List<Config> configList = readConfig(resourcePath).get("TALON");
 
-    List<TomlConfig> talons = config.getValue("TALON");
-
-    for (TomlConfig toml : talons) {
-      String name = toml.getValue("name");
+    for (Config config : configList) {
+      String name = config.get("name");
       if (name == null) {
         throw new IllegalArgumentException("TALON configuration name parameter missing");
       }
 
-      String mode = (String) toml.getOptionalValue("mode").orElse("Voltage");
+      String mode = (String) config.getOptional("mode").orElse("Voltage");
       TalonParameters talon = null;
       switch (CANTalon.TalonControlMode.valueOf(mode)) {
         case Voltage:
-          talon = new VoltageTalonParameters(toml);
+          talon = new VoltageTalonParameters(config);
           break;
         case Position:
-          talon = new PositionTalonParameters(toml);
+          talon = new PositionTalonParameters(config);
           break;
         case Speed:
-          talon = new SpeedTalonParameters(toml);
+          talon = new SpeedTalonParameters(config);
           break;
         case Follower:
         case MotionMagic:
@@ -123,6 +120,34 @@ public abstract class TalonParameters {
    */
   public static TalonParameters getInstance(String name) {
     return settings.get(name);
+  }
+
+  /**
+   * Print the current state of the Talon.
+   *
+   * @param talon the Talon to print
+   */
+  public static void log(CANTalon talon) {
+    System.out.println("talon = [" + talon + "]");
+  }
+
+  private static UnmodifiableConfig readConfig(String path) {
+    try {
+      URL configUrl = TalonParameters.class.getResource(path);
+      if (configUrl == null) {
+        throw new IllegalArgumentException("config not found: " + path);
+      }
+      File configFile = new File(configUrl.toURI());
+
+      try (FileConfig config = FileConfig.of(configFile)) {
+        config.load();
+        System.out.println("config = " + config);
+        return config.unmodifiable();
+      }
+    } catch (URISyntaxException e) {
+      e.printStackTrace();
+    }
+    return null;
   }
 
   /**
@@ -152,15 +177,6 @@ public abstract class TalonParameters {
       talon.enableReverseSoftLimit(true);
       talon.setReverseSoftLimit(reverseSoftLimit.getValue());
     }
-  }
-
-  /**
-   * Print the current state of the Talon.
-   *
-   * @param talon the Talon to print
-   */
-  public static void log(CANTalon talon) {
-    System.out.println("talon = [" + talon + "]");
   }
 
   public String getName() {

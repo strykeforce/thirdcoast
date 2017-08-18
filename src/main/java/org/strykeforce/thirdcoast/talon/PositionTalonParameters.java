@@ -2,12 +2,12 @@ package org.strykeforce.thirdcoast.talon;
 
 import com.ctre.CANTalon;
 import com.ctre.CANTalon.TalonControlMode;
-import com.electronwill.nightconfig.toml.TomlConfig;
+import com.electronwill.nightconfig.core.UnmodifiableConfig;
 
 class PositionTalonParameters extends PIDTalonParameters {
 
-  PositionTalonParameters(TomlConfig toml) {
-    super(toml);
+  PositionTalonParameters(UnmodifiableConfig config) {
+    super(config);
   }
 
   @Override
