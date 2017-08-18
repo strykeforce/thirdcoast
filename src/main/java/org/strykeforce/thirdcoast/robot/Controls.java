@@ -65,7 +65,7 @@ public class Controls {
   /**
    * Return the driver controller right stick X-axis position.
    *
-   * @return  the position, range is -1.0 (full left) to 1.0 (full right)
+   * @return the position, range is -1.0 (full left) to 1.0 (full right)
    */
   public double getAzimuth() {
     return driverController.getRawAxis(DRIVER_RIGHT_X_AXIS);
@@ -76,10 +76,22 @@ public class Controls {
    *
    * @return the knob position,  range is -1.0 (full left) to 1.0 (full right)
    */
-  public double getTuner() {return driverController.getRawAxis(DRIVER_TUNER_AXIS);}
+  public double getTuner() {
+    return driverController.getRawAxis(DRIVER_TUNER_AXIS);
+  }
+
+  /**
+   * Return the "Reset" button on flight sim controller.
+   *
+   * @return true if the button is pressed
+   */
+  public boolean getResetButton() {
+    return driverController.getRawButton(DRIVER_RESET_BUTTON);
+  }
 
   /**
    * Return the gamepad "A" button
+   *
    * @return true if the button is pressed
    */
   public boolean getGamepadAButton() {
@@ -88,6 +100,7 @@ public class Controls {
 
   /**
    * Return the gamepad "B" button
+   *
    * @return true if the button is pressed
    */
   public boolean getGamepadBButton() {
@@ -96,6 +109,7 @@ public class Controls {
 
   /**
    * Return the gamepad "X" button
+   *
    * @return true if the button is pressed
    */
   public boolean getGamepadXButton() {
@@ -104,6 +118,7 @@ public class Controls {
 
   /**
    * Return the gamepad "Y" button
+   *
    * @return true if the button is pressed
    */
   public boolean getGamepadYButton() {

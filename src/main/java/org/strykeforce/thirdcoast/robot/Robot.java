@@ -26,6 +26,12 @@ public class Robot extends IterativeRobot {
 
   private final SwerveDrive swerve = SwerveDrive.getInstance();
   private final Controls controls = Controls.getInstance();
+  private final Trigger gyroResetButton = new Trigger() {
+    @Override
+    public boolean get() {
+      return controls.getResetButton();
+    }
+  };
 
   @Override
   public void robotInit() {
@@ -45,6 +51,9 @@ public class Robot extends IterativeRobot {
 
   @Override
   public void teleopPeriodic() {
+    if (gyroResetButton.hasActivated()) {
+      swerve.getGyro().zeroYaw();
+    }
     double forward = applyDeadband(controls.getForward());
     double strafe = applyDeadband(controls.getStrafe());
     double azimuth = applyDeadband(controls.getAzimuth());

@@ -119,6 +119,14 @@ public class SwerveDrive implements Subsystem {
     }
   }
 
+  /**
+   * Get the gyro being used by the drive.
+   * @return the gyro instance
+   */
+  public AHRS getGyro() {
+    return gyro;
+  }
+
   private static class LazyHolder {
 
     static final SwerveDrive INSTANCE = new SwerveDrive(new AHRS(Port.kMXP));
