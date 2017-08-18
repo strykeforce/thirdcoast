@@ -113,7 +113,7 @@ public class SwerveDrive implements Subsystem {
 
   @Override
   public void zeroSensors() {
-    int[] zeros = new int[]{2281, 3359, 2966, 1236};
+    int[] zeros = new int[]{3593, 3359, 2966, 1236};
     for (int i = 0; i != wheels.length; i++) {
       wheels[i].setAzimuthZero(zeros[i]);
     }
