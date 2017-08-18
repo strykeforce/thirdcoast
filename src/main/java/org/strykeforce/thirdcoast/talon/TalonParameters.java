@@ -6,8 +6,6 @@ import com.electronwill.nightconfig.core.Config;
 import com.electronwill.nightconfig.core.UnmodifiableConfig;
 import com.electronwill.nightconfig.core.file.FileConfig;
 import java.io.File;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -78,11 +76,14 @@ public abstract class TalonParameters {
    *
    * @param resourcePath path to TOML file in Jar archive
    */
-  public static void register(String resourcePath) {
+  public static void register(UnmodifiableConfig talonConfigs) {
 
-    List<Config> configList = readConfig(resourcePath).get("TALON");
+    List<Config> configList = talonConfigs.get("TALON");
+    if (configList == null) {
+      throw new IllegalArgumentException("no TALONS in config");
+    }
 
-    for (Config config : configList) {
+    for (UnmodifiableConfig config : configList) {
       String name = config.get("name");
       if (name == null) {
         throw new IllegalArgumentException("TALON configuration name parameter missing");
@@ -133,21 +134,20 @@ public abstract class TalonParameters {
 
   private static UnmodifiableConfig readConfig(String path) {
     try {
-      URL configUrl = TalonParameters.class.getResource(path);
-      if (configUrl == null) {
-        throw new IllegalArgumentException("config not found: " + path);
-      }
-      File configFile = new File(configUrl.toURI());
+//      URL configUrl = TalonParameters.class.getResource(path);
+//      if (configUrl == null) {
+//        throw new IllegalArgumentException("config not found: " + path);
+//      }
+      File configFile = new File("/home/lvuser/thirdcoast.toml");
 
-      try (FileConfig config = FileConfig.of(configFile)) {
+      try (FileConfig config = FileConfig.builder(configFile).defaultResource(path).build()) {
         config.load();
         System.out.println("config = " + config);
         return config.unmodifiable();
       }
-    } catch (URISyntaxException e) {
-      e.printStackTrace();
+    } catch (Exception e) {
+      throw new IllegalArgumentException(e);
     }
-    return null;
   }
 
   /**

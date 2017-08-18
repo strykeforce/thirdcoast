@@ -1,5 +1,6 @@
 package org.strykeforce.thirdcoast.robot;
 
+import com.electronwill.nightconfig.core.file.FileConfig;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import org.strykeforce.thirdcoast.swerve.SwerveDrive;
 import org.strykeforce.thirdcoast.talon.TalonParameters;
@@ -11,7 +12,16 @@ import org.strykeforce.thirdcoast.talon.TalonParameters;
 public class Robot extends IterativeRobot {
 
   static {
-    TalonParameters.register("/org/strykeforce/thirdcoast.toml");
+    try {
+      FileConfig config = FileConfig.builder("/home/lvuser/thirdcoast.toml")
+          .defaultResource("/org/strykeforce/thirdcoast.toml")
+          .build();
+      config.load();
+      config.close();
+      TalonParameters.register(config.unmodifiable());
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
 
   private final SwerveDrive swerve = SwerveDrive.getInstance();

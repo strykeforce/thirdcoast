@@ -1,6 +1,7 @@
 package org.strykeforce.thirdcoast.talon
 
 import com.ctre.CANTalon
+import com.electronwill.nightconfig.core.file.FileConfig
 import spock.lang.Specification
 
 class PIDTalonParametersTest extends Specification {
@@ -8,7 +9,11 @@ class PIDTalonParametersTest extends Specification {
     def talon = Mock(CANTalon)
 
     void setupSpec() {
-        TalonParameters.register("testdata/talons.toml")
+        URL url = this.getClass().getResource("testdata/talons.toml")
+        FileConfig config = FileConfig.of(url.file)
+        config.load()
+        config.close()
+        TalonParameters.register(config.unmodifiable())
     }
 
     def "reads talon parameters"() {

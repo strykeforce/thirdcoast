@@ -1,6 +1,9 @@
 package org.strykeforce.thirdcoast.talon
 
 import com.ctre.CANTalon
+import com.electronwill.nightconfig.core.Config
+import com.electronwill.nightconfig.core.file.FileConfig
+import com.electronwill.nightconfig.core.file.FileNotFoundAction
 import spock.lang.Specification
 
 class TalonParametersTest extends Specification {
@@ -8,12 +11,16 @@ class TalonParametersTest extends Specification {
     def talon = Mock(CANTalon)
 
     void setupSpec() {
-        TalonParameters.register("testdata/talons.toml")
+        URL url = this.getClass().getResource("testdata/talons.toml")
+        FileConfig config = FileConfig.of(url.file)
+        config.load()
+        config.close()
+        TalonParameters.register(config.unmodifiable())
     }
 
     def "handles missing parameters file"() {
         when:
-        TalonParameters.register("/missing.toml")
+        TalonParameters.register(Config.inMemory())
 
         then:
         thrown(IllegalArgumentException)
@@ -49,7 +56,7 @@ class TalonParametersTest extends Specification {
         t.configure(talon)
 
         then:
-        with (talon) {
+        with(talon) {
             1 * changeControlMode(CANTalon.TalonControlMode.Voltage)
             1 * setFeedbackDevice(CANTalon.FeedbackDevice.QuadEncoder)
             1 * enableBrakeMode(true)
@@ -70,7 +77,11 @@ class TalonParametersTest extends Specification {
 
     def "handles missing name"() {
         when:
-        TalonParameters.register("testdata/no_name.toml")
+        URL url = this.getClass().getResource("testdata/no_name.toml")
+        FileConfig config = FileConfig.of(url.file)
+        config.load()
+        config.close()
+        TalonParameters.register(config.unmodifiable())
 
         then:
         IllegalArgumentException e = thrown()
@@ -79,7 +90,11 @@ class TalonParametersTest extends Specification {
 
     def "handles missing setpoint_max"() {
         when:
-        TalonParameters.register("testdata/no_setpoint_max.toml")
+        URL url = this.getClass().getResource("testdata/no_setpoint_max.toml")
+        FileConfig config = FileConfig.of(url.file)
+        config.load()
+        config.close()
+        TalonParameters.register(config.unmodifiable())
 
         then:
         IllegalArgumentException e = thrown()
@@ -136,7 +151,11 @@ class TalonParametersTest extends Specification {
 
     def "non-allowed velocity measurement period"() {
         when:
-        TalonParameters.register("testdata/bad_velocity_measurement_period.toml")
+        URL url = this.getClass().getResource("testdata/bad_velocity_measurement_period.toml")
+        FileConfig config = FileConfig.of(url.file)
+        config.load()
+        config.close()
+        TalonParameters.register(config.unmodifiable())
 
         then:
         IllegalArgumentException e = thrown()

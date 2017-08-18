@@ -1,5 +1,6 @@
 package org.strykeforce.thirdcoast.robot;
 
+import com.electronwill.nightconfig.core.file.FileConfig;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import org.strykeforce.thirdcoast.swerve.Wheel;
 import org.strykeforce.thirdcoast.talon.TalonParameters;
@@ -11,7 +12,10 @@ import org.strykeforce.thirdcoast.talon.TalonParameters;
 public class WheelTestRobot extends IterativeRobot {
 
   static {
-    TalonParameters.register("/org/strykeforce/thirdcoast.toml");
+    FileConfig config = FileConfig.builder("/home/lvuser/thirdcoast.toml")
+        .defaultResource("/org/strykeforce/thirdcoast.toml")
+        .build();
+    TalonParameters.register(config.unmodifiable());
   }
 
   private final Wheel wheel = new Wheel(0);

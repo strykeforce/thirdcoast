@@ -1,11 +1,16 @@
 package org.strykeforce.thirdcoast.swerve
 
+import com.electronwill.nightconfig.core.file.FileConfig
 import org.strykeforce.thirdcoast.talon.TalonParameters
 
 class SwerveDriveTest extends spock.lang.Specification {
 
     void setupSpec() {
-        TalonParameters.register("testdata/talons.toml")
+        URL url = this.getClass().getResource("/org/strykeforce/thirdcoast/talon/testdata/talons.toml")
+        FileConfig config = FileConfig.of(url.file)
+        config.load()
+        config.close()
+        TalonParameters.register(config.unmodifiable())
     }
 
     def "calculates inverse kinematics"() {
