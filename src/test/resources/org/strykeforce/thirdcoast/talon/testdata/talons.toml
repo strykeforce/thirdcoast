@@ -97,10 +97,10 @@ setpoint_max     = 4095.0
 feedback_device  = "CtreMagEncoder_Relative"
 brake_in_neutral = false
 
-***REMOVED***
-I =   0.0
-***REMOVED***
-F =   0.0
+P =   1.0
+I =   2.0
+D =   3.0
+F =   4.0
 I_zone = 0
 
 forward_output_voltage_peak =  6.0

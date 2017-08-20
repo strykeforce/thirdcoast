@@ -20,9 +20,10 @@ brake_in_neutral = false
 encoder_reversed = false
 output_reversed = false
 
-***REMOVED***
+# NOTE: you must provide azimuth Talon closed-loop tuning parameters below
+P =   0.0
 I =   0.0
-***REMOVED***
+D =   0.0
 F =   0.0
 I_zone = 0
 
