@@ -6,21 +6,20 @@ import org.strykeforce.thirdcoast.swerve.SwerveDrive;
 import org.strykeforce.thirdcoast.talon.TalonParameters;
 
 /**
- * Third Coast test robot.
+ * Third Coast swerve drive demo robot.
  */
 
 public class Robot extends IterativeRobot {
 
+  // load Talon parameters from config file, this must be done before the SwerveDrive object
+  // is instantiated below
+  private final static String CONFIG = "/home/lvuser/thirdcoast.toml";
+  private final static String DEFAULT_CONFIG = "/org/strykeforce/thirdcoast.toml";
+
   static {
-    try {
-      FileConfig config = FileConfig.builder("/home/lvuser/thirdcoast.toml")
-          .defaultResource("/org/strykeforce/thirdcoast.toml")
-          .build();
+    try (FileConfig config = FileConfig.builder(CONFIG).defaultResource(DEFAULT_CONFIG).build()) {
       config.load();
-      config.close();
       TalonParameters.register(config.unmodifiable());
-    } catch (Exception e) {
-      e.printStackTrace();
     }
   }
 

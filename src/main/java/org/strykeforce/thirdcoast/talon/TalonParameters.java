@@ -74,7 +74,7 @@ public abstract class TalonParameters {
    * merged with existing parameter objects. If a new parameter object has the same name as an
    * existing object, the old object will be overwritten.
    *
-   * @param resourcePath path to TOML file in Jar archive
+   * @param talonConfigs a parsed config collection
    */
   public static void register(UnmodifiableConfig talonConfigs) {
 
