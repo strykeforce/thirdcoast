@@ -2,6 +2,9 @@
 *.iws
 build
 out
+*.iml
+*.iws
+*.ipr
 
 # Compiled class file
 *.class
