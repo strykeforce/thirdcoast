@@ -102,7 +102,7 @@ public class Wheel {
   }
 
   /**
-   * Set the azimuthTalon encoder relative to wheel zeroSensors position.
+   * Set the azimuthTalon encoder relative to wheel zero alignment position.
    *
    * @param zero encoder position (in ticks) where wheel is zeroed.
    */

@@ -34,7 +34,7 @@ public class Robot extends IterativeRobot {
 
   @Override
   public void robotInit() {
-    swerve.zeroSensors();
+    swerve.alignWheels();
   }
 
   @Override

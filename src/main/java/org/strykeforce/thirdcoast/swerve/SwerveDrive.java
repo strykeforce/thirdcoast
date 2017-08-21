@@ -2,7 +2,6 @@ package org.strykeforce.thirdcoast.swerve;
 
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.SPI.Port;
-import org.strykeforce.thirdcoast.robot.Subsystem;
 
 /**
  * Control a Third Coast swerve drive.
@@ -15,7 +14,7 @@ import org.strykeforce.thirdcoast.robot.Subsystem;
  *
  * @see Wheel
  */
-public class SwerveDrive implements Subsystem {
+public class SwerveDrive {
 
   private final Wheel[] wheels;
   private final AHRS gyro;
@@ -104,15 +103,13 @@ public class SwerveDrive implements Subsystem {
     }
   }
 
-  @Override
   public void stop() {
     for (Wheel wheel : wheels) {
       wheel.stop();
     }
   }
 
-  @Override
-  public void zeroSensors() {
+  public void alignWheels() {
     int[] zeros = new int[]{3593, 3359, 2966, 1236};
     for (int i = 0; i != wheels.length; i++) {
       wheels[i].setAzimuthZero(zeros[i]);
