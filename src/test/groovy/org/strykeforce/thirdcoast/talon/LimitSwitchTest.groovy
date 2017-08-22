@@ -41,7 +41,7 @@ class LimitSwitchTest extends Specification {
 
     def "misconfigured limit switch"() {
         when:
-        def ls = new LimitSwitch(Optional.of("FOO"))
+        new LimitSwitch(Optional.of("FOO"))
 
         then:
         thrown(IllegalStateException)

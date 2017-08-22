@@ -32,7 +32,7 @@ public class WheelTestRobot extends IterativeRobot {
       return controls.getGamepadAButton();
     }
   };
-  private double[][] testCases = new double[][]{
+  private final double[][] testCases = new double[][]{
       {0, 0},
       {0, 2},
       {0.5, 2},
