@@ -1,6 +1,17 @@
-# Third Coast
+# Third Coast Swerve Drive
 
-Third Coast swerve drive and Talon configuration library.
+Example Third Coast swerve drive and Talon configuration API for FRC robots. It is designed to run on swerve drive hardware described in this [paper](https://www.chiefdelphi.com/media/papers/3375).
+
+## Demonstration Robot
+A demonstration of Third Coast API usage is in [`org.strykeforce.thirdcoast.robot`](src/main/java/org/strykeforce/thirdcoast/robot).
+
+## Swerve Drive
+The swerve drive is controlled using the [`SwerveDrive`](src/main/java/org/strykeforce/thirdcoast/swerve) class. Derivation of inverse kinematic equations are from Ether's [Swerve Kinematics and Programming](https://www.chiefdelphi.com/media/papers/2426).
+
+The swerve-drive inverse kinematics algorithm will always calculate individual wheel angles as -0.5 to 0.5 rotations, measured clockwise with zero being the straight-ahead position. Wheel speed is calculated as 0 to 1 in the direction of the wheel angle. The [`Wheel`](src/main/java/org/strykeforce/thirdcoast/swerve) class will calculate how to implement this angle and drive direction optimally for the azimuth and drive motors. In some cases it makes sense to reverse wheel direction to avoid rotating the wheel azimuth 180 degrees.
+
+Hardware assumed by the `Wheel` class includes a CTRE magnetic encoder on the azimuth motor and no limits on wheel azimuth rotation. Azimuth Talons have an ID in the range 0-3 with corresponding drive Talon IDs in the range 10-13.
+
 
 ## Talon Configurations
 
