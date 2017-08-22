@@ -50,10 +50,17 @@ jar {
     manifest robotManifest
 }
 
-test {
-    systemProperty("org.strykeforce.thirdcoast.toml",
-            "/org/strykeforce/thirdcoast/subsystems/testdata/talon.toml")
+javadoc {
+    title = "Third Coast Swerve Drive API"
+    options.overview = "src/main/java/overview.html"
+    options.links = [
+      "https://docs.oracle.com/javase/8/docs/api/",
+      "http://first.wpi.edu/FRC/roborio/release/docs/java/",
+      "http://www.ctr-electronics.com/downloads/api/java/html/",
+      "http://www.kauailabs.com/public_files/navx-mxp/apidocs/java/"
+    ]
 }
+
 
 task wrapper(type: Wrapper) {
     gradleVersion = '3.2.1'

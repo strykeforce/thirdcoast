@@ -2,6 +2,9 @@ package org.strykeforce.thirdcoast.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
 
+/**
+ * Accesses driver control input.
+ */
 public class Controls {
 
   private static final int DRIVER_RIGHT_X_AXIS = 0;
@@ -123,5 +126,23 @@ public class Controls {
    */
   public boolean getGamepadYButton() {
     return gameController.getRawButton(GAME_Y_BUTTON);
+  }
+
+  /**
+   * Return the gamepad "back" button
+   *
+   * @return true if the button is pressed
+   */
+  public boolean getGamepadBackButton() {
+    return gameController.getRawButton(GAME_BACK_BUTTON);
+  }
+
+  /**
+   * Return the gamepad "start" button
+   *
+   * @return true if the button is pressed
+   */
+  public boolean getGamepadStartButton() {
+    return gameController.getRawButton(GAME_START_BUTTON);
   }
 }

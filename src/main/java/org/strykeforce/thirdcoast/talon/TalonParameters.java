@@ -179,50 +179,61 @@ public abstract class TalonParameters {
     }
   }
 
+  /**
+   * Get the name used to look up this Talon configuration.
+   *
+   * @return configuration name
+   */
   public String getName() {
     return name;
   }
 
-  public Encoder getEncoder() {
+  Encoder getEncoder() {
     return encoder;
   }
 
-  public boolean isBrakeInNeutral() {
+  boolean isBrakeInNeutral() {
     return isBrakeInNeutral;
   }
 
-  public boolean isOutputReversed() {
+  boolean isOutputReversed() {
     return isOutputReversed;
   }
 
-  public VelocityMeasurementPeriod getVelocityMeasurementPeriod() {
+  VelocityMeasurementPeriod getVelocityMeasurementPeriod() {
     return velocityMeasurementPeriod;
   }
 
-  public int getVelocityMeasurementWindow() {
+  int getVelocityMeasurementWindow() {
     return velocityMeasurementWindow;
   }
 
-  public LimitSwitch getForwardLimitSwitch() {
+  LimitSwitch getForwardLimitSwitch() {
     return forwardLimitSwitch;
   }
 
-  public LimitSwitch getReverseLimitSwitch() {
+  LimitSwitch getReverseLimitSwitch() {
     return reverseLimitSwitch;
   }
 
-  public SoftLimit getForwardSoftLimit() {
+  SoftLimit getForwardSoftLimit() {
     return forwardSoftLimit;
   }
 
-  public SoftLimit getReverseSoftLimit() {
+  SoftLimit getReverseSoftLimit() {
     return reverseSoftLimit;
   }
 
-  public int getCurrentLimit() {
+  int getCurrentLimit() {
     return currentLimit;
   }
 
+  /**
+   * Maximum setpoint allowed by this Talon configuration. This is used by the {@link
+   * org.strykeforce.thirdcoast.swerve.Wheel#set} to scale the drive output setpoint.
+   *
+   * @return the maximum allowed setpoint
+   */
   public double getSetpointMax() {
     return setpointMax;
   }
