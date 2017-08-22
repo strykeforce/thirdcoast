@@ -14,8 +14,8 @@ class SwerveDriveTest extends spock.lang.Specification {
     }
 
     def "calculates inverse kinematics"() {
-        def Wheel[] wheels = [Mock(Wheel), Mock(Wheel), Mock(Wheel), Mock(Wheel)]
-        def SwerveDrive swerve = new SwerveDrive(null, wheels)
+        Wheel[] wheels = [Mock(Wheel), Mock(Wheel), Mock(Wheel), Mock(Wheel)]
+        SwerveDrive swerve = new SwerveDrive(null, wheels)
 
         when:
         for (Wheel w : wheels) {
@@ -49,6 +49,16 @@ class SwerveDriveTest extends spock.lang.Specification {
         0.5   | 0   | 1    || 0.0844 | 1      | 0.2953 | 0.5267 | -0.0844 | 1      | -0.2953 | 0.5267
         1     | 1   | 1    || 0.125  | 1      | 0.2231 | 0.7174 | 0.0269  | 0.7174 | 0.125   | 0.1716
         -0.25 | 0.5 | -0.2 || 0.3819 | 0.5308 | 0.2967 | 0.3746 | 0.3372  | 0.7514 | 0.2767  | 0.6505
+    }
+
+    def "sets preference key for wheel zero data"() {
+        expect:
+        key == SwerveDrive.getPreferenceKeyForWheel(i)
+
+        where:
+        i || key
+        0 || "SwerveDrive/wheel.0"
+        1 || "SwerveDrive/wheel.1"
     }
 
     // check some swerve related math

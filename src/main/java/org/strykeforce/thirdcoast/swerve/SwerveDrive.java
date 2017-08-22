@@ -1,6 +1,7 @@
 package org.strykeforce.thirdcoast.swerve;
 
 import com.kauailabs.navx.frc.AHRS;
+import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.SPI.Port;
 
 /**
@@ -15,6 +16,8 @@ import edu.wpi.first.wpilibj.SPI.Port;
  * @see Wheel
  */
 public class SwerveDrive {
+
+  private final static int WHEEL_COUNT = 4;
 
   private final Wheel[] wheels;
   private final AHRS gyro;
@@ -44,6 +47,10 @@ public class SwerveDrive {
     return LazyHolder.INSTANCE;
   }
 
+  static String getPreferenceKeyForWheel(int i) {
+    return String.format("%s/wheel.%d", SwerveDrive.class.getSimpleName(), i);
+  }
+
   /**
    * Set all four wheels to specified values.
    *
@@ -57,11 +64,19 @@ public class SwerveDrive {
     }
   }
 
+  /**
+   * Drive the robot in given field-relative direction and with given rotation.
+   *
+   * @param forward Y-axis movement, from -1.0 (reverse) to 1.0 (forward)
+   * @param strafe X-axis movement, from -1.0 (left) to 1.0 (right)
+   * @param azimuth robot rotation, from -1.0 (CCW) to 1.0 (CW)
+   */
   public void drive(double forward, double strafe, double azimuth) {
 
+    // field-oriented
     if (gyro != null) {
-      double angle = gyro.getYaw() * Math.PI / 180.0;
-      double temp = forward * Math.cos(angle) + strafe * Math.sin(angle);
+      final double angle = gyro.getYaw() * Math.PI / 180.0;
+      final double temp = forward * Math.cos(angle) + strafe * Math.sin(angle);
       strafe = -forward * Math.sin(angle) + strafe * Math.cos(angle);
       forward = temp;
     }
@@ -92,32 +107,62 @@ public class SwerveDrive {
     // normalize wheel speed
     final double maxWheelSpeed = Math.max(Math.max(ws[0], ws[1]), Math.max(ws[2], ws[3]));
     if (maxWheelSpeed > 1.0) {
-      for (int i = 0; i != ws.length; i++) {
+      for (int i = 0; i < WHEEL_COUNT; i++) {
         ws[i] /= maxWheelSpeed;
       }
     }
 
     // set wheels
-    for (int i = 0; i != wheels.length; i++) {
+    for (int i = 0; i < WHEEL_COUNT; i++) {
       wheels[i].set(wa[i], ws[i]);
     }
   }
 
+  /**
+   * Stops all wheels' azimuth and drive movement. Calling this in the robots {@code teleopInit} and
+   * {@code autonomousInit} will reset wheel azimuth relative encoders to the current position and
+   * thereby prevent wheel rotation if the wheels were moved manually while the robot was disabled.
+   */
   public void stop() {
     for (Wheel wheel : wheels) {
       wheel.stop();
     }
   }
 
-  public void alignWheels() {
-    int[] zeros = new int[]{3593, 3359, 2966, 1236};
-    for (int i = 0; i != wheels.length; i++) {
-      wheels[i].setAzimuthZero(zeros[i]);
+  /**
+   * Save the wheels' azimuth current position as read by absolute encoder. These values are saved
+   * persistently on the roboRIO and are normally used to calculate the relative encoder offset
+   * during wheel initialization.
+   *
+   * <p>The wheel alignment data is saved in the WPI preferences data store and may be viewed using
+   * a network tables viewer.
+   *
+   * @see #zeroAzimuthEncoders()
+   */
+  public void saveAzimuthPositions() {
+    Preferences prefs = Preferences.getInstance();
+    for (int i = 0; i < WHEEL_COUNT; i++) {
+      prefs.putInt(getPreferenceKeyForWheel(i), wheels[i].getAzimuthAbsolutePosition());
     }
   }
 
   /**
-   * Get the gyro being used by the drive.
+   * Set wheels' azimuth relative offset from zero based on the current absolute position. This uses
+   * the physical zero position as read by the absolute encoder and saved during the wheel alignment
+   * process.
+   *
+   * @see #saveAzimuthPositions()
+   */
+  public void zeroAzimuthEncoders() {
+    Preferences prefs = Preferences.getInstance();
+    for (int i = 0; i < WHEEL_COUNT; i++) {
+      wheels[i].setAzimuthZero(prefs.getInt(getPreferenceKeyForWheel(i), 0));
+    }
+  }
+
+  /**
+   * Get the gyro instance being used by the drive.
+   *
    * @return the gyro instance
    */
   public AHRS getGyro() {
