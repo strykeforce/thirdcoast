@@ -2,6 +2,9 @@
 
 Example Third Coast swerve drive and Talon configuration API for FRC robots. It is designed to run on swerve drive hardware described in this [paper](https://www.chiefdelphi.com/media/papers/3375).
 
+Read the Third Coast [javadocs](https://strykeforce.github.io/thirdcoast/javadoc/).
+
+
 ## Demonstration Robot
 A demonstration of Third Coast API usage is in [`org.strykeforce.thirdcoast.robot`](src/main/java/org/strykeforce/thirdcoast/robot). This uses [GradleRIO](https://github.com/Open-RIO/GradleRIO) to build.
 
