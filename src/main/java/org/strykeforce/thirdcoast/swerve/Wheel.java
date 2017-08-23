@@ -5,9 +5,10 @@ import com.electronwill.nightconfig.core.UnmodifiableConfig;
 import org.strykeforce.thirdcoast.talon.TalonParameters;
 
 /**
- * Controls a swerve drive wheel azimuth and drive motors.
+ * Controls a swerve drive wheel azimuth and drive motors. The azimuth and drive Talons are
+ * configured using {@link TalonParameters} named "azimuth" and "drive", respectively.
  *
- * The swerve-drive inverse kinematics algorithm will always calculate individual wheel angles as
+ * <p>The swerve-drive inverse kinematics algorithm will always calculate individual wheel angles as
  * -0.5 to 0.5 rotations, measured clockwise with zero being the straight-ahead position. Wheel
  * speed is calculated as 0 to 1 in the direction of the wheel angle.
  *

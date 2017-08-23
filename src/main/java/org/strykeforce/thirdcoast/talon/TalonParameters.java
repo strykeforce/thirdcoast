@@ -12,9 +12,9 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Configure Talon SRX parameters. This class will read CANTalon configurations located in TOML
- * configuration files stored on the classpath, typically in the robot's JAR file.
+ * configuration objects registered using the {@link #register(UnmodifiableConfig)} class method.
  *
- * <p>Multiple configuration files can be registered by calling the {@code register} method.
+ * <p>Multiple configurations can be registered by calling the {@code register} method repeatedly.
  *
  * @see com.ctre.CANTalon
  */
