@@ -52,6 +52,7 @@ jar {
 
 javadoc {
     title = "Third Coast Swerve Drive API"
+    destinationDir = file("docs/javadoc")
     options.overview = "src/main/java/overview.html"
     options.links = [
       "https://docs.oracle.com/javase/8/docs/api/",
