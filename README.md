@@ -8,7 +8,7 @@ Read the Third Coast [javadocs](https://strykeforce.github.io/thirdcoast/javadoc
 ## Demonstration Robot
 A demonstration of Third Coast API usage is in [`org.strykeforce.thirdcoast.robot`](src/main/java/org/strykeforce/thirdcoast/robot). This uses [GradleRIO](https://github.com/Open-RIO/GradleRIO) to build.
 
-Note: you must edit [`thirdcoast.toml`](src/main/resources/org/strykeforce/thirdcoast.toml) and provide Talon position-mode PID parameters for your hardware.
+**Note:** you must edit the [`thirdcoast.toml`](src/main/resources/org/strykeforce/thirdcoast.toml) configuration file and provide Talon position-mode PID parameters for your hardware. This file will be copied from the deployed JAR file to `/home/lvuser/thirdcoast.toml` the first time you deploy and run the robot code.
 
 ## Swerve Drive
 The swerve drive is controlled using the [`SwerveDrive`](src/main/java/org/strykeforce/thirdcoast/swerve) class. Derivation of inverse kinematic equations are from Ether's [Swerve Kinematics and Programming](https://www.chiefdelphi.com/media/papers/2426).
