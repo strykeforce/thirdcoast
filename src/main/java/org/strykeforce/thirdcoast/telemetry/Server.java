@@ -37,7 +37,7 @@ class Server implements Runnable {
     } catch (IOException e) {
       System.out.println(e.getMessage());
     }
-    Client.stopAll();
+    Client.shutdownAll();
   }
 
 }
