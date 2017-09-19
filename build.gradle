@@ -24,6 +24,8 @@ wpi {
     ntcoreVersion = "+"
     opencvVersion = "3.1.0"
     cscoreVersion = "+"
+
+    talonSrxVersion = "4.4.1.14"
 }
 
 dependencies {
