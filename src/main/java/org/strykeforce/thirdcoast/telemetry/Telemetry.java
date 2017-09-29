@@ -1,6 +1,8 @@
 package org.strykeforce.thirdcoast.telemetry;
 
 import com.ctre.CANTalon;
+import java.net.DatagramSocket;
+import java.net.SocketException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
@@ -9,34 +11,31 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import org.strykeforce.thirdcoast.telemetry.message.MessageFactory;
 
 public class Telemetry {
 
-  private final static Telemetry instance = new Telemetry();
   private final Set<CANTalon> talons = new CopyOnWriteArraySet<>();
-  private Server server = new Server();
+  private Server server;
   private ExecutorService serverExecutor;
 
-  private Telemetry() {
-
-  }
-
-  /**
-   * Get the Telemetry service.
-   *
-   * @return the telemetry singleton
-   */
-  public static Telemetry getInstance() {
-    return instance;
+  public Telemetry() {
+    try {
+      server = new Server(new DatagramSocket(5555), new ClientFactory(),
+          new MessageFactory());
+    } catch (SocketException e) {
+      e.printStackTrace();
+    }
   }
 
   public static void main(String[] args) {
+    Telemetry telemetry = new Telemetry();
     ScheduledExecutorService s = Executors.newSingleThreadScheduledExecutor();
     s.schedule(() -> {
-      Telemetry.getInstance().stop();
-    }, 120, TimeUnit.SECONDS);
+      telemetry.stop();
+    }, 60, TimeUnit.SECONDS);
     s.shutdown();
-    Telemetry.getInstance().start();
+    telemetry.start();
   }
 
   /**
@@ -50,7 +49,7 @@ public class Telemetry {
    * Stop the Telemetry service.
    */
   public void stop() {
-    server.stop();
+    server.shutdown();
   }
 
   /**
@@ -80,5 +79,10 @@ public class Telemetry {
     return Collections.unmodifiableSet(talons);
   }
 
-
+  @Override
+  public String toString() {
+    return "Telemetry{" +
+        "talons=" + talons +
+        '}';
+  }
 }

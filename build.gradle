@@ -4,7 +4,11 @@ plugins {
     id "idea"
     id "jaci.openrio.gradle.GradleRIO" version "2017.1.5"
     id "groovy"
+    id "maven"
 }
+
+group = "thirdcoast"
+version = "2017.1.0"
 
 repositories {
     mavenCentral()
@@ -41,6 +45,10 @@ dependencies {
     testRuntime group: 'org.objenesis', name: 'objenesis', version: '2.6'
 }
 
+tasks.withType(JavaCompile) {
+    options.compilerArgs.addAll(['-profile', 'compact2'])
+}
+
 def robotManifest = {
     attributes 'Main-Class': 'edu.wpi.first.wpilibj.RobotBase'
     attributes 'Robot-Class': frc.robotClass
@@ -70,6 +78,6 @@ task wrapper(type: Wrapper) {
 
 task list {
     doLast {
-        configurations.archives.collect { relativePath(it) }.sort().each { println it }
+        configurations.compile.collect { relativePath(it) }.sort().each { println it }
     }
 }
