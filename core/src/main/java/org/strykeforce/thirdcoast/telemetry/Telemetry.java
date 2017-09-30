@@ -13,6 +13,9 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import org.strykeforce.thirdcoast.telemetry.message.MessageFactory;
 
+/**
+ * The Telemetry service.
+ */
 public class Telemetry {
 
   private final Set<CANTalon> talons = new CopyOnWriteArraySet<>();

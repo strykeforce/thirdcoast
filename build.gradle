@@ -38,7 +38,7 @@ configure(subprojects.findAll {it.name != 'shared'}) {
   }
 }
 
-def exportedProjects= [
+def exportedProjects = [
         ":core",
         ":shared"
 ]

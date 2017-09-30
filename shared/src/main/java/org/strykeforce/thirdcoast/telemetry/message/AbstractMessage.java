@@ -3,14 +3,17 @@ package org.strykeforce.thirdcoast.telemetry.message;
 import com.jsoniter.output.JsonStream;
 import java.io.OutputStream;
 
+/**
+ * Abstract base class for messages.
+ */
 public class AbstractMessage implements Message {
-
-  final public String type;
-  final public long timestamp;
 
   static {
     JsonStream.setIndentionStep(2);
   }
+
+  final public String type;
+  final public long timestamp;
 
   AbstractMessage(String type) {
     this.type = type;
