@@ -1,0 +1,40 @@
+plugins {
+    id "groovy"
+    id "maven"
+}
+
+install {
+    repositories.mavenInstaller {
+        pom.groupId = 'org.strykeforce'
+        pom.artifactId = 'thirdcoast-core'
+        pom.version = '2017.1.0'
+    }
+}
+
+dependencies {
+    compile wpilib()
+    compile talonSrx()
+    compile navx()
+    compile group: 'com.github.TheElectronWill.Night-Config', name: 'toml', version: '3.0.1'
+    compile project(':shared')
+
+    testCompile group: 'org.spockframework', name: 'spock-core', version: '1.1-groovy-2.4'
+    testRuntime group: 'net.bytebuddy', name: 'byte-buddy', version: '1.7.1'
+    testRuntime group: 'org.objenesis', name: 'objenesis', version: '2.6'
+}
+
+tasks.withType(JavaCompile) {
+    options.compilerArgs.addAll(['-profile', 'compact2'])
+}
+
+javadoc {
+    title = "Third Coast Swerve Drive API"
+    destinationDir = file("../docs/javadoc")
+    options.overview = "src/main/java/overview.html"
+    options.links = [
+      "https://docs.oracle.com/javase/8/docs/api/",
+      "http://first.wpi.edu/FRC/roborio/release/docs/java/",
+      "http://www.ctr-electronics.com/downloads/api/java/html/",
+      "http://www.kauailabs.com/public_files/navx-mxp/apidocs/java/"
+    ]
+}

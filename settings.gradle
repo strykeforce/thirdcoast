@@ -1,0 +1,2 @@
+rootProject.name = 'thirdcoast'
+include 'shared', 'core', 'robot'

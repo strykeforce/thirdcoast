@@ -1,0 +1,21 @@
+frc {
+    team = "2767"
+    robotClass = "org.strykeforce.thirdcoast.robot.Robot"
+    rioHost = "10.27.67.2"
+    deployTimeout = 2
+    jvmArguments = "-Xms10m"
+}
+
+dependencies {
+  compile project(':core')
+}
+
+def robotManifest = {
+    attributes 'Main-Class': 'edu.wpi.first.wpilibj.RobotBase'
+    attributes 'Robot-Class': frc.robotClass
+}
+
+jar {
+    from configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    manifest robotManifest
+}

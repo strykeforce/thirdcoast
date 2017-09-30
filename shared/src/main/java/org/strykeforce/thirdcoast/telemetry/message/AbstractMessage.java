@@ -8,6 +8,10 @@ public class AbstractMessage implements Message {
   final public String type;
   final public long timestamp;
 
+  static {
+    JsonStream.setIndentionStep(2);
+  }
+
   AbstractMessage(String type) {
     this.type = type;
     this.timestamp = System.currentTimeMillis();

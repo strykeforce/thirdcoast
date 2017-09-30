@@ -3,81 +3,34 @@ plugins {
     id "eclipse"
     id "idea"
     id "jaci.openrio.gradle.GradleRIO" version "2017.1.5"
-    id "groovy"
-    id "maven"
 }
 
-group = "thirdcoast"
-version = "2017.1.0"
+allprojects {
+  apply plugin: 'jaci.openrio.gradle.GradleRIO'
+  apply plugin: 'java'
 
-repositories {
-    mavenCentral()
-    maven { url 'https://jitpack.io' }
+  frc {
+      team = "2767"
+      robotClass = "org.strykeforce.thirdcoast.robot.Robot"
+      rioHost = "10.27.67.2"
+      deployTimeout = 2
+      jvmArguments = "-Xms10m"
+  }
+
+  wpi {
+      wpilibVersion = "+"
+      ntcoreVersion = "+"
+      opencvVersion = "3.1.0"
+      cscoreVersion = "+"
+      talonSrxVersion = "4.4.1.14"
+  }
+
+  repositories {
+      mavenCentral()
+      maven { url 'https://jitpack.io' }
+  }
 }
-
-frc {
-    team = "2767"
-    robotClass = "org.strykeforce.thirdcoast.robot.Robot"
-    rioHost = "10.27.67.2"
-    deployTimeout = 2
-    jvmArguments = "-Xms10m"
-}
-
-wpi {
-    wpilibVersion = "+"
-    ntcoreVersion = "+"
-    opencvVersion = "3.1.0"
-    cscoreVersion = "+"
-
-    talonSrxVersion = "4.4.1.14"
-}
-
-dependencies {
-    compile wpilib()
-    compile talonSrx()
-    compile navx()
-    compile group: 'com.github.TheElectronWill.Night-Config', name: 'toml', version: '3.0.1'
-    compile group: 'com.jsoniter', name: 'jsoniter', version: '0.9.15'
-    compile group: 'org.javassist', name: 'javassist', version: '3.21.0-GA'
-
-    testCompile group: 'org.spockframework', name: 'spock-core', version: '1.1-groovy-2.4'
-    testRuntime group: 'net.bytebuddy', name: 'byte-buddy', version: '1.7.1'
-    testRuntime group: 'org.objenesis', name: 'objenesis', version: '2.6'
-}
-
-tasks.withType(JavaCompile) {
-    options.compilerArgs.addAll(['-profile', 'compact2'])
-}
-
-def robotManifest = {
-    attributes 'Main-Class': 'edu.wpi.first.wpilibj.RobotBase'
-    attributes 'Robot-Class': frc.robotClass
-}
-
-jar {
-    from configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
-    manifest robotManifest
-}
-
-javadoc {
-    title = "Third Coast Swerve Drive API"
-    destinationDir = file("docs/javadoc")
-    options.overview = "src/main/java/overview.html"
-    options.links = [
-      "https://docs.oracle.com/javase/8/docs/api/",
-      "http://first.wpi.edu/FRC/roborio/release/docs/java/",
-      "http://www.ctr-electronics.com/downloads/api/java/html/",
-      "http://www.kauailabs.com/public_files/navx-mxp/apidocs/java/"
-    ]
-}
-
 
 task wrapper(type: Wrapper) {
     gradleVersion = '4.1'
-}
-
-task list {
-    doLast {
-        configurations.compile.collect { relativePath(it) }.sort().each { println it }
-    }
 }
