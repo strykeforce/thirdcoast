@@ -1,6 +1,5 @@
-plugins {
-    id "maven"
-}
+apply plugin: 'groovy'
+apply plugin: 'maven'
 
 install {
     repositories.mavenInstaller {
@@ -17,8 +16,4 @@ dependencies {
     testCompile group: 'org.spockframework', name: 'spock-core', version: '1.1-groovy-2.4'
     testRuntime group: 'net.bytebuddy', name: 'byte-buddy', version: '1.7.1'
     testRuntime group: 'org.objenesis', name: 'objenesis', version: '2.6'
-}
-
-tasks.withType(JavaCompile) {
-    options.compilerArgs.addAll(['-profile', 'compact2'])
 }

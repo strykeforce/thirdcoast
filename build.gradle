@@ -2,12 +2,24 @@ plugins {
     id "java"
     id "eclipse"
     id "idea"
-    id "jaci.openrio.gradle.GradleRIO" version "2017.1.5"
+    id "jaci.openrio.gradle.GradleRIO" version "2017.1.5" apply false
 }
 
-allprojects {
-  apply plugin: 'jaci.openrio.gradle.GradleRIO'
+subprojects {
   apply plugin: 'java'
+
+  repositories {
+      mavenCentral()
+      maven { url 'https://jitpack.io' }
+  }
+
+  tasks.withType(JavaCompile) {
+      options.compilerArgs.addAll(['-profile', 'compact2'])
+  }
+}
+
+configure(subprojects.findAll {it.name != 'shared'}) {
+  apply plugin: 'jaci.openrio.gradle.GradleRIO'
 
   frc {
       team = "2767"
@@ -24,13 +36,43 @@ allprojects {
       cscoreVersion = "+"
       talonSrxVersion = "4.4.1.14"
   }
-
-  repositories {
-      mavenCentral()
-      maven { url 'https://jitpack.io' }
-  }
 }
 
+def exportedProjects= [
+        ":core",
+        ":shared"
+]
+
+task allJavadoc(type: Javadoc) {
+    description "Generate Javadoc API documentation for core and shared projects."
+    group "Documentation"
+    source exportedProjects.collect { project(it).sourceSets.main.allJava }
+    classpath = files(exportedProjects.collect { project(it).sourceSets.main.compileClasspath })
+    title = "Third Coast Swerve Drive API"
+    /*destinationDir = file("docs/javadoc")*/
+    options.overview = "core/src/main/java/overview.html"
+    options.links = [
+      "https://docs.oracle.com/javase/8/docs/api/",
+      "http://first.wpi.edu/FRC/roborio/release/docs/java/",
+      "http://www.ctr-electronics.com/downloads/api/java/html/",
+      "http://www.kauailabs.com/public_files/navx-mxp/apidocs/java/"
+    ]
+}
+
+task cleanJavadoc(type: Delete) {
+  delete 'docs/javadoc'
+}
+
+task refreshJavadoc(type: Copy) {
+  description "Generate Javadoc API documentation and copy to docs dir for publication."
+  group "Documentation"
+  from 'build/docs'
+  into 'docs'
+}
+
+refreshJavadoc.dependsOn cleanJavadoc
+refreshJavadoc.dependsOn allJavadoc
+
 task wrapper(type: Wrapper) {
-    gradleVersion = '4.1'
+    gradleVersion = '4.2'
 }
