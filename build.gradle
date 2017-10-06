@@ -1,41 +1,45 @@
 plugins {
     id "java"
-    id "eclipse"
-    id "idea"
+    id "net.ltgt.apt-idea" version "0.12"
     id "jaci.openrio.gradle.GradleRIO" version "2017.1.5" apply false
 }
 
 subprojects {
-  apply plugin: 'java'
+    apply plugin: 'java'
 
-  repositories {
-      mavenCentral()
-      maven { url 'https://jitpack.io' }
-  }
+    repositories {
+        mavenCentral()
+        maven { url 'https://jitpack.io' }
+    }
 
-  tasks.withType(JavaCompile) {
-      options.compilerArgs.addAll(['-profile', 'compact2'])
-  }
+    idea {
+        module {
+            apt {
+                addGeneratedSourcesDirs = true
+                addAptDependencies = false
+            }
+        }
+    }
 }
 
-configure(subprojects.findAll {it.name != 'shared'}) {
-  apply plugin: 'jaci.openrio.gradle.GradleRIO'
+configure(subprojects.findAll { it.name != 'shared' }) {
+    apply plugin: 'jaci.openrio.gradle.GradleRIO'
 
-  frc {
-      team = "2767"
-      robotClass = "org.strykeforce.thirdcoast.robot.Robot"
-      rioHost = "10.27.67.2"
-      deployTimeout = 2
-      jvmArguments = "-Xms10m"
-  }
+    frc {
+        team = "2767"
+        robotClass = "org.strykeforce.thirdcoast.robot.Robot"
+        rioHost = "10.27.67.2"
+        deployTimeout = 2
+        jvmArguments = "-Xms10m"
+    }
 
-  wpi {
-      wpilibVersion = "+"
-      ntcoreVersion = "+"
-      opencvVersion = "3.1.0"
-      cscoreVersion = "+"
-      talonSrxVersion = "4.4.1.14"
-  }
+    wpi {
+        wpilibVersion = "+"
+        ntcoreVersion = "+"
+        opencvVersion = "3.1.0"
+        cscoreVersion = "+"
+        talonSrxVersion = "4.4.1.14"
+    }
 }
 
 def exportedProjects = [
@@ -52,22 +56,22 @@ task allJavadoc(type: Javadoc) {
     /*destinationDir = file("docs/javadoc")*/
     options.overview = "core/src/main/java/overview.html"
     options.links = [
-      "https://docs.oracle.com/javase/8/docs/api/",
-      "http://first.wpi.edu/FRC/roborio/release/docs/java/",
-      "http://www.ctr-electronics.com/downloads/api/java/html/",
-      "http://www.kauailabs.com/public_files/navx-mxp/apidocs/java/"
+            "https://docs.oracle.com/javase/8/docs/api/",
+            "http://first.wpi.edu/FRC/roborio/release/docs/java/",
+            "http://www.ctr-electronics.com/downloads/api/java/html/",
+            "http://www.kauailabs.com/public_files/navx-mxp/apidocs/java/"
     ]
 }
 
 task cleanJavadoc(type: Delete) {
-  delete 'docs/javadoc'
+    delete 'docs/javadoc'
 }
 
 task refreshJavadoc(type: Copy) {
-  description "Generate Javadoc API documentation and copy to docs dir for publication."
-  group "Documentation"
-  from 'build/docs'
-  into 'docs'
+    description "Generate Javadoc API documentation and copy to docs dir for publication."
+    group "Documentation"
+    from 'build/docs'
+    into 'docs'
 }
 
 refreshJavadoc.dependsOn cleanJavadoc

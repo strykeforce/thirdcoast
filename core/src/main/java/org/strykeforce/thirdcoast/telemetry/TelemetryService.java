@@ -1,38 +1,38 @@
 package org.strykeforce.thirdcoast.telemetry;
 
 import com.ctre.CANTalon;
-import java.net.DatagramSocket;
-import java.net.SocketException;
+import dagger.BindsInstance;
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import org.strykeforce.thirdcoast.telemetry.message.MessageFactory;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 /**
  * The Telemetry service.
  */
-public class Telemetry {
+@Singleton
+public class TelemetryService {
 
   private final Set<CANTalon> talons = new CopyOnWriteArraySet<>();
-  private Server server;
-  private ExecutorService serverExecutor;
+  private final Server server;
 
-  public Telemetry() {
-    try {
-      server = new Server(new DatagramSocket(5555), new ClientFactory(),
-          new MessageFactory());
-    } catch (SocketException e) {
-      e.printStackTrace();
-    }
+  @Inject
+  TelemetryService(Server server) {
+    this.server = server;
   }
 
   public static void main(String[] args) {
-    Telemetry telemetry = new Telemetry();
+    Component component = DaggerTelemetryService_Component.builder()
+        .socketAddress(new InetSocketAddress(5555))
+        .build();
+    TelemetryService telemetry = component.getTelemetryService();
     ScheduledExecutorService s = Executors.newSingleThreadScheduledExecutor();
     s.schedule(() -> {
       telemetry.stop();
@@ -87,5 +87,21 @@ public class Telemetry {
     return "Telemetry{" +
         "talons=" + talons +
         '}';
+  }
+
+  @Singleton
+  @dagger.Component(modules = {DatagramModule.class})
+  interface Component {
+
+    TelemetryService getTelemetryService();
+
+    @dagger.Component.Builder
+    interface Builder {
+
+      Component build();
+
+      @BindsInstance
+      Builder socketAddress(SocketAddress address);
+    }
   }
 }

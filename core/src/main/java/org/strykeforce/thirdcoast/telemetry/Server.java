@@ -3,46 +3,44 @@ package org.strykeforce.thirdcoast.telemetry;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.net.InetAddress;
 import java.net.SocketException;
+import java.util.function.BooleanSupplier;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import org.strykeforce.thirdcoast.telemetry.message.Message;
-import org.strykeforce.thirdcoast.telemetry.message.MessageFactory;
+import org.strykeforce.thirdcoast.telemetry.message.MessageParser;
 
 class Server implements Runnable {
 
   private final static int BUFSZ = 256;
 
-  private final MessageFactory messageFactory;
-  private final ClientFactory clientFactory;
-  private Client client;
-  private DatagramSocket socket;
+  private final MessageParser messageParser;
+  private final ClientHandler clientHandler;
+  private final DatagramSocket socket;
   private byte[] buf = new byte[BUFSZ];
   private DatagramPacket packet = new DatagramPacket(buf, BUFSZ);
-  private ShutdownNotifier shutdownNotifier = () -> false;
+  private BooleanSupplier shutdownNotifier = () -> false;
 
-  Server(DatagramSocket socket, ClientFactory clientFactory, MessageFactory messageFactory) {
-    assert socket != null;
-    assert clientFactory != null;
-    assert messageFactory != null;
+  @Inject
+  Server(DatagramSocket socket, ClientHandler clientHandler, MessageParser messageParser) {
     this.socket = socket;
-    this.clientFactory = clientFactory;
-    this.messageFactory = messageFactory;
+    this.clientHandler = clientHandler;
+    this.messageParser = messageParser;
   }
 
-  @SuppressWarnings("InfiniteLoopStatement")
   @Override
   public void run() {
     try {
-      while (!shutdownNotifier.shouldShutdown()) {
+      while (!shutdownNotifier.getAsBoolean()) {
         socket.receive(packet);
         // FIXME: handle non-JSON packet
-        Message message = messageFactory.createMessage(packet);
+        Message message = messageParser.parse(packet);
         switch (message.getType()) {
           case "refresh":
             break;
           case "subscribe":
-            Client client = clientFactory.createClient();
-            client.start();
+            clientHandler.start();
+            break;
         }
       }
     } catch (SocketException e) {
@@ -52,20 +50,20 @@ class Server implements Runnable {
     }
   }
 
-  void start() {
+  public void start() {
     Thread thread = new Thread(this);
     thread.setDaemon(true);
     thread.start();
   }
 
-  void shutdown() {
+  public void shutdown() {
     shutdownNotifier = () -> true;
     if (socket != null) {
       socket.close();
     }
   }
 
-  void setShutdownNotifier(ShutdownNotifier shutdownNotifier) {
+  void setShutdownNotifier(BooleanSupplier shutdownNotifier) {
     this.shutdownNotifier = shutdownNotifier;
   }
 }

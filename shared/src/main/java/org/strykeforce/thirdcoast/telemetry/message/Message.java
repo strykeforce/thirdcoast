@@ -7,6 +7,8 @@ import java.io.OutputStream;
  */
 public interface Message {
 
+  public static int TALON_MAX = 16;
+
   /**
    * Returns a string representing of the message type.
    *

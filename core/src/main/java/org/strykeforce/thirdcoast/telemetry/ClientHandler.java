@@ -1,23 +1,26 @@
 package org.strykeforce.thirdcoast.telemetry;
 
 import java.net.DatagramSocket;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
-class Client implements Runnable {
+class ClientHandler implements Runnable {
 
 
   private int count = 0;
 
-  Client() {
+  @Inject
+  ClientHandler() {
   }
 
 
-  void start() {
+  public void start() {
     Thread thread = new Thread(this);
     thread.setDaemon(true);
     thread.start();
   }
 
-  void shutdown() {
+  public void shutdown() {
 
   }
 

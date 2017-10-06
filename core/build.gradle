@@ -1,5 +1,6 @@
 apply plugin: 'groovy'
 apply plugin: 'maven'
+apply plugin: 'net.ltgt.apt-idea'
 
 install {
     repositories.mavenInstaller {
@@ -15,6 +16,8 @@ dependencies {
     compile navx()
     compile group: 'com.github.TheElectronWill.Night-Config', name: 'toml', version: '3.0.1'
     compile project(':shared')
+    compile 'com.google.dagger:dagger:2.11'
+    apt 'com.google.dagger:dagger-compiler:2.11'
 
     testCompile group: 'org.spockframework', name: 'spock-core', version: '1.1-groovy-2.4'
     testRuntime group: 'net.bytebuddy', name: 'byte-buddy', version: '1.7.1'

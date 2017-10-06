@@ -1,23 +1,17 @@
 package org.strykeforce.thirdcoast.telemetry
 
-import groovy.json.JsonOutput
-import groovy.json.JsonSlurper
 import spock.lang.Specification
-import spock.util.concurrent.BlockingVariable
 
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
-
-class ClientTest extends Specification {
+class ClientHandlerTest extends Specification {
 
     def "test client construction"() {
         expect:
         SocketAddress address = new InetSocketAddress("127.0.0.1", 5555)
-        def client = new Client()
+        def client = new ClientHandler()
     }
 
     /*
-    Client client
+    DatagramClientHandler client
     PipedInputStream clientOutput
     PipedOutputStream clientInput
     ExecutorService executorService = Executors.newSingleThreadExecutor()
@@ -30,7 +24,7 @@ class ClientTest extends Specification {
         clientInput = new PipedOutputStream()
         socket.getInputStream() >> new PipedInputStream(clientInput)
 
-        client = new Client(socket)
+        client = new DatagramClientHandler(socket)
         client.start()
     }
 

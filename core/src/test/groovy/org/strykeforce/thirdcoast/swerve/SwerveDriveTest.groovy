@@ -1,6 +1,7 @@
 package org.strykeforce.thirdcoast.swerve
 
 import com.electronwill.nightconfig.core.file.FileConfig
+import com.kauailabs.navx.frc.AHRS
 import org.strykeforce.thirdcoast.talon.TalonParameters
 
 class SwerveDriveTest extends spock.lang.Specification {

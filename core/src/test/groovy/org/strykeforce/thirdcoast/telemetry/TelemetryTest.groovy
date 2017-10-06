@@ -8,7 +8,7 @@ class TelemetryTest extends Specification {
     def "registers mock CANTalons"() {
 
         given: "a Telemetry service"
-        Telemetry telemetry = new Telemetry()
+        TelemetryService telemetry = new TelemetryService()
 
         when: "a talon is registered"
         telemetry.register(Mock(CANTalon))

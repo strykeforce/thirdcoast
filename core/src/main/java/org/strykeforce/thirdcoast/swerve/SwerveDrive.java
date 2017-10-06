@@ -25,6 +25,9 @@ public class SwerveDrive {
   private final AHRS gyro;
 
   SwerveDrive(AHRS gyro, Wheel[] wheels) {
+    if (gyro != null) {
+      gyro.enableLogging(true);
+    }
     this.gyro = gyro;
     this.wheels = wheels;
   }

@@ -1,10 +1,11 @@
 package org.strykeforce.thirdcoast.telemetry
 
-import org.strykeforce.thirdcoast.telemetry.message.MessageFactory
-import org.strykeforce.thirdcoast.telemetry.message.RefreshMessage
+import org.strykeforce.thirdcoast.telemetry.message.MessageParser
 import org.strykeforce.thirdcoast.telemetry.message.SubscribeMessage
 import spock.lang.Specification
 import spock.util.concurrent.PollingConditions
+
+import java.util.function.BooleanSupplier
 
 class ServerTest extends Specification {
 
@@ -14,17 +15,17 @@ class ServerTest extends Specification {
 
         given: "a configured server"
         DatagramSocket datagramSocket = Stub(DatagramSocket)
-        ClientFactory clientFactory = Mock(ClientFactory)
-        MessageFactory messageFactory = Stub(MessageFactory) {
-            createMessage(_ as DatagramPacket) >>> [new SubscribeMessage(),
-                                                    new SubscribeMessage(),
-                                                    new SubscribeMessage()]
+        ClientHandler clientHandler = Mock(ClientHandler)
+        MessageParser messageFactory = Stub(MessageParser) {
+            parse(_ as DatagramPacket) >>> [new SubscribeMessage(),
+                                            new SubscribeMessage(),
+                                            new SubscribeMessage()]
         }
-        ShutdownNotifier shutdownNotifier = Stub(ShutdownNotifier) {
-            shouldShutdown() >>> [false, false, true]
+        BooleanSupplier shutdownNotifier = Stub(BooleanSupplier) {
+            getAsBoolean() >>> [false, false, true]
         }
-        Client client = Mock(Client)
-        Server server = new Server(datagramSocket, clientFactory, messageFactory)
+        ClientHandler client = Mock(ClientHandler)
+        Server server = new Server(datagramSocket, clientHandler, messageFactory)
         server.setShutdownNotifier(shutdownNotifier)
 
         when: "a connect message arrives"
@@ -32,8 +33,7 @@ class ServerTest extends Specification {
 
         then: "a client is created"
         conditions.eventually {
-            2 * clientFactory.createClient() >> client
-            2 * client.start()
+            2 * clientHandler.start()
         }
     }
 }
