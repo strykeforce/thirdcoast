@@ -5,7 +5,7 @@ out
 *.iml
 *.iws
 *.ipr
-/.idea
+/.idea/
 
 # Compiled class file
 *.class
