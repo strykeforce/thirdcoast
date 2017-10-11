@@ -5,9 +5,6 @@ import dagger.BindsInstance;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Set;
-import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -20,12 +17,13 @@ import javax.inject.Singleton;
 @Singleton
 public class TelemetryService {
 
-  private final Set<CANTalon> talons = new CopyOnWriteArraySet<>();
-  private final Server server;
+  private final MotorManager motorManager;
+//  private final Server server;
 
   @Inject
-  TelemetryService(Server server) {
-    this.server = server;
+  TelemetryService(MotorManager motorManager) {
+//    this.server = server;
+    this.motorManager = motorManager;
   }
 
   public static void main(String[] args) {
@@ -45,14 +43,14 @@ public class TelemetryService {
    * Start the Telemetry service and listen for client connections.
    */
   public void start() {
-    server.start();
+//    server.start();
   }
 
   /**
    * Stop the Telemetry service.
    */
   public void stop() {
-    server.shutdown();
+//    server.shutdown();
   }
 
   /**
@@ -61,7 +59,7 @@ public class TelemetryService {
    * @param talon the CANTalon to add
    */
   public void register(CANTalon talon) {
-    talons.add(talon);
+    motorManager.register(talon);
   }
 
   /**
@@ -70,27 +68,12 @@ public class TelemetryService {
    * @param collection the collection of CANTalons to add
    */
   public void registerAll(Collection<CANTalon> collection) {
-    talons.addAll(collection);
-  }
-
-  /**
-   * Returns an unmodifiable view of the registered Talons.
-   *
-   * @return a unmodifiable Set containing registered CANTalons
-   */
-  public Set<CANTalon> getTalons() {
-    return Collections.unmodifiableSet(talons);
-  }
-
-  @Override
-  public String toString() {
-    return "Telemetry{" +
-        "talons=" + talons +
-        '}';
+    motorManager.registerAll(collection);
   }
 
   @Singleton
-  @dagger.Component(modules = {DatagramModule.class})
+//  @dagger.Component(modules = {DatagramModule.class})
+  @dagger.Component()
   interface Component {
 
     TelemetryService getTelemetryService();

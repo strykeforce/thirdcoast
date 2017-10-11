@@ -14,8 +14,9 @@ dependencies {
     compile wpilib()
     compile talonSrx()
     compile navx()
-    compile group: 'com.github.TheElectronWill.Night-Config', name: 'toml', version: '3.0.1'
-    compile project(':shared')
+    compile group: 'com.github.TheElectronWill.Night-Config', name: 'toml', version: '3.0.2'
+    compile group: 'com.squareup.moshi', name: 'moshi', version: '1.5.0'
+    compile group: 'org.nanohttpd', name: 'nanohttpd', version: '2.3.2-SNAPSHOT'
     compile 'com.google.dagger:dagger:2.11'
     apt 'com.google.dagger:dagger-compiler:2.11'
 
@@ -37,4 +38,11 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 artifacts {
     archives sourcesJar
     archives javadocJar
+}
+
+idea {
+    module {
+        downloadJavadoc = true
+        downloadSources = true
+    }
 }

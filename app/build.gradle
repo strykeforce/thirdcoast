@@ -1,0 +1,18 @@
+plugins {
+    id "application"
+    id 'com.github.johnrengelman.shadow' version '2.0.1'
+}
+apply plugin: 'net.ltgt.apt-idea'
+
+mainClassName = 'org.strykeforce.thirdcoast.telemetry.app.Main'
+
+dependencies {
+    compile project(':core')
+    apt 'com.google.dagger:dagger-compiler:2.11'
+}
+
+shadowJar {
+    baseName = 'tct'
+    classifier = null
+    version = '2017.0.5'
+}
