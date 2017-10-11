@@ -13,4 +13,9 @@ public class SquareSignalGenerator extends SignalGenerator {
     double val = Math.signum(Math.sin(2.0 * Math.PI * t));
     return invert * amplitude * val + offset;
   }
+
+  @Override
+  public String toString() {
+    return "Square at " + super.toString();
+  }
 }

@@ -13,4 +13,9 @@ public class TriangleSignalGenerator extends SignalGenerator {
     double val = 2.0 * Math.abs(t - 2 * Math.floor(t / 2.0) - 1.0) - 1.0;
     return invert * amplitude * val + offset;
   }
+
+  @Override
+  public String toString() {
+    return "Triangle at " + super.toString();
+  }
 }

@@ -13,4 +13,9 @@ public class SineSignalGenerator extends SignalGenerator {
     double val = Math.sin(2.0 * Math.PI * t);
     return invert * amplitude * val + offset;
   }
+
+  @Override
+  public String toString() {
+    return "Sine at " + super.toString();
+  }
 }

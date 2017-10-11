@@ -33,7 +33,7 @@ class ClientHandler {
     if (scheduler != null) {
       return;
     }
-    System.out.print("  Sending graph data to " + subscription.client() + ":" + port + "\n\n");
+    System.out.print("\nSending graph data to " + subscription.client() + ":" + port + "\n");
     socketAddress = new InetSocketAddress(subscription.client(), port);
     scheduler = Executors.newSingleThreadScheduledExecutor();
     scheduler.scheduleAtFixedRate(() -> {
@@ -50,6 +50,7 @@ class ClientHandler {
   }
 
   public void shutdown() {
+    System.out.print("Stopping graph data\n\n");
     if (scheduler != null) {
       scheduler.shutdown();
     }

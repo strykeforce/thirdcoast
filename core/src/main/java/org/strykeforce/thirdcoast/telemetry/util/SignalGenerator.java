@@ -37,6 +37,18 @@ public abstract class SignalGenerator {
     startTime = System.nanoTime();
   }
 
+  public boolean isInverted() {
+    return invert == -1.0;
+  }
+
+  @Override
+  public String toString() {
+    return String
+        .format("%.2f hz with amplitude %.2f, phase %.2f, offset %.2f%s", frequency, amplitude,
+            phase, offset, isInverted() ? ", inverted" : "");
+
+  }
+
   public enum SignalType {
     SINE, SQUARE, TRIANGLE, SAWTOOTH;
   }

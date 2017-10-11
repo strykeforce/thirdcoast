@@ -13,4 +13,9 @@ public class SawtoothSignalGenerator extends SignalGenerator {
     double val = 2.0 * (t - Math.floor(t + 0.5));
     return invert * amplitude * val + offset;
   }
+
+  @Override
+  public String toString() {
+    return "Sawtooth at " + super.toString();
+  }
 }
