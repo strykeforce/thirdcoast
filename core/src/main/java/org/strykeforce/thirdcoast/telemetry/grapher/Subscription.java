@@ -15,22 +15,22 @@ public class Subscription {
 
   private final String client;
   private final List<DoubleSupplier> measurements = new ArrayList<>(16);
+  private final List<String> descriptions = new ArrayList<>(16);
 
-  FakeGraphData message = FakeGraphData.sineWaves();
-
-  public Subscription(Inventory inventory, String client, String json) {
+  public Subscription(Inventory inventory, String client, String requestJson) {
     this.client = client;
     RequestJson request = RequestJson.EMPTY;
     try {
-      request = RequestJson.fromJson(json);
+      request = RequestJson.fromJson(requestJson);
     } catch (IOException e) {
       e.printStackTrace();
     }
 
-    for (RequestJson.Item jsonItem: request.subscription) {
+    for (RequestJson.Item jsonItem : request.subscription) {
       Item item = inventory.itemForId(jsonItem.itemId);
       Measure measure = Measure.findByJsonId(jsonItem.measurementId);
       measurements.add(item.measurementFor(measure));
+      descriptions.add(item.description() + ": " + measure.getDescription());
     }
   }
 
@@ -39,11 +39,9 @@ public class Subscription {
     return client;
   }
 
-  public void toJson(BufferedSink sink) throws IOException {
-//    message.toJson(sink);
+  public void measurementsToJson(BufferedSink sink) throws IOException {
     long ts = System.currentTimeMillis();
     JsonWriter writer = JsonWriter.of(sink);
-//    writer.setIndent("  ");
     writer.beginObject();
     writer.name("type").value("talon");
     writer.name("timestamp").value(ts);
@@ -55,6 +53,21 @@ public class Subscription {
     writer.endArray();
     writer.endObject();
 
+  }
+
+  public void toJson(BufferedSink sink) throws IOException {
+    long ts = System.currentTimeMillis();
+    JsonWriter writer = JsonWriter.of(sink);
+    writer.beginObject();
+    writer.name("type").value("subscription");
+    writer.name("timestamp").value(ts);
+    writer.name("descriptions");
+    writer.beginArray();
+    for (String d : descriptions) {
+      writer.value(d);
+    }
+    writer.endArray();
+    writer.endObject();
   }
 
   public static class RequestJson {
@@ -99,45 +112,4 @@ public class Subscription {
       }
     }
   }
-
-
-  public static class FakeGraphData {
-
-    private final static int TALON_MAX = 8;
-    private static double x = 0;
-
-    public double[] data;
-
-    public FakeGraphData(double[] data) {
-      this.data = data;
-    }
-
-    public static FakeGraphData sineWaves() {
-      x += 0.01;
-
-      double[] data = new double[TALON_MAX];
-      for (int i = 0; i < TALON_MAX; i++) {
-        data[i] = 10 * Math.sin((i + 1) * x + i);
-      }
-      return new FakeGraphData(data);
-    }
-
-    public void toJson(BufferedSink buffer) throws IOException {
-      long ts = System.currentTimeMillis();
-      JsonWriter writer = JsonWriter.of(buffer);
-      writer.setIndent("  ");
-      writer.beginObject();
-      writer.name("type").value("talon");
-      writer.name("timestamp").value(ts);
-      writer.name("data");
-      writer.beginArray();
-      for (double d : data) {
-        writer.value(d);
-      }
-      writer.endArray();
-      writer.endObject();
-    }
-
-  }
-
 }

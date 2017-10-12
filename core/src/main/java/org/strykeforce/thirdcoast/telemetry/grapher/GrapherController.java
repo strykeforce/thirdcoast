@@ -47,17 +47,20 @@ public class GrapherController extends NanoHTTPD {
     addHTTPInterceptor(session -> {
       if (session.getMethod() == Method.POST && session.getUri()
           .equalsIgnoreCase("/v1/grapher/subscription")) {
-        Map<String, String> body = new HashMap<String, String>();
+        Map<String, String> body = new HashMap<>();
         try {
           session.parseBody(body);
+          Subscription sub = new Subscription(inventory, session.getRemoteIpAddress(),
+              body.get("postData"));
+          clientHandler.start(sub);
+          Buffer buffer = new Buffer();
+          sub.toJson(buffer);
+          return Response.newFixedLengthResponse(Status.OK, JSON, buffer.readByteArray());
         } catch (IOException e) {
           e.printStackTrace();
         } catch (ResponseException e) {
           e.printStackTrace();
         }
-        clientHandler.start(
-            new Subscription(inventory, session.getRemoteIpAddress(), body.get("postData")));
-        return Response.newFixedLengthResponse(Status.NO_CONTENT, JSON, "");
       }
       return null;
     });

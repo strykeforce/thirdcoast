@@ -7,7 +7,6 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
-import java.net.SocketException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import javax.inject.Inject;
@@ -39,7 +38,7 @@ class ClientHandler {
     scheduler.scheduleAtFixedRate(() -> {
       Buffer buffer = new Buffer();
       try {
-        subscription.toJson(buffer);
+        subscription.measurementsToJson(buffer);
         byte[] bytes = buffer.readByteArray();
         DatagramPacket packet = new DatagramPacket(bytes, bytes.length, socketAddress);
         socket.send(packet);
