@@ -20,5 +20,5 @@ dependencies {
 shadowJar {
     baseName = 'tct'
     classifier = null
-    version = '2017.0.6'
+    version = '2017.0.8'
 }
