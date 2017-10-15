@@ -6,7 +6,7 @@ import javax.inject.Singleton;
 import org.strykeforce.thirdcoast.telemetry.grapher.Inventory;
 
 @Module
-public class SimulatedInventoryModule {
+public abstract class SimulatedInventoryModule {
 
   @Provides
   @Singleton

@@ -17,13 +17,8 @@ import javax.inject.Singleton;
 @Singleton
 public class TelemetryService {
 
-  private final MotorManager motorManager;
-//  private final Server server;
-
   @Inject
-  TelemetryService(MotorManager motorManager) {
-//    this.server = server;
-    this.motorManager = motorManager;
+  TelemetryService() {
   }
 
   public static void main(String[] args) {
@@ -59,7 +54,6 @@ public class TelemetryService {
    * @param talon the CANTalon to add
    */
   public void register(CANTalon talon) {
-    motorManager.register(talon);
   }
 
   /**
@@ -68,7 +62,7 @@ public class TelemetryService {
    * @param collection the collection of CANTalons to add
    */
   public void registerAll(Collection<CANTalon> collection) {
-    motorManager.registerAll(collection);
+
   }
 
   @Singleton

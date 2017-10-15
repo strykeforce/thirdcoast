@@ -1,5 +1,8 @@
 dependencies {
-  compile project(':core')
+    compile wpilib()
+    compile talonSrx()
+    compile navx()
+    compile project(':core')
 }
 
 def robotManifest = {

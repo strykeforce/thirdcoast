@@ -5,7 +5,7 @@ import groovy.json.JsonSlurper
 import okio.Buffer
 import spock.lang.Specification
 
-import static org.strykeforce.thirdcoast.telemetry.grapher.Item.Measure.*
+import static Measure.*
 
 class InventoryTest extends Specification {
 
@@ -49,10 +49,10 @@ class InventoryTest extends Specification {
             items[0].id == 10
             items[0].description == "talon10"
             with(measures) {
-                talon.size == Item.Measure.values().length
-                talon[0].id == SETPOINT.jsonId
+                talon.size == Measure.values().length
+                talon[0].id == "SETPOINT"
                 talon[0].description == SETPOINT.description
-                talon[5].id == ABSOLUTE_ENCODER_POSITION.jsonId
+                talon[5].id == "ABSOLUTE_ENCODER_POSITION"
                 talon[5].description == ABSOLUTE_ENCODER_POSITION.description
             }
         }

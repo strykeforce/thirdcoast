@@ -1,6 +1,6 @@
 package org.strykeforce.thirdcoast.telemetry.grapher;
 
-import static org.strykeforce.thirdcoast.telemetry.grapher.Item.Measure.*;
+import static org.strykeforce.thirdcoast.telemetry.grapher.Measure.*;
 
 import com.squareup.moshi.JsonWriter;
 import java.io.IOException;
@@ -8,7 +8,6 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
 import okio.BufferedSink;
-import org.strykeforce.thirdcoast.telemetry.grapher.Item.Measure;
 
 public abstract class AbstractInventory implements Inventory {
 
@@ -55,7 +54,7 @@ public abstract class AbstractInventory implements Inventory {
   void writeMeasure(JsonWriter writer, Measure measure)
       throws IOException {
     writer.beginObject();
-    writer.name("id").value(measure.getJsonId());
+    writer.name("id").value(measure.name());
     writer.name("description").value(measure.getDescription());
     writer.endObject();
 

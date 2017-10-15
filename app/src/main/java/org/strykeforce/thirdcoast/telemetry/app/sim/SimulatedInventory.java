@@ -1,27 +1,29 @@
 package org.strykeforce.thirdcoast.telemetry.app.sim;
 
-import static org.strykeforce.thirdcoast.telemetry.grapher.Item.Measure.ABSOLUTE_ENCODER_POSITION;
-import static org.strykeforce.thirdcoast.telemetry.grapher.Item.Measure.BUS_VOLTAGE;
-import static org.strykeforce.thirdcoast.telemetry.grapher.Item.Measure.CONTROL_LOOP_ERROR;
-import static org.strykeforce.thirdcoast.telemetry.grapher.Item.Measure.ENCODER_POSITION;
-import static org.strykeforce.thirdcoast.telemetry.grapher.Item.Measure.ENCODER_VELOCITY;
-import static org.strykeforce.thirdcoast.telemetry.grapher.Item.Measure.FORWARD_HARD_LIMIT_CLOSED;
-import static org.strykeforce.thirdcoast.telemetry.grapher.Item.Measure.FORWARD_SOFT_LIMIT_OK;
-import static org.strykeforce.thirdcoast.telemetry.grapher.Item.Measure.INTEGRATOR_ACCUMULATOR;
-import static org.strykeforce.thirdcoast.telemetry.grapher.Item.Measure.OUTPUT_CURRENT;
-import static org.strykeforce.thirdcoast.telemetry.grapher.Item.Measure.OUTPUT_VOLTAGE;
-import static org.strykeforce.thirdcoast.telemetry.grapher.Item.Measure.REVERSE_HARD_LIMIT_CLOSED;
-import static org.strykeforce.thirdcoast.telemetry.grapher.Item.Measure.REVERSE_SOFT_LIMIT_OK;
-import static org.strykeforce.thirdcoast.telemetry.grapher.Item.Measure.SETPOINT;
+import static org.strykeforce.thirdcoast.telemetry.grapher.Measure.ABSOLUTE_ENCODER_POSITION;
+import static org.strykeforce.thirdcoast.telemetry.grapher.Measure.BUS_VOLTAGE;
+import static org.strykeforce.thirdcoast.telemetry.grapher.Measure.CONTROL_LOOP_ERROR;
+import static org.strykeforce.thirdcoast.telemetry.grapher.Measure.ENCODER_POSITION;
+import static org.strykeforce.thirdcoast.telemetry.grapher.Measure.ENCODER_VELOCITY;
+import static org.strykeforce.thirdcoast.telemetry.grapher.Measure.FORWARD_HARD_LIMIT_CLOSED;
+import static org.strykeforce.thirdcoast.telemetry.grapher.Measure.FORWARD_SOFT_LIMIT_OK;
+import static org.strykeforce.thirdcoast.telemetry.grapher.Measure.INTEGRATOR_ACCUMULATOR;
+import static org.strykeforce.thirdcoast.telemetry.grapher.Measure.OUTPUT_CURRENT;
+import static org.strykeforce.thirdcoast.telemetry.grapher.Measure.OUTPUT_VOLTAGE;
+import static org.strykeforce.thirdcoast.telemetry.grapher.Measure.REVERSE_HARD_LIMIT_CLOSED;
+import static org.strykeforce.thirdcoast.telemetry.grapher.Measure.REVERSE_SOFT_LIMIT_OK;
+import static org.strykeforce.thirdcoast.telemetry.grapher.Measure.SETPOINT;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.TreeMap;
 import java.util.function.DoubleSupplier;
 import org.strykeforce.thirdcoast.telemetry.grapher.AbstractInventory;
 import org.strykeforce.thirdcoast.telemetry.grapher.Item;
+import org.strykeforce.thirdcoast.telemetry.grapher.Measure;
 import org.strykeforce.thirdcoast.telemetry.util.SignalGenerator;
 import org.strykeforce.thirdcoast.telemetry.util.SignalGenerator.SignalType;
 
@@ -33,7 +35,8 @@ public class SimulatedInventory extends AbstractInventory {
 
   public static SimulatedInventory create() {
     List<Item> fakes = new ArrayList<>();
-    for (int i = 0; i < 63; i++) {
+    final int[] ints = new Random().ints(0, 64).distinct().limit(16).toArray();
+    for (int i : ints) {
       fakes.add(new SimulatedItem(i));
     }
     return new SimulatedInventory(fakes);
@@ -53,7 +56,8 @@ public class SimulatedInventory extends AbstractInventory {
 
       sigs.put(OUTPUT_CURRENT, builder.amplitude(id * 100).phase(0.25).build()); // 1
 
-      sigs.put(OUTPUT_VOLTAGE, builder.amplitude(2).phase(-0.25).offset(even ? 2 : -2).build()); // 2
+      sigs.put(OUTPUT_VOLTAGE,
+          builder.amplitude(2).phase(-0.25).offset(even ? 2 : -2).build()); // 2
 
       builder = new SignalGenerator.Builder(SignalType.SAWTOOTH).frequency(id);
       sigs.put(ENCODER_POSITION, builder.invert(!even).build()); // 3
@@ -74,9 +78,9 @@ public class SimulatedInventory extends AbstractInventory {
 
       sigs.put(REVERSE_HARD_LIMIT_CLOSED, builder.invert(true).build());
 
-      sigs.put(FORWARD_SOFT_LIMIT_OK, builder.phase(1/3f).build());
+      sigs.put(FORWARD_SOFT_LIMIT_OK, builder.phase(1 / 3f).build());
 
-      sigs.put(REVERSE_SOFT_LIMIT_OK, builder.phase(1/3f).invert(true).build());
+      sigs.put(REVERSE_SOFT_LIMIT_OK, builder.phase(1 / 3f).invert(true).build());
     }
 
     @Override

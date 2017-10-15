@@ -9,7 +9,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.DoubleSupplier;
 import okio.BufferedSink;
-import org.strykeforce.thirdcoast.telemetry.grapher.Item.Measure;
 
 public class Subscription {
 
@@ -28,7 +27,7 @@ public class Subscription {
 
     for (RequestJson.Item jsonItem : request.subscription) {
       Item item = inventory.itemForId(jsonItem.itemId);
-      Measure measure = Measure.findByJsonId(jsonItem.measurementId);
+      Measure measure = Measure.valueOf(jsonItem.measurementId);
       measurements.add(item.measurementFor(measure));
       descriptions.add(item.description() + ": " + measure.getDescription());
     }
@@ -101,7 +100,7 @@ public class Subscription {
     public static class Item {
 
       public int itemId;
-      public int measurementId;
+      public String measurementId;
 
       @Override
       public String toString() {

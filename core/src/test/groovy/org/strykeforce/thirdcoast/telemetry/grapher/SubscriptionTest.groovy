@@ -16,27 +16,27 @@ class SubscriptionTest extends Specification {
     "subscription": [
         {
             "itemId": 0,
-            "measurementId": 1
+            "measurementId": "OUTPUT_VOLTAGE"
         },
         {
             "itemId": 10,
-            "measurementId": 2
+            "measurementId": "OUTPUT_CURRENT"
         },
         {
             "itemId": 1,
-            "measurementId": 1
+            "measurementId": "OUTPUT_VOLTAGE"
         },
         {
             "itemId": 11,
-            "measurementId": 2
+            "measurementId": "OUTPUT_CURRENT"
         },
         {
             "itemId": 61,
-            "measurementId": 13
+            "measurementId": "STRYKE_FORCE"
         },
         {
             "itemId": 62,
-            "measurementId": 14
+            "measurementId": "STRYKE_FORCE"
         }
     ]
 }
@@ -50,17 +50,17 @@ class SubscriptionTest extends Specification {
             type == "start"
             subscription.size == 6
             subscription[0].itemId == 0
-            subscription[0].measurementId == 1
+            subscription[0].measurementId == "OUTPUT_VOLTAGE"
             subscription[1].itemId == 10
-            subscription[1].measurementId == 2
+            subscription[1].measurementId == "OUTPUT_CURRENT"
             subscription[2].itemId == 1
-            subscription[2].measurementId == 1
+            subscription[2].measurementId == "OUTPUT_VOLTAGE"
             subscription[3].itemId == 11
-            subscription[3].measurementId == 2
+            subscription[3].measurementId == "OUTPUT_CURRENT"
             subscription[4].itemId == 61
-            subscription[4].measurementId == 13
+            subscription[4].measurementId == "STRYKE_FORCE"
             subscription[5].itemId == 62
-            subscription[5].measurementId == 14
+            subscription[5].measurementId == "STRYKE_FORCE"
         }
     }
 
@@ -72,11 +72,11 @@ class SubscriptionTest extends Specification {
     "subscription": [
         {
             "itemId": 0,
-            "measurementId": 1
+            "measurementId": "OUTPUT_CURRENT"
         },
         {
             "itemId": 10,
-            "measurementId": 2
+            "measurementId": "OUTPUT_VOLTAGE"
         }
     ]
 }
@@ -120,11 +120,11 @@ class SubscriptionTest extends Specification {
     "subscription": [
         {
             "itemId": 0,
-            "measurementId": 1
+            "measurementId": "OUTPUT_CURRENT"
         },
         {
             "itemId": 10,
-            "measurementId": 2
+            "measurementId": "OUTPUT_VOLTAGE"
         }
     ]
 }
