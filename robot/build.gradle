@@ -1,0 +1,16 @@
+dependencies {
+    compile wpilib()
+    compile talonSrx()
+    compile navx()
+    compile project(':core')
+}
+
+def robotManifest = {
+    attributes 'Main-Class': 'edu.wpi.first.wpilibj.RobotBase'
+    attributes 'Robot-Class': frc.robotClass
+}
+
+jar {
+    from configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    manifest robotManifest
+}
