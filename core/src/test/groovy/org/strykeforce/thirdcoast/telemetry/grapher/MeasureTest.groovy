@@ -9,4 +9,12 @@ class MeasureTest extends Specification {
         Measure.valueOf("SETPOINT") == Measure.SETPOINT
     }
 
+    def "measure does not exist"() {
+        when:
+        Measure.valueOf("MISSING")
+
+        then:
+        thrown(IllegalArgumentException)
+    }
+
  }
