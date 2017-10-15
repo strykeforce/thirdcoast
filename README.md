@@ -1,4 +1,5 @@
 # Third Coast Swerve Drive
+[![Build Status](https://travis-ci.org/strykeforce/thirdcoast.svg?branch=master)](https://travis-ci.org/strykeforce/thirdcoast)
 
 Example Third Coast swerve drive and Talon configuration API for FRC robots. It is designed to run on swerve drive hardware described in this [paper](https://www.chiefdelphi.com/media/papers/3375).
 
