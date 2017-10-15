@@ -24,8 +24,8 @@ public class GrapherController extends NanoHTTPD {
   private final int port;
 
   @Inject
-  public GrapherController(Inventory inventory, ClientHandler clientHandler,
-      @Named("server") int port) {
+  public GrapherController(final Inventory inventory, final ClientHandler clientHandler,
+      final @Named("server") int port) {
     super(port);
     this.inventory = inventory;
     this.clientHandler = clientHandler;
@@ -101,7 +101,7 @@ public class GrapherController extends NanoHTTPD {
     System.out.println("Server stopped.\n");
   }
 
-  private Response errorResponseFor(Exception e) {
+  private Response errorResponseFor(final Exception e) {
     Buffer buffer = new Buffer();
     JsonWriter writer = JsonWriter.of(buffer);
     try {

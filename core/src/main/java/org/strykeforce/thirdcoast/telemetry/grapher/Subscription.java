@@ -85,7 +85,7 @@ public class Subscription {
     public String type;
     public List<Item> subscription;
 
-    public static RequestJson fromJson(String json) throws IOException {
+    public static RequestJson fromJson(final String json) throws IOException {
       // TODO: verify type=start
       Moshi moshi = new Moshi.Builder().build();
       JsonAdapter<RequestJson> adapter = moshi.adapter(RequestJson.class);

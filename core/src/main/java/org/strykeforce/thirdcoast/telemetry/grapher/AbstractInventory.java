@@ -4,7 +4,9 @@ import static org.strykeforce.thirdcoast.telemetry.grapher.Measure.*;
 
 import com.squareup.moshi.JsonWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import okio.BufferedSink;
@@ -14,13 +16,13 @@ import okio.BufferedSink;
  */
 public abstract class AbstractInventory implements Inventory {
 
-  protected final Map<Integer, Item> items = new TreeMap<>();
+  protected final List<Item> items = new ArrayList<>(16);
 
-  public AbstractInventory(Collection<Item> items) {
-    items.forEach(item -> this.items.put(item.id(), item));
+  public AbstractInventory(final Collection<Item> items) {
+    this.items.addAll(items);
   }
 
-  public Item itemForId(int id) {
+  public Item itemForId(final int id) {
     return items.get(id);
   }
 
@@ -37,11 +39,11 @@ public abstract class AbstractInventory implements Inventory {
 
   void writeItems(JsonWriter writer) throws IOException {
     writer.beginArray();
-    for (Item item : items.values()) {
+    for (int i = 0; i < items.size(); i++) {
       writer.beginObject();
-      writer.name("id").value(item.id());
-      writer.name("type").value(item.type());
-      writer.name("description").value(item.description());
+      writer.name("id").value(i);
+      writer.name("type").value(items.get(i).type());
+      writer.name("description").value(items.get(i).description());
       writer.endObject();
     }
     writer.endArray();

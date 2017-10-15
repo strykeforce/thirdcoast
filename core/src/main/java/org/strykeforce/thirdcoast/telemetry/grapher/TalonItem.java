@@ -10,7 +10,7 @@ class TalonItem implements Item {
 
   private final CANTalon talon;
 
-  public TalonItem(CANTalon talon) {
+  public TalonItem(final CANTalon talon) {
     this.talon = talon;
   }
 
@@ -30,7 +30,7 @@ class TalonItem implements Item {
   }
 
   @Override
-  public DoubleSupplier measurementFor(Measure measure) {
+  public DoubleSupplier measurementFor(final Measure measure) {
     switch (measure) {
       case SETPOINT:
         return () -> talon.getSetpoint();

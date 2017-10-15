@@ -10,11 +10,11 @@ import javax.inject.Inject;
  */
 public class RobotInventory extends AbstractInventory {
 
-  public RobotInventory(Collection<Item> items) {
+  public RobotInventory(final Collection<Item> items) {
     super(items);
   }
 
-  public static Inventory of(Collection<CANTalon> talons) {
+  public static Inventory of(final Collection<CANTalon> talons) {
     Collection<Item> items = talons.stream().map(t -> new TalonItem(t))
         .collect(Collectors.toList());
     return new RobotInventory(items);

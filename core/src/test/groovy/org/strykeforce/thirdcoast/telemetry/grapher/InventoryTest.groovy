@@ -19,15 +19,17 @@ class InventoryTest extends Specification {
     def "Creates Robot Inventory with Talons"() {
         given:
         def talons = new ArrayList<CANTalon>()
-        talons.add(talonStub(0, "talon0"))
-        talons.add(talonStub(1, "talon1"))
+        talons.add(talonStub(51, "talon0"))
+        talons.add(talonStub(61, "talon1"))
 
         when:
         Inventory inventory = RobotInventory.of(talons)
 
         then:
         inventory.itemForId(0).description() == "talon0"
+        inventory.itemForId(0).id() == 51
         inventory.itemForId(1).description() == "talon1"
+        inventory.itemForId(1).id() == 61
     }
 
     def "Creates JSON representation"() {
@@ -46,7 +48,7 @@ class InventoryTest extends Specification {
         then:
         with(result) {
             items.size == 2
-            items[0].id == 10
+            items[0].id == 0
             items[0].description == "talon10"
             with(measures) {
                 talon.size == Measure.values().length
@@ -55,6 +57,8 @@ class InventoryTest extends Specification {
                 talon[5].id == "ABSOLUTE_ENCODER_POSITION"
                 talon[5].description == ABSOLUTE_ENCODER_POSITION.description
             }
+            items[1].id == 1
+            items[1].description == "talon11"
         }
     }
 }
