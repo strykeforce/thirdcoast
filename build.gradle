@@ -64,20 +64,6 @@ task allJavadoc(type: Javadoc) {
     ]
 }
 
-task cleanJavadoc(type: Delete) {
-    delete 'docs/javadoc'
-}
-
-task refreshJavadoc(type: Copy) {
-    description "Generate Javadoc API documentation and copy to docs dir for publication."
-    group "Documentation"
-    from 'build/docs'
-    into 'docs'
-}
-
-refreshJavadoc.dependsOn cleanJavadoc
-refreshJavadoc.dependsOn allJavadoc
-
 task wrapper(type: Wrapper) {
     gradleVersion = '4.2'
 }
