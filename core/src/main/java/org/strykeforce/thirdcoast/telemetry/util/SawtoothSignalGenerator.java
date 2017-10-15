@@ -1,6 +1,6 @@
 package org.strykeforce.thirdcoast.telemetry.util;
 
-public class SawtoothSignalGenerator extends SignalGenerator {
+class SawtoothSignalGenerator extends SignalGenerator {
 
   public SawtoothSignalGenerator(double frequency, double phase, double amplitude, double offset,
       double invert) {

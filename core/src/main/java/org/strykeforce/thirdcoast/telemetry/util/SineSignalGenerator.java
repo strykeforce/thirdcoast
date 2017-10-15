@@ -1,6 +1,6 @@
 package org.strykeforce.thirdcoast.telemetry.util;
 
-public class SineSignalGenerator extends SignalGenerator {
+class SineSignalGenerator extends SignalGenerator {
 
   public SineSignalGenerator(double frequency, double phase, double amplitude, double offset,
       double invert) {

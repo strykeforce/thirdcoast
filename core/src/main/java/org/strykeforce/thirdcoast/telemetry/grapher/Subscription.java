@@ -10,6 +10,9 @@ import java.util.List;
 import java.util.function.DoubleSupplier;
 import okio.BufferedSink;
 
+/**
+ * Represents a subscription request for streaming data.
+ */
 public class Subscription {
 
   private final String client;
@@ -69,7 +72,7 @@ public class Subscription {
     writer.endObject();
   }
 
-  public static class RequestJson {
+  static class RequestJson {
 
     public final static RequestJson EMPTY;
 
@@ -97,7 +100,7 @@ public class Subscription {
           '}';
     }
 
-    public static class Item {
+    static class Item {
 
       public int itemId;
       public String measurementId;

@@ -1,5 +1,5 @@
 /**
- * Third Coast Telemetry API.
+ * Provides a data streaming service for robot subsystems.
  *
  * @author 2767 Stryke Force
  */

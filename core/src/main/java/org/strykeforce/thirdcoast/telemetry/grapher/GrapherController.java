@@ -12,6 +12,9 @@ import org.nanohttpd.protocols.http.request.Method;
 import org.nanohttpd.protocols.http.response.Response;
 import org.nanohttpd.protocols.http.response.Status;
 
+/**
+ * Provides a development web service to control telemetry.
+ */
 public class GrapherController extends NanoHTTPD {
 
   private final static String JSON = "application/json";

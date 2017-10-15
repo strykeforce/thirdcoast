@@ -44,26 +44,6 @@ subprojects {
     }
 }
 
-def exportedProjects = [
-        ":core",
-]
-
-task allJavadoc(type: Javadoc) {
-    description "Generate Javadoc API documentation for core and shared projects."
-    group "Documentation"
-    source exportedProjects.collect { project(it).sourceSets.main.allJava }
-    classpath = files(exportedProjects.collect { project(it).sourceSets.main.compileClasspath })
-    title = "Third Coast Swerve Drive API"
-    /*destinationDir = file("docs/javadoc")*/
-    options.overview = "core/src/main/java/overview.html"
-    options.links = [
-            "https://docs.oracle.com/javase/8/docs/api/",
-            "http://first.wpi.edu/FRC/roborio/release/docs/java/",
-            "http://www.ctr-electronics.com/downloads/api/java/html/",
-            "http://www.kauailabs.com/public_files/navx-mxp/apidocs/java/"
-    ]
-}
-
 task wrapper(type: Wrapper) {
     gradleVersion = '4.2'
 }

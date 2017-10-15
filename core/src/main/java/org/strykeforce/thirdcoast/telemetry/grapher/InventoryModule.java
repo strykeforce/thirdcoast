@@ -4,10 +4,13 @@ import com.ctre.CANTalon;
 import dagger.Module;
 import dagger.Provides;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import javax.inject.Singleton;
 
+/**
+ * <a href="https://google.github.io/dagger/">Dagger</a> dependency-injection support for {@link
+ * Inventory}.
+ */
 @Module
 public class InventoryModule {
 

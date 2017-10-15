@@ -5,6 +5,9 @@ import java.util.Collection;
 import java.util.stream.Collectors;
 import javax.inject.Inject;
 
+/**
+ * Default implementation of {@link Inventory} for a robot.
+ */
 public class RobotInventory extends AbstractInventory {
 
   public RobotInventory(Collection<Item> items) {

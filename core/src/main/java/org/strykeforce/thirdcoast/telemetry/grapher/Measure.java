@@ -3,6 +3,9 @@ package org.strykeforce.thirdcoast.telemetry.grapher;
 import java.util.Map;
 import java.util.TreeMap;
 
+/**
+ * Available measurement types.
+ */
 public enum Measure {
   SETPOINT("Setpoint"),
   OUTPUT_CURRENT("Output Current"),

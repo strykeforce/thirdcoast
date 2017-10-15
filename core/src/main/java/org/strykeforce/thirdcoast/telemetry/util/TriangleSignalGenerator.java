@@ -1,6 +1,6 @@
 package org.strykeforce.thirdcoast.telemetry.util;
 
-public class TriangleSignalGenerator extends SignalGenerator {
+class TriangleSignalGenerator extends SignalGenerator {
 
   public TriangleSignalGenerator(double frequency, double phase, double amplitude, double offset,
       double invert) {

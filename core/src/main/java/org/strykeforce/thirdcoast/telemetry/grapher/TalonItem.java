@@ -3,7 +3,10 @@ package org.strykeforce.thirdcoast.telemetry.grapher;
 import com.ctre.CANTalon;
 import java.util.function.DoubleSupplier;
 
-public class TalonItem implements Item {
+/**
+ * TalonSRX specialization for {@link Item}.
+ */
+class TalonItem implements Item {
 
   private final CANTalon talon;
 

@@ -9,6 +9,9 @@ import java.util.Map;
 import java.util.TreeMap;
 import okio.BufferedSink;
 
+/**
+ * An abstract base class intended to be subclassed by concrete implmentations of {@link Inventory}.
+ */
 public abstract class AbstractInventory implements Inventory {
 
   protected final Map<Integer, Item> items = new TreeMap<>();

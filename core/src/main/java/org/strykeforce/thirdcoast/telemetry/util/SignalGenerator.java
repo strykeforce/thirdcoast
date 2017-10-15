@@ -1,5 +1,8 @@
 package org.strykeforce.thirdcoast.telemetry.util;
 
+/**
+ * Generate a signal used for simulation.
+ */
 public abstract class SignalGenerator {
 
   // for System.nanoTime() resolution
@@ -49,10 +52,16 @@ public abstract class SignalGenerator {
 
   }
 
+  /**
+   * Available signal types.
+   */
   public enum SignalType {
     SINE, SQUARE, TRIANGLE, SAWTOOTH;
   }
 
+  /**
+   * Builder for {@link SignalGenerator}.
+   */
   public static class Builder {
 
     private SignalType type;

@@ -25,6 +25,18 @@ dependencies {
     testRuntime group: 'org.objenesis', name: 'objenesis', version: '2.6'
 }
 
+javadoc {
+    title = "Third Coast Swerve Drive API"
+    options.overview = "src/main/java/overview.html"
+    options.links = [
+            "https://docs.oracle.com/javase/8/docs/api/",
+            "http://first.wpi.edu/FRC/roborio/release/docs/java/",
+            "http://www.ctr-electronics.com/downloads/api/java/html/",
+            "http://www.kauailabs.com/public_files/navx-mxp/apidocs/java/"
+    ]
+
+}
+
 task sourcesJar(type: Jar, dependsOn: classes) {
     classifier = 'sources'
     from sourceSets.main.allSource

@@ -9,7 +9,7 @@ import java.util.Map;
 import okio.BufferedSink;
 
 /**
- * Wraps a {code CANTalon} and presents a JSON representation.
+ * Wraps a {@link CANTalon} and presents a JSON representation.
  */
 public class Talon {
 
@@ -68,7 +68,7 @@ public class Talon {
 
   }
 
- public  void toJson(BufferedSink sink) throws IOException {
+  public void toJson(BufferedSink sink) throws IOException {
     Moshi moshi = new Moshi.Builder().build();
     JsonAdapter<Talon> adapter = moshi.adapter(Talon.class);
     adapter = adapter.indent("  ");
