@@ -17,8 +17,8 @@ dependencies {
     compile group: 'com.github.TheElectronWill.Night-Config', name: 'toml', version: '3.0.2'
     compile group: 'com.squareup.moshi', name: 'moshi', version: '1.5.0'
     compile group: 'org.nanohttpd', name: 'nanohttpd', version: '2.3.2-SNAPSHOT'
-    compile 'com.google.dagger:dagger:2.11'
-    apt 'com.google.dagger:dagger-compiler:2.11'
+    compile group: 'com.google.dagger', name: 'dagger-compiler', version: '2.12'
+    apt 'com.google.dagger:dagger-compiler:2.12'
 
     testCompile group: 'org.spockframework', name: 'spock-core', version: '1.1-groovy-2.4'
     testRuntime group: 'net.bytebuddy', name: 'byte-buddy', version: '1.7.1'
