@@ -1,1 +1,5 @@
+title: Third Coast
+description: Third Coast swerve drive, talon configuration and telemetry API for FRC robots
+show_downloads: false
+google_analytics:
 theme: jekyll-theme-minimal
