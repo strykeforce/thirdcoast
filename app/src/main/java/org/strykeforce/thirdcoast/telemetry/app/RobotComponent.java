@@ -15,7 +15,7 @@ import org.strykeforce.thirdcoast.telemetry.grapher.NetworkModule;
     NetworkModule.class,
     CommandModule.class,
 })
-public interface RobotComponent {
+interface RobotComponent {
 
   Inventory inventory();
 

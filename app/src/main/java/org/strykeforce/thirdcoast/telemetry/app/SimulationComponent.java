@@ -12,4 +12,4 @@ import org.strykeforce.thirdcoast.telemetry.grapher.NetworkModule;
     NetworkModule.class,
     CommandModule.class,
 })
-public interface SimulationComponent extends RobotComponent { }
+interface SimulationComponent extends RobotComponent { }
