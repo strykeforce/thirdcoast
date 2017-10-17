@@ -1,1 +1,1 @@
-See [https://strykeforce.github.io/thirdcoast](https://strykeforce.github.io/thirdcoast)
+See [Third Coast Article](https://strykeforce.github.io/posts/thirdcoast) in our Dev Blog.
