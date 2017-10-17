@@ -7,4 +7,4 @@ Stryke Force team 2767's Third Coast swerve drive, talon configuration and telem
 
 Third Coast [Javadocs](javadoc/).
 
-Third Coast [Documentation](https://strykeforce.github.io/posts/thirdcoast/).
+Third Coast [Documentation](https://strykeforce.github.io/tags/thirdcoast/).

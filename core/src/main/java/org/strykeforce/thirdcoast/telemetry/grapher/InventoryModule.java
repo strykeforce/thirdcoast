@@ -14,13 +14,24 @@ import javax.inject.Singleton;
 @Module
 public class InventoryModule {
 
+  private long vers;
+
   @Provides
   @Singleton
   static Inventory inventory() {
     List<CANTalon> talons = new ArrayList<>(16);
-    talons.add(new CANTalon(1));
-    long vers = talons.get(0).GetFirmwareVersion();
-    System.out.println("vers = " + vers);
+
+    for (int i = 0; i < 64; i++) {
+      try {
+        CANTalon talon = new CANTalon(i);
+        if (talon.GetFirmwareVersion() == 546) {
+          talons.add(talon);
+        }
+      } catch (Throwable e) {
+        System.out.println(e.getMessage());
+      }
+    }
+
     return RobotInventory.of(talons);
   }
 }
