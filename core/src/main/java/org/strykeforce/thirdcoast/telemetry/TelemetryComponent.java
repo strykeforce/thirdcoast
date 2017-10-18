@@ -1,14 +1,10 @@
-package org.strykeforce.thirdcoast.telemetry.app;
+package org.strykeforce.thirdcoast.telemetry;
 
 import com.ctre.CANTalon;
 import dagger.BindsInstance;
 import dagger.Component;
 import java.util.Collection;
 import javax.inject.Singleton;
-import org.strykeforce.thirdcoast.telemetry.TelemetryComponent;
-import org.strykeforce.thirdcoast.telemetry.TelemetryComponent.Builder;
-import org.strykeforce.thirdcoast.telemetry.app.command.Command;
-import org.strykeforce.thirdcoast.telemetry.app.command.CommandModule;
 import org.strykeforce.thirdcoast.telemetry.grapher.GrapherController;
 import org.strykeforce.thirdcoast.telemetry.grapher.Inventory;
 import org.strykeforce.thirdcoast.telemetry.grapher.InventoryModule;
@@ -18,16 +14,14 @@ import org.strykeforce.thirdcoast.telemetry.grapher.NetworkModule;
 @Component(modules = {
     InventoryModule.class,
     NetworkModule.class,
-    CommandModule.class,
 })
-interface RobotComponent {
-  // TODO: this class appears to not be used
+public interface TelemetryComponent {
 
   Inventory inventory();
 
   GrapherController grapherController();
 
-  Command mainCommand();
+  Collection<CANTalon> talons();
 
   @Component.Builder
   interface Builder {
@@ -35,7 +29,7 @@ interface RobotComponent {
     @BindsInstance
     Builder talons(Collection<CANTalon> talons);
 
-    RobotComponent build();
+    TelemetryComponent build();
   }
 
 }

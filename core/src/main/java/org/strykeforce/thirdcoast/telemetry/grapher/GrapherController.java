@@ -98,6 +98,11 @@ public class GrapherController extends NanoHTTPD {
     }
   }
 
+  public void shutdown() {
+    clientHandler.shutdown();
+    super.stop();
+  }
+
   private Response errorResponseFor(final Exception e) {
     Buffer buffer = new Buffer();
     JsonWriter writer = JsonWriter.of(buffer);

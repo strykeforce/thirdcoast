@@ -1,15 +1,11 @@
 package org.strykeforce.thirdcoast.telemetry;
 
 import com.ctre.CANTalon;
-import dagger.BindsInstance;
-import java.net.InetSocketAddress;
-import java.net.SocketAddress;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import org.strykeforce.thirdcoast.telemetry.grapher.GrapherController;
 
 /**
  * The Telemetry service.
@@ -17,35 +13,28 @@ import javax.inject.Singleton;
 @Singleton
 public class TelemetryService {
 
-  @Inject
-  TelemetryService() {
-  }
+  GrapherController grapherController;
+  Collection<CANTalon> talons = new ArrayList<>(16);
 
-  public static void main(String[] args) {
-    Component component = DaggerTelemetryService_Component.builder()
-        .socketAddress(new InetSocketAddress(5555))
-        .build();
-    TelemetryService telemetry = component.getTelemetryService();
-    ScheduledExecutorService s = Executors.newSingleThreadScheduledExecutor();
-    s.schedule(() -> {
-      telemetry.stop();
-    }, 60, TimeUnit.SECONDS);
-    s.shutdown();
-    telemetry.start();
+  @Inject
+  public TelemetryService() {
   }
 
   /**
    * Start the Telemetry service and listen for client connections.
    */
   public void start() {
-//    server.start();
+    TelemetryComponent component = DaggerTelemetryComponent.builder().talons(talons).build();
+    grapherController = component.grapherController();
+    grapherController.start();
+
   }
 
   /**
    * Stop the Telemetry service.
    */
   public void stop() {
-//    server.shutdown();
+    grapherController.shutdown();
   }
 
   /**
@@ -54,6 +43,7 @@ public class TelemetryService {
    * @param talon the CANTalon to add
    */
   public void register(CANTalon talon) {
+    talons.add(talon);
   }
 
   /**
@@ -62,23 +52,7 @@ public class TelemetryService {
    * @param collection the collection of CANTalons to add
    */
   public void registerAll(Collection<CANTalon> collection) {
-
+    talons.addAll(collection);
   }
 
-  @Singleton
-//  @dagger.Component(modules = {DatagramModule.class})
-  @dagger.Component()
-  interface Component {
-
-    TelemetryService getTelemetryService();
-
-    @dagger.Component.Builder
-    interface Builder {
-
-      Component build();
-
-      @BindsInstance
-      Builder socketAddress(SocketAddress address);
-    }
-  }
 }

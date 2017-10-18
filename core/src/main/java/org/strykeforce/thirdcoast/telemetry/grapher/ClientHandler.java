@@ -45,7 +45,7 @@ class ClientHandler {
       } catch (IOException e) {
         e.printStackTrace();
       }
-    }, 0, 20, MILLISECONDS);
+    }, 0, 5, MILLISECONDS);
   }
 
   public void shutdown() {

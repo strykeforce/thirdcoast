@@ -26,6 +26,7 @@ before_cache:
   - rm -rf $HOME/.gradle/caches/*/plugin-resolution/
   - rm -f  $HOME/.gradle/caches/*/fileHashes/fileHashes.bin
   - rm -f  $HOME/.gradle/caches/*/fileHashes/fileHashes.lock
+  - rm -rf $HOME/.gradle/caches/*/scripts/
   - rm -rf $HOME/.m2/repository/org/strykeforce
 cache:
   directories:
