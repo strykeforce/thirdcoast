@@ -17,8 +17,20 @@ dependencies {
     apt 'com.google.dagger:dagger-compiler:2.12'
 }
 
+def robotManifest = {
+    attributes 'Main-Class': 'edu.wpi.first.wpilibj.RobotBase'
+    attributes 'Robot-Class': mainClassName
+}
+
+//jar {
+//    from configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+//    manifest robotManifest
+//}
+
+
 shadowJar {
     baseName = 'tct'
     classifier = null
-    version = '2017.0.8'
+    version = '2017.0.9'
+    manifest robotManifest
 }

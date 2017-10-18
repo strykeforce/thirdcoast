@@ -1,49 +1,39 @@
 package org.strykeforce.thirdcoast.telemetry.app;
 
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.HLUsageReporting;
-import edu.wpi.first.wpilibj.RobotState;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.hal.HAL;
-import edu.wpi.first.wpilibj.internal.HardwareHLUsageReporting;
-import edu.wpi.first.wpilibj.internal.HardwareTimer;
 import org.strykeforce.thirdcoast.telemetry.app.command.Command;
 import org.strykeforce.thirdcoast.telemetry.grapher.GrapherController;
 
-public class Main {
+public class Main extends RobotBase {
+
+  private final static boolean simulated = true;
+
+  public Main() {
+  }
 
   public static void main(String[] args) {
-    boolean simulated = false;
-    for (String s : args) {
-      switch (s) {
-        case "-simulate":
-          simulated = true;
-          break;
-        default:
-          System.out.println("usage: java -jar jarfile [-simulate]");
-          System.exit(-1);
-      }
+    RobotComponent component = DaggerSimulationComponent.create();
+    GrapherController grapherController = component.grapherController();
+    grapherController.start();
+    Command command = component.mainCommand();
+    try {
+      System.out.println("\nPress <enter> key to stop.");
+      System.in.read();
+    } catch (Throwable ignored) {
     }
-    if (!simulated) {
-      initializeHardwareConfiguration();
-    }
+    System.exit(0);
+  }
+
+  @Override
+  public void startCompetition() {
     RobotComponent component =
         simulated ? DaggerSimulationComponent.create() : DaggerRobotComponent.create();
     GrapherController grapherController = component.grapherController();
     grapherController.start();
 //    Command command = component.mainCommand();
-//    command.run();
-    System.exit(0);
+    while (true) {
+      Timer.delay(0.1);
+    }
   }
-
-  public static void initializeHardwareConfiguration() {
-    int rv = HAL.initialize(0);
-    assert rv == 1;
-
-    // Set some implementations so that the static methods work properly
-    Timer.SetImplementation(new HardwareTimer());
-    HLUsageReporting.SetImplementation(new HardwareHLUsageReporting());
-    RobotState.SetImplementation(DriverStation.getInstance());
-  }
-
 }

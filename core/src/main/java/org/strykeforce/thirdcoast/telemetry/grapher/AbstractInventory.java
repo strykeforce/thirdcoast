@@ -1,18 +1,18 @@
 package org.strykeforce.thirdcoast.telemetry.grapher;
 
-import static org.strykeforce.thirdcoast.telemetry.grapher.Measure.*;
-
 import com.squareup.moshi.JsonWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.Set;
+import java.util.stream.Collectors;
 import okio.BufferedSink;
+import org.strykeforce.thirdcoast.telemetry.grapher.Item.Type;
 
 /**
- * An abstract base class intended to be subclassed by concrete implmentations of {@link Inventory}.
+ * An abstract base class intended to be subclassed by concrete implmentations of {@link
+ * Inventory}.
  */
 public abstract class AbstractInventory implements Inventory {
 
@@ -42,19 +42,35 @@ public abstract class AbstractInventory implements Inventory {
     for (int i = 0; i < items.size(); i++) {
       writer.beginObject();
       writer.name("id").value(i);
-      writer.name("type").value(items.get(i).type());
+      writer.name("type").value(items.get(i).type().name());
       writer.name("description").value(items.get(i).description());
       writer.endObject();
     }
     writer.endArray();
   }
 
- void writeMeasures(JsonWriter writer) throws IOException {
+  void writeMeasures(JsonWriter writer) throws IOException {
+    Set<Type> types = items.stream().map(Item::type).collect(Collectors.toSet());
+    writer.beginArray();
+    for (Type type : types) {
+      writeDeviceMeasures(writer, type);
+    }
+    writer.endArray();
+  }
+
+  void writeDeviceMeasures(JsonWriter writer, Item.Type type) throws IOException {
     writer.beginObject();
-    writer.name("talon");
-    writeTalonMeasures(writer);
+    writer.name("deviceType").value(type.name());
+    writer.name("deviceMeasures");
+    writer.beginArray();
+    for (Measure m : type.measures()) {
+      writeMeasure(writer, m);
+    }
+    writer.endArray();
+
     writer.endObject();
   }
+
 
   void writeMeasure(JsonWriter writer, Measure measure)
       throws IOException {
@@ -63,25 +79,6 @@ public abstract class AbstractInventory implements Inventory {
     writer.name("description").value(measure.getDescription());
     writer.endObject();
 
-  }
-
-  void writeTalonMeasures(JsonWriter writer) throws IOException {
-    writer.beginArray();
-    int i = 0;
-    writeMeasure(writer, SETPOINT);
-    writeMeasure(writer, OUTPUT_CURRENT);
-    writeMeasure(writer, OUTPUT_VOLTAGE);
-    writeMeasure(writer, ENCODER_POSITION);
-    writeMeasure(writer, ENCODER_VELOCITY);
-    writeMeasure(writer, ABSOLUTE_ENCODER_POSITION);
-    writeMeasure(writer, CONTROL_LOOP_ERROR);
-    writeMeasure(writer, INTEGRATOR_ACCUMULATOR);
-    writeMeasure(writer, BUS_VOLTAGE);
-    writeMeasure(writer, FORWARD_HARD_LIMIT_CLOSED);
-    writeMeasure(writer, REVERSE_HARD_LIMIT_CLOSED);
-    writeMeasure(writer, FORWARD_SOFT_LIMIT_OK);
-    writeMeasure(writer, REVERSE_SOFT_LIMIT_OK);
-    writer.endArray();
   }
 
   @Override

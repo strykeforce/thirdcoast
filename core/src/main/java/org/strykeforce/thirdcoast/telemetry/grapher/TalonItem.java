@@ -20,8 +20,8 @@ class TalonItem implements Item {
   }
 
   @Override
-  public String type() {
-    return "talon";
+  public Type type() {
+    return Type.TALON;
   }
 
   @Override

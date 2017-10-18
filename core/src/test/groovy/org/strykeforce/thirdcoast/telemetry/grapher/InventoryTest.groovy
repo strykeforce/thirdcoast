@@ -50,12 +50,14 @@ class InventoryTest extends Specification {
             items.size == 2
             items[0].id == 0
             items[0].description == "talon10"
-            with(measures) {
-                talon.size == Measure.values().length
-                talon[0].id == "SETPOINT"
-                talon[0].description == SETPOINT.description
-                talon[5].id == "ABSOLUTE_ENCODER_POSITION"
-                talon[5].description == ABSOLUTE_ENCODER_POSITION.description
+            measures.size == 1
+            with(measures[0]) {
+                Item.Type.valueOf(deviceType) == Item.Type.TALON
+                deviceMeasures.size == Item.Type.TALON.measures().size()
+                Measure.valueOf(deviceMeasures[0].id) == SETPOINT
+                deviceMeasures[0].description == SETPOINT.description
+                Measure.valueOf(deviceMeasures[5].id) == ABSOLUTE_ENCODER_POSITION
+                deviceMeasures[5].description == ABSOLUTE_ENCODER_POSITION.description
             }
             items[1].id == 1
             items[1].description == "talon11"

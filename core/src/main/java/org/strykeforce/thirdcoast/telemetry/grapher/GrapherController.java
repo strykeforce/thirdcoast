@@ -2,6 +2,7 @@ package org.strykeforce.thirdcoast.telemetry.grapher;
 
 import com.squareup.moshi.JsonWriter;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.util.HashMap;
 import java.util.Map;
 import javax.inject.Inject;
@@ -32,6 +33,7 @@ public class GrapherController extends NanoHTTPD {
     this.port = port;
 
     addHTTPInterceptor(session -> {
+//      double start = Timer.getFPGATimestamp();
       if (session.getMethod() == Method.GET && session.getUri()
           .equalsIgnoreCase("/v1/grapher/inventory")) {
         Buffer buffer = new Buffer();
@@ -41,6 +43,7 @@ public class GrapherController extends NanoHTTPD {
           e.printStackTrace();
           return errorResponseFor(e);
         }
+//        System.out.printf("start response %g%n", (Timer.getFPGATimestamp() - start) * 1000);
         return Response
             .newFixedLengthResponse(Status.OK, JSON, buffer.readByteArray());
       }
@@ -82,23 +85,14 @@ public class GrapherController extends NanoHTTPD {
 
   public void start() {
     try {
-      start(NanoHTTPD.SOCKET_READ_TIMEOUT, false);
+      start(NanoHTTPD.SOCKET_READ_TIMEOUT, true);
+      System.out.printf("%nInventory at http://localhost:%d/v1/grapher/inventory%n", port);
+      System.out.printf("Inventory at http://%s:%d/v1/grapher/inventory%n",
+          InetAddress.getLocalHost().getHostAddress(), port);
     } catch (IOException e) {
       System.err.println("Couldn't start server:\n" + e);
       System.exit(-1);
     }
-    System.out
-        .printf("%nInventory at http://localhost:%d/v1/grapher/inventory, Hit Enter to stop.%n%n",
-            port);
-
-    try {
-      System.in.read();
-    } catch (Throwable ignored) {
-    }
-
-    stop();
-    clientHandler.shutdown();
-    System.out.println("Server stopped.\n");
   }
 
   private Response errorResponseFor(final Exception e) {
