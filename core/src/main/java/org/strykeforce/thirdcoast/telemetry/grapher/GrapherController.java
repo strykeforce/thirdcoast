@@ -2,7 +2,12 @@ package org.strykeforce.thirdcoast.telemetry.grapher;
 
 import com.squareup.moshi.JsonWriter;
 import java.io.IOException;
+import java.net.Inet4Address;
 import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import javax.inject.Inject;
@@ -86,9 +91,7 @@ public class GrapherController extends NanoHTTPD {
   public void start() {
     try {
       start(NanoHTTPD.SOCKET_READ_TIMEOUT, true);
-      System.out.printf("%nInventory at http://localhost:%d/v1/grapher/inventory%n", port);
-      System.out.printf("Inventory at http://%s:%d/v1/grapher/inventory%n",
-          InetAddress.getLocalHost().getHostAddress(), port);
+      showInventoryEndpoint();
     } catch (IOException e) {
       System.err.println("Couldn't start server:\n" + e);
       System.exit(-1);
@@ -105,5 +108,19 @@ public class GrapherController extends NanoHTTPD {
     } catch (IOException ignored) {
     }
     return Response.newFixedLengthResponse(Status.INTERNAL_ERROR, JSON, buffer.readByteArray());
+  }
+
+  private void showInventoryEndpoint() throws SocketException {
+    System.out.println();
+    Enumeration<NetworkInterface> nets = NetworkInterface.getNetworkInterfaces();
+    for (NetworkInterface netint : Collections.list(nets)) {
+      Enumeration<InetAddress> inetAddresses = netint.getInetAddresses();
+      for (InetAddress inetAddress : Collections.list(inetAddresses)) {
+        if (!inetAddress.isLinkLocalAddress() && inetAddress.getClass() == Inet4Address.class) {
+          System.out.printf("Inventory at http://%s:%d/v1/grapher/inventory%n", inetAddress.getHostAddress(), port);
+        }
+      }
+
+    }
   }
 }
