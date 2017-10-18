@@ -1,32 +1,37 @@
-language:       java
-sudo:           false
-
+language:          java
+sudo:              false
 jdk:
-- oraclejdk8
+  - oraclejdk8
 
 after_success:
-- cp -R core/build/docs/javadoc docs/
+  - cp -R core/build/docs/javadoc docs/
 
 deploy:
-  provider:     pages
-  skip_cleanup: true
-  github_token: "$GITHUB_TOKEN"
-  local_dir:    docs
-  on:
-    branch:     master
+  -  provider:     pages
+     skip_cleanup: true
+     github_token: "$GITHUB_TOKEN"
+     local_dir:    docs
+     on:
+       branch:     master
+  - provider:      releases
+    skip_cleanup:  true
+    api_key:
+      secure:      VawxVLIOq2XSIRsgsZUPEw5y1f6iWXqY6ujvhydIDO150KXEBjytHIv3BOkpDmtkM4PAjfe3LzXdL2gJ7xLjuvDiuE1+aD/eM5PtHD4omPtzBVxWBot/jwvsxP2zTmZsGvBGvkffvA2GalOdSFnfa5S18W5L5DgyGe1nJFCwLhMwNXTnSIBr01W8LemcN7PAu/rtpSB1iYPI75Weiyaq1SsjRYJ6La2/tIMhQUnEWEgWcJh1mg0DikcDE8A5pXDDmhHrIvEFa8Q3SJQmIC0ZiVdiWTlnV4LjPt8knfegPZXyrO6VvitIZxwHP+U5P6N7JsFIhVpU6N2isF40dgoXm9d/Nyi3HdsYTcqmbK1JpzcArx5XqjXolwpPPnZ5/KV5DLcZyOZqar2NOGVjs5h55WHnxdgHZqYP30nP9nc1SY8Bw/4Tm6aebOLFXR1PAnilxYfhbk666IQwGsAsPUxDK2ZpB3fBZfr0j2Mwi3ZwkBK0Cqike6E2PQKDkdSiGAkCHUKORepKy+iJC7/8B/ToakI2ena8pi763BBDegyHxllH4EZ+gep0Q/MNKmBvrEIvv8oRgcovV6RZ6JFy4NaosHFVWGoi242Sn9Z0CDg+LTq2uGc1YIuVMzsPi8jCPmTCR7Di4OtGyeaujFqrv0HhYGH9mekoaSU3avfot3Zo/Ws=
+    file:          app/build/libs/tct-$TRAVIS_TAG.jar
+    on:
+      tags:        true
 
 before_cache:
-- rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
-- rm -rf $HOME/.gradle/caches/*/plugin-resolution/
-- rm -f  $HOME/.gradle/caches/*/fileHashes/fileHashes.bin
-- rm -f  $HOME/.gradle/caches/*/fileHashes/fileHashes.lock
-- rm -rf $HOME/.m2/repository/org/strykeforce
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -rf $HOME/.gradle/caches/*/plugin-resolution/
+  - rm -f  $HOME/.gradle/caches/*/fileHashes/fileHashes.bin
+  - rm -f  $HOME/.gradle/caches/*/fileHashes/fileHashes.lock
+  - rm -rf $HOME/.m2/repository/org/strykeforce
 cache:
   directories:
-  - "$HOME/.m2/"
-  - "$HOME/.gradle/caches/"
-  - "$HOME/.gradle/wrapper/"
-
+    - "$HOME/.m2/"
+    - "$HOME/.gradle/caches/"
+    - "$HOME/.gradle/wrapper/"
 env:
   global:
-    secure:     StbRRMHj5mEAKLzQET5dJ9wjjBU0XnOy5LWUrYHMH/EIuk1RueCcofngmsS6V70Nr54F8/9xv4voL2JLSINtoVcQzJ6PTMLjB1Ujsm+xbW5aii29kFtVy4dY4N/fmRALEP8Be9o8Yve686bOUJFEyyGlYZsVqsipILyz/eHjhmqEv7s9QSA5IZzwyd4lEyCb1RY3xgPepXEDt2Du/AvOK6+mJM1mqHxE0awDS5jrORH8aigmugF7wtUcBWkgsvTO4MeelVi3l4uXRp/5a8JoJ0vTP3iMvVKADzS/g6s3fWSPIyvJYzWQoYuW85mKr63mJS+FXggzFXIDholYb27TqLGmU4HAbTl/bmWllWJe3FbkZSK5VFyGKpypNOBugzRgyubxAB1TBbGj0kW2fgncLsrKYPq63DhJzCXpPc4LsT9XaZxxTI47BhFRnsWGIaSvmBavBWD0Qq9WP0BMvJMxUR/PJ6C8D+YG+AHrs3w3zZLHe7iuaXyVwq97IC7IhAnkYWnX+bG6KIwY08QLki8DYYBeGPxkPHsyBep84tPfKqxnY+xdVNylteBJt0YJZyn/rNK89a9k110DjKvKCewQpx/b6v3JLaqjju5nFHcdM7M+0kJGbKGHWJUMLWv/0UMfBG9NuiEpq6+NNv3Hi+OITeUYVvRT8/Ditverjdv6KlU=
+    secure:        StbRRMHj5mEAKLzQET5dJ9wjjBU0XnOy5LWUrYHMH/EIuk1RueCcofngmsS6V70Nr54F8/9xv4voL2JLSINtoVcQzJ6PTMLjB1Ujsm+xbW5aii29kFtVy4dY4N/fmRALEP8Be9o8Yve686bOUJFEyyGlYZsVqsipILyz/eHjhmqEv7s9QSA5IZzwyd4lEyCb1RY3xgPepXEDt2Du/AvOK6+mJM1mqHxE0awDS5jrORH8aigmugF7wtUcBWkgsvTO4MeelVi3l4uXRp/5a8JoJ0vTP3iMvVKADzS/g6s3fWSPIyvJYzWQoYuW85mKr63mJS+FXggzFXIDholYb27TqLGmU4HAbTl/bmWllWJe3FbkZSK5VFyGKpypNOBugzRgyubxAB1TBbGj0kW2fgncLsrKYPq63DhJzCXpPc4LsT9XaZxxTI47BhFRnsWGIaSvmBavBWD0Qq9WP0BMvJMxUR/PJ6C8D+YG+AHrs3w3zZLHe7iuaXyVwq97IC7IhAnkYWnX+bG6KIwY08QLki8DYYBeGPxkPHsyBep84tPfKqxnY+xdVNylteBJt0YJZyn/rNK89a9k110DjKvKCewQpx/b6v3JLaqjju5nFHcdM7M+0kJGbKGHWJUMLWv/0UMfBG9NuiEpq6+NNv3Hi+OITeUYVvRT8/Ditverjdv6KlU=

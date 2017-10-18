@@ -31,6 +31,6 @@ def robotManifest = {
 shadowJar {
     baseName = 'tct'
     classifier = null
-    version = '2017.0.9'
+    version = 'v17.0.10'
     manifest robotManifest
 }
