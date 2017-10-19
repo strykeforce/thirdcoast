@@ -6,6 +6,8 @@ import java.util.Collection;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import org.strykeforce.thirdcoast.telemetry.grapher.GrapherController;
+import org.strykeforce.thirdcoast.telemetry.grapher.Item;
+import org.strykeforce.thirdcoast.telemetry.grapher.TalonItem;
 
 /**
  * The Telemetry service.
@@ -14,7 +16,7 @@ import org.strykeforce.thirdcoast.telemetry.grapher.GrapherController;
 public class TelemetryService {
 
   GrapherController grapherController;
-  Collection<CANTalon> talons = new ArrayList<>(16);
+  Collection<Item> items = new ArrayList<>(16);
 
   @Inject
   public TelemetryService() {
@@ -24,7 +26,7 @@ public class TelemetryService {
    * Start the Telemetry service and listen for client connections.
    */
   public void start() {
-    TelemetryComponent component = DaggerTelemetryComponent.builder().talons(talons).build();
+    TelemetryComponent component = DaggerTelemetryComponent.builder().items(items).build();
     grapherController = component.grapherController();
     grapherController.start();
 
@@ -38,21 +40,30 @@ public class TelemetryService {
   }
 
   /**
-   * Register a Talon for telemetry sending. This is thread-safe.
+   * Register a Talon for telemetry sending.
    *
    * @param talon the CANTalon to add
    */
   public void register(CANTalon talon) {
-    talons.add(talon);
+    register(new TalonItem(talon));
   }
 
   /**
-   * Register a collection for telemetry sending. This is thread-safe.
+   * Registers an Item for telemetry sending.
    *
-   * @param collection the collection of CANTalons to add
+   * @param item the Item to add
    */
-  public void registerAll(Collection<CANTalon> collection) {
-    talons.addAll(collection);
+  public void register(Item item) {
+    items.add(item);
+  }
+
+  /**
+   * Register a collection for telemetry sending.
+   *
+   * @param collection the collection of Items to add
+   */
+  public void registerAll(Collection<Item> collection) {
+    items.addAll(collection);
   }
 
 }

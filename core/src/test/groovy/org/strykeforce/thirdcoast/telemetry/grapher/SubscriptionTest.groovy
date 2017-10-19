@@ -107,7 +107,6 @@ class SubscriptionTest extends Specification {
         def result = sluper.parse(buffer.readByteArray())
 
         then:
-        result.type == 'talon'
         result.data[0] == 1.23
         result.data[1] == 27.67
     }

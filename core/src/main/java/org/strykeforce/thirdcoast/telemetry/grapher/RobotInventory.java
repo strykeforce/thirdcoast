@@ -1,8 +1,6 @@
 package org.strykeforce.thirdcoast.telemetry.grapher;
 
-import com.ctre.CANTalon;
 import java.util.Collection;
-import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 /**
@@ -10,16 +8,9 @@ import javax.inject.Inject;
  */
 public class RobotInventory extends AbstractInventory {
 
+  @Inject
   public RobotInventory(final Collection<Item> items) {
     super(items);
   }
-
-  public static Inventory of(final Collection<CANTalon> talons) {
-    Collection<Item> items = talons.stream().map(t -> new TalonItem(t))
-        .collect(Collectors.toList());
-    return new RobotInventory(items);
-  }
-
-
 
 }

@@ -6,7 +6,7 @@ import java.util.function.DoubleSupplier;
 /**
  * TalonSRX specialization for {@link Item}.
  */
-class TalonItem implements Item {
+public class TalonItem implements Item {
 
   private final CANTalon talon;
 

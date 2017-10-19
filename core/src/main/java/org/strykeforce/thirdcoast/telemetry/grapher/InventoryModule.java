@@ -1,9 +1,7 @@
 package org.strykeforce.thirdcoast.telemetry.grapher;
 
-import com.ctre.CANTalon;
+import dagger.Binds;
 import dagger.Module;
-import dagger.Provides;
-import java.util.Collection;
 import javax.inject.Singleton;
 
 /**
@@ -11,11 +9,9 @@ import javax.inject.Singleton;
  * for {@link Inventory}.
  */
 @Module
-public class InventoryModule {
+public abstract class InventoryModule {
 
-  @Provides
+  @Binds
   @Singleton
-  static Inventory inventory(Collection<CANTalon> talons) {
-    return RobotInventory.of(talons);
-  }
+  abstract Inventory providesInventory(RobotInventory inv);
 }

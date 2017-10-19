@@ -5,7 +5,8 @@ import groovy.json.JsonSlurper
 import okio.Buffer
 import spock.lang.Specification
 
-import static Measure.*
+import static org.strykeforce.thirdcoast.telemetry.grapher.Measure.ABSOLUTE_ENCODER_POSITION
+import static org.strykeforce.thirdcoast.telemetry.grapher.Measure.SETPOINT
 
 class InventoryTest extends Specification {
 
@@ -18,12 +19,12 @@ class InventoryTest extends Specification {
 
     def "Creates Robot Inventory with Talons"() {
         given:
-        def talons = new ArrayList<CANTalon>()
-        talons.add(talonStub(51, "talon0"))
-        talons.add(talonStub(61, "talon1"))
+        def talons = new ArrayList<Item>()
+        talons.add(new TalonItem(talonStub(51, "talon0")))
+        talons.add(new TalonItem(talonStub(61, "talon1")))
 
         when:
-        Inventory inventory = RobotInventory.of(talons)
+        Inventory inventory = new RobotInventory(talons)
 
         then:
         inventory.itemForId(0).description() == "talon0"
@@ -34,14 +35,14 @@ class InventoryTest extends Specification {
 
     def "Creates JSON representation"() {
         given:
-        def talons = new ArrayList<CANTalon>()
-        talons.add(talonStub(10, "talon10"))
-        talons.add(talonStub(11, "talon11"))
+        def talons = new ArrayList<Item>()
+        talons.add(new TalonItem(talonStub(51, "talon10")))
+        talons.add(new TalonItem(talonStub(61, "talon11")))
         Buffer buffer = new Buffer()
         JsonSlurper slurper = new JsonSlurper()
 
         when:
-        Inventory inventory = RobotInventory.of(talons)
+        Inventory inventory = new RobotInventory(talons)
         inventory.writeInventory(buffer)
         def result = slurper.parse(buffer.readByteArray())
 
