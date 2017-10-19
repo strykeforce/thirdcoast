@@ -4,11 +4,13 @@ import com.squareup.moshi.JsonWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
-import java.util.stream.Collectors;
 import okio.BufferedSink;
-import org.strykeforce.thirdcoast.telemetry.grapher.Item.Type;
+import org.strykeforce.thirdcoast.telemetry.grapher.item.Item;
 
 /**
  * An abstract base class intended to be subclassed by concrete implmentations of {@link
@@ -42,7 +44,7 @@ public abstract class AbstractInventory implements Inventory {
     for (int i = 0; i < items.size(); i++) {
       writer.beginObject();
       writer.name("id").value(i);
-      writer.name("type").value(items.get(i).type().name());
+      writer.name("type").value(items.get(i).type());
       writer.name("description").value(items.get(i).description());
       writer.endObject();
     }
@@ -50,20 +52,21 @@ public abstract class AbstractInventory implements Inventory {
   }
 
   void writeMeasures(JsonWriter writer) throws IOException {
-    Set<Type> types = items.stream().map(Item::type).collect(Collectors.toSet());
+    Map<String, Set<Measure>> measures = new HashMap<>();
+    items.forEach(it -> measures.putIfAbsent(it.type(), it.measures()));
     writer.beginArray();
-    for (Type type : types) {
-      writeDeviceMeasures(writer, type);
+    for (Entry<String, Set<Measure>> entry: measures.entrySet()) {
+      writeDeviceMeasures(writer, entry.getKey(), entry.getValue());
     }
     writer.endArray();
   }
 
-  void writeDeviceMeasures(JsonWriter writer, Item.Type type) throws IOException {
+  void writeDeviceMeasures(JsonWriter writer, String type, Set<Measure> measures) throws IOException {
     writer.beginObject();
-    writer.name("deviceType").value(type.name());
+    writer.name("deviceType").value(type);
     writer.name("deviceMeasures");
     writer.beginArray();
-    for (Measure m : type.measures()) {
+    for (Measure m : measures) {
       writeMeasure(writer, m);
     }
     writer.endArray();

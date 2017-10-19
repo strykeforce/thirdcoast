@@ -1,11 +1,5 @@
 package org.strykeforce.thirdcoast.telemetry.grapher;
 
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import org.strykeforce.thirdcoast.telemetry.grapher.Item.Type;
-
 /**
  * Available measurement types.
  */
@@ -27,26 +21,26 @@ public enum Measure {
   POSITION("Position"),
   VALUE("Value");
 
-  private final static Map<Item.Type, Set<Measure>> byType = new HashMap<>();
-
-  static {
-    byType.put(Type.DIGITAL_INPUT, EnumSet.of(VALUE));
-    byType.put(Type.SERVO, EnumSet.of(POSITION, ANGLE));
-
-    byType.put(Type.TALON, EnumSet.allOf(Measure.class));
-    byType.get(Type.TALON).removeAll(byType.get(Type.DIGITAL_INPUT));
-    byType.get(Type.TALON).removeAll(byType.get(Type.SERVO));
-  }
-
+//  private final static Map<Item.Type, Set<Measure>> byType = new HashMap<>();
+//
+//  static {
+//    byType.put(Type.DIGITAL_INPUT, EnumSet.of(VALUE));
+//    byType.put(Type.SERVO, EnumSet.of(POSITION, ANGLE));
+//
+//    byType.put(Type.TALON, EnumSet.allOf(Measure.class));
+//    byType.get(Type.TALON).removeAll(byType.get(Type.DIGITAL_INPUT));
+//    byType.get(Type.TALON).removeAll(byType.get(Type.SERVO));
+//  }
+//
   private final String description;
 
   Measure(String description) {
     this.description = description;
   }
 
-  public static Set<Measure> measuresByType(String type) {
-    return byType.getOrDefault(Type.valueOf(type), EnumSet.noneOf(Measure.class));
-  }
+//  public static Set<Measure> measuresByType(String type) {
+//    return byType.getOrDefault(Type.valueOf(type), EnumSet.noneOf(Measure.class));
+//  }
 
   public String getDescription() {
     return description;

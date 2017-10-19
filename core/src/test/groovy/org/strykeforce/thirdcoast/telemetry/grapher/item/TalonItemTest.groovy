@@ -1,6 +1,7 @@
-package org.strykeforce.thirdcoast.telemetry.grapher
+package org.strykeforce.thirdcoast.telemetry.grapher.item
 
 import com.ctre.CANTalon
+import org.strykeforce.thirdcoast.telemetry.grapher.Measure
 import spock.lang.Specification
 
 class TalonItemTest extends Specification {

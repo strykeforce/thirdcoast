@@ -22,12 +22,15 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.function.DoubleSupplier;
 import org.strykeforce.thirdcoast.telemetry.grapher.AbstractInventory;
-import org.strykeforce.thirdcoast.telemetry.grapher.Item;
-import org.strykeforce.thirdcoast.telemetry.grapher.Item.Type;
 import org.strykeforce.thirdcoast.telemetry.grapher.Measure;
+import org.strykeforce.thirdcoast.telemetry.grapher.item.DigitalInputItem;
+import org.strykeforce.thirdcoast.telemetry.grapher.item.Item;
+import org.strykeforce.thirdcoast.telemetry.grapher.item.ServoItem;
+import org.strykeforce.thirdcoast.telemetry.grapher.item.TalonItem;
 import org.strykeforce.thirdcoast.telemetry.util.SignalGenerator;
 import org.strykeforce.thirdcoast.telemetry.util.SignalGenerator.SignalType;
 
@@ -42,10 +45,10 @@ public class SimulatedInventory extends AbstractInventory {
     List<Item> fakes = new ArrayList<>();
     final int[] ints = new Random().ints(0, 64).distinct().limit(8).toArray();
     for (int i : ints) {
-      fakes.add(new SimulatedItem(i, Type.TALON));
+      fakes.add(new SimulatedItem(i, TalonItem.TYPE));
     }
-    fakes.add(new SimulatedItem(0, Type.SERVO));
-    fakes.add(new SimulatedItem(0, Type.DIGITAL_INPUT));
+    fakes.add(new SimulatedItem(0, ServoItem.TYPE));
+    fakes.add(new SimulatedItem(0, DigitalInputItem.TYPE));
     for (int i = 0; i < fakes.size(); i++) {
       System.out.printf("%2d: %s%n", i, fakes.get(i).description());
     }
@@ -79,10 +82,10 @@ public class SimulatedInventory extends AbstractInventory {
   public static class SimulatedItem implements Item {
 
     private final int id;
-    private final Item.Type type;
+    private final String type;
     private final Map<Measure, SignalGenerator> sigs = new TreeMap<>();
 
-    public SimulatedItem(int id, Item.Type type) {
+    public SimulatedItem(int id, String type) {
       this.id = id;
       this.type = type;
 
@@ -131,7 +134,7 @@ public class SimulatedInventory extends AbstractInventory {
     }
 
     @Override
-    public Item.Type type() {
+    public String type() {
       return type;
     }
 
@@ -139,19 +142,33 @@ public class SimulatedInventory extends AbstractInventory {
     public String description() {
       String desc;
       switch (type) {
-        case DIGITAL_INPUT:
+        case "digitalInput":
           desc = "Digital Input " + id;
           break;
-        case SERVO:
+        case "servo":
           desc = "Servo " + id;
           break;
-        case TALON:
+        case "talon":
           desc = "Talon " + id;
           break;
         default:
           desc = "Unknown " + id;
       }
       return String.format("Fake %s at %d Hz", desc, id % 5 + 1);
+    }
+
+    @Override
+    public Set<Measure> measures() {
+      switch (type) {
+        case DigitalInputItem.TYPE:
+          return DigitalInputItem.MEASURES;
+        case ServoItem.TYPE:
+          return ServoItem.MEASURES;
+        case TalonItem.TYPE:
+          return TalonItem.MEASURES;
+        default:
+          throw new IllegalStateException("cant get here");
+      }
     }
 
     @Override

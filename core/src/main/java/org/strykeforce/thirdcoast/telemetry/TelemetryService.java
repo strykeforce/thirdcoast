@@ -6,8 +6,8 @@ import java.util.Collection;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import org.strykeforce.thirdcoast.telemetry.grapher.GrapherController;
-import org.strykeforce.thirdcoast.telemetry.grapher.Item;
-import org.strykeforce.thirdcoast.telemetry.grapher.TalonItem;
+import org.strykeforce.thirdcoast.telemetry.grapher.item.Item;
+import org.strykeforce.thirdcoast.telemetry.grapher.item.TalonItem;
 
 /**
  * The Telemetry service.

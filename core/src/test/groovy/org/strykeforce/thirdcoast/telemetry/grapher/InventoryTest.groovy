@@ -3,6 +3,8 @@ package org.strykeforce.thirdcoast.telemetry.grapher
 import com.ctre.CANTalon
 import groovy.json.JsonSlurper
 import okio.Buffer
+import org.strykeforce.thirdcoast.telemetry.grapher.item.Item
+import org.strykeforce.thirdcoast.telemetry.grapher.item.TalonItem
 import spock.lang.Specification
 
 import static org.strykeforce.thirdcoast.telemetry.grapher.Measure.ABSOLUTE_ENCODER_POSITION
@@ -53,8 +55,8 @@ class InventoryTest extends Specification {
             items[0].description == "talon10"
             measures.size == 1
             with(measures[0]) {
-                Item.Type.valueOf(deviceType) == Item.Type.TALON
-                deviceMeasures.size == Item.Type.TALON.measures().size()
+                deviceType == "talon"
+                deviceMeasures.size == TalonItem.MEASURES.size()
                 Measure.valueOf(deviceMeasures[0].id) == SETPOINT
                 deviceMeasures[0].description == SETPOINT.description
                 Measure.valueOf(deviceMeasures[5].id) == ABSOLUTE_ENCODER_POSITION

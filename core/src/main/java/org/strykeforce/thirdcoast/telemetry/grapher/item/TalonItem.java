@@ -1,12 +1,33 @@
-package org.strykeforce.thirdcoast.telemetry.grapher;
+package org.strykeforce.thirdcoast.telemetry.grapher.item;
 
 import com.ctre.CANTalon;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.Set;
 import java.util.function.DoubleSupplier;
+import org.strykeforce.thirdcoast.telemetry.grapher.Measure;
 
 /**
  * TalonSRX specialization for {@link Item}.
  */
 public class TalonItem implements Item {
+
+  public final static String TYPE = "talon";
+  public final static Set<Measure> MEASURES = Collections.unmodifiableSet(EnumSet.of(
+      Measure.SETPOINT,
+      Measure.OUTPUT_CURRENT,
+      Measure.OUTPUT_VOLTAGE,
+      Measure.ENCODER_POSITION,
+      Measure.ENCODER_VELOCITY,
+      Measure.ABSOLUTE_ENCODER_POSITION,
+      Measure.CONTROL_LOOP_ERROR,
+      Measure.INTEGRATOR_ACCUMULATOR,
+      Measure.BUS_VOLTAGE,
+      Measure.FORWARD_HARD_LIMIT_CLOSED,
+      Measure.REVERSE_HARD_LIMIT_CLOSED,
+      Measure.FORWARD_SOFT_LIMIT_OK,
+      Measure.REVERSE_SOFT_LIMIT_OK
+  ));
 
   private final CANTalon talon;
 
@@ -20,8 +41,13 @@ public class TalonItem implements Item {
   }
 
   @Override
-  public Type type() {
-    return Type.TALON;
+  public String type() {
+    return TYPE;
+  }
+
+  @Override
+  public Set<Measure> measures() {
+    return MEASURES;
   }
 
   @Override
@@ -31,6 +57,10 @@ public class TalonItem implements Item {
 
   @Override
   public DoubleSupplier measurementFor(final Measure measure) {
+    if (!MEASURES.contains(measure)) {
+      throw new IllegalArgumentException("invalid measure: " + measure.name());
+    }
+
     switch (measure) {
       case SETPOINT:
         return () -> talon.getSetpoint();
@@ -61,6 +91,7 @@ public class TalonItem implements Item {
         return () -> talon.getReverseSoftLimit();
     }
     return () -> Double.NaN;
+
   }
 
   @Override

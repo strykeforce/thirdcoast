@@ -1,12 +1,13 @@
-package org.strykeforce.thirdcoast.telemetry.grapher
+package org.strykeforce.thirdcoast.telemetry.grapher.item
 
+import org.strykeforce.thirdcoast.telemetry.grapher.Measure
 import spock.lang.Specification
 
 class ItemTest extends Specification {
 
     def "measures set by type"() {
         when:
-        def measures = Item.Type.valueOf("TALON").measures()
+        def measures = TalonItem.MEASURES
 
         then:
         measures.size() == 13
@@ -14,7 +15,7 @@ class ItemTest extends Specification {
         !measures.contains(Measure.POSITION)
 
         when:
-        measures = Item.Type.valueOf("SERVO").measures()
+        measures = ServoItem.MEASURES
 
         then:
         measures.size() == 2
@@ -22,8 +23,7 @@ class ItemTest extends Specification {
         measures.contains(Measure.POSITION)
 
         when:
-        measures = Item.Type.valueOf("DIGITAL_INPUT").measures()
-
+        measures = DigitalInputItem.MEASURES
         then:
         measures.size() == 1
         measures.contains(Measure.VALUE)

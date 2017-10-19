@@ -32,12 +32,12 @@ public class Main extends SampleRobot {
     try {
       while (true) {
         long elapsed = System.currentTimeMillis() - start;
-        if (elapsed < 4000) {
-          talon.set(0);
-        } else if (elapsed < 8000) {
-          talon.set(12);
-        } else if (elapsed < 12000) {
-          talon.set(6);
+        if (elapsed < 20_000) {
+          talon.set(8);
+//        } else if (elapsed < 8000) {
+//          talon.set(12);
+//        } else if (elapsed < 12000) {
+//          talon.set(6);
         } else {
           talon.set(0);
         }

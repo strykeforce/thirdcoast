@@ -2,6 +2,7 @@ package org.strykeforce.thirdcoast.telemetry.grapher;
 
 import java.io.IOException;
 import okio.BufferedSink;
+import org.strykeforce.thirdcoast.telemetry.grapher.item.Item;
 
 /**
  * Represents the inventory of robot hardware and subsystems that can have telemetry streaming.
