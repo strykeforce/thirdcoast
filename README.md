@@ -2,7 +2,7 @@ Stryke Force team 2767's Third Coast swerve drive, talon configuration and telem
 
 [![Build Status](https://travis-ci.org/strykeforce/thirdcoast.svg?branch=master)](https://travis-ci.org/strykeforce/thirdcoast)
 
-Information on these topics are available on the [Third Coast web site][site].
+Information on these topics are available on the [Third Coast web page][site].
 
 - Third Coast [Javadocs][javadoc].
 
