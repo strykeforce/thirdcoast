@@ -8,12 +8,12 @@ Information on these topics are available on the [Third Coast web site][site].
 
 - Third Coast [Swerve Drive][swerve].
 
-- Talon Configuration API [Specification][talon].
+- [Talon Configuration API][talon].
 
-- Telemetry API [Specification][telemetry].
+- [Telemetry API][telemetry] data streaming service for robot sensors, actuators or subsystems.
 
-[site]: https://strykeforce.github.io/thirdcoast
+[site]: https://strykeforce.github.io/tags/thirdcoast/
 [javadoc]: https://strykeforce.github.io/thirdcoast/javadoc/
-[swerve]: https://strykeforce.github.io/thirdcoast/swerve
-[talon]: https://strykeforce.github.io/thirdcoast/talon
-[telemetry]: https://strykeforce.github.io/thirdcoast/telemetry
+[swerve]: https://strykeforce.github.io/tags/swerve/
+[talon]: https://strykeforce.github.io/tags/talon/
+[telemetry]: https://strykeforce.github.io/tags/telemetry/
