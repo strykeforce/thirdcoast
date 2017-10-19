@@ -1,4 +1,4 @@
-package org.strykeforce.thirdcoast.telemetry.app.command;
+package org.strykeforce.thirdcoast.telemetry.tct.command;
 
 import org.jline.terminal.Terminal;
 import org.jline.utils.AttributedString;

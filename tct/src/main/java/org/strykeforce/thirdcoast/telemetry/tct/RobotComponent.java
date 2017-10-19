@@ -1,14 +1,12 @@
-package org.strykeforce.thirdcoast.telemetry.app;
+package org.strykeforce.thirdcoast.telemetry.tct;
 
 import com.ctre.CANTalon;
 import dagger.BindsInstance;
 import dagger.Component;
 import java.util.Collection;
 import javax.inject.Singleton;
-import org.strykeforce.thirdcoast.telemetry.TelemetryComponent;
-import org.strykeforce.thirdcoast.telemetry.TelemetryComponent.Builder;
-import org.strykeforce.thirdcoast.telemetry.app.command.Command;
-import org.strykeforce.thirdcoast.telemetry.app.command.CommandModule;
+import org.strykeforce.thirdcoast.telemetry.tct.command.Command;
+import org.strykeforce.thirdcoast.telemetry.tct.command.CommandModule;
 import org.strykeforce.thirdcoast.telemetry.grapher.GrapherController;
 import org.strykeforce.thirdcoast.telemetry.grapher.Inventory;
 import org.strykeforce.thirdcoast.telemetry.grapher.InventoryModule;

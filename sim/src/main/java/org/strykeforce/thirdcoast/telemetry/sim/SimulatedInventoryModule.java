@@ -1,4 +1,4 @@
-package org.strykeforce.thirdcoast.telemetry.app.sim;
+package org.strykeforce.thirdcoast.telemetry.sim;
 
 import dagger.Module;
 import dagger.Provides;

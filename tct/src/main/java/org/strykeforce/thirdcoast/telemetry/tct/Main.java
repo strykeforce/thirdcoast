@@ -1,4 +1,4 @@
-package org.strykeforce.thirdcoast.telemetry.app;
+package org.strykeforce.thirdcoast.telemetry.tct;
 
 import com.ctre.CANTalon;
 import com.ctre.CANTalon.StatusFrameRate;
@@ -10,30 +10,7 @@ import org.strykeforce.thirdcoast.telemetry.grapher.GrapherController;
 
 public class Main extends SampleRobot {
 
-  private final static boolean simulated = false;
   CANTalon talon = new CANTalon(6);
-  GrapherController grapherController;
-  Timer timer = new Timer();
-
-  public Main() {
-  }
-
-  public static void main(String[] args) {
-//    RobotComponent component = DaggerSimulationComponent.create();
-//    GrapherController grapherController = component.grapherController();
-//    grapherController.start();
-//    Command command = component.mainCommand();
-//    waitForEnter();
-    System.exit(0);
-  }
-
-  private static void waitForEnter() {
-    try {
-      System.out.println("\nPress <enter> key to stop.");
-      System.in.read();
-    } catch (Throwable ignored) {
-    }
-  }
 
   @Override
   protected void robotInit() {

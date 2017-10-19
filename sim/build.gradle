@@ -1,0 +1,19 @@
+plugins {
+    id "application"
+    id 'com.github.johnrengelman.shadow' version '2.0.1'
+    id "net.ltgt.errorprone" version "0.0.13"
+}
+apply plugin: 'net.ltgt.apt-idea'
+
+mainClassName = 'org.strykeforce.thirdcoast.telemetry.sim.Main'
+
+dependencies {
+    compile project(':core')
+    apt 'com.google.dagger:dagger-compiler:2.12'
+}
+
+shadowJar {
+    baseName = 'sim'
+    classifier = null
+    version = 'v17.0.12'
+}

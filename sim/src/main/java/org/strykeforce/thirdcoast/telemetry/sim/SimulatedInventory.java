@@ -1,4 +1,4 @@
-package org.strykeforce.thirdcoast.telemetry.app.sim;
+package org.strykeforce.thirdcoast.telemetry.sim;
 
 import static org.strykeforce.thirdcoast.telemetry.grapher.Measure.ABSOLUTE_ENCODER_POSITION;
 import static org.strykeforce.thirdcoast.telemetry.grapher.Measure.ANGLE;

@@ -17,7 +17,7 @@ deploy:
     skip_cleanup:  true
     api_key:
       secure:      VawxVLIOq2XSIRsgsZUPEw5y1f6iWXqY6ujvhydIDO150KXEBjytHIv3BOkpDmtkM4PAjfe3LzXdL2gJ7xLjuvDiuE1+aD/eM5PtHD4omPtzBVxWBot/jwvsxP2zTmZsGvBGvkffvA2GalOdSFnfa5S18W5L5DgyGe1nJFCwLhMwNXTnSIBr01W8LemcN7PAu/rtpSB1iYPI75Weiyaq1SsjRYJ6La2/tIMhQUnEWEgWcJh1mg0DikcDE8A5pXDDmhHrIvEFa8Q3SJQmIC0ZiVdiWTlnV4LjPt8knfegPZXyrO6VvitIZxwHP+U5P6N7JsFIhVpU6N2isF40dgoXm9d/Nyi3HdsYTcqmbK1JpzcArx5XqjXolwpPPnZ5/KV5DLcZyOZqar2NOGVjs5h55WHnxdgHZqYP30nP9nc1SY8Bw/4Tm6aebOLFXR1PAnilxYfhbk666IQwGsAsPUxDK2ZpB3fBZfr0j2Mwi3ZwkBK0Cqike6E2PQKDkdSiGAkCHUKORepKy+iJC7/8B/ToakI2ena8pi763BBDegyHxllH4EZ+gep0Q/MNKmBvrEIvv8oRgcovV6RZ6JFy4NaosHFVWGoi242Sn9Z0CDg+LTq2uGc1YIuVMzsPi8jCPmTCR7Di4OtGyeaujFqrv0HhYGH9mekoaSU3avfot3Zo/Ws=
-    file:          app/build/libs/tct-$TRAVIS_TAG.jar
+    file:          sim/build/libs/sim-$TRAVIS_TAG.jar
     on:
       tags:        true
 

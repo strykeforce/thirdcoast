@@ -1,4 +1,4 @@
-package org.strykeforce.thirdcoast.telemetry.app.command;
+package org.strykeforce.thirdcoast.telemetry.tct.command;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
