@@ -19,6 +19,9 @@ public interface Item {
 
   DoubleSupplier measurementFor(Measure measure);
 
+  /**
+   * Represents the type of sensors, actuators or subsystems we can send telemetry for.
+   */
   enum Type {
     DIGITAL_INPUT, SERVO, TALON;
 

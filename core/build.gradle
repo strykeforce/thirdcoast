@@ -26,7 +26,7 @@ dependencies {
 }
 
 javadoc {
-    title = "Third Coast Swerve Drive API"
+    title = "Third Coast FRC Library"
     options.overview = "src/main/java/overview.html"
     options.links = [
             "https://docs.oracle.com/javase/8/docs/api/",

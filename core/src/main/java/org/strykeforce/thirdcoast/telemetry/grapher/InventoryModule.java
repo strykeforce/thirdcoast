@@ -4,21 +4,14 @@ import com.ctre.CANTalon;
 import dagger.Module;
 import dagger.Provides;
 import java.util.Collection;
-import javax.inject.Named;
 import javax.inject.Singleton;
-import org.strykeforce.thirdcoast.telemetry.TelemetryComponent;
 
 /**
- * <a href="https://google.github.io/dagger/">Dagger</a> dependency-injection support for {@link
- * Inventory}.
+ * <a href="https://google.github.io/dagger/" target="_top">Dagger</a> dependency-injection support
+ * for {@link Inventory}.
  */
 @Module
 public class InventoryModule {
-
-//  @Provides
-//  static Collection<CANTalon> provideTalons(@Named("talons") Collection<CANTalon> talons) {
-//    return talons;
-//  }
 
   @Provides
   @Singleton

@@ -7,8 +7,8 @@ import java.net.SocketException;
 import javax.inject.Named;
 
 /**
- * <a href="https://google.github.io/dagger/">Dagger</a> dependency-injection support for networking
- * configuration.
+ * <a href="https://google.github.io/dagger/" target="_top">Dagger</a> dependency-injection support
+ * for networking configuration.
  */
 @Module
 public class NetworkModule {
