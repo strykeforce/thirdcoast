@@ -7,7 +7,7 @@ import java.util.Set;
 import java.util.function.DoubleSupplier;
 import org.strykeforce.thirdcoast.telemetry.grapher.Measure;
 
-public class ServoItem implements Item {
+public class ServoItem extends AbstractItem {
 
   public final static String TYPE = "servo";
   public final static Set<Measure> MEASURES = Collections.unmodifiableSet(EnumSet.of(
@@ -16,11 +16,10 @@ public class ServoItem implements Item {
   ));
 
   private final Servo servo;
-  private final String description;
 
   public ServoItem(Servo servo, String description) {
+    super(TYPE, description, MEASURES);
     this.servo = servo;
-    this.description = description;
   }
 
   public ServoItem(Servo servo) {
@@ -30,21 +29,6 @@ public class ServoItem implements Item {
   @Override
   public int id() {
     return servo.getChannel();
-  }
-
-  @Override
-  public String type() {
-    return TYPE;
-  }
-
-  @Override
-  public String description() {
-    return description;
-  }
-
-  @Override
-  public Set<Measure> measures() {
-    return MEASURES;
   }
 
   @Override
@@ -60,5 +44,12 @@ public class ServoItem implements Item {
         default:
           throw new IllegalStateException("should not get here");
     }
+  }
+
+  @Override
+  public String toString() {
+    return "ServoItem{" +
+        "servo=" + servo +
+        "} " + super.toString();
   }
 }

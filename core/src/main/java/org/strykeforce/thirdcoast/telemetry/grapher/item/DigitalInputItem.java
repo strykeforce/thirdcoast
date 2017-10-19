@@ -7,7 +7,7 @@ import java.util.Set;
 import java.util.function.DoubleSupplier;
 import org.strykeforce.thirdcoast.telemetry.grapher.Measure;
 
-public class DigitalInputItem implements Item {
+public class DigitalInputItem extends AbstractItem {
 
   public final static String TYPE = "digitalInput";
   public final static Set<Measure> MEASURES = Collections.unmodifiableSet(EnumSet.of(
@@ -15,11 +15,10 @@ public class DigitalInputItem implements Item {
   ));
 
   private final DigitalInput digitalInput;
-  private final String description;
 
   public DigitalInputItem(DigitalInput digitalInput, String description) {
+    super(TYPE, description, MEASURES);
     this.digitalInput = digitalInput;
-    this.description = description;
   }
 
   public DigitalInputItem(DigitalInput digitalInput) {
@@ -32,25 +31,17 @@ public class DigitalInputItem implements Item {
   }
 
   @Override
-  public String type() {
-    return TYPE;
-  }
-
-  @Override
-  public String description() {
-    return description;
-  }
-
-  @Override
-  public Set<Measure> measures() {
-    return MEASURES;
-  }
-
-  @Override
   public DoubleSupplier measurementFor(Measure measure) {
     if (!MEASURES.contains(measure)) {
       throw new IllegalArgumentException("invalid measure: " + measure.name());
     }
     return () -> digitalInput.get() ? 1.0 : 0.0;
+  }
+
+  @Override
+  public String toString() {
+    return "DigitalInputItem{" +
+        "digitalInput=" + digitalInput +
+        "} " + super.toString();
   }
 }

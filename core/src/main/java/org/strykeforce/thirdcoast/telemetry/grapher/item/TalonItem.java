@@ -10,7 +10,7 @@ import org.strykeforce.thirdcoast.telemetry.grapher.Measure;
 /**
  * TalonSRX specialization for {@link Item}.
  */
-public class TalonItem implements Item {
+public class TalonItem extends AbstractItem {
 
   public final static String TYPE = "talon";
   public final static Set<Measure> MEASURES = Collections.unmodifiableSet(EnumSet.of(
@@ -32,27 +32,13 @@ public class TalonItem implements Item {
   private final CANTalon talon;
 
   public TalonItem(final CANTalon talon) {
+    super(TYPE, talon.getDescription(), MEASURES);
     this.talon = talon;
   }
 
   @Override
   public int id() {
     return talon.getDeviceID();
-  }
-
-  @Override
-  public String type() {
-    return TYPE;
-  }
-
-  @Override
-  public Set<Measure> measures() {
-    return MEASURES;
-  }
-
-  @Override
-  public String description() {
-    return talon.getDescription();
   }
 
   @Override
@@ -98,6 +84,6 @@ public class TalonItem implements Item {
   public String toString() {
     return "TalonItem{" +
         "talon=" + talon +
-        '}';
+        "} " + super.toString();
   }
 }
