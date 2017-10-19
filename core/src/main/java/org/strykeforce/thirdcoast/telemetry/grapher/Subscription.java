@@ -45,7 +45,6 @@ public class Subscription {
     long ts = System.currentTimeMillis();
     JsonWriter writer = JsonWriter.of(sink);
     writer.beginObject();
-    writer.name("type").value("talon");
     writer.name("timestamp").value(ts);
     writer.name("data");
     writer.beginArray();
