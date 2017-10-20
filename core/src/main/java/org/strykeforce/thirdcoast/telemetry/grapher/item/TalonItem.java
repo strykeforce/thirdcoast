@@ -42,6 +42,10 @@ public class TalonItem extends AbstractItem {
     this.talon = talon;
   }
 
+  public CANTalon getTalon() {
+    return talon;
+  }
+
   @Override
   public int id() {
     return talon.getDeviceID();

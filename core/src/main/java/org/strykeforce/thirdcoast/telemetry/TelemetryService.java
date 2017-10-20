@@ -1,11 +1,12 @@
 package org.strykeforce.thirdcoast.telemetry;
 
 import com.ctre.CANTalon;
-import com.ctre.CANTalon.StatusFrameRate;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Optional;
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import org.strykeforce.thirdcoast.talon.StatusFrameRate;
 import org.strykeforce.thirdcoast.telemetry.grapher.item.Item;
 import org.strykeforce.thirdcoast.telemetry.grapher.item.TalonItem;
 
@@ -20,6 +21,9 @@ public class TelemetryService {
   TelemetryController telemetryController;
   Collection<Item> items = new ArrayList<>(16);
 
+  /**
+   * Default constructor.
+   */
   @Inject
   public TelemetryService() {
   }
@@ -42,27 +46,14 @@ public class TelemetryService {
   }
 
   /**
-   * Register a Talon for telemetry sending and set CAN bus frame rates to default values.
-   *
-   * <ul>
-   *   <li>General <b>10ms</b>: error, output duty cycle, limit switches, faults, mode</li>
-   *   <li>Feedback <b>20ms</b>: selected encoder pos/vel, current, sticky faults, brake neutral state,
-   *   motion control profile select</li>
-   *   <li>Quad Encoder <b>100ms</b>: pos/vel, Index rising edge count, A/B/Index pin state</li>
-   *   <li>Pulse Width <b>100ms</b>: assume abs encoder pos</li>
-   *   <li>Analog In/Temp/Bus Voltage <b>100ms</b>: analog pos/vel, temp, bus voltage</li>
-   * </ul>
+   * Register a Talon for telemetry sending and set its CAN bus frame rates to default values.
    *
    * @param talon the CANTalon to register for data collection
+   * @see org.strykeforce.thirdcoast.talon.StatusFrameRate
    */
   public void register(CANTalon talon) {
     register(new TalonItem(talon));
-    talon.setStatusFrameRateMs(StatusFrameRate.General, 10);
-    talon.setStatusFrameRateMs(StatusFrameRate.Feedback, 20);
-    talon.setStatusFrameRateMs(StatusFrameRate.QuadEncoder, 100);
-    talon.setStatusFrameRateMs(StatusFrameRate.PulseWidth, 100);
-    talon.setStatusFrameRateMs(StatusFrameRate.AnalogTempVbat, 100);
-
+    StatusFrameRate.DEFAULT.configure(talon);
   }
 
   /**
@@ -81,6 +72,27 @@ public class TelemetryService {
    */
   public void registerAll(Collection<Item> collection) {
     items.addAll(collection);
+  }
+
+  /**
+   * Configure the Talon with the given ID with the given status frame rates.
+   *
+   * @param talonId the Talon to configure
+   * @param rates the status frame rates
+   */
+  public void configureStatusFrameRates(int talonId, StatusFrameRate rates) {
+    assert rates != null;
+
+    Optional<Item> item = items.stream().filter(it -> {
+      return it instanceof TalonItem && it.id() == talonId;
+    }).findFirst();
+
+    if (!item.isPresent()) {
+      throw new IllegalArgumentException("Talon with id " + talonId + " not found");
+    }
+
+    TalonItem talonItem = (TalonItem)item.get();
+    rates.configure(talonItem.getTalon());
   }
 
 }
