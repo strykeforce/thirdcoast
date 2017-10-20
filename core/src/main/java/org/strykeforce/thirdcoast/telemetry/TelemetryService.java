@@ -7,8 +7,8 @@ import java.util.Optional;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import org.strykeforce.thirdcoast.talon.StatusFrameRate;
-import org.strykeforce.thirdcoast.telemetry.grapher.item.Item;
-import org.strykeforce.thirdcoast.telemetry.grapher.item.TalonItem;
+import org.strykeforce.thirdcoast.telemetry.item.Item;
+import org.strykeforce.thirdcoast.telemetry.item.TalonItem;
 
 /**
  * The Telemetry service registers {@link Item} instances for data collection and controls the

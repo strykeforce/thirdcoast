@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import okio.BufferedSink;
-import org.strykeforce.thirdcoast.telemetry.grapher.item.Item;
+import org.strykeforce.thirdcoast.telemetry.item.Item;
 
 /**
  * An abstract base class intended to be subclassed by concrete implmentations of {@link

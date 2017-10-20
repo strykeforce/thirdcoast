@@ -1,9 +1,8 @@
-package org.strykeforce.thirdcoast.telemetry.grapher.item;
+package org.strykeforce.thirdcoast.telemetry.item;
 
 import com.squareup.moshi.JsonWriter;
 import java.io.IOException;
 import java.util.Set;
-import okio.BufferedSink;
 import org.strykeforce.thirdcoast.telemetry.grapher.Measure;
 
 public abstract class AbstractItem implements Item {

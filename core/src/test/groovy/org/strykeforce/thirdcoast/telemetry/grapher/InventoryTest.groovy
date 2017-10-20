@@ -3,8 +3,8 @@ package org.strykeforce.thirdcoast.telemetry.grapher
 import com.ctre.CANTalon
 import groovy.json.JsonSlurper
 import okio.Buffer
-import org.strykeforce.thirdcoast.telemetry.grapher.item.Item
-import org.strykeforce.thirdcoast.telemetry.grapher.item.TalonItem
+import org.strykeforce.thirdcoast.telemetry.item.Item
+import org.strykeforce.thirdcoast.telemetry.item.TalonItem
 import spock.lang.Specification
 
 import static org.strykeforce.thirdcoast.telemetry.grapher.Measure.ABSOLUTE_ENCODER_POSITION

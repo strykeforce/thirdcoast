@@ -1,4 +1,4 @@
-package org.strykeforce.thirdcoast.telemetry.grapher.item;
+package org.strykeforce.thirdcoast.telemetry.item;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import java.util.Collections;
