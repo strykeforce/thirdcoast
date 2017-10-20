@@ -1,4 +1,4 @@
-package org.strykeforce.thirdcoast.telemetry.grapher.item;
+package org.strykeforce.thirdcoast.telemetry.item;
 
 import com.squareup.moshi.JsonWriter;
 import java.io.IOException;

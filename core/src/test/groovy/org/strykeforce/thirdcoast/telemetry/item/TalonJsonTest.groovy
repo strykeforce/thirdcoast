@@ -1,4 +1,4 @@
-package org.strykeforce.thirdcoast.telemetry.grapher.item
+package org.strykeforce.thirdcoast.telemetry.item
 
 import com.ctre.CANTalon
 import com.squareup.moshi.JsonWriter

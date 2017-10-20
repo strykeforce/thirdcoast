@@ -29,10 +29,10 @@ import java.util.TreeMap;
 import java.util.function.DoubleSupplier;
 import org.strykeforce.thirdcoast.telemetry.grapher.AbstractInventory;
 import org.strykeforce.thirdcoast.telemetry.grapher.Measure;
-import org.strykeforce.thirdcoast.telemetry.grapher.item.DigitalInputItem;
-import org.strykeforce.thirdcoast.telemetry.grapher.item.Item;
-import org.strykeforce.thirdcoast.telemetry.grapher.item.ServoItem;
-import org.strykeforce.thirdcoast.telemetry.grapher.item.TalonItem;
+import org.strykeforce.thirdcoast.telemetry.item.DigitalInputItem;
+import org.strykeforce.thirdcoast.telemetry.item.Item;
+import org.strykeforce.thirdcoast.telemetry.item.ServoItem;
+import org.strykeforce.thirdcoast.telemetry.item.TalonItem;
 import org.strykeforce.thirdcoast.telemetry.util.SignalGenerator;
 import org.strykeforce.thirdcoast.telemetry.util.SignalGenerator.SignalType;
 

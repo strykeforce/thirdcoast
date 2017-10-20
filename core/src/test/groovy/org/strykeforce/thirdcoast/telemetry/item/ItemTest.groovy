@@ -1,4 +1,4 @@
-package org.strykeforce.thirdcoast.telemetry.grapher.item
+package org.strykeforce.thirdcoast.telemetry.item
 
 import org.strykeforce.thirdcoast.telemetry.grapher.Measure
 import spock.lang.Specification

@@ -2,7 +2,7 @@ package org.strykeforce.thirdcoast.telemetry.grapher
 
 import groovy.json.JsonSlurper
 import okio.Buffer
-import org.strykeforce.thirdcoast.telemetry.grapher.item.Item
+import org.strykeforce.thirdcoast.telemetry.item.Item
 import spock.lang.Specification
 
 import java.util.function.DoubleSupplier

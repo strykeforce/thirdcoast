@@ -6,7 +6,7 @@ import java.util.Collection;
 import javax.inject.Singleton;
 import org.strykeforce.thirdcoast.telemetry.grapher.Inventory;
 import org.strykeforce.thirdcoast.telemetry.grapher.InventoryModule;
-import org.strykeforce.thirdcoast.telemetry.grapher.item.Item;
+import org.strykeforce.thirdcoast.telemetry.item.Item;
 import org.strykeforce.thirdcoast.telemetry.grapher.NetworkModule;
 
 @Singleton
