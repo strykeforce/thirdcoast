@@ -4,6 +4,7 @@ import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.SPI.Port;
 import org.strykeforce.thirdcoast.talon.TalonParameters;
+import org.strykeforce.thirdcoast.telemetry.TelemetryService;
 
 /**
  * Control a Third Coast swerve drive.
@@ -165,6 +166,25 @@ public class SwerveDrive {
     }
   }
 
+  /**
+   * Register the swerve wheel azimuth and drive {@link com.ctre.CANTalon} with the Telemetry
+   * service for data collection. The Telemetry service will set the Talon status frame update rates
+   * to default values during registration.
+   *
+   * @param telemetryService the active Telemetry service instance created by the robot
+   */
+  public void configure(TelemetryService telemetryService) {
+    for (Wheel wheel : wheels) {
+      telemetryService.register(wheel.getAzimuthTalon());
+      telemetryService.register(wheel.getDriveTalon());
+    }
+  }
+
+  /**
+   * Returns the four wheels of the swerve drive.
+   *
+   * @return the Wheel array.
+   */
   public Wheel[] getWheels() {
     return wheels;
   }

@@ -48,29 +48,7 @@ public class Robot extends IterativeRobot {
 
   @Override
   public void robotInit() {
-    Wheel[] wheels = swerve.getWheels();
-    for (Wheel wheel: wheels) {
-      CANTalon azimuth = wheel.getAzimuthTalon();
-      CANTalon drive = wheel.getDriveTalon();
-
-      telemetryService.register(azimuth);
-      telemetryService.register(drive);
-
-      if (drive.getDeviceID() != 11) continue;
-
-      int period = 5;
-//      azimuth.setStatusFrameRateMs(StatusFrameRate.General, period);
-//      azimuth.setStatusFrameRateMs(StatusFrameRate.Feedback, period);
-//      azimuth.setStatusFrameRateMs(StatusFrameRate.QuadEncoder, 100);
-//      azimuth.setStatusFrameRateMs(StatusFrameRate.PulseWidth, 100);
-//      azimuth.setStatusFrameRateMs(StatusFrameRate.AnalogTempVbat, 100);
-
-      drive.setStatusFrameRateMs(StatusFrameRate.General, period);
-      drive.setStatusFrameRateMs(StatusFrameRate.Feedback, period);
-      drive.setStatusFrameRateMs(StatusFrameRate.QuadEncoder, period);
-      drive.setStatusFrameRateMs(StatusFrameRate.PulseWidth, 100);
-      drive.setStatusFrameRateMs(StatusFrameRate.AnalogTempVbat, 100);
-    }
+    swerve.configure(telemetryService);
     telemetryService.start();
     swerve.zeroAzimuthEncoders();
   }
