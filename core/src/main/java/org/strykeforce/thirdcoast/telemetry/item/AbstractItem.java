@@ -5,6 +5,9 @@ import java.io.IOException;
 import java.util.Set;
 import org.strykeforce.thirdcoast.telemetry.grapher.Measure;
 
+/**
+ * Abstract base class for Items.
+ */
 public abstract class AbstractItem implements Item {
 
   public final String type;

@@ -7,6 +7,10 @@ import java.util.Set;
 import java.util.function.DoubleSupplier;
 import org.strykeforce.thirdcoast.telemetry.grapher.Measure;
 
+/**
+ * Represents a {@link DigitalInput} telemetry-enable Item.
+ */
+
 public class DigitalInputItem extends AbstractItem {
 
   public final static String TYPE = "digitalInput";

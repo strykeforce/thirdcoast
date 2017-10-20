@@ -14,7 +14,7 @@ import java.util.function.DoubleSupplier;
 import org.strykeforce.thirdcoast.telemetry.grapher.Measure;
 
 /**
- * TalonSRX specialization for {@link Item}.
+ * Represents a {@link CANTalon} telemetry-enable Item.
  */
 public class TalonItem extends AbstractItem {
 

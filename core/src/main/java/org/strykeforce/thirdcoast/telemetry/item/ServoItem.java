@@ -7,6 +7,9 @@ import java.util.Set;
 import java.util.function.DoubleSupplier;
 import org.strykeforce.thirdcoast.telemetry.grapher.Measure;
 
+/**
+ * Represents a {@link Servo} telemetry-enable Item.
+ */
 public class ServoItem extends AbstractItem {
 
   public final static String TYPE = "servo";
