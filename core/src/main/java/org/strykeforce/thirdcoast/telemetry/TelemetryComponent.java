@@ -4,7 +4,6 @@ import dagger.BindsInstance;
 import dagger.Component;
 import java.util.Collection;
 import javax.inject.Singleton;
-import org.strykeforce.thirdcoast.telemetry.grapher.GrapherController;
 import org.strykeforce.thirdcoast.telemetry.grapher.Inventory;
 import org.strykeforce.thirdcoast.telemetry.grapher.InventoryModule;
 import org.strykeforce.thirdcoast.telemetry.grapher.item.Item;
@@ -19,7 +18,7 @@ interface TelemetryComponent {
 
   Inventory inventory();
 
-  GrapherController grapherController();
+  TelemetryController telemetryController();
 
   Collection<Item> items();
 

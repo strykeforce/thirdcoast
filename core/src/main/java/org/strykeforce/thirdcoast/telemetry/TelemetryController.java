@@ -1,4 +1,4 @@
-package org.strykeforce.thirdcoast.telemetry.grapher;
+package org.strykeforce.thirdcoast.telemetry;
 
 import com.squareup.moshi.JsonWriter;
 import java.io.IOException;
@@ -17,11 +17,14 @@ import org.nanohttpd.protocols.http.NanoHTTPD;
 import org.nanohttpd.protocols.http.request.Method;
 import org.nanohttpd.protocols.http.response.Response;
 import org.nanohttpd.protocols.http.response.Status;
+import org.strykeforce.thirdcoast.telemetry.grapher.ClientHandler;
+import org.strykeforce.thirdcoast.telemetry.grapher.Inventory;
+import org.strykeforce.thirdcoast.telemetry.grapher.Subscription;
 
 /**
  * Provides a development web service to control telemetry.
  */
-public class GrapherController extends NanoHTTPD {
+public class TelemetryController extends NanoHTTPD {
 
   private final static String JSON = "application/json";
 
@@ -30,7 +33,7 @@ public class GrapherController extends NanoHTTPD {
   private final int port;
 
   @Inject
-  public GrapherController(final Inventory inventory, final ClientHandler clientHandler,
+  public TelemetryController(final Inventory inventory, final ClientHandler clientHandler,
       final @Named("server") int port) {
     super(port);
     this.inventory = inventory;

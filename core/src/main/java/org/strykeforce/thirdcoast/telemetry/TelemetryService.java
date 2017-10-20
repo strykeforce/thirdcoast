@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import org.strykeforce.thirdcoast.telemetry.grapher.GrapherController;
 import org.strykeforce.thirdcoast.telemetry.grapher.item.Item;
 import org.strykeforce.thirdcoast.telemetry.grapher.item.TalonItem;
 
@@ -18,7 +17,7 @@ import org.strykeforce.thirdcoast.telemetry.grapher.item.TalonItem;
 @Singleton
 public class TelemetryService {
 
-  GrapherController grapherController;
+  TelemetryController telemetryController;
   Collection<Item> items = new ArrayList<>(16);
 
   @Inject
@@ -30,8 +29,8 @@ public class TelemetryService {
    */
   public void start() {
     TelemetryComponent component = DaggerTelemetryComponent.builder().items(items).build();
-    grapherController = component.grapherController();
-    grapherController.start();
+    telemetryController = component.telemetryController();
+    telemetryController.start();
 
   }
 
@@ -39,7 +38,7 @@ public class TelemetryService {
    * Stop the Telemetry service.
    */
   public void stop() {
-    grapherController.shutdown();
+    telemetryController.shutdown();
   }
 
   /**

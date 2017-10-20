@@ -5,7 +5,7 @@ apply plugin: 'net.ltgt.apt-idea'
 install {
     repositories.mavenInstaller {
         pom.groupId = 'org.strykeforce'
-        pom.artifactId = 'thirdcoast-core'
+        pom.artifactId = 'thirdcoast'
         pom.version = '2017.1.0'
     }
 }

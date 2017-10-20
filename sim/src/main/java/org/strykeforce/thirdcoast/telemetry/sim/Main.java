@@ -1,14 +1,14 @@
 package org.strykeforce.thirdcoast.telemetry.sim;
 
 import java.io.IOException;
-import org.strykeforce.thirdcoast.telemetry.grapher.GrapherController;
+import org.strykeforce.thirdcoast.telemetry.TelemetryController;
 
 public class Main {
 
   public static void main(String[] args) {
     SimulationComponent component = DaggerSimulationComponent.create();
-    GrapherController grapherController = component.grapherController();
-    grapherController.start();
+    TelemetryController telemetryController = component.telemetryController();
+    telemetryController.start();
 
     System.out.println("\nPress enter to exit.\n");
     try {

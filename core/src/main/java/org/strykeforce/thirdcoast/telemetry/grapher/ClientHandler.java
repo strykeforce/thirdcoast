@@ -13,7 +13,10 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import okio.Buffer;
 
-class ClientHandler {
+/**
+ * Handles data streaming with Grapher client.
+ */
+public class ClientHandler {
 
   private final int port;
   DatagramSocket socket;
@@ -28,6 +31,11 @@ class ClientHandler {
     this.socket = socket;
   }
 
+  /**
+   * Start streaming the items specified in the subscription.
+   *
+   * @param subscription Items to stream to client
+   */
   public void start(Subscription subscription) {
     if (scheduler != null) {
       return;
@@ -48,6 +56,9 @@ class ClientHandler {
     }, 0, 5, MILLISECONDS);
   }
 
+  /**
+   * Stop streaming to client.
+   */
   public void shutdown() {
     System.out.print("Stopping graph data\n\n");
     if (scheduler != null) {
