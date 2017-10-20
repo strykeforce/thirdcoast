@@ -49,8 +49,7 @@ public class GrapherController extends NanoHTTPD {
           return errorResponseFor(e);
         }
 //        System.out.printf("start response %g%n", (Timer.getFPGATimestamp() - start) * 1000);
-        return Response
-            .newFixedLengthResponse(Status.OK, JSON, buffer.readByteArray());
+        return Response.newFixedLengthResponse(Status.OK, JSON, buffer.readByteArray());
       }
       return null;
     });
@@ -82,6 +81,21 @@ public class GrapherController extends NanoHTTPD {
         clientHandler.shutdown();
         Buffer buffer = new Buffer();
         return Response.newFixedLengthResponse(Status.NO_CONTENT, JSON, "");
+      }
+      return null;
+    });
+
+    addHTTPInterceptor(session -> {
+      if (session.getMethod() == Method.GET && session.getUri()
+          .equalsIgnoreCase("/v1/inventory")) {
+        Buffer buffer = new Buffer();
+        try {
+          inventory.toJson(buffer);
+        } catch (IOException e) {
+          e.printStackTrace();
+          return errorResponseFor(e);
+        }
+        return Response.newFixedLengthResponse(Status.OK, JSON, buffer.readByteArray());
       }
       return null;
     });

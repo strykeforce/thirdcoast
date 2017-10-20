@@ -1,10 +1,14 @@
 package org.strykeforce.thirdcoast.robot;
 
+import com.ctre.CANTalon;
+import com.ctre.CANTalon.StatusFrameRate;
 import com.electronwill.nightconfig.core.file.FileConfig;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import org.strykeforce.thirdcoast.swerve.SwerveDrive;
+import org.strykeforce.thirdcoast.swerve.Wheel;
 import org.strykeforce.thirdcoast.talon.TalonParameters;
+import org.strykeforce.thirdcoast.telemetry.TelemetryService;
 
 /**
  * Third Coast swerve drive demo robot.
@@ -26,7 +30,7 @@ public class Robot extends IterativeRobot {
     }
   }
 
-  private final SwerveDrive swerve = SwerveDrive.getInstance();
+  private final TelemetryService telemetryService = new TelemetryService();
   private final Controls controls = Controls.getInstance();
   private final Trigger gyroResetButton = new Trigger() {
     @Override
@@ -34,6 +38,7 @@ public class Robot extends IterativeRobot {
       return controls.getResetButton();
     }
   };
+  private final SwerveDrive swerve = SwerveDrive.getInstance();
   private final Trigger alignWheelsButton = new Trigger() {
     @Override
     public boolean get() {
@@ -43,6 +48,30 @@ public class Robot extends IterativeRobot {
 
   @Override
   public void robotInit() {
+    Wheel[] wheels = swerve.getWheels();
+    for (Wheel wheel: wheels) {
+      CANTalon azimuth = wheel.getAzimuthTalon();
+      CANTalon drive = wheel.getDriveTalon();
+
+      telemetryService.register(azimuth);
+      telemetryService.register(drive);
+
+      if (drive.getDeviceID() != 11) continue;
+
+      int period = 5;
+//      azimuth.setStatusFrameRateMs(StatusFrameRate.General, period);
+//      azimuth.setStatusFrameRateMs(StatusFrameRate.Feedback, period);
+//      azimuth.setStatusFrameRateMs(StatusFrameRate.QuadEncoder, 100);
+//      azimuth.setStatusFrameRateMs(StatusFrameRate.PulseWidth, 100);
+//      azimuth.setStatusFrameRateMs(StatusFrameRate.AnalogTempVbat, 100);
+
+      drive.setStatusFrameRateMs(StatusFrameRate.General, period);
+      drive.setStatusFrameRateMs(StatusFrameRate.Feedback, period);
+      drive.setStatusFrameRateMs(StatusFrameRate.QuadEncoder, period);
+      drive.setStatusFrameRateMs(StatusFrameRate.PulseWidth, 100);
+      drive.setStatusFrameRateMs(StatusFrameRate.AnalogTempVbat, 100);
+    }
+    telemetryService.start();
     swerve.zeroAzimuthEncoders();
   }
 
@@ -64,7 +93,8 @@ public class Robot extends IterativeRobot {
   }
 
   @Override
-  public void disabledInit() {}
+  public void disabledInit() {
+  }
 
   @Override
   public void disabledPeriodic() {

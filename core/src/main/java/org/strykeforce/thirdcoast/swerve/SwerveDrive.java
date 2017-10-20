@@ -165,6 +165,10 @@ public class SwerveDrive {
     }
   }
 
+  public Wheel[] getWheels() {
+    return wheels;
+  }
+
   /**
    * Get the gyro instance being used by the drive.
    *

@@ -85,6 +85,17 @@ public abstract class AbstractInventory implements Inventory {
   }
 
   @Override
+  public void toJson(BufferedSink sink) throws IOException {
+    JsonWriter writer = JsonWriter.of(sink);
+    writer.setIndent("  ");
+    writer.beginArray();
+    for (Item item: items) {
+      item.toJson(writer);
+    }
+    writer.endArray();
+  }
+
+  @Override
   public String toString() {
     return "AbstractInventory{" +
         "items=" + items +

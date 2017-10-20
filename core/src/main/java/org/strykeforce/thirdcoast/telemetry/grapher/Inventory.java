@@ -13,4 +13,6 @@ public interface Inventory {
 
   void writeInventory(BufferedSink sink) throws IOException;
 
+  void toJson(BufferedSink sink) throws IOException;
+
 }

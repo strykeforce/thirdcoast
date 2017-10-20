@@ -32,7 +32,7 @@ subprojects {
         robotClass = "org.strykeforce.thirdcoast.robot.Robot"
         rioHost = "10.27.67.2"
         deployTimeout = 2
-        jvmArguments = "-Xms10m"
+//        jvmArguments = "-Xms10m"
     }
 
     wpi {

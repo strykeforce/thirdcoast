@@ -1,6 +1,9 @@
 package org.strykeforce.thirdcoast.telemetry.grapher.item;
 
+import com.squareup.moshi.JsonWriter;
+import java.io.IOException;
 import java.util.Set;
+import okio.BufferedSink;
 import org.strykeforce.thirdcoast.telemetry.grapher.Measure;
 
 public abstract class AbstractItem implements Item {
@@ -29,6 +32,13 @@ public abstract class AbstractItem implements Item {
   @Override
   public Set<Measure> measures() {
     return measures;
+  }
+
+  @Override
+  public void toJson(JsonWriter writer) throws IOException {
+    writer.beginObject();
+    writer.name("not").value("implemented");
+    writer.endObject();
   }
 
   @Override

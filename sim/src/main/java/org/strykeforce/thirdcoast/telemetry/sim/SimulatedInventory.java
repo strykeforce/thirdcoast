@@ -17,6 +17,8 @@ import static org.strykeforce.thirdcoast.telemetry.grapher.Measure.REVERSE_SOFT_
 import static org.strykeforce.thirdcoast.telemetry.grapher.Measure.SETPOINT;
 import static org.strykeforce.thirdcoast.telemetry.grapher.Measure.VALUE;
 
+import com.squareup.moshi.JsonWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -178,5 +180,13 @@ public class SimulatedInventory extends AbstractInventory {
       return signalGenerator::getValue;
     }
 
+    @Override
+    public void toJson(JsonWriter writer) throws IOException {
+      writer.beginObject();
+      writer.name("id").value(id);
+      writer.name("description").value(description());
+      writer.name("type").value(type);
+      writer.endObject();
+    }
   }
 }
