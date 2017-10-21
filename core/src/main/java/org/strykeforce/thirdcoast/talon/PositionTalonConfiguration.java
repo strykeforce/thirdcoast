@@ -4,20 +4,20 @@ import com.ctre.CANTalon;
 import com.ctre.CANTalon.TalonControlMode;
 import com.electronwill.nightconfig.core.UnmodifiableConfig;
 
-class VoltageTalonParameters extends TalonParameters {
+class PositionTalonConfiguration extends PIDTalonConfiguration {
 
-  VoltageTalonParameters(UnmodifiableConfig config) {
+  PositionTalonConfiguration(UnmodifiableConfig config) {
     super(config);
   }
 
   @Override
   public void configure(CANTalon talon) {
+    talon.changeControlMode(TalonControlMode.Position);
     super.configure(talon);
-    talon.changeControlMode(TalonControlMode.Voltage);
   }
 
   @Override
   public String toString() {
-    return "VoltageTalonParameters{} " + super.toString();
+    return "PositionTalonParameters{} " + super.toString();
   }
 }

@@ -2,27 +2,30 @@ package org.strykeforce.thirdcoast.talon
 
 import com.ctre.CANTalon
 import com.electronwill.nightconfig.core.file.FileConfig
+import spock.lang.Shared
 import spock.lang.Specification
 
-class PIDTalonParametersTest extends Specification {
+class PIDTalonConfigurationTest extends Specification {
 
     def talon = Mock(CANTalon)
+    @Shared
+    TalonProvisioner provisioner
 
     void setupSpec() {
         URL url = this.getClass().getResource("testdata/talons.toml")
         FileConfig config = FileConfig.of(url.file)
         config.load()
         config.close()
-        TalonParameters.register(config.unmodifiable())
+        provisioner = new TalonProvisioner(config.unmodifiable())
     }
 
     def "reads talon parameters"() {
         when:
-        def t = (PIDTalonParameters) TalonParameters.getInstance("pid")
+        def t = (PIDTalonConfiguration) provisioner.configurationFor("pid")
 
         then:
         t.name == "pid"
-        t.class == PositionTalonParameters
+        t.class == PositionTalonConfiguration
         t.encoder.feedbackDevice == CANTalon.FeedbackDevice.CtreMagEncoder_Relative
         t.outputVoltageMax == 12.0
         t.forwardOutputVoltagePeak == 5.0
@@ -39,7 +42,7 @@ class PIDTalonParametersTest extends Specification {
 
     def "configures default parameters"() {
         when:
-        def t = (PIDTalonParameters) TalonParameters.getInstance("pid_defaults")
+        def t = (PIDTalonConfiguration) provisioner.configurationFor("pid_defaults")
 
         then:
         t.outputVoltageMax == 0.0
@@ -53,7 +56,7 @@ class PIDTalonParametersTest extends Specification {
 
     def "configures PID position mode talon"() {
         when:
-        def t = TalonParameters.getInstance("pid")
+        def t = provisioner.configurationFor("pid")
         t.configure(talon)
 
         then:
@@ -70,11 +73,11 @@ class PIDTalonParametersTest extends Specification {
 
     def "configures speed mode talon"() {
         when:
-        def t = (SpeedTalonParameters) TalonParameters.getInstance("speed")
+        def t = (SpeedTalonConfiguration) provisioner.configurationFor("speed")
 
         then:
         t.name == "speed"
-        t.class == SpeedTalonParameters
+        t.class == SpeedTalonConfiguration
     }
 
 }

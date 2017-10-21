@@ -1,13 +1,9 @@
 package org.strykeforce.thirdcoast.robot;
 
-import com.ctre.CANTalon;
-import com.ctre.CANTalon.StatusFrameRate;
 import com.electronwill.nightconfig.core.file.FileConfig;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import org.strykeforce.thirdcoast.swerve.SwerveDrive;
-import org.strykeforce.thirdcoast.swerve.Wheel;
-import org.strykeforce.thirdcoast.talon.TalonParameters;
 import org.strykeforce.thirdcoast.telemetry.TelemetryService;
 
 /**
@@ -24,10 +20,6 @@ public class Robot extends IterativeRobot {
    * object is instantiated below.
    */
   static {
-    try (FileConfig config = FileConfig.builder(CONFIG).defaultResource(DEFAULT_CONFIG).build()) {
-      config.load();
-      TalonParameters.register(config.unmodifiable());
-    }
   }
 
   private TelemetryService telemetryService;
@@ -48,7 +40,11 @@ public class Robot extends IterativeRobot {
 
   @Override
   public void robotInit() {
-    RobotComponent component = DaggerRobotComponent.create();
+    RobotComponent component;
+    try (FileConfig toml = FileConfig.builder(CONFIG).defaultResource(DEFAULT_CONFIG).build()) {
+      toml.load();
+      component = DaggerRobotComponent.builder().toml(toml.unmodifiable()).build();
+    }
     controls = component.controls();
     swerve = component.swerveDrive();
     telemetryService = component.telemetryService();

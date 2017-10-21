@@ -1,5 +1,8 @@
 package org.strykeforce.thirdcoast.robot;
 
+import com.electronwill.nightconfig.core.Config;
+import com.electronwill.nightconfig.core.UnmodifiableConfig;
+import dagger.BindsInstance;
 import dagger.Component;
 import javax.inject.Singleton;
 import org.strykeforce.thirdcoast.swerve.GyroModule;
@@ -16,12 +19,23 @@ import org.strykeforce.thirdcoast.telemetry.TelemetryService;
     GyroModule.class,
     WheelModule.class,
 })
-public interface RobotComponent {
+interface RobotComponent {
 
   Controls controls();
 
   SwerveDrive swerveDrive();
 
   TelemetryService telemetryService();
+
+//  UnmodifiableConfig unmodifiableConfig();
+
+  @Component.Builder
+  interface Builder {
+
+    @BindsInstance
+    Builder toml(UnmodifiableConfig config);
+
+    RobotComponent build();
+  }
 
 }

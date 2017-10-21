@@ -2,7 +2,8 @@ package org.strykeforce.thirdcoast.swerve
 
 import com.ctre.CANTalon
 import com.electronwill.nightconfig.core.file.FileConfig
-import org.strykeforce.thirdcoast.talon.TalonParameters
+import org.strykeforce.thirdcoast.talon.TalonProvisioner
+import spock.lang.Shared
 import spock.lang.Specification
 
 class WheelTest extends Specification {
@@ -11,19 +12,20 @@ class WheelTest extends Specification {
 
     def azimuth = Mock(CANTalon)
     def drive = Mock(CANTalon)
-
+    @Shared
+    TalonProvisioner provisioner
 
     void setupSpec() {
         URL url = this.getClass().getResource("/org/strykeforce/thirdcoast/talon/testdata/talons.toml")
         FileConfig config = FileConfig.of(url.file)
         config.load()
         config.close()
-        TalonParameters.register(config.unmodifiable())
+        provisioner = new TalonProvisioner(config.unmodifiable())
     }
 
     def "configures azimuth and drive talons"() {
         when:
-        def wheel = new Wheel(azimuth, drive)
+        def wheel = new Wheel(provisioner, azimuth, drive)
 
         then:
         1 * drive.SetVelocityMeasurementPeriod(CANTalon.VelocityMeasurementPeriod.Period_100Ms)
@@ -68,7 +70,7 @@ class WheelTest extends Specification {
         azimuth.getPulseWidthPosition() >> 0x1000
 
         when:
-        def wheel = new Wheel(azimuth, drive)
+        def wheel = new Wheel(provisioner, azimuth, drive)
         def zeroPosition = 2767
 
         then:
@@ -84,7 +86,7 @@ class WheelTest extends Specification {
     def "azimuth changes are optimized"() {
         when:
         azimuth.getPosition() >> start_position
-        def wheel = new Wheel(azimuth, drive)
+        def wheel = new Wheel(provisioner, azimuth, drive)
         wheel.set(setpoint, 1)
 
         then:
@@ -136,7 +138,7 @@ class WheelTest extends Specification {
 
     def "drive output is scaled"() {
         when:
-        def wheel = new Wheel(azimuth, drive)
+        def wheel = new Wheel(provisioner, azimuth, drive)
         wheel.set(0, 1)
 
         then:

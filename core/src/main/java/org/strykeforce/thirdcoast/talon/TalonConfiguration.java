@@ -2,25 +2,18 @@ package org.strykeforce.thirdcoast.talon;
 
 import com.ctre.CANTalon;
 import com.ctre.CANTalon.VelocityMeasurementPeriod;
-import com.electronwill.nightconfig.core.Config;
 import com.electronwill.nightconfig.core.UnmodifiableConfig;
-import com.electronwill.nightconfig.core.file.FileConfig;
-import java.io.File;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Configure Talon SRX parameters. This class will read CANTalon configurations located in TOML
- * configuration objects registered using the {@link #register(UnmodifiableConfig)} class method.
- *
- * <p>Multiple configurations can be registered by calling the {@code register} method repeatedly.
+ * Represents a Talon configuration.
  *
  * @see com.ctre.CANTalon
  */
-public abstract class TalonParameters {
+public abstract class TalonConfiguration {
 
-  private static final Map<String, TalonParameters> settings = new ConcurrentHashMap<>();
+  private static final Map<String, TalonConfiguration> settings = new ConcurrentHashMap<>();
   // required
   private final String name;
   private final double setpointMax;
@@ -37,7 +30,7 @@ public abstract class TalonParameters {
   private final SoftLimit reverseSoftLimit;
   private final int currentLimit;
 
-  TalonParameters(UnmodifiableConfig toml) {
+  TalonConfiguration(UnmodifiableConfig toml) {
     name = toml.get("name");
     try {
       setpointMax = toml.get("setpoint_max");
@@ -69,59 +62,6 @@ public abstract class TalonParameters {
     currentLimit = (int) toml.getOptional("current_limit").orElse(0);
   }
 
-  /**
-   * Register a new configuration file containing Talon parameters. These parameter objects will be
-   * merged with existing parameter objects. If a new parameter object has the same name as an
-   * existing object, the old object will be overwritten.
-   *
-   * @param talonConfigs a parsed config collection
-   */
-  public static void register(UnmodifiableConfig talonConfigs) {
-
-    List<Config> configList = talonConfigs.get("TALON");
-    if (configList == null) {
-      throw new IllegalArgumentException("no TALONS in config");
-    }
-
-    for (UnmodifiableConfig config : configList) {
-      String name = config.get("name");
-      if (name == null) {
-        throw new IllegalArgumentException("TALON configuration name parameter missing");
-      }
-
-      String mode = (String) config.getOptional("mode").orElse("Voltage");
-      TalonParameters talon = null;
-      switch (CANTalon.TalonControlMode.valueOf(mode)) {
-        case Voltage:
-          talon = new VoltageTalonParameters(config);
-          break;
-        case Position:
-          talon = new PositionTalonParameters(config);
-          break;
-        case Speed:
-          talon = new SpeedTalonParameters(config);
-          break;
-        case Follower:
-        case MotionMagic:
-        case Current:
-        case MotionProfile:
-        case Disabled:
-        case PercentVbus:
-          throw new IllegalStateException("talon mode not implemented: " + mode);
-      }
-      settings.put(name, talon);
-    }
-  }
-
-  /**
-   * Return Talon parameters for the named configuration.
-   *
-   * @param name the name of the Talon set of parameters
-   * @return configured Talon parameter immutable object
-   */
-  public static TalonParameters getInstance(String name) {
-    return settings.get(name);
-  }
 
   /**
    * Print the current state of the Talon.
@@ -131,25 +71,7 @@ public abstract class TalonParameters {
   public static void log(CANTalon talon) {
     System.out.println("talon = [" + talon + "]");
   }
-
-  private static UnmodifiableConfig readConfig(String path) {
-    try {
-//      URL configUrl = TalonParameters.class.getResource(path);
-//      if (configUrl == null) {
-//        throw new IllegalArgumentException("config not found: " + path);
-//      }
-      File configFile = new File("/home/lvuser/thirdcoast.toml");
-
-      try (FileConfig config = FileConfig.builder(configFile).defaultResource(path).build()) {
-        config.load();
-        System.out.println("config = " + config);
-        return config.unmodifiable();
-      }
-    } catch (Exception e) {
-      throw new IllegalArgumentException(e);
-    }
-  }
-
+  
   /**
    * Configure a Talon with stored parameters.
    *

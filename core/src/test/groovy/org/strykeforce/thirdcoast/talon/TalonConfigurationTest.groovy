@@ -3,24 +3,25 @@ package org.strykeforce.thirdcoast.talon
 import com.ctre.CANTalon
 import com.electronwill.nightconfig.core.Config
 import com.electronwill.nightconfig.core.file.FileConfig
-import com.electronwill.nightconfig.core.file.FileNotFoundAction
+import spock.lang.Shared
 import spock.lang.Specification
 
-class TalonParametersTest extends Specification {
+class TalonConfigurationTest extends Specification {
 
     def talon = Mock(CANTalon)
+    @Shared TalonProvisioner provisioner
 
     void setupSpec() {
         URL url = this.getClass().getResource("testdata/talons.toml")
         FileConfig config = FileConfig.of(url.file)
         config.load()
         config.close()
-        TalonParameters.register(config.unmodifiable())
+        provisioner = new TalonProvisioner(config.unmodifiable())
     }
 
     def "handles missing parameters file"() {
         when:
-        TalonParameters.register(Config.inMemory())
+        TalonProvisioner provisioner = new TalonProvisioner(Config.inMemory())
 
         then:
         thrown(IllegalArgumentException)
@@ -28,7 +29,7 @@ class TalonParametersTest extends Specification {
 
     def "reads talon parameters"() {
         when:
-        def t = TalonParameters.getInstance("test")
+        def t = provisioner.configurationFor("test")
 
         then:
         t.name == "test"
@@ -52,7 +53,7 @@ class TalonParametersTest extends Specification {
 
     def "configures voltage mode talon"() {
         when:
-        def t = TalonParameters.getInstance("test")
+        def t = provisioner.configurationFor("test")
         t.configure(talon)
 
         then:
@@ -81,7 +82,7 @@ class TalonParametersTest extends Specification {
         FileConfig config = FileConfig.of(url.file)
         config.load()
         config.close()
-        TalonParameters.register(config.unmodifiable())
+        def provisioner = new TalonProvisioner(config.unmodifiable())
 
         then:
         IllegalArgumentException e = thrown()
@@ -94,7 +95,7 @@ class TalonParametersTest extends Specification {
         FileConfig config = FileConfig.of(url.file)
         config.load()
         config.close()
-        TalonParameters.register(config.unmodifiable())
+        def provisioner = new TalonProvisioner(config.unmodifiable())
 
         then:
         IllegalArgumentException e = thrown()
@@ -103,10 +104,10 @@ class TalonParametersTest extends Specification {
 
     def "sets defaults"() {
         when:
-        def t = TalonParameters.getInstance("all_defaults")
+        def t = provisioner.configurationFor("all_defaults")
 
         then:
-        t.class == VoltageTalonParameters
+        t.class == VoltageTalonConfiguration
         t.name == "all_defaults"
         t.encoder.feedbackDevice == CANTalon.FeedbackDevice.QuadEncoder;
         !t.encoder.unitScalingEnabled
@@ -124,7 +125,7 @@ class TalonParametersTest extends Specification {
 
     def "handles file when name is emoji"() {
         when:
-        def t = TalonParameters.getInstance("😀🕹")
+        def t = provisioner.configurationFor("😀🕹")
 
         then:
         t.name == "😀🕹"
@@ -133,7 +134,7 @@ class TalonParametersTest extends Specification {
 
     def "handles truncate_velocity_measurement_window 100"() {
         when:
-        def t = TalonParameters.getInstance("truncate_velocity_measurement_window_100")
+        def t = provisioner.configurationFor("truncate_velocity_measurement_window_100")
 
         then:
         t.name == "truncate_velocity_measurement_window_100"
@@ -142,7 +143,7 @@ class TalonParametersTest extends Specification {
 
     def "handles truncate_velocity_measurement_window 3"() {
         when:
-        def t = TalonParameters.getInstance("truncate_velocity_measurement_window_3")
+        def t = provisioner.configurationFor("truncate_velocity_measurement_window_3")
 
         then:
         t.name == "truncate_velocity_measurement_window_3"
@@ -155,7 +156,7 @@ class TalonParametersTest extends Specification {
         FileConfig config = FileConfig.of(url.file)
         config.load()
         config.close()
-        TalonParameters.register(config.unmodifiable())
+        def provisioner = new TalonProvisioner(config.unmodifiable())
 
         then:
         IllegalArgumentException e = thrown()

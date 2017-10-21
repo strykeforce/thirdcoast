@@ -3,7 +3,7 @@ package org.strykeforce.thirdcoast.talon;
 import com.ctre.CANTalon;
 import com.electronwill.nightconfig.core.UnmodifiableConfig;
 
-class PIDTalonParameters extends TalonParameters {
+class PIDTalonConfiguration extends TalonConfiguration {
 
   private final double outputVoltageMax;
   private final double forwardOutputVoltagePeak;
@@ -18,7 +18,7 @@ class PIDTalonParameters extends TalonParameters {
   private final double fGain;
   private final int iZone;
 
-  PIDTalonParameters(UnmodifiableConfig config) {
+  PIDTalonConfiguration(UnmodifiableConfig config) {
     super(config);
     outputVoltageMax = (double) config.getOptional("output_voltage_max").orElse(0.0);
     forwardOutputVoltagePeak = (double) config.getOptional("forward_output_voltage_peak")

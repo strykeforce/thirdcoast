@@ -2,11 +2,12 @@ package org.strykeforce.thirdcoast.swerve;
 
 import com.ctre.CANTalon;
 import com.electronwill.nightconfig.core.UnmodifiableConfig;
-import org.strykeforce.thirdcoast.talon.TalonParameters;
+import org.strykeforce.thirdcoast.talon.TalonConfiguration;
+import org.strykeforce.thirdcoast.talon.TalonProvisioner;
 
 /**
  * Controls a swerve drive wheel azimuth and drive motors. The azimuth and drive Talons are
- * configured using {@link TalonParameters} named "azimuth" and "drive", respectively.
+ * configured using {@link TalonConfiguration} named "azimuth" and "drive", respectively.
  *
  * <p>The swerve-drive inverse kinematics algorithm will always calculate individual wheel angles as
  * -0.5 to 0.5 rotations, measured clockwise with zero being the straight-ahead position. Wheel
@@ -22,6 +23,7 @@ import org.strykeforce.thirdcoast.talon.TalonParameters;
  */
 public class Wheel {
 
+  private final TalonProvisioner talonProvisioner;
   private final CANTalon azimuthTalon;
   private final CANTalon driveTalon;
 
@@ -34,14 +36,16 @@ public class Wheel {
    * They are initialized with Talon configurations named "azimuthTalon" and "driveTalon"
    * respectively. Assumes the Talon configurations have been registered.
    *
+   * @param talonProvisioner the TalonProvisioner used to provision Talons
    * @param azimuth the azimuthTalon CANTalon
    * @param drive the driveTalon CANTalon
-   * @see org.strykeforce.thirdcoast.talon.TalonParameters#register(UnmodifiableConfig)
+   * @see org.strykeforce.thirdcoast.talon.TalonProvisioner#addConfigurations(UnmodifiableConfig)
    */
-  public Wheel(CANTalon azimuth, CANTalon drive) {
+  public Wheel(TalonProvisioner talonProvisioner, CANTalon azimuth, CANTalon drive) {
     final String AZIMUTH_PARAMETERS = "azimuth";
     final String DRIVE_PARAMETERS = "drive";
 
+    this.talonProvisioner = talonProvisioner;
     azimuthTalon = azimuth;
     driveTalon = drive;
     setAzimuthParameters(AZIMUTH_PARAMETERS);
@@ -51,17 +55,18 @@ public class Wheel {
   /**
    * Convenience constructor for a wheel by specifying the swerve driveTalon wheel number (0-3).
    *
+   * @param talonProvisioner the TalonProvisioner used to provision Talons
    * @param index the wheel number
    */
-  public Wheel(int index) {
-    this(new CANTalon(index), new CANTalon(index + 10));
+  public Wheel(TalonProvisioner talonProvisioner, int index) {
+    this(talonProvisioner, new CANTalon(index), new CANTalon(index + 10));
   }
 
   /**
    * This method calculates the optimal driveTalon settings and applies them.
    *
    * <p>The drive setpoint is scaled by the drive Talon {@code setpoint_max} parameter configured in
-   * {@link TalonParameters}. For instance, with an open-loop {@code setpoint_max = 12.0} volts, a
+   * {@link TalonConfiguration}. For instance, with an open-loop {@code setpoint_max = 12.0} volts, a
    * drive setpoint of 1.0 would result in the drive Talon being set to 12.0.
    *
    * @param azimuth -0.5 to 0.5 rotations, measured clockwise with zero being the wheel's zeroed
@@ -101,15 +106,15 @@ public class Wheel {
   }
 
 
-  void setAzimuthParameters(String parameters) {
-    TalonParameters talonParameters = TalonParameters.getInstance(parameters);
-    talonParameters.configure(azimuthTalon);
+  void setAzimuthParameters(String name) {
+    TalonConfiguration talonConfiguration = talonProvisioner.configurationFor(name);
+    talonConfiguration.configure(azimuthTalon);
   }
 
-  void setDriveParameters(String parameters) {
-    TalonParameters talonParameters = TalonParameters.getInstance(parameters);
-    talonParameters.configure(driveTalon);
-    driveSetpointMax = talonParameters.getSetpointMax();
+  void setDriveParameters(String name) {
+    TalonConfiguration talonConfiguration = talonProvisioner.configurationFor(name);
+    talonConfiguration.configure(driveTalon);
+    driveSetpointMax = talonConfiguration.getSetpointMax();
   }
 
   /**

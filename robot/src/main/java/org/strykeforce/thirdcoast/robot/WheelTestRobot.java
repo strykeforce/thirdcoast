@@ -3,7 +3,7 @@ package org.strykeforce.thirdcoast.robot;
 import com.electronwill.nightconfig.core.file.FileConfig;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import org.strykeforce.thirdcoast.swerve.Wheel;
-import org.strykeforce.thirdcoast.talon.TalonParameters;
+import org.strykeforce.thirdcoast.talon.TalonProvisioner;
 
 /**
  * Third Coast test robot.
@@ -11,14 +11,7 @@ import org.strykeforce.thirdcoast.talon.TalonParameters;
 
 public class WheelTestRobot extends IterativeRobot {
 
-  static {
-    FileConfig config = FileConfig.builder("/home/lvuser/thirdcoast.toml")
-        .defaultResource("/org/strykeforce/thirdcoast.toml")
-        .build();
-    TalonParameters.register(config.unmodifiable());
-  }
-
-  private final Wheel wheel = new Wheel(0);
+  private Wheel wheel;
   private Controls controls;
   private final Trigger upButton = new Trigger() {
     @Override
@@ -53,9 +46,14 @@ public class WheelTestRobot extends IterativeRobot {
 
   @Override
   public void robotInit() {
-    RobotComponent component = DaggerRobotComponent.create();
-    controls = component.controls();
+    FileConfig config = FileConfig.builder("/home/lvuser/thirdcoast.toml")
+        .defaultResource("/org/strykeforce/thirdcoast.toml")
+        .build();
 
+    RobotComponent component = DaggerRobotComponent.builder().toml(config).build();
+    controls = component.controls();
+    TalonProvisioner provisioner = new TalonProvisioner(config);
+    wheel = new Wheel(provisioner, 0);
     wheel.setAzimuthZero(2281);
   }
 

@@ -2,17 +2,16 @@ package org.strykeforce.thirdcoast.swerve;
 
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.Preferences;
-import edu.wpi.first.wpilibj.SPI.Port;
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import org.strykeforce.thirdcoast.talon.TalonParameters;
+import org.strykeforce.thirdcoast.talon.TalonConfiguration;
 import org.strykeforce.thirdcoast.telemetry.TelemetryService;
 
 /**
  * Control a Third Coast swerve drive.
  *
  * <p>Wheels are numbered 0-3 from front to back, with even numbers on the left side when facing
- * forward. The azimuth and drive Talons are configured using {@link TalonParameters} named
+ * forward. The azimuth and drive Talons are configured using {@link TalonConfiguration} named
  * "azimuth" and "drive", respectively.
  *
  * <p>Derivation of inverse kinematic equations are from Ether's
