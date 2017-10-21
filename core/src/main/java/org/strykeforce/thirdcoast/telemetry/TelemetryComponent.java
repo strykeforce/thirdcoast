@@ -9,6 +9,16 @@ import org.strykeforce.thirdcoast.telemetry.grapher.InventoryModule;
 import org.strykeforce.thirdcoast.telemetry.item.Item;
 import org.strykeforce.thirdcoast.telemetry.grapher.NetworkModule;
 
+/**
+ * This interface configures dependency injection for the TelemetryService.
+ *
+ * Component interfaces are set up for particular uses of different modules, for example this
+ * component has a sibling SimulationComponent used for simulating an Inventory during Telemetry
+ * client development. The
+ *
+ * @see InventoryModule
+ * @see NetworkModule
+ */
 @Singleton
 @Component(modules = {
     InventoryModule.class,

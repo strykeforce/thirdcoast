@@ -22,7 +22,7 @@ import org.strykeforce.thirdcoast.telemetry.grapher.Inventory;
 import org.strykeforce.thirdcoast.telemetry.grapher.Subscription;
 
 /**
- * Provides a development web service to control telemetry.
+ * Provides a web service to control telemetry.
  */
 public class TelemetryController extends NanoHTTPD {
 
