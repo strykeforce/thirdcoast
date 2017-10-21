@@ -40,7 +40,6 @@ public class TelemetryController extends NanoHTTPD {
     this.port = port;
 
     addHTTPInterceptor(session -> {
-//      double start = Timer.getFPGATimestamp();
       if (session.getMethod() == Method.GET && session.getUri()
           .equalsIgnoreCase("/v1/grapher/inventory")) {
         Buffer buffer = new Buffer();
@@ -50,7 +49,6 @@ public class TelemetryController extends NanoHTTPD {
           e.printStackTrace();
           return errorResponseFor(e);
         }
-//        System.out.printf("start response %g%n", (Timer.getFPGATimestamp() - start) * 1000);
         return Response.newFixedLengthResponse(Status.OK, JSON, buffer.readByteArray());
       }
       return null;

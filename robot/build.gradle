@@ -3,6 +3,7 @@ dependencies {
     compile talonSrx()
     compile navx()
     compile project(':core')
+    apt 'com.google.dagger:dagger-compiler:2.12'
 }
 
 def robotManifest = {

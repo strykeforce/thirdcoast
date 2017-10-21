@@ -3,6 +3,8 @@ package org.strykeforce.thirdcoast.swerve;
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.SPI.Port;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import org.strykeforce.thirdcoast.talon.TalonParameters;
 import org.strykeforce.thirdcoast.telemetry.TelemetryService;
 
@@ -13,11 +15,12 @@ import org.strykeforce.thirdcoast.telemetry.TelemetryService;
  * forward. The azimuth and drive Talons are configured using {@link TalonParameters} named
  * "azimuth" and "drive", respectively.
  *
- * <p>Derivation of inverse kinematic equations are from Ether's <a href="https://www.chiefdelphi.com/media/papers/2426">Swerve
- * Kinematics and Programming</a>.
+ * <p>Derivation of inverse kinematic equations are from Ether's
+ * <a href="https://www.chiefdelphi.com/media/papers/2426">Swerve Kinematics and Programming</a>.
  *
  * @see Wheel
  */
+@Singleton
 public class SwerveDrive {
 
   private final static int WHEEL_COUNT = 4;
@@ -25,32 +28,13 @@ public class SwerveDrive {
   private final Wheel[] wheels;
   private final AHRS gyro;
 
+  @Inject
   SwerveDrive(AHRS gyro, Wheel[] wheels) {
     if (gyro != null) {
       gyro.enableLogging(true);
     }
     this.gyro = gyro;
     this.wheels = wheels;
-  }
-
-  SwerveDrive(AHRS gyro) {
-    this(gyro, new Wheel[]{
-        new Wheel(0), // front left
-        new Wheel(1), // front right
-        new Wheel(2), // rear left
-        new Wheel(3)  // rear right
-    });
-  }
-
-  /**
-   * Get the drive subsystem singleton. This is lazy initialized to avoid UnsatisfiedLinkError
-   * against the CTRE JNI libs during unit testing.
-   *
-   * @return the drive singleton
-   */
-  public static SwerveDrive getInstance() {
-
-    return LazyHolder.INSTANCE;
   }
 
   static String getPreferenceKeyForWheel(int i) {
@@ -196,11 +180,6 @@ public class SwerveDrive {
    */
   public AHRS getGyro() {
     return gyro;
-  }
-
-  private static class LazyHolder {
-
-    static final SwerveDrive INSTANCE = new SwerveDrive(new AHRS(Port.kMXP));
   }
 
 }

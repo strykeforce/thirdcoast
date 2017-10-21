@@ -1,10 +1,13 @@
 package org.strykeforce.thirdcoast.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 /**
  * Accesses driver control input.
  */
+@Singleton
 public class Controls {
 
   private static final int DRIVER_RIGHT_X_AXIS = 0;
@@ -30,24 +33,14 @@ public class Controls {
   private static final int GAME_LEFT_STICK_BUTTON = 9;
   private static final int GAME_RIGHT_STICK_BUTTON = 10;
 
-  private static final Controls instance = new Controls();
-
   private final Joystick gameController = new Joystick(0);
   private final Joystick driverController = new Joystick(1);
 
-  private Controls() {
+  @Inject
+  public Controls() {
   }
 
-  /**
-   * Return the Controls singleton.
-   *
-   * @return the singleton instance
-   */
-  public static Controls getInstance() {
-    return instance;
-  }
-
-  /**
+   /**
    * Return the driver controller left stick Y-axis position.
    *
    * @return the position, range is -1.0 (full reverse) to 1.0 (full forward)

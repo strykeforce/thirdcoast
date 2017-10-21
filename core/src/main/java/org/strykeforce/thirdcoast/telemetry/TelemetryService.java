@@ -43,6 +43,7 @@ public class TelemetryService {
    */
   public void stop() {
     telemetryController.shutdown();
+    telemetryController = null;
   }
 
   /**

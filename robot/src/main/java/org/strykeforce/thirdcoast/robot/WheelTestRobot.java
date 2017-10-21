@@ -19,7 +19,7 @@ public class WheelTestRobot extends IterativeRobot {
   }
 
   private final Wheel wheel = new Wheel(0);
-  private final Controls controls = Controls.getInstance();
+  private Controls controls;
   private final Trigger upButton = new Trigger() {
     @Override
     public boolean get() {
@@ -53,6 +53,9 @@ public class WheelTestRobot extends IterativeRobot {
 
   @Override
   public void robotInit() {
+    RobotComponent component = DaggerRobotComponent.create();
+    controls = component.controls();
+
     wheel.setAzimuthZero(2281);
   }
 

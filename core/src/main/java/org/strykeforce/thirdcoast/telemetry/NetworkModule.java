@@ -11,7 +11,7 @@ import javax.inject.Named;
  * for networking configuration.
  */
 @Module
-public class NetworkModule {
+public abstract class NetworkModule {
 
   @Provides
   @Named("server")

@@ -1,6 +1,5 @@
 apply plugin: 'groovy'
 apply plugin: 'maven'
-apply plugin: 'net.ltgt.apt-idea'
 
 install {
     repositories.mavenInstaller {

@@ -30,15 +30,15 @@ public class Robot extends IterativeRobot {
     }
   }
 
-  private final TelemetryService telemetryService = new TelemetryService();
-  private final Controls controls = Controls.getInstance();
+  private TelemetryService telemetryService;
+  private SwerveDrive swerve;
+  private Controls controls;
   private final Trigger gyroResetButton = new Trigger() {
     @Override
     public boolean get() {
       return controls.getResetButton();
     }
   };
-  private final SwerveDrive swerve = SwerveDrive.getInstance();
   private final Trigger alignWheelsButton = new Trigger() {
     @Override
     public boolean get() {
@@ -48,6 +48,10 @@ public class Robot extends IterativeRobot {
 
   @Override
   public void robotInit() {
+    RobotComponent component = DaggerRobotComponent.create();
+    controls = component.controls();
+    swerve = component.swerveDrive();
+    telemetryService = component.telemetryService();
     swerve.configure(telemetryService);
     telemetryService.start();
     swerve.zeroAzimuthEncoders();
