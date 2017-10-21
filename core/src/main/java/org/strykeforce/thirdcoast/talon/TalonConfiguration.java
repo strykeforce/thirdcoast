@@ -75,7 +75,7 @@ public abstract class TalonConfiguration {
   /**
    * Configure a Talon with stored parameters.
    *
-   * @param talon the Talon to configure
+   * @param talon the Talon to registerWith
    */
   public void configure(CANTalon talon) {
     talon.setSafetyEnabled(false);

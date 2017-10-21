@@ -48,7 +48,7 @@ public class Robot extends IterativeRobot {
     controls = component.controls();
     swerve = component.swerveDrive();
     telemetryService = component.telemetryService();
-    swerve.configure(telemetryService);
+    swerve.registerWith(telemetryService);
     telemetryService.start();
     swerve.zeroAzimuthEncoders();
   }

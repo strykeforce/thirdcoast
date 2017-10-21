@@ -78,7 +78,7 @@ public class TelemetryService {
   /**
    * Configure the Talon with the given ID with the given status frame rates.
    *
-   * @param talonId the Talon to configure
+   * @param talonId the Talon to registerWith
    * @param rates the status frame rates
    */
   public void configureStatusFrameRates(int talonId, StatusFrameRate rates) {

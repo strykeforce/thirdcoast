@@ -156,7 +156,7 @@ public class SwerveDrive {
    *
    * @param telemetryService the active Telemetry service instance created by the robot
    */
-  public void configure(TelemetryService telemetryService) {
+  public void registerWith(TelemetryService telemetryService) {
     for (Wheel wheel : wheels) {
       telemetryService.register(wheel.getAzimuthTalon());
       telemetryService.register(wheel.getDriveTalon());

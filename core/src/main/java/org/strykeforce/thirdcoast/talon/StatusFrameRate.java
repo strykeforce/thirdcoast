@@ -37,7 +37,7 @@ public final class StatusFrameRate {
   /**
    * Configures the Talon with status frame update rates.
    *
-   * @param talon the Talon to configure
+   * @param talon the Talon to registerWith
    */
   public void configure(CANTalon talon) {
     talon.setStatusFrameRateMs(CANTalon.StatusFrameRate.AnalogTempVbat, analogTempVbat);
