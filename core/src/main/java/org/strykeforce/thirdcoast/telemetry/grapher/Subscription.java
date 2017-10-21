@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.DoubleSupplier;
 import okio.BufferedSink;
+import org.strykeforce.thirdcoast.telemetry.Inventory;
 import org.strykeforce.thirdcoast.telemetry.item.Item;
 
 /**

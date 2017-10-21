@@ -2,6 +2,7 @@ package org.strykeforce.thirdcoast.telemetry.grapher
 
 import groovy.json.JsonSlurper
 import okio.Buffer
+import org.strykeforce.thirdcoast.telemetry.Inventory
 import org.strykeforce.thirdcoast.telemetry.item.Item
 import spock.lang.Specification
 

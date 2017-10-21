@@ -1,8 +1,9 @@
-package org.strykeforce.thirdcoast.telemetry.grapher
+package org.strykeforce.thirdcoast.telemetry
 
 import com.ctre.CANTalon
 import groovy.json.JsonSlurper
 import okio.Buffer
+import org.strykeforce.thirdcoast.telemetry.grapher.Measure
 import org.strykeforce.thirdcoast.telemetry.item.Item
 import org.strykeforce.thirdcoast.telemetry.item.TalonItem
 import spock.lang.Specification

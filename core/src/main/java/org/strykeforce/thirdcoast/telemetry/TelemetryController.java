@@ -18,7 +18,6 @@ import org.nanohttpd.protocols.http.request.Method;
 import org.nanohttpd.protocols.http.response.Response;
 import org.nanohttpd.protocols.http.response.Status;
 import org.strykeforce.thirdcoast.telemetry.grapher.ClientHandler;
-import org.strykeforce.thirdcoast.telemetry.grapher.Inventory;
 import org.strykeforce.thirdcoast.telemetry.grapher.Subscription;
 
 /**

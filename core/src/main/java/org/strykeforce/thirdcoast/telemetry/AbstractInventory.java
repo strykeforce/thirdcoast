@@ -1,4 +1,4 @@
-package org.strykeforce.thirdcoast.telemetry.grapher;
+package org.strykeforce.thirdcoast.telemetry;
 
 import com.squareup.moshi.JsonWriter;
 import java.io.IOException;
@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import okio.BufferedSink;
+import org.strykeforce.thirdcoast.telemetry.grapher.Measure;
 import org.strykeforce.thirdcoast.telemetry.item.Item;
 
 /**

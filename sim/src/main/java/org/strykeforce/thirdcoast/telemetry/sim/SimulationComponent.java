@@ -3,7 +3,7 @@ package org.strykeforce.thirdcoast.telemetry.sim;
 import dagger.Component;
 import javax.inject.Singleton;
 import org.strykeforce.thirdcoast.telemetry.TelemetryController;
-import org.strykeforce.thirdcoast.telemetry.grapher.Inventory;
+import org.strykeforce.thirdcoast.telemetry.Inventory;
 import org.strykeforce.thirdcoast.telemetry.grapher.NetworkModule;
 
 @Singleton
