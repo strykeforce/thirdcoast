@@ -1,4 +1,4 @@
-package org.strykeforce.thirdcoast.telemetry.grapher;
+package org.strykeforce.thirdcoast.telemetry;
 
 import dagger.Module;
 import dagger.Provides;

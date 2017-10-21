@@ -5,7 +5,6 @@ import dagger.Component;
 import java.util.Collection;
 import javax.inject.Singleton;
 import org.strykeforce.thirdcoast.telemetry.item.Item;
-import org.strykeforce.thirdcoast.telemetry.grapher.NetworkModule;
 
 /**
  * This interface configures dependency injection for the TelemetryService.

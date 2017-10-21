@@ -4,7 +4,7 @@ import dagger.Component;
 import javax.inject.Singleton;
 import org.strykeforce.thirdcoast.telemetry.TelemetryController;
 import org.strykeforce.thirdcoast.telemetry.Inventory;
-import org.strykeforce.thirdcoast.telemetry.grapher.NetworkModule;
+import org.strykeforce.thirdcoast.telemetry.NetworkModule;
 
 @Singleton
 @Component(modules = {
