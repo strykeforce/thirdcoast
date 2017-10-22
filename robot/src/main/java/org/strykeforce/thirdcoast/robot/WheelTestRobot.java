@@ -47,7 +47,7 @@ public class WheelTestRobot extends IterativeRobot {
   @Override
   public void robotInit() {
     FileConfig config = FileConfig.builder("/home/lvuser/thirdcoast.toml")
-        .defaultResource("/org/strykeforce/thirdcoast.toml")
+        .defaultResource("/org/strykeforce/thirdcoast/defaults.toml")
         .build();
 
     RobotComponent component = DaggerRobotComponent.builder().toml(config).build();

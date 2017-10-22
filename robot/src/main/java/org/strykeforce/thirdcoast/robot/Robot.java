@@ -13,14 +13,7 @@ import org.strykeforce.thirdcoast.telemetry.TelemetryService;
 public class Robot extends IterativeRobot {
 
   private final static String CONFIG = "/home/lvuser/thirdcoast.toml";
-  private final static String DEFAULT_CONFIG = "/org/strykeforce/thirdcoast.toml";
-
-  /*
-   * Register Talon parameters in static initializer. This must be done before the SwerveDrive
-   * object is instantiated below.
-   */
-  static {
-  }
+  private final static String DEFAULT_CONFIG = "/org/strykeforce/thirdcoast/defaults.toml";
 
   private TelemetryService telemetryService;
   private SwerveDrive swerve;

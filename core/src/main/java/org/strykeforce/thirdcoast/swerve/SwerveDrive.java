@@ -10,12 +10,15 @@ import org.strykeforce.thirdcoast.telemetry.TelemetryService;
 /**
  * Control a Third Coast swerve drive.
  *
- * <p>Wheels are numbered 0-3 from front to back, with even numbers on the left side when facing
- * forward. The azimuth and drive Talons are configured using {@link TalonConfiguration} named
- * "azimuth" and "drive", respectively.
+ * <p>Wheels are injected by a Dagger provider in {@link WheelModule}. They are a singleton array
+ * numbered 0-3 from front to back, with even numbers on the left side when facing forward. The
+ * azimuth and drive Talons are configured using {@link TalonConfiguration} named "azimuth" and
+ * "drive", respectively.
  *
- * <p>Derivation of inverse kinematic equations are from Ether's
- * <a href="https://www.chiefdelphi.com/media/papers/2426">Swerve Kinematics and Programming</a>.
+ * The gyro is injected by a Dagger provider in {@link GyroModule}.
+ *
+ * <p>Derivation of inverse kinematic equations are from Ether's <a href="https://www.chiefdelphi.com/media/papers/2426">Swerve
+ * Kinematics and Programming</a>.
  *
  * @see Wheel
  */
