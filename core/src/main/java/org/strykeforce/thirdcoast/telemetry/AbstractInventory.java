@@ -56,13 +56,14 @@ public abstract class AbstractInventory implements Inventory {
     Map<String, Set<Measure>> measures = new HashMap<>();
     items.forEach(it -> measures.putIfAbsent(it.type(), it.measures()));
     writer.beginArray();
-    for (Entry<String, Set<Measure>> entry: measures.entrySet()) {
+    for (Entry<String, Set<Measure>> entry : measures.entrySet()) {
       writeDeviceMeasures(writer, entry.getKey(), entry.getValue());
     }
     writer.endArray();
   }
 
-  void writeDeviceMeasures(JsonWriter writer, String type, Set<Measure> measures) throws IOException {
+  void writeDeviceMeasures(JsonWriter writer, String type, Set<Measure> measures)
+      throws IOException {
     writer.beginObject();
     writer.name("deviceType").value(type);
     writer.name("deviceMeasures");
@@ -71,7 +72,6 @@ public abstract class AbstractInventory implements Inventory {
       writeMeasure(writer, m);
     }
     writer.endArray();
-
     writer.endObject();
   }
 
@@ -82,7 +82,6 @@ public abstract class AbstractInventory implements Inventory {
     writer.name("id").value(measure.name());
     writer.name("description").value(measure.getDescription());
     writer.endObject();
-
   }
 
   @Override
@@ -90,7 +89,7 @@ public abstract class AbstractInventory implements Inventory {
     JsonWriter writer = JsonWriter.of(sink);
     writer.setIndent("  ");
     writer.beginArray();
-    for (Item item: items) {
+    for (Item item : items) {
       item.toJson(writer);
     }
     writer.endArray();

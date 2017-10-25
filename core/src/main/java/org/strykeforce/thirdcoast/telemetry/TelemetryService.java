@@ -3,9 +3,12 @@ package org.strykeforce.thirdcoast.telemetry;
 import com.ctre.CANTalon;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.talon.StatusFrameRate;
 import org.strykeforce.thirdcoast.telemetry.item.Item;
 import org.strykeforce.thirdcoast.telemetry.item.TalonItem;
@@ -18,14 +21,16 @@ import org.strykeforce.thirdcoast.telemetry.item.TalonItem;
 @Singleton
 public class TelemetryService {
 
+  final static Logger logger = LoggerFactory.getLogger(TelemetryService.class);
   TelemetryController telemetryController;
-  Collection<Item> items = new ArrayList<>(16);
+  List<Item> items = new ArrayList<>(16);
 
   /**
    * Default constructor.
    */
   @Inject
   public TelemetryService() {
+    logger.debug("Telemetry service created");
   }
 
   /**
@@ -35,7 +40,7 @@ public class TelemetryService {
     TelemetryComponent component = DaggerTelemetryComponent.builder().items(items).build();
     telemetryController = component.telemetryController();
     telemetryController.start();
-
+    logger.info("Telemetry service started");
   }
 
   /**
@@ -44,6 +49,7 @@ public class TelemetryService {
   public void stop() {
     telemetryController.shutdown();
     telemetryController = null;
+    logger.info("Stopped Telemetry service");
   }
 
   /**
@@ -53,8 +59,9 @@ public class TelemetryService {
    * @see org.strykeforce.thirdcoast.talon.StatusFrameRate
    */
   public void register(CANTalon talon) {
-    register(new TalonItem(talon));
+    items.add(new TalonItem(talon));
     StatusFrameRate.DEFAULT.configure(talon);
+    logger.info("Registered Talon {} with {}", talon.getDeviceID(), StatusFrameRate.DEFAULT);
   }
 
   /**
@@ -64,6 +71,7 @@ public class TelemetryService {
    */
   public void register(Item item) {
     items.add(item);
+    logger.info("Registered Item {}", item.description());
   }
 
   /**
@@ -92,7 +100,8 @@ public class TelemetryService {
       throw new IllegalArgumentException("Talon with id " + talonId + " not found");
     }
 
-    TalonItem talonItem = (TalonItem)item.get();
+    TalonItem talonItem = (TalonItem) item.get();
+    logger.info("Setting Talon {} ({}) to {}", talonItem.description(), talonItem.getTalon().getDeviceID(), rates);
     rates.configure(talonItem.getTalon());
   }
 

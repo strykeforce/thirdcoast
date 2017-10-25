@@ -17,9 +17,12 @@ dependencies {
     compile group: 'com.squareup.moshi', name: 'moshi', version: '1.5.0'
     compile group: 'org.nanohttpd', name: 'nanohttpd', version: '2.3.2-SNAPSHOT'
     compile group: 'com.google.dagger', name: 'dagger', version: '2.12'
+    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
+
     apt 'com.google.dagger:dagger-compiler:2.12'
 
     testCompile group: 'org.spockframework', name: 'spock-core', version: '1.1-groovy-2.4'
+    testRuntime group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
     testRuntime group: 'net.bytebuddy', name: 'byte-buddy', version: '1.7.1'
     testRuntime group: 'org.objenesis', name: 'objenesis', version: '2.6'
 }

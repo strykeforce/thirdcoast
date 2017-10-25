@@ -8,6 +8,7 @@ mainClassName = 'org.strykeforce.thirdcoast.telemetry.sim.Main'
 
 dependencies {
     compile project(':core')
+    compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
     apt 'com.google.dagger:dagger-compiler:2.12'
 }
 

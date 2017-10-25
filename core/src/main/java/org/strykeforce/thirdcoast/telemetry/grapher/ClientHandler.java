@@ -12,12 +12,16 @@ import java.util.concurrent.ScheduledExecutorService;
 import javax.inject.Inject;
 import javax.inject.Named;
 import okio.Buffer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.strykeforce.thirdcoast.telemetry.NetworkModule;
 
 /**
  * Handles data streaming with Grapher client.
  */
 public class ClientHandler {
 
+  final static Logger logger = LoggerFactory.getLogger(ClientHandler.class);
   private final int port;
   DatagramSocket socket;
   ScheduledExecutorService scheduler;
@@ -40,7 +44,7 @@ public class ClientHandler {
     if (scheduler != null) {
       return;
     }
-    System.out.print("\nSending graph data to " + subscription.client() + ":" + port + "\n");
+    logger.info("Sending graph data to {}:{}", subscription.client(), port);
     socketAddress = new InetSocketAddress(subscription.client(), port);
     scheduler = Executors.newSingleThreadScheduledExecutor();
     scheduler.scheduleAtFixedRate(() -> {
@@ -51,7 +55,7 @@ public class ClientHandler {
         DatagramPacket packet = new DatagramPacket(bytes, bytes.length, socketAddress);
         socket.send(packet);
       } catch (IOException e) {
-        e.printStackTrace();
+        logger.error("Exception sending grapher data", e);
       }
     }, 0, 5, MILLISECONDS);
   }
@@ -60,7 +64,7 @@ public class ClientHandler {
    * Stop streaming to client.
    */
   public void shutdown() {
-    System.out.print("Stopping graph data\n\n");
+    logger.info("Stopping graph data");
     if (scheduler != null) {
       scheduler.shutdown();
     }

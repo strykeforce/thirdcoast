@@ -5,6 +5,8 @@ import com.ctre.CANTalon.VelocityMeasurementPeriod;
 import com.electronwill.nightconfig.core.UnmodifiableConfig;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Represents a Talon configuration.
@@ -13,6 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public abstract class TalonConfiguration {
 
+  final static Logger logger = LoggerFactory.getLogger(TalonConfiguration.class);
   private static final Map<String, TalonConfiguration> settings = new ConcurrentHashMap<>();
   // required
   private final String name;
@@ -69,9 +72,9 @@ public abstract class TalonConfiguration {
    * @param talon the Talon to print
    */
   public static void log(CANTalon talon) {
-    System.out.println("talon = [" + talon + "]");
+    logger.info("TODO {}", talon);
   }
-  
+
   /**
    * Configure a Talon with stored parameters.
    *

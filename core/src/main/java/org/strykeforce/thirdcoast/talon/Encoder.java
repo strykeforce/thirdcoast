@@ -4,9 +4,12 @@ import com.ctre.CANTalon;
 import com.ctre.CANTalon.FeedbackDevice;
 import com.ctre.CANTalon.FeedbackDeviceStatus;
 import java.util.Optional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 final class Encoder {
 
+  final static Logger logger = LoggerFactory.getLogger(Encoder.class);
   private final CANTalon.FeedbackDevice feedbackDevice;
   private final boolean isReversed;
   private final boolean isUnitScalingEnabled;
@@ -32,22 +35,20 @@ final class Encoder {
 
   public void checkEncoder(CANTalon talon) {
     FeedbackDeviceStatus status = talon.isSensorPresent(feedbackDevice);
-
-    if (status != null) {
-      System.out.print(talon.getDescription() + ": ");
-    } else {
+    if (status == null) {
       return; // unit testing
     }
+
     switch (status) {
       case FeedbackStatusPresent:
-        System.out.println("encoder is present");
+        logger.info("{}: encoder is present", talon.getDescription());
         break;
       case FeedbackStatusNotPresent:
-        System.out.println("encoder is MISSING");
+        logger.warn("{}: encoder is MISSING", talon.getDescription());
         break;
       case FeedbackStatusUnknown:
-        System.out.println(
-            "encoder is unknown, only CTRE Mag Encoder or Pulse-Width Encoder supported");
+        logger.info("{}: encoder is unknown, only CTRE Mag or Pulse-Width Encoder supported",
+                talon.getDescription());
         break;
     }
   }

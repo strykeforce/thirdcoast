@@ -2,13 +2,16 @@ package org.strykeforce.thirdcoast.telemetry;
 
 import com.squareup.moshi.JsonWriter;
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -17,6 +20,8 @@ import org.nanohttpd.protocols.http.NanoHTTPD;
 import org.nanohttpd.protocols.http.request.Method;
 import org.nanohttpd.protocols.http.response.Response;
 import org.nanohttpd.protocols.http.response.Status;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.telemetry.grapher.ClientHandler;
 import org.strykeforce.thirdcoast.telemetry.grapher.Subscription;
 
@@ -25,6 +30,7 @@ import org.strykeforce.thirdcoast.telemetry.grapher.Subscription;
  */
 public class TelemetryController extends NanoHTTPD {
 
+  final static Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
   private final static String JSON = "application/json";
 
   private final Inventory inventory;
@@ -46,9 +52,10 @@ public class TelemetryController extends NanoHTTPD {
         try {
           inventory.writeInventory(buffer);
         } catch (IOException e) {
-          e.printStackTrace();
+          logger.error("Exception creating grapher inventory JSON", e);
           return errorResponseFor(e);
         }
+        logger.debug("Inventory requested from {}", session.getRemoteIpAddress());
         return Response.newFixedLengthResponse(Status.OK, JSON, buffer.readByteArray());
       }
       return null;
@@ -66,10 +73,9 @@ public class TelemetryController extends NanoHTTPD {
           Buffer buffer = new Buffer();
           sub.toJson(buffer);
           return Response.newFixedLengthResponse(Status.OK, JSON, buffer.readByteArray());
-        } catch (IOException e) {
-          e.printStackTrace();
-        } catch (ResponseException e) {
-          e.printStackTrace();
+        } catch (Throwable t) {
+          logger.error("Exception starting grapher", t);
+          return errorResponseFor(t);
         }
       }
       return null;
@@ -78,9 +84,14 @@ public class TelemetryController extends NanoHTTPD {
     addHTTPInterceptor(session -> {
       if (session.getMethod() == Method.DELETE && session.getUri()
           .equalsIgnoreCase("/v1/grapher/subscription")) {
-        clientHandler.shutdown();
-        Buffer buffer = new Buffer();
-        return Response.newFixedLengthResponse(Status.NO_CONTENT, JSON, "");
+        try {
+          clientHandler.shutdown();
+          Buffer buffer = new Buffer();
+          return Response.newFixedLengthResponse(Status.NO_CONTENT, JSON, "");
+        } catch (Throwable t) {
+          logger.error("Exception stopping grapher", t);
+          return errorResponseFor(t);
+        }
       }
       return null;
     });
@@ -91,11 +102,11 @@ public class TelemetryController extends NanoHTTPD {
         Buffer buffer = new Buffer();
         try {
           inventory.toJson(buffer);
-        } catch (IOException e) {
-          e.printStackTrace();
-          return errorResponseFor(e);
+          return Response.newFixedLengthResponse(Status.OK, JSON, buffer.readByteArray());
+        } catch (Throwable t) {
+          logger.error("Exception creating detail inventory JSON", t);
+          return errorResponseFor(t);
         }
-        return Response.newFixedLengthResponse(Status.OK, JSON, buffer.readByteArray());
       }
       return null;
     });
@@ -105,19 +116,24 @@ public class TelemetryController extends NanoHTTPD {
   public void start() {
     try {
       start(NanoHTTPD.SOCKET_READ_TIMEOUT, true);
-      showInventoryEndpoint();
     } catch (IOException e) {
-      System.err.println("Couldn't start server:\n" + e);
-      System.exit(-1);
+      logger.error("Couldn't start server", e);
+    }
+    if (logger.isInfoEnabled()) {
+      logger.info("Started web server");
+      for (String end : getInventoryEndpoints()) {
+        logger.info(end);
+      }
     }
   }
 
   public void shutdown() {
     clientHandler.shutdown();
     super.stop();
+    logger.info("Stopped web server");
   }
 
-  private Response errorResponseFor(final Exception e) {
+  private Response errorResponseFor(final Throwable e) {
     Buffer buffer = new Buffer();
     JsonWriter writer = JsonWriter.of(buffer);
     try {
@@ -129,17 +145,23 @@ public class TelemetryController extends NanoHTTPD {
     return Response.newFixedLengthResponse(Status.INTERNAL_ERROR, JSON, buffer.readByteArray());
   }
 
-  private void showInventoryEndpoint() throws SocketException {
-    System.out.println();
-    Enumeration<NetworkInterface> nets = NetworkInterface.getNetworkInterfaces();
-    for (NetworkInterface netint : Collections.list(nets)) {
-      Enumeration<InetAddress> inetAddresses = netint.getInetAddresses();
-      for (InetAddress inetAddress : Collections.list(inetAddresses)) {
-        if (!inetAddress.isLinkLocalAddress() && inetAddress.getClass() == Inet4Address.class) {
-          System.out.printf("Inventory at http://%s:%d/v1/grapher/inventory%n", inetAddress.getHostAddress(), port);
+  public List<String> getInventoryEndpoints() {
+    List<String> endpoints = new ArrayList<>(2);
+    try {
+      Enumeration<NetworkInterface> nets = NetworkInterface.getNetworkInterfaces();
+      for (NetworkInterface netint : Collections.list(nets)) {
+        Enumeration<InetAddress> inetAddresses = netint.getInetAddresses();
+        for (InetAddress addr : Collections.list(inetAddresses)) {
+          if (!addr.isLinkLocalAddress() && addr.getClass() == Inet4Address.class) {
+            endpoints.add(
+                String.format("http://%s:%d/v1/grapher/inventory", addr.getHostAddress(), port));
+          }
         }
       }
-
+    } catch (SocketException e) {
+      logger.error("Exception looking up network interfaces", e);
     }
+    return endpoints;
   }
+
 }
