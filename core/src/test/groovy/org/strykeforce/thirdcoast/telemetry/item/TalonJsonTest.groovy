@@ -17,7 +17,7 @@ class TalonJsonTest extends Specification {
         talon = Stub(CANTalon)
         talon.getDeviceID() >> random.nextInt()
         talon.getDescription() >> "test talon"
-        talon.getControlMode() >> CANTalon.TalonControlMode.Disabled
+        talon.getControlMode() >> CANTalon.TalonControlMode.Speed
         talon.getAnalogInPosition() >> random.nextInt()
         talon.getAnalogInRaw() >> random.nextInt()
         talon.getAnalogInVelocity() >> random.nextInt()
@@ -43,7 +43,7 @@ class TalonJsonTest extends Specification {
 
     def "ToJson"() {
         given:
-        TalonItem.Json talon = new TalonItem.Json(this.talon)
+        def talon = new TalonItem(this.talon)
         Buffer buffer = new Buffer()
         JsonWriter writer = JsonWriter.of(buffer)
         JsonSlurper slurper = new JsonSlurper()
@@ -55,28 +55,21 @@ class TalonJsonTest extends Specification {
 
         then:
         with(result) {
-            id == this.talon.getDeviceID()
+            deviceId == this.talon.getDeviceID()
             description == this.talon.getDescription()
             controlMode == this.talon.getControlMode().toString()
-            feedbackDevice == "unknown"
-            analogInPosition == this.talon.getAnalogInPosition()
-            analogInRaw == this.talon.getAnalogInRaw()
-            analogInVelocity == this.talon.getAnalogInVelocity()
-            d == this.talon.getD()
-            encPosition == this.talon.getEncPosition()
-            encVelocity == this.talon.getEncVelocity()
-            error == this.talon.getError()
-            expiration == this.talon.getExpiration()
-            f == this.talon.getF()
-            with(faults) {
-                lim == this.talon.getFaultForLim()
-                softLim == this.talon.getFaultForSoftLim()
-                hardwareFailure == this.talon.getFaultHardwareFailure()
-                overTemp == this.talon.getFaultOverTemp()
-                underVoltage == this.talon.getFaultUnderVoltage()
-                revLim == this.talon.getFaultRevLim()
-                revSoftLim == this.talon.getFaultRevSoftLim()
-            }
+            feedbackDevice == "not available in API"
+            analogInput.position == this.talon.getAnalogInPosition()
+            analogInput.raw == this.talon.getAnalogInRaw()
+            analogInput.velocity == this.talon.getAnalogInVelocity()
+            closedLoop.enabled == true
+            closedLoop.p == this.talon.getP()
+            closedLoop.i == this.talon.getI()
+            closedLoop.d == this.talon.getD()
+            closedLoop.f == this.talon.getF()
+            closedLoop.errorDouble == this.talon.getError()
+            encoder.position == this.talon.getEncPosition()
+            encoder.velocity == this.talon.getEncVelocity()
             firmwareVersion == this.talon.GetFirmwareVersion()
         }
     }

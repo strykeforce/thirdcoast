@@ -1,14 +1,11 @@
 package org.strykeforce.thirdcoast.telemetry.item;
 
 import com.ctre.CANTalon;
-import com.squareup.moshi.JsonAdapter;
+import com.ctre.CANTalon.TalonControlMode;
 import com.squareup.moshi.JsonWriter;
-import com.squareup.moshi.Moshi;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 import java.util.function.DoubleSupplier;
 import org.strykeforce.thirdcoast.telemetry.grapher.Measure;
@@ -34,8 +31,14 @@ public class TalonItem extends AbstractItem {
       Measure.FORWARD_SOFT_LIMIT_OK,
       Measure.REVERSE_SOFT_LIMIT_OK
   ));
-
+  // TODO: getMotionProfileStatus
+  private final static String NA = "not available in API";
   private final CANTalon talon;
+  private final Set<TalonControlMode> CLOSED_LOOP = EnumSet.of(
+      TalonControlMode.Current,
+      TalonControlMode.Position,
+      TalonControlMode.Speed
+  );
 
   public TalonItem(final CANTalon talon) {
     super(TYPE, talon.getDescription(), MEASURES);
@@ -91,112 +94,120 @@ public class TalonItem extends AbstractItem {
   }
 
   @Override
-  public void toJson(JsonWriter writer) throws IOException {
-    Json json = new Json(talon);
-    json.toJson(writer);
-  }
-
-  @Override
   public String toString() {
     return "TalonItem{" +
         "talon=" + talon +
         "} " + super.toString();
   }
 
-  static class Json {
+  @Override
+  public void toJson(JsonWriter writer) throws IOException {
+    writer.beginObject();
+    writer.name("type").value(TYPE);
+    writer.name("deviceId").value(talon.getDeviceID());
+    writer.name("description").value(talon.getDescription());
+    writer.name("firmwareVersion").value(talon.GetFirmwareVersion());
+    writer.name("controlMode").value(talon.getControlMode().toString());
+    writer.name("brakeEnabledDuringNeutral").value(talon.getBrakeEnableDuringNeutral());
+    writer.name("busVoltage").value(talon.getBusVoltage());
+    writer.name("feedbackDevice").value(NA);
+    writer.name("currentLimit").value(NA);
+    writer.name("encoderCodesPerRef").value(NA);
+    writer.name("inverted").value(talon.getInverted());
+    writer.name("numberOfQuadIdxRises").value(talon.getNumberOfQuadIdxRises());
+    writer.name("outputVoltage").value(talon.getOutputVoltage());
+    writer.name("outputCurrent").value(talon.getOutputCurrent());
 
-    final String type = TalonItem.TYPE;
-    final int id;
-    final String feedbackDevice;
-    final int currentLimit;
-    final int encoderCodesPerRef;
-    final int analogInPosition;
-    final int analogInRaw;
-    final int analogInVelocity;
-    final boolean brakeEnabledDuringNeutral;
-    final double busVoltage;
-    final int closedLoopError;
-    final double closeLoopRampRate;
-    final String controlMode;
-    final double d;
-    final String description;
-    final int encPosition;
-    final int encVelocity;
-    final double error;
-    final double expiration;
-    final double f;
-    final long firmwareVersion;
-    final int forwardSoftLimit;
-    final double i;
-    final double iAccum;
-    final boolean inverted;
-    final String lastError;
-    final double motionMagicAcceleration;
-    final double motionMagicActTrajPosition;
-    final double motionMagicActTrajVelocity;
-    final double motionMagicCruiseVelocity;
-    // TODO: getMotionProfileStatus
-    final int motionProfileTopLevelBufferCount;
-    final double 	nominalClosedLoopVoltage;
-    final int numberOfQuadIdxRises;
-    final double outputCurrent;
-    final double outputVoltage;
-    final double p;
+    writer.name("analogInput");
+    writer.beginObject();
+    writer.name("position").value(talon.getAnalogInPosition());
+    writer.name("velocity").value(talon.getAnalogInVelocity());
+    writer.name("raw").value(talon.getAnalogInRaw());
+    writer.endObject();
 
-    final Map<String, Integer> faults = new HashMap<>(6);
+    writer.name("encoder");
+    writer.beginObject();
+    writer.name("position").value(talon.getEncPosition());
+    writer.name("velocity").value(talon.getEncVelocity());
+    writer.endObject();
 
-    public Json(CANTalon t) {
-      id = t.getDeviceID();
-      controlMode = t.getControlMode().toString();
-      feedbackDevice = "unknown";
-      currentLimit = -1;
-      encoderCodesPerRef = -1;
-      analogInPosition = t.getAnalogInPosition();
-      analogInRaw = t.getAnalogInRaw();
-      analogInVelocity = t.getAnalogInVelocity();
-      brakeEnabledDuringNeutral = t.getBrakeEnableDuringNeutral();
-      busVoltage = t.getBusVoltage();
-      closedLoopError = t.getClosedLoopError();
-      closeLoopRampRate = t.getCloseLoopRampRate();
-      d = t.getD();
-      description = t.getDescription();
-      encPosition = t.getEncPosition();
-      encVelocity = t.getEncVelocity();
-      error = t.getError();
-      expiration = t.getExpiration();
-      f = t.getF();
-      firmwareVersion = t.GetFirmwareVersion();
-      forwardSoftLimit = t.getForwardSoftLimit();
-      i = t.getI();
-      iAccum = t.GetIaccum();
-      inverted = t.getInverted();
-      lastError = t.getLastError();
-      motionMagicAcceleration = t.getMotionMagicAcceleration();
-      motionMagicActTrajPosition = t.getMotionMagicActTrajPosition();
-      motionMagicActTrajVelocity = t.getMotionMagicActTrajVelocity();
-      motionMagicCruiseVelocity = t.getMotionMagicCruiseVelocity();
-      motionProfileTopLevelBufferCount = t.getMotionProfileTopLevelBufferCount();
-      nominalClosedLoopVoltage = t.GetNominalClosedLoopVoltage();
-      numberOfQuadIdxRises = t.getNumberOfQuadIdxRises();
-      outputCurrent = t.getOutputCurrent();
-      outputVoltage = t.getOutputVoltage();
-      p = t.getP();
-
-      faults.put("lim", t.getFaultForLim());
-      faults.put("softLim", t.getFaultForSoftLim());
-      faults.put("hardwareFailure", t.getFaultHardwareFailure());
-      faults.put("overTemp", t.getFaultOverTemp());
-      faults.put("revLim", t.getFaultRevLim());
-      faults.put("revSoftLim", t.getFaultRevSoftLim());
-      faults.put("underVoltage", t.getFaultUnderVoltage());
-
+    writer.name("closedLoop");
+    writer.beginObject();
+    if (CLOSED_LOOP.contains(talon.getControlMode())) {
+      writer.name("enabled").value(true);
+      writer.name("p").value(talon.getP());
+      writer.name("i").value(talon.getI());
+      writer.name("d").value(talon.getD());
+      writer.name("f").value(talon.getF());
+      writer.name("iAccum").value(talon.GetIaccum());
+      writer.name("iZone").value(talon.getIZone());
+      writer.name("errorInt").value(talon.getClosedLoopError());
+      writer.name("errorDouble").value(talon.getError());
+      writer.name("rampRate").value(talon.getCloseLoopRampRate());
+      writer.name("nominalVoltage").value(talon.GetNominalClosedLoopVoltage());
+    } else {
+      writer.name("enabled").value(false);
     }
+    writer.endObject();
 
-    public void toJson(JsonWriter writer) throws IOException {
-      Moshi moshi = new Moshi.Builder().build();
-      JsonAdapter<Json> adapter = moshi.adapter(Json.class);
-      adapter.toJson(writer, Json.this);
+    writer.name("motionMagic");
+    writer.beginObject();
+    if (talon.getControlMode() == TalonControlMode.MotionMagic) {
+      writer.name("enabled").value(true);
+      writer.name("acceleration").value(talon.getMotionMagicAcceleration());
+      writer.name("actTrajPosition").value(talon.getMotionMagicActTrajPosition());
+      writer.name("actTrajVelocity").value(talon.getMotionMagicActTrajVelocity());
+      writer.name("cruiseVelocity").value(talon.getMotionMagicCruiseVelocity());
+    } else {
+      writer.name("enabled").value(false);
     }
+    writer.endObject();
 
+    writer.name("motionProfile");
+    writer.beginObject();
+    if (talon.getControlMode() == TalonControlMode.MotionProfile) {
+      writer.name("enabled").value(true);
+      writer.name("topLevelBufferCount").value(talon.getMotionProfileTopLevelBufferCount());
+    } else {
+      writer.name("enabled").value(false);
+    }
+    writer.endObject();
+
+    writer.name("forwardSoftLimit");
+    writer.beginObject();
+    writer.name("enabled").value(talon.isForwardSoftLimitEnabled());
+    if (talon.isForwardSoftLimitEnabled()) {
+      writer.name("limit").value(talon.getForwardSoftLimit());
+    }
+    writer.endObject();
+
+    writer.name("reverseSoftLimit");
+    writer.beginObject();
+    writer.name("enabled").value(talon.isReverseSoftLimitEnabled());
+    if (talon.isReverseSoftLimitEnabled()) {
+      writer.name("limit").value(talon.getReverseSoftLimit());
+    }
+    writer.endObject();
+
+    writer.name("lastError").value(talon.getLastError());
+    writer.name("faults");
+    writer.beginObject();
+    writer.name("lim").value(talon.getFaultForLim());
+    writer.name("stickyLim").value(talon.getStickyFaultForLim());
+    writer.name("softLim").value(talon.getFaultForSoftLim());
+    writer.name("stickySoftLim").value(talon.getStickyFaultForSoftLim());
+    writer.name("hardwareFailure").value(talon.getFaultHardwareFailure());
+    writer.name("overTemp").value(talon.getFaultOverTemp());
+    writer.name("stickyOverTemp").value(talon.getStickyFaultOverTemp());
+    writer.name("revLim").value(talon.getFaultRevLim());
+    writer.name("stickyRevLim").value(talon.getStickyFaultRevLim());
+    writer.name("revSoftLim").value(talon.getFaultRevSoftLim());
+    writer.name("stickyRevSoftLim").value(talon.getStickyFaultRevSoftLim());
+    writer.name("underVoltage").value(talon.getFaultUnderVoltage());
+    writer.name("stickyUnderVoltage").value(talon.getStickyFaultUnderVoltage());
+    writer.endObject();
+
+    writer.endObject();
   }
+
 }
