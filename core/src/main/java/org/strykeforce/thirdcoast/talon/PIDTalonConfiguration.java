@@ -5,6 +5,19 @@ import com.electronwill.nightconfig.core.UnmodifiableConfig;
 
 class PIDTalonConfiguration extends TalonConfiguration {
 
+  private final static String OUTPUT_VOLTAGE_MAX = "output_voltage_max";
+  private final static String FORWARD_OUTPUT_VOLTAGE_PEAK = "forward_output_voltage_peak";
+  private final static String REVERSE_OUTPUT_VOLTAGE_PEAK = "reverse_output_voltage_peak";
+  private final static String FORWARD_OUTPUT_VOLTAGE_NOMINAL = "forward_output_voltage_nominal";
+  private final static String REVERSE_OUTPUT_VOLTAGE_NOMINAL = "reverse_output_voltage_nominal";
+  private final static String ALLOWABLE_CLOSED_LOOP_ERROR = "allowable_closed_loop_error";
+  private final static String NOMINAL_CLOSED_LOOP_VOLTAGE = "nominal_closed_loop_voltage";
+  private final static String K_P = "P";
+  private final static String K_I = "I";
+  private final static String K_D = "D";
+  private final static String K_F = "F";
+  private final static String I_ZONE = "I_zone";
+
   private final double outputVoltageMax;
   private final double forwardOutputVoltagePeak;
   private final double reverseOutputVoltagePeak;
@@ -20,23 +33,21 @@ class PIDTalonConfiguration extends TalonConfiguration {
 
   PIDTalonConfiguration(UnmodifiableConfig config) {
     super(config);
-    outputVoltageMax = (double) config.getOptional("output_voltage_max").orElse(0.0);
-    forwardOutputVoltagePeak = (double) config.getOptional("forward_output_voltage_peak")
+    outputVoltageMax = (double) config.getOptional(OUTPUT_VOLTAGE_MAX).orElse(0.0);
+    forwardOutputVoltagePeak = (double) config.getOptional(FORWARD_OUTPUT_VOLTAGE_PEAK).orElse(0.0);
+    reverseOutputVoltagePeak = (double) config.getOptional(REVERSE_OUTPUT_VOLTAGE_PEAK).orElse(0.0);
+    forwardOutputVoltageNominal = (double) config.getOptional(FORWARD_OUTPUT_VOLTAGE_NOMINAL)
         .orElse(0.0);
-    reverseOutputVoltagePeak = (double) config.getOptional("reverse_output_voltage_peak")
+    reverseOutputVoltageNominal = (double) config.getOptional(REVERSE_OUTPUT_VOLTAGE_NOMINAL)
         .orElse(0.0);
-    forwardOutputVoltageNominal = (double) config.getOptional("forward_output_voltage_nominal")
-        .orElse(0.0);
-    reverseOutputVoltageNominal = (double) config.getOptional("reverse_output_voltage_nominal")
-        .orElse(0.0);
-    allowableClosedLoopError = (int) config.getOptional("allowable_closed_loop_error").orElse(0);
-    nominalClosedLoopVoltage = (double) config.getOptional("nominal_closed_loop_voltage")
+    allowableClosedLoopError = (int) config.getOptional(ALLOWABLE_CLOSED_LOOP_ERROR).orElse(0);
+    nominalClosedLoopVoltage = (double) config.getOptional(NOMINAL_CLOSED_LOOP_VOLTAGE)
         .orElse(0.0); // DisableNominalClosedLoopVoltage, SetNominalClosedLoopVoltage
-    pGain = (double) config.getOptional("P").orElse(0.0);
-    iGain = (double) config.getOptional("I").orElse(0.0);
-    dGain = (double) config.getOptional("D").orElse(0.0);
-    fGain = (double) config.getOptional("F").orElse(0.0);
-    iZone = (int) config.getOptional("I_zone").orElse(0);
+    pGain = (double) config.getOptional(K_P).orElse(0.0);
+    iGain = (double) config.getOptional(K_I).orElse(0.0);
+    dGain = (double) config.getOptional(K_D).orElse(0.0);
+    fGain = (double) config.getOptional(K_F).orElse(0.0);
+    iZone = (int) config.getOptional(I_ZONE).orElse(0);
   }
 
   @Override

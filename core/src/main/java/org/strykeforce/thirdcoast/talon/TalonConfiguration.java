@@ -3,8 +3,7 @@ package org.strykeforce.thirdcoast.talon;
 import com.ctre.CANTalon;
 import com.ctre.CANTalon.VelocityMeasurementPeriod;
 import com.electronwill.nightconfig.core.UnmodifiableConfig;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,7 +15,22 @@ import org.slf4j.LoggerFactory;
 public abstract class TalonConfiguration {
 
   final static Logger logger = LoggerFactory.getLogger(TalonConfiguration.class);
-  private static final Map<String, TalonConfiguration> settings = new ConcurrentHashMap<>();
+
+  private final static String NAME = "name";
+  private final static String SETPOINT_MAX = "setpoint_max";
+  private final static String FEEDBACK_DEVICE = "feedback_device";
+  private final static String ENCODER_REVERSED = "encoder_reversed";
+  private final static String TICKS_PER_REVOLUTION = "ticks_per_revolution";
+  private final static String BRAKE_IN_NEUTRAL = "brake_in_neutral";
+  private final static String OUTPUT_REVERSED = "output_reversed";
+  private final static String VELOCITY_MEASUREMENT_PERIOD = "velocity_measurement_period";
+  private final static String VELOCITY_MEASUREMENT_WINDOW = "velocity_measurement_window";
+  private final static String FORWARD_LIMIT_SWITCH = "forward_limit_switch";
+  private final static String REVERSE_LIMIT_SWITCH = "reverse_limit_switch";
+  private final static String FORWARD_SOFT_LIMIT = "forward_soft_limit";
+  private final static String REVERSE_SOFT_LIMIT = "reverse_soft_limit";
+  private final static String CURRENT_LIMIT = "current_limit";
+
   // required
   private final String name;
   private final double setpointMax;
@@ -34,35 +48,39 @@ public abstract class TalonConfiguration {
   private final int currentLimit;
 
   TalonConfiguration(UnmodifiableConfig toml) {
-    name = toml.get("name");
-    try {
-      setpointMax = toml.get("setpoint_max");
-    } catch (NullPointerException e) {
-      throw new IllegalArgumentException("TALON setpoint_max parameter missing in: " + name);
+    Optional<String> optString = toml.getOptional(NAME);
+    if (!optString.isPresent()) {
+      throw new IllegalArgumentException("TALON " + NAME + " parameter missing");
     }
+    name = optString.get();
+    Optional<Double> optDouble = toml.getOptional(SETPOINT_MAX);
+    if (!optDouble.isPresent()) {
+      throw new IllegalArgumentException(
+          "TALON " + SETPOINT_MAX + " parameter missing in: " + name);
+    }
+    setpointMax = optDouble.get().doubleValue();
 
-    encoder = new Encoder(toml.getOptional("feedback_device"),
-        toml.getOptional("encoder_reversed"),
-        toml.getOptional("ticks_per_revolution"));
+    encoder = new Encoder(toml.getOptional(FEEDBACK_DEVICE), toml.getOptional(ENCODER_REVERSED),
+        toml.getOptional(TICKS_PER_REVOLUTION));
 
-    isBrakeInNeutral = (boolean) toml.getOptional("brake_in_neutral").orElse(true);
-    isOutputReversed = (boolean) toml.getOptional("output_reversed").orElse(false);
+    isBrakeInNeutral = (boolean) toml.getOptional(BRAKE_IN_NEUTRAL).orElse(true);
+    isOutputReversed = (boolean) toml.getOptional(OUTPUT_REVERSED).orElse(false);
 
-    int vmp = (int) toml.getOptional("velocity_measurement_period").orElse(100);
+    int vmp = (int) toml.getOptional(VELOCITY_MEASUREMENT_PERIOD).orElse(100);
     velocityMeasurementPeriod = VelocityMeasurementPeriod.valueOf(vmp);
     if (velocityMeasurementPeriod == null) {
-      throw new IllegalArgumentException("TALON velocity_measurement_period invalid: " + vmp);
+      throw new IllegalArgumentException(
+          "TALON " + VELOCITY_MEASUREMENT_PERIOD + " invalid: " + vmp);
     }
-    velocityMeasurementWindow = (int) toml.getOptional("velocity_measurement_window")
-        .orElse(64);
+    velocityMeasurementWindow = (int) toml.getOptional(VELOCITY_MEASUREMENT_WINDOW).orElse(64);
 
-    forwardLimitSwitch = new LimitSwitch(toml.getOptional("forward_limit_switch"));
-    reverseLimitSwitch = new LimitSwitch(toml.getOptional("reverse_limit_switch"));
+    forwardLimitSwitch = new LimitSwitch(toml.getOptional(FORWARD_LIMIT_SWITCH));
+    reverseLimitSwitch = new LimitSwitch(toml.getOptional(REVERSE_LIMIT_SWITCH));
 
-    forwardSoftLimit = new SoftLimit(toml.getOptional("forward_soft_limit"));
-    reverseSoftLimit = new SoftLimit(toml.getOptional("reverse_soft_limit"));
+    forwardSoftLimit = new SoftLimit(toml.getOptional(FORWARD_SOFT_LIMIT));
+    reverseSoftLimit = new SoftLimit(toml.getOptional(REVERSE_SOFT_LIMIT));
 
-    currentLimit = (int) toml.getOptional("current_limit").orElse(0);
+    currentLimit = (int) toml.getOptional(CURRENT_LIMIT).orElse(0);
   }
 
 
