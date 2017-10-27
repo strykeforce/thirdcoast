@@ -3,6 +3,7 @@ package org.strykeforce.thirdcoast.talon;
 import com.ctre.CANTalon;
 import com.ctre.CANTalon.VelocityMeasurementPeriod;
 import com.electronwill.nightconfig.core.UnmodifiableConfig;
+import edu.wpi.first.wpilibj.MotorSafety;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,20 +17,21 @@ public abstract class TalonConfiguration {
 
   final static Logger logger = LoggerFactory.getLogger(TalonConfiguration.class);
 
-  private final static String NAME = "name";
-  private final static String SETPOINT_MAX = "setpoint_max";
-  private final static String FEEDBACK_DEVICE = "feedback_device";
-  private final static String ENCODER_REVERSED = "encoder_reversed";
-  private final static String TICKS_PER_REVOLUTION = "ticks_per_revolution";
-  private final static String BRAKE_IN_NEUTRAL = "brake_in_neutral";
-  private final static String OUTPUT_REVERSED = "output_reversed";
-  private final static String VELOCITY_MEASUREMENT_PERIOD = "velocity_measurement_period";
-  private final static String VELOCITY_MEASUREMENT_WINDOW = "velocity_measurement_window";
-  private final static String FORWARD_LIMIT_SWITCH = "forward_limit_switch";
-  private final static String REVERSE_LIMIT_SWITCH = "reverse_limit_switch";
-  private final static String FORWARD_SOFT_LIMIT = "forward_soft_limit";
-  private final static String REVERSE_SOFT_LIMIT = "reverse_soft_limit";
-  private final static String CURRENT_LIMIT = "current_limit";
+  public final static String NAME = "name";
+  public final static String MODE = "mode";
+  public final static String SETPOINT_MAX = "setpoint_max";
+  public final static String FEEDBACK_DEVICE = "feedback_device";
+  public final static String ENCODER_REVERSED = "encoder_reversed";
+  public final static String TICKS_PER_REVOLUTION = "ticks_per_revolution";
+  public final static String BRAKE_IN_NEUTRAL = "brake_in_neutral";
+  public final static String OUTPUT_REVERSED = "output_reversed";
+  public final static String VELOCITY_MEASUREMENT_PERIOD = "velocity_measurement_period";
+  public final static String VELOCITY_MEASUREMENT_WINDOW = "velocity_measurement_window";
+  public final static String FORWARD_LIMIT_SWITCH = "forward_limit_switch";
+  public final static String REVERSE_LIMIT_SWITCH = "reverse_limit_switch";
+  public final static String FORWARD_SOFT_LIMIT = "forward_soft_limit";
+  public final static String REVERSE_SOFT_LIMIT = "reverse_soft_limit";
+  public final static String CURRENT_LIMIT = "current_limit";
 
   // required
   private final String name;
@@ -100,6 +102,8 @@ public abstract class TalonConfiguration {
    */
   public void configure(CANTalon talon) {
     talon.setSafetyEnabled(false);
+    talon.setProfile(0);
+    talon.setExpiration(MotorSafety.DEFAULT_SAFETY_EXPIRATION);
     encoder.configure(talon);
     talon.enableBrakeMode(isBrakeInNeutral);
     talon.reverseOutput(isOutputReversed);

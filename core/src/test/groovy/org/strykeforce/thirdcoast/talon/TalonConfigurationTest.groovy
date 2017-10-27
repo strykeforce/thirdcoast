@@ -19,15 +19,7 @@ class TalonConfigurationTest extends Specification {
         provisioner = new TalonProvisioner(config.unmodifiable())
     }
 
-    def "handles missing parameters file"() {
-        when:
-        TalonProvisioner provisioner = new TalonProvisioner(Config.inMemory())
-
-        then:
-        thrown(IllegalArgumentException)
-    }
-
-    def "reads talon parameters"() {
+     def "reads talon parameters"() {
         when:
         def t = provisioner.configurationFor("test")
 

@@ -1,13 +1,19 @@
 package org.strykeforce.thirdcoast.talon;
 
 import com.ctre.CANTalon;
+import com.ctre.CANTalon.TalonControlMode;
 import com.electronwill.nightconfig.core.Config;
+import com.electronwill.nightconfig.core.InMemoryFormat;
 import com.electronwill.nightconfig.core.UnmodifiableConfig;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A service for provisioning Talons. This class will read CANTalon configurations located in TOML
@@ -21,8 +27,27 @@ import javax.inject.Singleton;
 @Singleton
 public class TalonProvisioner {
 
+  public final static UnmodifiableConfig DEFAULT;
+  public final static String TALON_TABLE = "TALON";
+  public final static String DEFAULT_CONFIG = "voltage.default";
+  final static Logger logger = LoggerFactory.getLogger(TalonProvisioner.class);
+
+  static {
+    Config c = Config.inMemory();
+    c.add(Arrays.asList(TalonConfiguration.NAME), DEFAULT_CONFIG);
+    c.add(Arrays.asList(TalonConfiguration.MODE), TalonControlMode.Voltage.name());
+    c.add(Arrays.asList(TalonConfiguration.SETPOINT_MAX), 12.0);
+    Config d = InMemoryFormat.defaultInstance().createConfig();
+    d.add(TALON_TABLE, Arrays.asList(c));
+    DEFAULT = d.unmodifiable();
+  }
+
   private final Map<String, TalonConfiguration> settings = new HashMap<>();
 
+  /**
+   * Construct the TalonProvisioner with base talon configurations that include swerve drive
+   * motors.
+   */
   @Inject
   public TalonProvisioner(UnmodifiableConfig configs) {
     addConfigurations(configs);
@@ -38,16 +63,18 @@ public class TalonProvisioner {
   public void addConfigurations(UnmodifiableConfig configs) {
     List<Config> configList = configs.get("TALON");
     if (configList == null) {
-      throw new IllegalArgumentException("no TALONS in config");
+      logger.warn("no TALON tables in config");
+      return;
     }
 
     for (UnmodifiableConfig config : configList) {
-      String name = config.get("name");
+      String name = config.get(TalonConfiguration.NAME);
       if (name == null) {
         throw new IllegalArgumentException("TALON configuration name parameter missing");
       }
 
-      String mode = (String) config.getOptional("mode").orElse("Voltage");
+      String mode = (String) config.getOptional(TalonConfiguration.MODE)
+          .orElse(TalonControlMode.Voltage.name());
       TalonConfiguration talon = null;
       switch (CANTalon.TalonControlMode.valueOf(mode)) {
         case Voltage:
