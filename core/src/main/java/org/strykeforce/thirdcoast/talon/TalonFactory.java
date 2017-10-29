@@ -22,7 +22,7 @@ public class TalonFactory {
 
   @Inject
   public TalonFactory(TalonProvisioner provisioner, WrapperFactory wrapperFactory) {
-    logger.debug("initializing TalonFactory: {}, {}", provisioner, wrapperFactory);
+    logger.debug("initializing TalonFactory: {}", provisioner);
     this.provisioner = provisioner;
     this.wrapperFactory = wrapperFactory;
   }
@@ -95,6 +95,7 @@ public class TalonFactory {
    */
   static class Wrapper extends CANTalon {
 
+    final static Logger logger = LoggerFactory.getLogger(Wrapper.class);
     private double setpoint = Double.NaN;
     private TalonControlMode controlMode = null;
 
@@ -119,10 +120,12 @@ public class TalonFactory {
     public void changeControlMode(TalonControlMode controlMode) {
       super.changeControlMode(controlMode);
       if (controlMode != this.controlMode) {
+        logger.info("{}: changed from {} to {}", getDescription(), this.controlMode, controlMode);
         setpoint = Double.NaN;
         this.controlMode = controlMode;
-        logger.info("changing {} from {} to {}", getDescription(), this.controlMode, controlMode);
+        return;
       }
+      logger.debug("{}: control mode {} not changed", getDescription(), controlMode);
     }
 
     @Override

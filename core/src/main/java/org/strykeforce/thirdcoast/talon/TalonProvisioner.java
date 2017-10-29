@@ -112,5 +112,10 @@ public class TalonProvisioner {
     return config;
   }
 
-
+  @Override
+  public String toString() {
+    return "TalonProvisioner{" +
+        "settings=" + settings +
+        '}';
+  }
 }

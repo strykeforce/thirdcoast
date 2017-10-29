@@ -1,49 +1,39 @@
 package org.strykeforce.thirdcoast.telemetry.tct;
 
-import com.ctre.CANTalon;
-import com.ctre.CANTalon.StatusFrameRate;
-import com.ctre.CANTalon.TalonControlMode;
+import com.electronwill.nightconfig.core.InMemoryFormat;
 import edu.wpi.first.wpilibj.SampleRobot;
-import org.strykeforce.thirdcoast.telemetry.TelemetryService;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.strykeforce.thirdcoast.talon.TalonProvisioner;
 
 public class Main extends SampleRobot {
 
-  CANTalon talon = new CANTalon(6);
+  final static Logger logger = LoggerFactory.getLogger(Main.class);
+  Menu menu;
+  MainComponent component;
+  Executor menuExecutor;
 
   @Override
   protected void robotInit() {
-    TelemetryService telemetry = new TelemetryService();
-    telemetry.register(talon);
-    telemetry.start();
-    talon.changeControlMode(TalonControlMode.Voltage);
-    talon.setVoltageRampRate(0);
-    talon.setVoltageCompensationRampRate(0);
-    talon.setStatusFrameRateMs(StatusFrameRate.General, 5);
-    talon.setStatusFrameRateMs(StatusFrameRate.Feedback, 5);
-    talon.setStatusFrameRateMs(StatusFrameRate.QuadEncoder, 5);
-    talon.setStatusFrameRateMs(StatusFrameRate.PulseWidth, 5);
-    talon.setStatusFrameRateMs(StatusFrameRate.AnalogTempVbat, 5);
-    talon.setCurrentLimit(10);
+    logger.trace("robotInit start");
+    MainComponent component = DaggerMainComponent.builder().toml(TalonProvisioner.DEFAULT).build();
+
+    menu = component.menu();
+    menuExecutor = Executors.newSingleThreadExecutor();
+    menuExecutor.execute(menu);
+    logger.trace("robotInit finish");
   }
 
   @Override
   public void operatorControl() {
-    long start = System.currentTimeMillis();
-    try {
-      while (true) {
-        long elapsed = System.currentTimeMillis() - start;
-        if (elapsed < 20_000) {
-          talon.set(8);
-//        } else if (elapsed < 8000) {
-//          talon.set(12);
-//        } else if (elapsed < 12000) {
-//          talon.set(6);
-        } else {
-          talon.set(0);
-        }
-        Thread.sleep(10);
+    while (isEnabled()) {
+      try {
+        Thread.sleep(5);
+      } catch (InterruptedException e) {
+        logger.debug("tele interrupted", e);
       }
-    } catch (InterruptedException e) {
     }
   }
 

@@ -57,14 +57,14 @@ public class Robot extends IterativeRobot {
         component = DaggerRobotComponent.builder().toml(toml.unmodifiable()).build();
       }
       controls = component.controls();
-//      swerve = component.swerveDrive();
+      swerve = component.swerveDrive();
       telemetryService = component.telemetryService();
-      telemetryService.register(new CANTalon(6));
-//      swerve.registerWith(telemetryService);
-      StatusFrameRate rates = StatusFrameRate.builder().general(5).feedback(5).build();
-      telemetryService.configureStatusFrameRates(6, rates);
+//      telemetryService.register(new CANTalon(6));
+      swerve.registerWith(telemetryService);
+//      StatusFrameRate rates = StatusFrameRate.builder().general(5).feedback(5).build();
+//      telemetryService.configureStatusFrameRates(6, rates);
       telemetryService.start();
-//      swerve.zeroAzimuthEncoders();
+      swerve.zeroAzimuthEncoders();
     } catch (Throwable t) {
       logger.error("Error initializing robot", t);
     }

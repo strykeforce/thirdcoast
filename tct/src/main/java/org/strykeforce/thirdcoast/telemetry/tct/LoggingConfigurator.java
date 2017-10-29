@@ -8,6 +8,7 @@ import ch.qos.logback.classic.layout.TTLLLayout;
 import ch.qos.logback.classic.spi.Configurator;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.ConsoleAppender;
+import ch.qos.logback.core.FileAppender;
 import ch.qos.logback.core.encoder.LayoutWrappingEncoder;
 import ch.qos.logback.core.spi.ContextAwareBase;
 
@@ -22,9 +23,14 @@ public class LoggingConfigurator extends ContextAwareBase implements Configurato
   public void configure(LoggerContext lc) {
     addInfo("Setting up robot logging configuration.");
 
+    FileAppender<ILoggingEvent> fa = new FileAppender<>();
+    fa.setFile("tct.log");
+    fa.setAppend(true);
     ConsoleAppender<ILoggingEvent> ca = new ConsoleAppender<>();
     ca.setContext(lc);
     ca.setName("console");
+    fa.setContext(lc);
+    fa.setName("logfile");
     LayoutWrappingEncoder<ILoggingEvent> encoder = new LayoutWrappingEncoder<>();
     encoder.setContext(lc);
 
@@ -36,10 +42,13 @@ public class LoggingConfigurator extends ContextAwareBase implements Configurato
     encoder.setLayout(layout);
 
     ca.setEncoder(encoder);
-    ca.start();
+//    ca.start();
+    fa.setEncoder(encoder);
+    fa.start();
 
     Logger rootLogger = lc.getLogger(Logger.ROOT_LOGGER_NAME);
-    rootLogger.addAppender(ca);
-    rootLogger.setLevel(Level.WARN);
+//    rootLogger.addAppender(ca);
+    rootLogger.addAppender(fa);
+    rootLogger.setLevel(Level.DEBUG);
   }
 }
