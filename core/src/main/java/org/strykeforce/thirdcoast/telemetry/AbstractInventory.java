@@ -25,10 +25,12 @@ public abstract class AbstractInventory implements Inventory {
     this.items.addAll(items);
   }
 
+  @Override
   public Item itemForId(final int id) {
     return items.get(id);
   }
 
+  @Override
   public void writeInventory(BufferedSink sink) throws IOException {
     JsonWriter writer = JsonWriter.of(sink);
     writer.setIndent("  ");

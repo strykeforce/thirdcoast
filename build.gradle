@@ -3,12 +3,14 @@ plugins {
     id "idea"
     id "net.ltgt.apt-idea" version "0.12"
     id "jaci.openrio.gradle.GradleRIO" version "2017.10.30" apply false
+    id "net.ltgt.errorprone" version "0.0.13"
 }
 
 subprojects {
     apply plugin: 'java'
     apply plugin: 'jaci.openrio.gradle.GradleRIO'
     apply plugin: 'net.ltgt.apt-idea'
+    apply plugin: 'net.ltgt.errorprone'
 
     wpi {
         navxVersion = '3.0.331' // FIXME: remove for 2018 build

@@ -1,5 +1,7 @@
-apply plugin: 'groovy'
-apply plugin: 'maven'
+plugins {
+    id 'groovy'
+    id 'maven'
+}
 
 install {
     repositories.mavenInstaller {

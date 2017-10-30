@@ -38,7 +38,7 @@ public abstract class NetworkModule {
     } catch (SocketException e) {
       logger.error("Failed to create new socket", e);
     }
-    return null;
+    throw new RuntimeException();
   }
 
 }

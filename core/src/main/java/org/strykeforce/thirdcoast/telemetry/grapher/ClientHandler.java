@@ -9,6 +9,7 @@ import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import javax.inject.Inject;
 import javax.inject.Named;
 import okio.Buffer;
@@ -47,7 +48,8 @@ public class ClientHandler {
     logger.info("Sending graph data to {}:{}", subscription.client(), port);
     socketAddress = new InetSocketAddress(subscription.client(), port);
     scheduler = Executors.newSingleThreadScheduledExecutor();
-    scheduler.scheduleAtFixedRate(() -> {
+    // FIXME: future not checked for exception
+    ScheduledFuture<?> future = scheduler.scheduleAtFixedRate(() -> {
       Buffer buffer = new Buffer();
       try {
         subscription.measurementsToJson(buffer);

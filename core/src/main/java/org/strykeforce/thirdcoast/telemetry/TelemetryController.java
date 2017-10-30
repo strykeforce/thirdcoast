@@ -113,6 +113,7 @@ public class TelemetryController extends NanoHTTPD {
 
   }
 
+  @Override
   public void start() {
     try {
       start(NanoHTTPD.SOCKET_READ_TIMEOUT, true);

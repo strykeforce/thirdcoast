@@ -1,7 +1,6 @@
 plugins {
     id "application"
     id 'com.github.johnrengelman.shadow' version '2.0.1'
-    id "net.ltgt.errorprone" version "0.0.13"
 }
 
 mainClassName = 'org.strykeforce.thirdcoast.telemetry.sim.Main'
