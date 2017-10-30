@@ -24,6 +24,7 @@ public class TelemetryService {
   final static Logger logger = LoggerFactory.getLogger(TelemetryService.class);
   TelemetryController telemetryController;
   List<Item> items = new ArrayList<>(16);
+  boolean running = false;
 
   /**
    * Default constructor.
@@ -37,19 +38,38 @@ public class TelemetryService {
    * Start the Telemetry service and listen for client connections.
    */
   public void start() {
+    if (running) {
+      logger.info("already started");
+      return;
+    }
     TelemetryComponent component = DaggerTelemetryComponent.builder().items(items).build();
     telemetryController = component.telemetryController();
     telemetryController.start();
-    logger.info("Telemetry service started");
+    logger.info("started");
+    running = true;
   }
 
   /**
    * Stop the Telemetry service.
    */
   public void stop() {
+    if (!running) {
+      logger.info("already stopped");
+      return;
+    }
     telemetryController.shutdown();
     telemetryController = null;
-    logger.info("Stopped Telemetry service");
+    logger.info("stopped");
+    running = false;
+  }
+
+  /**
+   * Un-register all Talons.
+   */
+  public void clear() {
+    checkNotStarted();
+    items.clear();
+    logger.info("talon set was cleared");
   }
 
   /**
@@ -59,9 +79,10 @@ public class TelemetryService {
    * @see org.strykeforce.thirdcoast.talon.StatusFrameRate
    */
   public void register(CANTalon talon) {
+    checkNotStarted();
     items.add(new TalonItem(talon));
     StatusFrameRate.DEFAULT.configure(talon);
-    logger.info("Registered Talon {} with {}", talon.getDeviceID(), StatusFrameRate.DEFAULT);
+    logger.info("registered talon {} with {}", talon.getDeviceID(), StatusFrameRate.DEFAULT);
   }
 
   /**
@@ -70,8 +91,9 @@ public class TelemetryService {
    * @param item the Item to register for data collection
    */
   public void register(Item item) {
+    checkNotStarted();
     items.add(item);
-    logger.info("Registered Item {}", item.description());
+    logger.info("registered item {}", item.description());
   }
 
   /**
@@ -80,7 +102,9 @@ public class TelemetryService {
    * @param collection the collection of Items to register for data collection
    */
   public void registerAll(Collection<Item> collection) {
+    checkNotStarted();
     items.addAll(collection);
+    logger.info("registered all: {}", collection);
   }
 
   /**
@@ -92,6 +116,10 @@ public class TelemetryService {
   public void configureStatusFrameRates(int talonId, StatusFrameRate rates) {
     assert rates != null;
 
+    if (running) {
+      logger.warn("setting status frame rates while telemetry service is running");
+    }
+
     Optional<Item> item = items.stream().filter(it -> {
       return it instanceof TalonItem && it.id() == talonId;
     }).findFirst();
@@ -101,8 +129,15 @@ public class TelemetryService {
     }
 
     TalonItem talonItem = (TalonItem) item.get();
-    logger.info("Setting Talon {} ({}) to {}", talonItem.description(), talonItem.getTalon().getDeviceID(), rates);
+    logger.info("setting talon {} ({}) to {}", talonItem.description(),
+        talonItem.getTalon().getDeviceID(), rates);
     rates.configure(talonItem.getTalon());
+  }
+
+  private void checkNotStarted() {
+    if (running) {
+      throw new IllegalStateException("TelemetryService must be stopped.");
+    }
   }
 
 }

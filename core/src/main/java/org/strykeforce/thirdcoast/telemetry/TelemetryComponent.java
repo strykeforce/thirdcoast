@@ -27,8 +27,6 @@ interface TelemetryComponent {
 
   TelemetryController telemetryController();
 
-//  Collection<Item> items();
-
   @Component.Builder
   interface Builder {
 

@@ -3,6 +3,7 @@ package org.strykeforce.thirdcoast.telemetry.tct;
 import com.ctre.CANTalon;
 import com.electronwill.nightconfig.core.Config;
 import com.electronwill.nightconfig.core.file.FileConfig;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -61,6 +62,9 @@ public class Talons {
         logStatus("no talons available to load");
         return;
       }
+      telemetryService.stop();
+      telemetryService.clear();
+      talons.clear();
       for (Config config : configList) {
         List<Integer> ids = config.get("deviceId");
         for (int i : ids) {
@@ -68,9 +72,11 @@ public class Talons {
               .orElse(TalonProvisioner.DEFAULT_CONFIG);
           CANTalon talon = talonFactory.createTalonWithConfiguration(i, name);
           talons.add(talon);
+          telemetryService.register(talon);
           logger.info("adding talon with id {} and configuration {}", i, name);
         }
       }
+      telemetryService.start();
     }
 //    terminal.puts(Capability.clear_screen);
   }
@@ -85,13 +91,38 @@ public class Talons {
   }
 
   public void select() {
-    for (CANTalon talon : talons) {
-      if (talon.getDeviceID() == 6) {
-        selected.add(talon);
-        telemetryService.register(talon);
+    terminal.writer().println("Enter comma-separated list of Talon IDs");
+    String line = null;
+    try {
+      line = reader.readLine("talon ids> ", prompts.rightPrompt(), (Character) null, null).trim();
+    } catch (EndOfFileException | UserInterruptException e) {
+      return;
+    }
+
+    selected.clear();
+    if (line.isEmpty()) {
+      terminal.writer().println("no Talons selected");
+      return;
+    }
+
+    List<String> ids = Arrays.asList(line.split(","));
+    for (String s : ids) {
+      int id;
+      try {
+        id = Integer.valueOf(s);
+      } catch (NumberFormatException e) {
+        terminal.writer().printf("%s is not a number, ignoring%n", s);
+        continue;
+      }
+
+      for (CANTalon talon : talons) {
+        if (talon.getDeviceID() == id) {
+          selected.add(talon);
+          terminal.writer().printf("added Talon ID %d%n", id);
+          break;
+        }
       }
     }
-    telemetryService.start();
   }
 
   void start() {
