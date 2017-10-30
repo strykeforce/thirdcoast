@@ -4,7 +4,7 @@ plugins {
 
 dependencies {
     compile wpilib()
-    compile talonSrx()
+    compile ctre()
     compile navx()
     compile project(':core')
     compile group: 'org.jline', name: 'jline-terminal', version: '3.5.1'

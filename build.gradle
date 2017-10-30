@@ -2,12 +2,17 @@ plugins {
     id "java"
     id "idea"
     id "net.ltgt.apt-idea" version "0.12"
-    id "jaci.openrio.gradle.GradleRIO" version "2017.1.5" apply false
+    id "jaci.openrio.gradle.GradleRIO" version "2017.10.30" apply false
 }
 
 subprojects {
     apply plugin: 'java'
+    apply plugin: 'jaci.openrio.gradle.GradleRIO'
     apply plugin: 'net.ltgt.apt-idea'
+
+    wpi {
+        navxVersion = '3.0.331' // FIXME: remove for 2018 build
+    }
 
     repositories {
         mavenCentral()
@@ -23,26 +28,6 @@ idea {
         }
     }
 }
-}
-
-subprojects {
-    apply plugin: 'jaci.openrio.gradle.GradleRIO'
-
-    frc {
-        team = "2767"
-        robotClass = "org.strykeforce.thirdcoast.robot.Robot"
-        rioHost = "10.27.67.2"
-        deployTimeout = 2
-//        jvmArguments = "-Xms10m"
-    }
-
-    wpi {
-        wpilibVersion = "+"
-        ntcoreVersion = "+"
-        opencvVersion = "3.1.0"
-        cscoreVersion = "+"
-        talonSrxVersion = "4.4.1.14"
-    }
 }
 
 task wrapper(type: Wrapper) {

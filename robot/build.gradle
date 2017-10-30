@@ -1,9 +1,25 @@
+def TEAM = 2767
+def ROBOT_CLASS = "org.strykeforce.thirdcoast.robot.Robot"
+
+deploy {
+    targets {
+        target("roborio", jaci.openrio.gradle.frc.RoboRIO) {
+            team = TEAM
+        }
+    }
+    artifacts {
+        artifact('frcJava', jaci.openrio.gradle.frc.FRCJavaArtifact) {
+            targets << "roborio"
+        }
+    }
+}
+
+
 dependencies {
     compile wpilib()
-    compile talonSrx()
+    compile ctre()
     compile navx()
     compile project(':core')
-//    compile group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.25'
     compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
     apt 'com.google.dagger:dagger-compiler:2.12'
 }
@@ -15,5 +31,5 @@ def robotManifest = {
 
 jar {
     from configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
-    manifest robotManifest
+    manifest jaci.openrio.gradle.GradleRIOPlugin.javaManifest(ROBOT_CLASS)
 }

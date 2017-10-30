@@ -47,6 +47,8 @@ public class TalonProvisioner {
   /**
    * Construct the TalonProvisioner with base talon configurations that include swerve drive
    * motors.
+   *
+   * @param configs base configuration that should include swerve azimuth and drive configs
    */
   @Inject
   public TalonProvisioner(UnmodifiableConfig configs) {

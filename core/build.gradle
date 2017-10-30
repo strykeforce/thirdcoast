@@ -11,7 +11,7 @@ install {
 
 dependencies {
     compile wpilib()
-    compile talonSrx()
+    compile ctre()
     compile navx()
     compile group: 'com.github.TheElectronWill.Night-Config', name: 'toml', version: '3.0.2'
     compile group: 'com.squareup.moshi', name: 'moshi', version: '1.5.0'
