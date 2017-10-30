@@ -41,11 +41,11 @@ public class ServoItem extends AbstractItem {
     }
     switch (measure) {
       case POSITION:
-        return () -> servo.getPosition();
+        return servo::getPosition;
       case ANGLE:
-        return () -> servo.getAngle();
-        default:
-          throw new IllegalStateException("should not get here");
+        return servo::getAngle;
+      default:
+        throw new AssertionError(measure);
     }
   }
 

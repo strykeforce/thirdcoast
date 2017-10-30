@@ -62,35 +62,35 @@ public class TalonItem extends AbstractItem {
 
     switch (measure) {
       case SETPOINT:
-        return () -> talon.get();
+        return talon::get;
       case OUTPUT_CURRENT:
-        return () -> talon.getOutputCurrent();
+        return talon::getOutputCurrent;
       case OUTPUT_VOLTAGE:
-        return () -> talon.getOutputVoltage();
+        return talon::getOutputVoltage;
       case ENCODER_POSITION:
-        return () -> talon.getEncPosition();
+        return talon::getEncPosition;
       case ENCODER_VELOCITY:
-        return () -> talon.getEncVelocity();
+        return talon::getEncVelocity;
       case ABSOLUTE_ENCODER_POSITION:
-        return () -> talon.getPulseWidthPosition();
+        return talon::getPulseWidthPosition;
       case CONTROL_LOOP_ERROR:
-        return () -> talon.getClosedLoopError();
+        return talon::getClosedLoopError;
       case INTEGRATOR_ACCUMULATOR:
-        return () -> talon.GetIaccum();
+        return talon::GetIaccum;
       case BUS_VOLTAGE:
-        return () -> talon.getBusVoltage();
+        return talon::getBusVoltage;
       case FORWARD_HARD_LIMIT_CLOSED:
         return () -> talon.isFwdLimitSwitchClosed() ? 1.0 : 0.0;
       case REVERSE_HARD_LIMIT_CLOSED:
         return () -> talon.isRevLimitSwitchClosed() ? 1.0 : 0.0;
       case FORWARD_SOFT_LIMIT_OK:
         // TODO: verify soft limit
-        return () -> talon.getForwardSoftLimit();
+        return talon::getForwardSoftLimit;
       case REVERSE_SOFT_LIMIT_OK:
-        return () -> talon.getReverseSoftLimit();
+        return talon::getReverseSoftLimit;
+      default:
+        throw new AssertionError(measure);
     }
-    return () -> Double.NaN;
-
   }
 
   @Override
