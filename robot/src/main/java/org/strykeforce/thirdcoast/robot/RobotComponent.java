@@ -1,6 +1,5 @@
 package org.strykeforce.thirdcoast.robot;
 
-import com.electronwill.nightconfig.core.Config;
 import com.electronwill.nightconfig.core.UnmodifiableConfig;
 import dagger.BindsInstance;
 import dagger.Component;
@@ -12,7 +11,6 @@ import org.strykeforce.thirdcoast.telemetry.TelemetryService;
 
 /**
  * This interface configures dependency injection for the Robot.
- *
  */
 @Singleton
 @Component(modules = {
@@ -26,8 +24,6 @@ interface RobotComponent {
   SwerveDrive swerveDrive();
 
   TelemetryService telemetryService();
-
-//  UnmodifiableConfig unmodifiableConfig();
 
   @Component.Builder
   interface Builder {
