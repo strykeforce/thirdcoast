@@ -1,89 +1,65 @@
 package org.strykeforce.thirdcoast.telemetry.tct;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import javax.inject.Inject;
-import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
-import org.jline.reader.UserInterruptException;
 import org.jline.terminal.Terminal;
-import org.jline.utils.InfoCmp.Capability;
+import org.jline.utils.AttributedStringBuilder;
+import org.jline.utils.AttributedStyle;
 
-public class Menu implements Runnable {
+/**
+ * Displays a menu of {@link Command} choices and
+ * performs action for selected choice.
+ */
+public class Menu {
+
+  private final static String ENABLED = new AttributedStringBuilder()
+      .style(AttributedStyle.DEFAULT.foreground(AttributedStyle.GREEN)).append("[enabled]")
+      .toAnsi();
+  private final static String DISABLED = new AttributedStringBuilder()
+      .style(AttributedStyle.DEFAULT.foreground(AttributedStyle.RED)).append("[disabled]")
+      .toAnsi();
 
   private final Terminal terminal;
   private final LineReader reader;
-  private final Prompts prompts;
-  private final Talons talons;
+  private final CommandAdapter commandsAdapter;
 
   @Inject
-  public Menu(Terminal terminal, Prompts prompts, Talons talons) {
+  public Menu(CommandAdapter commandsAdapter, Terminal terminal) {
+    this.commandsAdapter = commandsAdapter;
     this.terminal = terminal;
-    this.prompts = prompts;
-    this.talons = talons;
-    this.reader = LineReaderBuilder.builder().terminal(terminal).build();
+    reader = LineReaderBuilder.builder().terminal(terminal).build();
   }
 
-  @Override
-  public void run() {
-    display();
+  private String rightPrompt() {
+    boolean enabled = DriverStation.getInstance().isEnabled();
+    return enabled ? ENABLED : DISABLED;
   }
-
-//  public void refreshState() {
-//    reader.callWidget(LineReader.REDRAW_LINE);
-//    reader.callWidget(LineReader.REDRAW_LINE);
-//    reader.callWidget(LineReader.REDISPLAY);
-//  }
 
   public void display() {
-    terminal.puts(Capability.clear_screen);
-    terminal.flush();
+    int menuCount = commandsAdapter.getCount();
     while (true) {
-      terminal.writer().println("1 - load");
-      terminal.writer().println("2 - list");
-      terminal.writer().println("3 - select");
-      terminal.writer().println("4 - run");
-      terminal.writer().println("5 - quit");
-      terminal.flush();
-
-      String line = null;
-      try {
-        line = reader.readLine("> ", prompts.rightPrompt(), (Character) null, null).trim();
-      } catch (EndOfFileException | UserInterruptException e) {
-        continue;
+      for (int i = 0; i < menuCount; i++) {
+        terminal.writer().printf("%d - %s%n", i+1, commandsAdapter.getMenuText(i));
       }
-
+      String line = reader.readLine("> ", rightPrompt(), (Character) null, null).trim();
       if (line.isEmpty()) {
-        continue;
+        break;
       }
 
-      int choice = 0;
+      int choice;
       try {
-        choice = Integer.valueOf(line);
-      } catch (NumberFormatException nfe) {
+        choice = Integer.valueOf(line) - 1;
+      } catch (NumberFormatException e) {
         terminal.writer().println("please enter a number");
         continue;
       }
-      switch (choice) {
-        case 1:
-          talons.load();
-          break;
-        case 2:
-          talons.list();
-          break;
-        case 3:
-          talons.select();
-          break;
-        case 4:
-          talons.start();
-          break;
-        case 5:
-          System.exit(0);
-          break;
-        default:
-          terminal.writer().println("nope!");
+      if (choice < 0 || choice >= menuCount) {
+        terminal.writer().printf("please enter a number between 1 - %d%n", menuCount);
+        continue;
       }
+      commandsAdapter.perform(choice);
     }
   }
-
-
 }

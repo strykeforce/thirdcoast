@@ -13,6 +13,7 @@ import org.jline.terminal.TerminalBuilder;
 @Module
 public abstract class TerminalModule {
 
+  // TODO: check if needed
   @Provides
   @Singleton
   public static Set<CANTalon> provideTalons() {
