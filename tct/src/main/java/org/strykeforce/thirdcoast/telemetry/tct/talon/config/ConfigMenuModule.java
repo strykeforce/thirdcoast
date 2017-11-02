@@ -20,7 +20,9 @@ public abstract class ConfigMenuModule {
       PCommand.NAME,
       ICommand.NAME,
       DCommand.NAME,
-      FCommand.NAME
+      FCommand.NAME,
+      IZoneCommand.NAME,
+      NominalOutputVoltageCommand.NAME
   );
 
   @TalonConfigScope
@@ -47,23 +49,35 @@ public abstract class ConfigMenuModule {
   @Binds
   @IntoSet
   @TalonConfigMenu
-  public abstract Command PCommand(PCommand command);
+  public abstract Command pCommand(PCommand command);
 
   @TalonConfigScope
   @Binds
   @IntoSet
   @TalonConfigMenu
-  public abstract Command ICommand(ICommand command);
+  public abstract Command iCommand(ICommand command);
 
   @TalonConfigScope
   @Binds
   @IntoSet
   @TalonConfigMenu
-  public abstract Command DCommand(DCommand command);
+  public abstract Command dCommand(DCommand command);
 
   @TalonConfigScope
   @Binds
   @IntoSet
   @TalonConfigMenu
-  public abstract Command FCommand(FCommand command);
+  public abstract Command fCommand(FCommand command);
+
+  @TalonConfigScope
+  @Binds
+  @IntoSet
+  @TalonConfigMenu
+  public abstract Command iZoneCommand(IZoneCommand command);
+
+  @TalonConfigScope
+  @Binds
+  @IntoSet
+  @TalonConfigMenu
+  public abstract Command nominalOutputVoltageCommand(NominalOutputVoltageCommand command);
 }
