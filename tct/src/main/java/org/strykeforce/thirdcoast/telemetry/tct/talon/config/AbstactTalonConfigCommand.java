@@ -55,4 +55,8 @@ abstract class AbstactTalonConfigCommand extends AbstractCommand {
 
     return value;
   }
+  protected void logConfig(CANTalon talon, double value) {
+    logger.info("set {} for {} to {}", name(), talon.getDescription(), value);
+  }
+
 }
