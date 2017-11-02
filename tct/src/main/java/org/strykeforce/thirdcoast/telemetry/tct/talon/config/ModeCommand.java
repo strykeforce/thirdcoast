@@ -5,7 +5,7 @@ import org.jline.terminal.Terminal;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 
 @TalonConfigScope
-public class ModeCommand extends AbstactTalonConfigCommand {
+public class ModeCommand extends ConfigCommand {
 
   public final static String NAME = "Operating Mode";
 

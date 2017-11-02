@@ -26,14 +26,14 @@ public class RunCommand extends AbstractCommand {
   @Override
   public void perform() {
     if (talonSet.selected.isEmpty()) {
-      terminal.writer().println("no talons selected");
+      terminal.writer().println(bold("no talons selected"));
       return;
     }
-    terminal.writer().println("Enter motor setpoint, press <enter> to go back");
+    terminal.writer().println(bold("Enter motor setpoint, press <enter> to go back"));
     while (true) {
       String line = null;
       try {
-        line = reader.readLine("setpoint> ").trim();
+        line = reader.readLine(boldYellow("setpoint> ")).trim();
       } catch (EndOfFileException | UserInterruptException e) {
         continue;
       }
@@ -45,10 +45,10 @@ public class RunCommand extends AbstractCommand {
       try {
         setpoint = Double.valueOf(line);
       } catch (NumberFormatException nfe) {
-        terminal.writer().println("please enter a number");
+        terminal.writer().println(bold("please enter a number"));
         continue;
       }
-      terminal.writer().printf("setting talons to %.2f%n", setpoint);
+      terminal.writer().print(bold(String.format("setting talons to %.2f%n", setpoint)));
       for (CANTalon talon : talonSet.selected) {
         talon.set(setpoint);
       }

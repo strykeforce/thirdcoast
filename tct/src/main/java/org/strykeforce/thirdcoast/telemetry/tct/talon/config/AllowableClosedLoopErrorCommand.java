@@ -8,17 +8,17 @@ import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 /**
  * Configure F.
  */
-public class IZoneCommand extends IntConfigCommand {
+public class AllowableClosedLoopErrorCommand extends IntConfigCommand {
 
-  public final static String NAME = "I Zone";
+  public final static String NAME = "Allowable Closed Loop Error";
 
   @Inject
-  public IZoneCommand(TalonSet talonSet, Terminal terminal) {
+  public AllowableClosedLoopErrorCommand(TalonSet talonSet, Terminal terminal) {
     super(NAME, terminal, talonSet);
   }
 
   @Override
   protected void config(CANTalon talon, int value) {
-    talon.setIZone(value);
+    talon.setAllowableClosedLoopErr(value);
   }
 }

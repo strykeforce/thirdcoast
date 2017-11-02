@@ -22,8 +22,10 @@ public abstract class MenuModule {
   @Singleton
   @Provides
   @MainMenu
-  public static Menu mainMenu(@MainMenu CommandAdapter commandsAdapter, Terminal terminal) {
-    return new Menu(commandsAdapter, terminal);
+  public static Menu menu(@MainMenu CommandAdapter commandsAdapter, Terminal terminal) {
+    Menu menu = new Menu(commandsAdapter, terminal);
+    menu.setMainMenu(true);
+    return menu;
   }
 
   @Singleton

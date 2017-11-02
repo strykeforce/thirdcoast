@@ -1,7 +1,6 @@
 package org.strykeforce.thirdcoast.telemetry.tct.talon.config;
 
 import com.ctre.CANTalon;
-import java.util.OptionalDouble;
 import javax.inject.Inject;
 import org.jline.terminal.Terminal;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
@@ -9,7 +8,7 @@ import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 /**
  * Configure F.
  */
-public class FCommand extends AbstactTalonConfigCommand {
+public class FCommand extends DoubleConfigCommand {
 
   public final static String NAME = "F";
 
@@ -19,14 +18,7 @@ public class FCommand extends AbstactTalonConfigCommand {
   }
 
   @Override
-  public void perform() {
-    OptionalDouble opt = getDoubleValue();
-    if (!opt.isPresent()) {
-      return;
-    }
-    for (CANTalon talon : talonSet.selected()) {
-      talon.setF(opt.getAsDouble());
-      logConfig(talon, talon.getF());
-    }
+  protected void config(CANTalon talon, double value) {
+    talon.setF(value);
   }
 }

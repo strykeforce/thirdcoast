@@ -40,30 +40,32 @@ public class InspectCommand extends AbstractCommand {
     logger.info("inspecting {}", talon.getDescription());
     writer.println();
     writer
-        .printf("         ID: %-2d                  P: %6.3f%n", talon.getDeviceID(), talon.getP());
-    writer.printf("Description: %13s       I: %6.3f%n", talon.getDescription(), talon.getI());
-    writer.printf("       Mode: %-13s       D: %6.3f%n", talon.getControlMode(), talon.getD());
-    writer.printf("                                 F: %6.3f%n", talon.getF());
-    writer.printf("                            I-zone: %6.3f%n", talon.getIZone());
-    writer.printf("                       Encoder Pos:  %-6d%n", talon.getEncPosition());
+        .printf("         %s %-2d                  %s %6.3f           %s %6.3f%n", bold("ID:"),
+            talon.getDeviceID(), bold("P:"), talon.getP(), bold("I-zone:"), talon.getIZone());
+    writer.printf("%s %13s       %s %6.3f      %s  %-6d%n", bold("Description:"),
+        talon.getDescription(), bold("I:"), talon.getI(), bold("Encoder Pos:"),
+        talon.getEncPosition());
+    writer.printf("       %s %-13s       %s %6.3f%n", bold("Mode:"), talon.getControlMode(),
+        bold("D:"), talon.getD());
+    writer.printf("                                 %s %6.3f%n", bold("F:"), talon.getF());
     writer.println();
-    writer.printf("Velocity Meas. Period: %s%n", talon.GetVelocityMeasurementPeriod());
-    writer.printf("Velocity Meas. Window: %d%n", talon.GetVelocityMeasurementWindow());
-    writer.println();
-    writer.printf("   Closed-loop Ramp Rate: %5.2f%n", talon.GetNominalClosedLoopVoltage());
-    writer.printf("Nom. Closed-loop Voltage: %5.2f%n", talon.getCloseLoopRampRate());
-    writer.printf("             Bus Voltage: %5.2f%n", talon.getBusVoltage());
+    writer.printf("%s %s       %s %5.2f%n", bold("Velocity Meas. Period:"),
+        talon.GetVelocityMeasurementPeriod(), bold("Closed-loop Ramp Rate:"),
+        talon.getCloseLoopRampRate());
+    writer.printf("%s %d              %s %5.2f%n", bold("Velocity Meas. Window:"),
+        talon.GetVelocityMeasurementWindow(), bold("Nom. Closed-loop Voltage:"),
+        talon.GetNominalClosedLoopVoltage());
+    writer.printf("                                                    %s %5.2f%n",
+        bold("Bus Voltage:"), talon.getBusVoltage());
     writer.println();
   }
 
   private Optional<CANTalon> getTalon() {
     Optional<CANTalon> talon = Optional.empty();
-    terminal.writer().println("enter ID of Talon to inspect or <enter> to go back");
-
     while (!talon.isPresent()) {
       String line = null;
       try {
-        line = reader.readLine("talon id> ").trim();
+        line = reader.readLine(boldYellow("talon id> ")).trim();
       } catch (EndOfFileException | UserInterruptException e) {
         break;
       }
@@ -73,10 +75,11 @@ public class InspectCommand extends AbstractCommand {
         break;
       }
 
-      int id = -1;
+      int id;
       try {
         id = Integer.valueOf(line);
       } catch (NumberFormatException e) {
+        terminal.writer().println(bold("please enter a number"));
         continue;
       }
       talon = talonSet.get(id);

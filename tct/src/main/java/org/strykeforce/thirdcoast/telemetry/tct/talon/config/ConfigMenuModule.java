@@ -11,8 +11,14 @@ import org.jline.terminal.Terminal;
 import org.strykeforce.thirdcoast.telemetry.tct.Command;
 import org.strykeforce.thirdcoast.telemetry.tct.CommandAdapter;
 import org.strykeforce.thirdcoast.telemetry.tct.Menu;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.config.voltage.ClosedLoopRampRateCommand;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.config.voltage.NominalOutputVoltageCommand;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.config.voltage.PeakOutputVoltageCommand;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.config.voltage.VoltageMenuComponent;
 
-@Module
+@Module(subcomponents = {
+    VoltageMenuComponent.class
+})
 public abstract class ConfigMenuModule {
 
   public final static List<String> MENU_ORDER = Arrays.asList(
@@ -22,7 +28,8 @@ public abstract class ConfigMenuModule {
       DCommand.NAME,
       FCommand.NAME,
       IZoneCommand.NAME,
-      NominalOutputVoltageCommand.NAME
+      AllowableClosedLoopErrorCommand.NAME,
+      VoltageConfigCommand.NAME
   );
 
   @TalonConfigScope
@@ -79,5 +86,11 @@ public abstract class ConfigMenuModule {
   @Binds
   @IntoSet
   @TalonConfigMenu
-  public abstract Command nominalOutputVoltageCommand(NominalOutputVoltageCommand command);
+  public abstract Command voltageRampRateCommand(VoltageConfigCommand command);
+
+  @TalonConfigScope
+  @Binds
+  @IntoSet
+  @TalonConfigMenu
+  public abstract Command allowableClosedLoopErrorCommand(AllowableClosedLoopErrorCommand command);
 }

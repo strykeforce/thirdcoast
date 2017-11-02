@@ -37,10 +37,10 @@ public class SelectCommand extends AbstractCommand {
 
   @Override
   public void perform() {
-    terminal.writer().println("Enter comma-separated list of Talon IDs");
+    terminal.writer().println(bold("enter comma-separated list of Talon IDs"));
     String line = null;
     try {
-      line = reader.readLine("talon ids> ").trim();
+      line = reader.readLine(boldYellow("talon ids> ")).trim();
     } catch (EndOfFileException | UserInterruptException e) {
       return;
     }
@@ -57,7 +57,7 @@ public class SelectCommand extends AbstractCommand {
       try {
         id = Integer.valueOf(s);
       } catch (NumberFormatException e) {
-        terminal.writer().printf("%s is not a number, ignoring%n", s);
+        terminal.writer().print(bold(String.format("%s is not a number, ignoring%n", s)));
         continue;
       }
 

@@ -2,6 +2,8 @@ package org.strykeforce.thirdcoast.telemetry.tct;
 
 import java.util.Optional;
 import org.jline.terminal.Terminal;
+import org.jline.utils.AttributedStringBuilder;
+import org.jline.utils.AttributedStyle;
 
 /**
  * Abstract implementation of a menu command.
@@ -72,4 +74,15 @@ public abstract class AbstractCommand implements Command {
   public Optional<Command> post() {
     return Optional.empty();
   }
+
+  protected static String bold(String text) {
+    return new AttributedStringBuilder().style(AttributedStyle.BOLD).append(text).toAnsi();
+  }
+
+  protected static String boldYellow(String text) {
+    return new AttributedStringBuilder()
+        .style(AttributedStyle.BOLD.foreground(AttributedStyle.YELLOW)).append(text).toAnsi();
+  }
+
+
 }

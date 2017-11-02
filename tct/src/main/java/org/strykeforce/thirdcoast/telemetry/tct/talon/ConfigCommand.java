@@ -28,7 +28,7 @@ public class ConfigCommand extends AbstractCommand {
   @Override
   public void perform() {
     if (talonSet.selected.isEmpty()) {
-      terminal.writer().println("no talons selected");
+      terminal.writer().println(bold("no talons selected"));
       return;
     }
 
