@@ -35,7 +35,7 @@ public class LoadCommand extends AbstractCommand {
   @Inject
   public LoadCommand(TalonSet talonSet, Terminal terminal, TalonProvisioner talonProvisioner,
       TalonFactory talonFactory, TelemetryService telemetryService, ListCommand listCommand) {
-    super(NAME, -20, terminal);
+    super(NAME, TalonMenuModule.MENU_ORDER.indexOf(NAME), terminal);
     this.talonSet = talonSet;
     this.talonProvisioner = talonProvisioner;
     this.talonFactory = talonFactory;

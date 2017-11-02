@@ -4,15 +4,26 @@ import dagger.Binds;
 import dagger.Module;
 import dagger.Provides;
 import dagger.multibindings.IntoSet;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 import org.jline.terminal.Terminal;
+import org.strykeforce.thirdcoast.telemetry.tct.Command;
 import org.strykeforce.thirdcoast.telemetry.tct.CommandAdapter;
 import org.strykeforce.thirdcoast.telemetry.tct.Menu;
-import org.strykeforce.thirdcoast.telemetry.tct.Command;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.ConfigMenuComponent;
 
 @Module(subcomponents = ConfigMenuComponent.class)
 public abstract class TalonMenuModule {
+
+  public static final List<String> MENU_ORDER = Arrays.asList(
+      LoadCommand.NAME,
+      SelectCommand.NAME,
+      ListCommand.NAME,
+      ConfigCommand.NAME,
+      InspectCommand.NAME,
+      RunCommand.NAME
+  );
 
   @TalonScope
   @Provides

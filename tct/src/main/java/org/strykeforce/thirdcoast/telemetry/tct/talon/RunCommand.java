@@ -18,7 +18,7 @@ public class RunCommand extends AbstractCommand {
 
   @Inject
   public RunCommand(TalonSet talonSet, Terminal terminal) {
-    super(NAME, 20, terminal);
+    super(NAME, TalonMenuModule.MENU_ORDER.indexOf(NAME), terminal);
     this.talonSet = talonSet;
     reader = LineReaderBuilder.builder().terminal(terminal).build();
   }

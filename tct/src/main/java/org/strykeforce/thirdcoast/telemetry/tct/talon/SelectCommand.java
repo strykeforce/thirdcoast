@@ -29,7 +29,7 @@ public class SelectCommand extends AbstractCommand {
 
   @Inject
   public SelectCommand(TalonSet talonSet, Terminal terminal, ListCommand listCommand) {
-    super(NAME, terminal);
+    super(NAME, TalonMenuModule.MENU_ORDER.indexOf(NAME), terminal);
     this.talonSet = talonSet;
     this.listCommand = Optional.of(listCommand);
     reader = LineReaderBuilder.builder().terminal(terminal).build();

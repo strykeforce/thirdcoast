@@ -23,7 +23,7 @@ public class InspectCommand extends AbstractCommand {
 
   @Inject
   public InspectCommand(TalonSet talonSet, Terminal terminal) {
-    super(NAME, terminal);
+    super(NAME, TalonMenuModule.MENU_ORDER.indexOf(NAME), terminal);
     this.talonSet = talonSet;
     reader = LineReaderBuilder.builder().terminal(terminal).build();
   }

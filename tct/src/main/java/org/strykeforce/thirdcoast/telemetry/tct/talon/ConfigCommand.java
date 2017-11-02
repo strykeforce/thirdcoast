@@ -20,7 +20,7 @@ public class ConfigCommand extends AbstractCommand {
   @Inject
   public ConfigCommand(TalonSet talonSet,
       Provider<ConfigMenuComponent.Builder> talonMenuComponentProvider, Terminal terminal) {
-    super(NAME, terminal);
+    super(NAME, TalonMenuModule.MENU_ORDER.indexOf(NAME), terminal);
     this.talonMenuComponentProvider = talonMenuComponentProvider;
     this.talonSet = talonSet;
   }

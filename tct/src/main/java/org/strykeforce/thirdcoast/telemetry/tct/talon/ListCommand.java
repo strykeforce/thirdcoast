@@ -18,7 +18,7 @@ public class ListCommand extends AbstractCommand {
 
   @Inject
   public ListCommand(TalonSet talonSet, Terminal terminal) {
-    super(NAME, -10, terminal);
+    super(NAME, TalonMenuModule.MENU_ORDER.indexOf(NAME), terminal);
     this.talonSet = talonSet;
   }
 
