@@ -50,7 +50,7 @@ public class Menu {
     int menuCount = commandsAdapter.getCount();
     while (true) {
       for (int i = 0; i < menuCount; i++) {
-        terminal.writer().printf("%d - %s%n", i + 1, commandsAdapter.getMenuText(i));
+        terminal.writer().printf("%2d - %s%n", i + 1, commandsAdapter.getMenuText(i));
       }
       String line = reader.readLine(boldYellow("select> "), rightPrompt(), (Character) null, null)
           .trim();

@@ -11,13 +11,14 @@ import org.jline.terminal.Terminal;
 import org.strykeforce.thirdcoast.telemetry.tct.Command;
 import org.strykeforce.thirdcoast.telemetry.tct.CommandAdapter;
 import org.strykeforce.thirdcoast.telemetry.tct.Menu;
-import org.strykeforce.thirdcoast.telemetry.tct.talon.config.voltage.ClosedLoopRampRateCommand;
-import org.strykeforce.thirdcoast.telemetry.tct.talon.config.voltage.NominalOutputVoltageCommand;
-import org.strykeforce.thirdcoast.telemetry.tct.talon.config.voltage.PeakOutputVoltageCommand;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc.EncoderMenuComponent;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.config.limit.LimitMenuComponent;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.voltage.VoltageMenuComponent;
 
 @Module(subcomponents = {
-    VoltageMenuComponent.class
+    VoltageMenuComponent.class,
+    EncoderMenuComponent.class,
+    LimitMenuComponent.class,
 })
 public abstract class ConfigMenuModule {
 
@@ -29,7 +30,9 @@ public abstract class ConfigMenuModule {
       FCommand.NAME,
       IZoneCommand.NAME,
       AllowableClosedLoopErrorCommand.NAME,
-      VoltageConfigCommand.NAME
+      VoltageConfigCommand.NAME,
+      EncoderConfigCommand.NAME,
+      LimitConfigCommand.NAME
   );
 
   @TalonConfigScope
@@ -86,11 +89,24 @@ public abstract class ConfigMenuModule {
   @Binds
   @IntoSet
   @TalonConfigMenu
+  public abstract Command allowableClosedLoopErrorCommand(AllowableClosedLoopErrorCommand command);
+
+  @TalonConfigScope
+  @Binds
+  @IntoSet
+  @TalonConfigMenu
   public abstract Command voltageRampRateCommand(VoltageConfigCommand command);
 
   @TalonConfigScope
   @Binds
   @IntoSet
   @TalonConfigMenu
-  public abstract Command allowableClosedLoopErrorCommand(AllowableClosedLoopErrorCommand command);
+  public abstract Command encoderConfigCommand(EncoderConfigCommand command);
+
+  @TalonConfigScope
+  @Binds
+  @IntoSet
+  @TalonConfigMenu
+  public abstract Command limitConfigCommand(LimitConfigCommand command);
+
 }
