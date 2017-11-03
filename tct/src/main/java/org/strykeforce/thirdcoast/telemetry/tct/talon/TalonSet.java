@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import javax.inject.Inject;
+import org.strykeforce.thirdcoast.telemetry.tct.ModeScope;
 
 /**
  * Holds Talons being worked on.

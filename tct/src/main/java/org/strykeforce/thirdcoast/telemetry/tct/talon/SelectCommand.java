@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.telemetry.tct.AbstractCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.Command;
+import org.strykeforce.thirdcoast.telemetry.tct.ModeScope;
 
 /**
  * Select Talons to work with.

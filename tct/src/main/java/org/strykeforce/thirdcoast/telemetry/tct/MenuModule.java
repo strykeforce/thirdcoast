@@ -7,9 +7,15 @@ import dagger.multibindings.IntoSet;
 import java.util.Set;
 import javax.inject.Singleton;
 import org.jline.terminal.Terminal;
+import org.strykeforce.thirdcoast.telemetry.tct.dio.DioMenuComponent;
+import org.strykeforce.thirdcoast.telemetry.tct.servo.ServoMenuComponent;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonMenuComponent;
 
-@Module(subcomponents = TalonMenuComponent.class)
+@Module(subcomponents = {
+    TalonMenuComponent.class,
+    ServoMenuComponent.class,
+    DioMenuComponent.class
+})
 public abstract class MenuModule {
 
   @Singleton
@@ -27,6 +33,18 @@ public abstract class MenuModule {
     menu.setMainMenu(true);
     return menu;
   }
+
+  @Singleton
+  @Binds
+  @IntoSet
+  @MainMenu
+  public abstract Command servoModeCommand(ServoModeCommand command);
+
+  @Singleton
+  @Binds
+  @IntoSet
+  @MainMenu
+  public abstract Command dioModeCommand(DioModeCommand command);
 
   @Singleton
   @Binds

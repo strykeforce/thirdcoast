@@ -8,6 +8,7 @@ import org.jline.reader.LineReaderBuilder;
 import org.jline.reader.UserInterruptException;
 import org.jline.terminal.Terminal;
 import org.strykeforce.thirdcoast.telemetry.tct.AbstractCommand;
+import org.strykeforce.thirdcoast.telemetry.tct.ModeScope;
 
 @ModeScope
 public class RunCommand extends AbstractCommand {

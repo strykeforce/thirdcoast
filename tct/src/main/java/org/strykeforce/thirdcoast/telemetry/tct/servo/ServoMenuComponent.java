@@ -1,4 +1,4 @@
-package org.strykeforce.thirdcoast.telemetry.tct.talon;
+package org.strykeforce.thirdcoast.telemetry.tct.servo;
 
 import dagger.Subcomponent;
 import org.strykeforce.thirdcoast.telemetry.tct.Menu;
@@ -6,17 +6,17 @@ import org.strykeforce.thirdcoast.telemetry.tct.ModeScope;
 
 @ModeScope
 @Subcomponent(modules = {
-    TalonMenuModule.class,
+    ServoMenuModule.class,
 })
-public interface TalonMenuComponent {
+public interface ServoMenuComponent {
 
-  @TalonMenu
+  @ServoMenu
   Menu menu();
 
   @Subcomponent.Builder
   interface Builder {
 
-    TalonMenuComponent build();
+    ServoMenuComponent build();
   }
 
 }

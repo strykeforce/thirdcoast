@@ -11,6 +11,7 @@ import org.jline.terminal.Terminal;
 import org.strykeforce.thirdcoast.telemetry.tct.Command;
 import org.strykeforce.thirdcoast.telemetry.tct.CommandAdapter;
 import org.strykeforce.thirdcoast.telemetry.tct.Menu;
+import org.strykeforce.thirdcoast.telemetry.tct.ModeScope;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.ConfigMenuComponent;
 
 @Module(subcomponents = ConfigMenuComponent.class)

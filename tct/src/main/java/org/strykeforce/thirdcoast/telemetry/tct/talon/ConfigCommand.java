@@ -5,6 +5,7 @@ import javax.inject.Provider;
 import org.jline.terminal.Terminal;
 import org.strykeforce.thirdcoast.telemetry.tct.AbstractCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.Menu;
+import org.strykeforce.thirdcoast.telemetry.tct.ModeScope;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.ConfigMenuComponent;
 
 /**

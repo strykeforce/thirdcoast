@@ -6,6 +6,7 @@ import org.jline.terminal.Terminal;
 import org.jline.utils.AttributedStringBuilder;
 import org.jline.utils.AttributedStyle;
 import org.strykeforce.thirdcoast.telemetry.tct.AbstractCommand;
+import org.strykeforce.thirdcoast.telemetry.tct.ModeScope;
 
 /**
  * Display a list of all Talons.

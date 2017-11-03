@@ -15,6 +15,7 @@ import org.strykeforce.thirdcoast.talon.TalonProvisioner;
 import org.strykeforce.thirdcoast.telemetry.TelemetryService;
 import org.strykeforce.thirdcoast.telemetry.tct.AbstractCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.Command;
+import org.strykeforce.thirdcoast.telemetry.tct.ModeScope;
 
 /**
  * Loads Talons from TOML configuration file named {@code tct.toml}.

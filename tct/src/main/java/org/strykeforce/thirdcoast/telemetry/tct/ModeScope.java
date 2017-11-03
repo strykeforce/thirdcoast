@@ -1,4 +1,4 @@
-package org.strykeforce.thirdcoast.telemetry.tct.talon;
+package org.strykeforce.thirdcoast.telemetry.tct;
 
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
