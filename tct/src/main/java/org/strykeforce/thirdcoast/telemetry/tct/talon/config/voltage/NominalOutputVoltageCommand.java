@@ -11,7 +11,7 @@ import org.strykeforce.thirdcoast.telemetry.tct.talon.config.FwdRevDoubleConfigC
  */
 public class NominalOutputVoltageCommand extends FwdRevDoubleConfigCommand {
 
-  public final static String NAME = "Nominal Ouput Voltage";
+  public final static String NAME = "Nominal Output Voltage";
 
   @Inject
   public NominalOutputVoltageCommand(TalonSet talonSet, Terminal terminal) {

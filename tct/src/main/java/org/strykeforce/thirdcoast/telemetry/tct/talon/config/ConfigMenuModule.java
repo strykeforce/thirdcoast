@@ -11,11 +11,14 @@ import org.jline.terminal.Terminal;
 import org.strykeforce.thirdcoast.telemetry.tct.Command;
 import org.strykeforce.thirdcoast.telemetry.tct.CommandAdapter;
 import org.strykeforce.thirdcoast.telemetry.tct.Menu;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.config.cl.ClosedLoopMenuComponent;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.config.cl.ClosedLoopMenuModule;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc.EncoderMenuComponent;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.limit.LimitMenuComponent;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.voltage.VoltageMenuComponent;
 
 @Module(subcomponents = {
+    ClosedLoopMenuComponent.class,
     VoltageMenuComponent.class,
     EncoderMenuComponent.class,
     LimitMenuComponent.class,
@@ -24,12 +27,7 @@ public abstract class ConfigMenuModule {
 
   public final static List<String> MENU_ORDER = Arrays.asList(
       SelectOperatingModeCommand.NAME,
-      PCommand.NAME,
-      ICommand.NAME,
-      DCommand.NAME,
-      FCommand.NAME,
-      IZoneCommand.NAME,
-      AllowableClosedLoopErrorCommand.NAME,
+      ClosedLoopConfigCommand.NAME,
       VoltageConfigCommand.NAME,
       EncoderConfigCommand.NAME,
       LimitConfigCommand.NAME
@@ -59,37 +57,7 @@ public abstract class ConfigMenuModule {
   @Binds
   @IntoSet
   @TalonConfigMenu
-  public abstract Command pCommand(PCommand command);
-
-  @ConfigScope
-  @Binds
-  @IntoSet
-  @TalonConfigMenu
-  public abstract Command iCommand(ICommand command);
-
-  @ConfigScope
-  @Binds
-  @IntoSet
-  @TalonConfigMenu
-  public abstract Command dCommand(DCommand command);
-
-  @ConfigScope
-  @Binds
-  @IntoSet
-  @TalonConfigMenu
-  public abstract Command fCommand(FCommand command);
-
-  @ConfigScope
-  @Binds
-  @IntoSet
-  @TalonConfigMenu
-  public abstract Command iZoneCommand(IZoneCommand command);
-
-  @ConfigScope
-  @Binds
-  @IntoSet
-  @TalonConfigMenu
-  public abstract Command allowableClosedLoopErrorCommand(AllowableClosedLoopErrorCommand command);
+  public abstract Command closedLoopConfigCommand(ClosedLoopConfigCommand command);
 
   @ConfigScope
   @Binds

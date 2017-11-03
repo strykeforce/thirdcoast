@@ -1,9 +1,10 @@
-package org.strykeforce.thirdcoast.telemetry.tct.talon.config;
+package org.strykeforce.thirdcoast.telemetry.tct.talon.config.cl;
 
 import com.ctre.CANTalon;
 import javax.inject.Inject;
 import org.jline.terminal.Terminal;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.config.DoubleConfigCommand;
 
 /**
  * Configure P.
@@ -14,7 +15,7 @@ public class PCommand extends DoubleConfigCommand {
 
   @Inject
   public PCommand(TalonSet talonSet, Terminal terminal) {
-    super(NAME, terminal, talonSet);
+    super(NAME, ClosedLoopMenuModule.MENU_ORDER.indexOf(NAME), terminal, talonSet);
   }
 
   @Override
