@@ -1,20 +1,28 @@
 package org.strykeforce.thirdcoast.telemetry.tct;
 
+import org.jline.terminal.Terminal;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class Main implements Runnable {
 
+  final static Logger logger = LoggerFactory.getLogger(Main.class);
   private final MainComponent component = DaggerMainComponent.builder().build();
 
-  public Main() { }
+  public Main() {
+  }
 
   @Override
   public void run() {
-    Menu menu = component.menu();
-    menu.display();
+    try {
+      Menu menu = component.menu();
+      menu.display();
+    } catch (Throwable t) {
+      logger.error("fatal error", t);
+      Terminal terminal = component.terminal();
+      terminal.writer().println("fatal error: " + t.getMessage());
+      terminal.flush();
+      System.exit(-1);
+    }
   }
-
-  public static void main(String[] args) {
-    Main main = new Main();
-    main.run();
-  }
-
 }

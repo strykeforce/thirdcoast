@@ -6,7 +6,7 @@ import org.jline.terminal.Terminal;
 import org.strykeforce.thirdcoast.telemetry.tct.AbstractCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.Menu;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
-import org.strykeforce.thirdcoast.telemetry.tct.talon.config.limit.LimitMenuComponent;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.config.lim.LimitMenuComponent;
 
 /**
  * Configure selected Talons.

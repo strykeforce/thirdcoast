@@ -12,14 +12,13 @@ import org.strykeforce.thirdcoast.telemetry.tct.Command;
 import org.strykeforce.thirdcoast.telemetry.tct.CommandAdapter;
 import org.strykeforce.thirdcoast.telemetry.tct.Menu;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.cl.ClosedLoopMenuComponent;
-import org.strykeforce.thirdcoast.telemetry.tct.talon.config.cl.ClosedLoopMenuModule;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc.EncoderMenuComponent;
-import org.strykeforce.thirdcoast.telemetry.tct.talon.config.limit.LimitMenuComponent;
-import org.strykeforce.thirdcoast.telemetry.tct.talon.config.voltage.VoltageMenuComponent;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.config.lim.LimitMenuComponent;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.config.out.OutputMenuComponent;
 
 @Module(subcomponents = {
     ClosedLoopMenuComponent.class,
-    VoltageMenuComponent.class,
+    OutputMenuComponent.class,
     EncoderMenuComponent.class,
     LimitMenuComponent.class,
 })
@@ -28,7 +27,7 @@ public abstract class ConfigMenuModule {
   public final static List<String> MENU_ORDER = Arrays.asList(
       SelectOperatingModeCommand.NAME,
       ClosedLoopConfigCommand.NAME,
-      VoltageConfigCommand.NAME,
+      OutputConfigCommand.NAME,
       EncoderConfigCommand.NAME,
       LimitConfigCommand.NAME
   );
@@ -63,7 +62,7 @@ public abstract class ConfigMenuModule {
   @Binds
   @IntoSet
   @TalonConfigMenu
-  public abstract Command voltageRampRateCommand(VoltageConfigCommand command);
+  public abstract Command voltageRampRateCommand(OutputConfigCommand command);
 
   @ConfigScope
   @Binds

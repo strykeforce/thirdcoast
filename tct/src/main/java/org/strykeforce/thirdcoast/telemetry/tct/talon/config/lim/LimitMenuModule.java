@@ -1,4 +1,4 @@
-package org.strykeforce.thirdcoast.telemetry.tct.talon.config.limit;
+package org.strykeforce.thirdcoast.telemetry.tct.talon.config.lim;
 
 import dagger.Binds;
 import dagger.Module;

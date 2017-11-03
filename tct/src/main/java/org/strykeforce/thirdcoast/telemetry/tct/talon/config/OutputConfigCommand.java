@@ -6,21 +6,21 @@ import org.jline.terminal.Terminal;
 import org.strykeforce.thirdcoast.telemetry.tct.AbstractCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.Menu;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
-import org.strykeforce.thirdcoast.telemetry.tct.talon.config.voltage.VoltageMenuComponent;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.config.out.OutputMenuComponent;
 
 /**
  * Configure selected Talons.
  */
 @ConfigScope
-public class VoltageConfigCommand extends AbstractCommand {
+public class OutputConfigCommand extends AbstractCommand {
 
-  public final static String NAME = "Voltage Limits and Ramp Rates";
-  private final Provider<VoltageMenuComponent.Builder> voltageMenuComponentProvider;
+  public final static String NAME = "Output Limits and Ramp Rates";
+  private final Provider<OutputMenuComponent.Builder> voltageMenuComponentProvider;
   private final TalonSet talonSet;
 
   @Inject
-  public VoltageConfigCommand(TalonSet talonSet,
-      Provider<VoltageMenuComponent.Builder> voltageMenuComponentProvider, Terminal terminal) {
+  public OutputConfigCommand(TalonSet talonSet,
+      Provider<OutputMenuComponent.Builder> voltageMenuComponentProvider, Terminal terminal) {
     super(NAME, ConfigMenuModule.MENU_ORDER.indexOf(NAME), terminal);
     this.voltageMenuComponentProvider = voltageMenuComponentProvider;
     this.talonSet = talonSet;
@@ -33,7 +33,7 @@ public class VoltageConfigCommand extends AbstractCommand {
       return;
     }
 
-    VoltageMenuComponent component = voltageMenuComponentProvider.get().build();
+    OutputMenuComponent component = voltageMenuComponentProvider.get().build();
     Menu menu = component.menu();
     menu.display();
   }

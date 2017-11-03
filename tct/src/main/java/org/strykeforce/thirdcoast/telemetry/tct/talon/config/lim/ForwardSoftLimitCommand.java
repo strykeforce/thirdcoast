@@ -1,4 +1,4 @@
-package org.strykeforce.thirdcoast.telemetry.tct.talon.config.limit;
+package org.strykeforce.thirdcoast.telemetry.tct.talon.config.lim;
 
 import com.ctre.CANTalon;
 import javax.inject.Inject;
