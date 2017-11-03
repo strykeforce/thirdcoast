@@ -18,7 +18,7 @@ import org.strykeforce.thirdcoast.telemetry.tct.Command;
 /**
  * Select Talons to work with.
  */
-@TalonScope
+@ModeScope
 public class SelectCommand extends AbstractCommand {
 
   public final static String NAME = "Select Talons";

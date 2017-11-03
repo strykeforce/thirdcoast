@@ -11,7 +11,7 @@ import org.jline.terminal.Terminal;
 import org.strykeforce.thirdcoast.telemetry.tct.Command;
 import org.strykeforce.thirdcoast.telemetry.tct.CommandAdapter;
 import org.strykeforce.thirdcoast.telemetry.tct.Menu;
-import org.strykeforce.thirdcoast.telemetry.tct.talon.config.TalonSubConfigScope;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.config.SubConfigScope;
 
 @Module
 public abstract class EncoderMenuModule {
@@ -20,21 +20,21 @@ public abstract class EncoderMenuModule {
       DeviceCommand.NAME
   );
 
-  @TalonSubConfigScope
+  @SubConfigScope
   @Provides
   @EncoderMenu
   public static CommandAdapter configCommandsAdapter(@EncoderMenu Set<Command> commands) {
     return new CommandAdapter(commands);
   }
 
-  @TalonSubConfigScope
+  @SubConfigScope
   @Provides
   @EncoderMenu
   public static Menu configMenu(@EncoderMenu CommandAdapter commandAdapter, Terminal terminal) {
     return new Menu(commandAdapter, terminal);
   }
 
-   @TalonSubConfigScope
+   @SubConfigScope
    @Binds
    @IntoSet
    @EncoderMenu

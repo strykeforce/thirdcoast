@@ -7,12 +7,11 @@ import org.strykeforce.thirdcoast.telemetry.tct.AbstractCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.Menu;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.voltage.VoltageMenuComponent;
-import org.strykeforce.thirdcoast.telemetry.tct.talon.config.voltage.VoltageMenuModule;
 
 /**
  * Configure selected Talons.
  */
-@TalonConfigScope
+@ConfigScope
 public class VoltageConfigCommand extends AbstractCommand {
 
   public final static String NAME = "Voltage Limits and Ramp Rates";

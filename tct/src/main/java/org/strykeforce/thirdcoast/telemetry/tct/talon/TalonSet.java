@@ -9,7 +9,7 @@ import javax.inject.Inject;
 /**
  * Holds Talons being worked on.
  */
-@TalonScope
+@ModeScope
 public class TalonSet {
 
   final Set<CANTalon> all = new HashSet<>();

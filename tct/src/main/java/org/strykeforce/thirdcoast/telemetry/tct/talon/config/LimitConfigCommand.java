@@ -11,7 +11,7 @@ import org.strykeforce.thirdcoast.telemetry.tct.talon.config.limit.LimitMenuComp
 /**
  * Configure selected Talons.
  */
-@TalonConfigScope
+@ConfigScope
 public class LimitConfigCommand extends AbstractCommand {
 
   public final static String NAME = "Limit Switches";

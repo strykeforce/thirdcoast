@@ -9,6 +9,6 @@ import javax.inject.Scope;
 @Documented
 @Retention(RUNTIME)
 @Scope
-public @interface TalonConfigScope {
+public @interface SubConfigScope {
 
 }

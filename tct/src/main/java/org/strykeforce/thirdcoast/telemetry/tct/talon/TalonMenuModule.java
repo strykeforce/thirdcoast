@@ -25,51 +25,51 @@ public abstract class TalonMenuModule {
       RunCommand.NAME
   );
 
-  @TalonScope
+  @ModeScope
   @Provides
   @TalonMenu
   public static CommandAdapter talonCommandsAdapter(@TalonMenu Set<Command> commands) {
     return new CommandAdapter(commands);
   }
 
-  @TalonScope
+  @ModeScope
   @Provides
   @TalonMenu
   public static Menu talonMenu(@TalonMenu CommandAdapter commandAdapter, Terminal terminal) {
     return new Menu(commandAdapter, terminal);
   }
 
-  @TalonScope
+  @ModeScope
   @Binds
   @IntoSet
   @TalonMenu
   public abstract Command configCommand(ConfigCommand command);
 
-  @TalonScope
+  @ModeScope
   @Binds
   @IntoSet
   @TalonMenu
   public abstract Command listCommand(ListCommand command);
 
-  @TalonScope
+  @ModeScope
   @Binds
   @IntoSet
   @TalonMenu
   public abstract Command selectCommand(SelectCommand command);
 
-  @TalonScope
+  @ModeScope
   @Binds
   @IntoSet
   @TalonMenu
   public abstract Command loadCommand(LoadCommand command);
 
-  @TalonScope
+  @ModeScope
   @Binds
   @IntoSet
   @TalonMenu
   public abstract Command inspectCommand(InspectCommand command);
 
-  @TalonScope
+  @ModeScope
   @Binds
   @IntoSet
   @TalonMenu

@@ -11,7 +11,7 @@ import org.jline.terminal.Terminal;
 import org.strykeforce.thirdcoast.telemetry.tct.Command;
 import org.strykeforce.thirdcoast.telemetry.tct.CommandAdapter;
 import org.strykeforce.thirdcoast.telemetry.tct.Menu;
-import org.strykeforce.thirdcoast.telemetry.tct.talon.config.TalonSubConfigScope;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.config.SubConfigScope;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.VoltageRampRateCommand;
 
 @Module
@@ -24,39 +24,39 @@ public abstract class VoltageMenuModule {
       NominalOutputVoltageCommand.NAME
   );
 
-  @TalonSubConfigScope
+  @SubConfigScope
   @Provides
   @VoltageMenu
   public static CommandAdapter configCommandsAdapter(@VoltageMenu Set<Command> commands) {
     return new CommandAdapter(commands);
   }
 
-  @TalonSubConfigScope
+  @SubConfigScope
   @Provides
   @VoltageMenu
   public static Menu configMenu(@VoltageMenu CommandAdapter commandAdapter, Terminal terminal) {
     return new Menu(commandAdapter, terminal);
   }
 
-  @TalonSubConfigScope
+  @SubConfigScope
   @Binds
   @IntoSet
   @VoltageMenu
   public abstract Command voltageRampRateCommand(VoltageRampRateCommand command);
 
-  @TalonSubConfigScope
+  @SubConfigScope
   @Binds
   @IntoSet
   @VoltageMenu
   public abstract Command peakOutputVoltageCommand(PeakOutputVoltageCommand command);
 
-  @TalonSubConfigScope
+  @SubConfigScope
   @Binds
   @IntoSet
   @VoltageMenu
   public abstract Command closedLoopRampRateCommand(ClosedLoopRampRateCommand command);
 
-  @TalonSubConfigScope
+  @SubConfigScope
   @Binds
   @IntoSet
   @VoltageMenu

@@ -9,7 +9,7 @@ import org.jline.reader.UserInterruptException;
 import org.jline.terminal.Terminal;
 import org.strykeforce.thirdcoast.telemetry.tct.AbstractCommand;
 
-@TalonScope
+@ModeScope
 public class RunCommand extends AbstractCommand {
 
   public final static String NAME = "Run Selected Talons";

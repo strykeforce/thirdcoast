@@ -10,7 +10,7 @@ import org.strykeforce.thirdcoast.telemetry.tct.talon.config.ConfigMenuComponent
 /**
  * Configure selected Talons.
  */
-@TalonScope
+@ModeScope
 public class ConfigCommand extends AbstractCommand {
 
   public final static String NAME = "Configure Selected Talons";

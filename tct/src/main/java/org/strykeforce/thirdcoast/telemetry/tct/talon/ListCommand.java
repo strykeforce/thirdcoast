@@ -10,7 +10,7 @@ import org.strykeforce.thirdcoast.telemetry.tct.AbstractCommand;
 /**
  * Display a list of all Talons.
  */
-@TalonScope
+@ModeScope
 public class ListCommand extends AbstractCommand {
 
   public final static String NAME = "List Talons";

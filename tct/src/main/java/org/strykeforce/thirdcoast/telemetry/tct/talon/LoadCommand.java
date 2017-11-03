@@ -19,7 +19,7 @@ import org.strykeforce.thirdcoast.telemetry.tct.Command;
 /**
  * Loads Talons from TOML configuration file named {@code tct.toml}.
  */
-@TalonScope
+@ModeScope
 public class LoadCommand extends AbstractCommand {
 
   public final static String NAME = "Load Talons";

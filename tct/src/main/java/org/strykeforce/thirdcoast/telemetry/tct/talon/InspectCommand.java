@@ -13,7 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.telemetry.tct.AbstractCommand;
 
-@TalonScope
+@ModeScope
 public class InspectCommand extends AbstractCommand {
 
   public final static String NAME = "Inspect Talon";

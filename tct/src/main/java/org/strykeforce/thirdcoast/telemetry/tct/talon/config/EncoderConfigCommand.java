@@ -11,7 +11,7 @@ import org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc.EncoderMenuComp
 /**
  * Configure selected Talons.
  */
-@TalonConfigScope
+@ConfigScope
 public class EncoderConfigCommand extends AbstractCommand {
 
   public final static String NAME = "Encoders, Velocity Measurement and Frame Rates";

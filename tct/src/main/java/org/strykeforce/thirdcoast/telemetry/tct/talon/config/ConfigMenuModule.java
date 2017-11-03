@@ -35,75 +35,75 @@ public abstract class ConfigMenuModule {
       LimitConfigCommand.NAME
   );
 
-  @TalonConfigScope
+  @ConfigScope
   @Provides
   @TalonConfigMenu
   public static CommandAdapter configCommandsAdapter(@TalonConfigMenu Set<Command> commands) {
     return new CommandAdapter(commands);
   }
 
-  @TalonConfigScope
+  @ConfigScope
   @Provides
   @TalonConfigMenu
   public static Menu configMenu(@TalonConfigMenu CommandAdapter commandAdapter, Terminal terminal) {
     return new Menu(commandAdapter, terminal);
   }
 
-  @TalonConfigScope
+  @ConfigScope
   @Binds
   @IntoSet
   @TalonConfigMenu
   public abstract Command modeCommand(ModeCommand command);
 
-  @TalonConfigScope
+  @ConfigScope
   @Binds
   @IntoSet
   @TalonConfigMenu
   public abstract Command pCommand(PCommand command);
 
-  @TalonConfigScope
+  @ConfigScope
   @Binds
   @IntoSet
   @TalonConfigMenu
   public abstract Command iCommand(ICommand command);
 
-  @TalonConfigScope
+  @ConfigScope
   @Binds
   @IntoSet
   @TalonConfigMenu
   public abstract Command dCommand(DCommand command);
 
-  @TalonConfigScope
+  @ConfigScope
   @Binds
   @IntoSet
   @TalonConfigMenu
   public abstract Command fCommand(FCommand command);
 
-  @TalonConfigScope
+  @ConfigScope
   @Binds
   @IntoSet
   @TalonConfigMenu
   public abstract Command iZoneCommand(IZoneCommand command);
 
-  @TalonConfigScope
+  @ConfigScope
   @Binds
   @IntoSet
   @TalonConfigMenu
   public abstract Command allowableClosedLoopErrorCommand(AllowableClosedLoopErrorCommand command);
 
-  @TalonConfigScope
+  @ConfigScope
   @Binds
   @IntoSet
   @TalonConfigMenu
   public abstract Command voltageRampRateCommand(VoltageConfigCommand command);
 
-  @TalonConfigScope
+  @ConfigScope
   @Binds
   @IntoSet
   @TalonConfigMenu
   public abstract Command encoderConfigCommand(EncoderConfigCommand command);
 
-  @TalonConfigScope
+  @ConfigScope
   @Binds
   @IntoSet
   @TalonConfigMenu

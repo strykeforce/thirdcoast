@@ -4,7 +4,7 @@ import javax.inject.Inject;
 import org.jline.terminal.Terminal;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 
-@TalonConfigScope
+@ConfigScope
 public class ModeCommand extends ConfigCommand {
 
   public final static String NAME = "Operating Mode";
