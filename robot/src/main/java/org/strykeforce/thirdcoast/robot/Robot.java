@@ -1,13 +1,11 @@
 package org.strykeforce.thirdcoast.robot;
 
-import com.ctre.CANTalon;
 import com.electronwill.nightconfig.core.file.FileConfig;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.swerve.SwerveDrive;
-import org.strykeforce.thirdcoast.talon.StatusFrameRate;
 import org.strykeforce.thirdcoast.telemetry.TelemetryService;
 
 /**
@@ -49,25 +47,12 @@ public class Robot extends IterativeRobot {
   @Override
   public void robotInit() {
     logger.info("Robot is initializing");
-    try {
-      RobotComponent component;
-      try (FileConfig toml = FileConfig.builder(CONFIG).defaultResource(DEFAULT_CONFIG).build()) {
-        logger.info("loading robot configuration from {}", CONFIG);
-        toml.load();
-        component = DaggerRobotComponent.builder().toml(toml.unmodifiable()).build();
-      }
-      controls = component.controls();
-      swerve = component.swerveDrive();
-      telemetryService = component.telemetryService();
-//      telemetryService.register(new CANTalon(6));
-      swerve.registerWith(telemetryService);
-//      StatusFrameRate rates = StatusFrameRate.builder().general(5).feedback(5).build();
-//      telemetryService.configureStatusFrameRates(6, rates);
-      telemetryService.start();
-      swerve.zeroAzimuthEncoders();
-    } catch (Throwable t) {
-      logger.error("Error initializing robot", t);
-    }
+    controls = getComponent().controls();
+    swerve = getComponent().swerveDrive();
+    telemetryService = getComponent().telemetryService();
+    swerve.registerWith(telemetryService);
+    telemetryService.start();
+    swerve.zeroAzimuthEncoders();
   }
 
   @Override
@@ -112,6 +97,16 @@ public class Robot extends IterativeRobot {
       return 0;
     }
     return input;
+  }
+
+  private RobotComponent getComponent() {
+    RobotComponent component;
+    try (FileConfig toml = FileConfig.builder(CONFIG).defaultResource(DEFAULT_CONFIG).build()) {
+      logger.info("loading robot configuration from {}", CONFIG);
+      toml.load();
+      component = DaggerRobotComponent.builder().toml(toml.unmodifiable()).build();
+    }
+    return component;
   }
 
 }
