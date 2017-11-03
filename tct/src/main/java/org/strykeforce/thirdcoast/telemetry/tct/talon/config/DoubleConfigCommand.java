@@ -30,8 +30,6 @@ public abstract class DoubleConfigCommand extends ConfigCommand {
       config(talon, value);
       logger.info("set {} for {} to {}", name(), talon.getDescription(), value);
     }
-
-
   }
 
   protected OptionalDouble getDoubleValue() {
@@ -58,7 +56,6 @@ public abstract class DoubleConfigCommand extends ConfigCommand {
       }
       value = OptionalDouble.of(setpoint);
     }
-
     return value;
   }
 }

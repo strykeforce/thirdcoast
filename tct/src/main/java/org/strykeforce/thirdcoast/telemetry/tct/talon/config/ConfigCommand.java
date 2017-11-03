@@ -18,9 +18,9 @@ import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.telemetry.tct.AbstractCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 
-abstract class ConfigCommand extends AbstractCommand {
+public abstract class ConfigCommand extends AbstractCommand {
 
-  final static Logger logger = LoggerFactory.getLogger(ConfigCommand.class);
+  protected final static Logger logger = LoggerFactory.getLogger(ConfigCommand.class);
   protected final TalonSet talonSet;
   protected final LineReader reader;
 

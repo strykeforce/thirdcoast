@@ -2,8 +2,10 @@ package org.strykeforce.thirdcoast.telemetry.tct;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import javax.inject.Inject;
+import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
+import org.jline.reader.UserInterruptException;
 import org.jline.terminal.Terminal;
 import org.jline.utils.AttributedStringBuilder;
 import org.jline.utils.AttributedStyle;
@@ -52,9 +54,16 @@ public class Menu {
       for (int i = 0; i < menuCount; i++) {
         terminal.writer().printf("%2d - %s%n", i + 1, commandsAdapter.getMenuText(i));
       }
-      String line = reader.readLine(boldYellow("select> "), rightPrompt(), (Character) null, null)
-          .trim();
-      if (line.isEmpty()) {
+      String line = null;
+      try {
+        line = reader.readLine(boldYellow("select> "), rightPrompt(), (Character) null, null)
+            .trim();
+      } catch (EndOfFileException | UserInterruptException e) {
+        if (!mainMenu) {
+          return; // go up a menu level
+        }
+      }
+      if (line ==null || line.isEmpty()) {
         help();
         continue;
       }

@@ -17,7 +17,12 @@ import org.strykeforce.thirdcoast.telemetry.tct.talon.config.SubConfigScope;
 public abstract class EncoderMenuModule {
 
   public final static List<String> MENU_ORDER = Arrays.asList(
-      DeviceCommand.NAME
+      SelectTypeCommand.NAME,
+      SetPositionCommand.NAME,
+      ReverseSensorCommand.NAME,
+      ReverseOutputCommand.NAME,
+      VelocityMeasurementPeriodCommand.NAME,
+      VelocityMeasurementWindowCommand.NAME
   );
 
   @SubConfigScope
@@ -38,5 +43,35 @@ public abstract class EncoderMenuModule {
    @Binds
    @IntoSet
    @EncoderMenu
-   public abstract Command deviceCommand(DeviceCommand command);
+   public abstract Command selectTypeCommand(SelectTypeCommand command);
+
+  @SubConfigScope
+  @Binds
+  @IntoSet
+  @EncoderMenu
+  public abstract Command setPositionCommand(SetPositionCommand command);
+
+  @SubConfigScope
+  @Binds
+  @IntoSet
+  @EncoderMenu
+  public abstract Command reverseSensorCommand(ReverseSensorCommand command);
+
+  @SubConfigScope
+  @Binds
+  @IntoSet
+  @EncoderMenu
+  public abstract Command reverseOutputCommand(ReverseOutputCommand command);
+
+  @SubConfigScope
+  @Binds
+  @IntoSet
+  @EncoderMenu
+  public abstract Command velocityMeasurementWindowCommand(VelocityMeasurementWindowCommand command);
+
+  @SubConfigScope
+  @Binds
+  @IntoSet
+  @EncoderMenu
+  public abstract Command velocityMeasurementPeriodCommand(VelocityMeasurementPeriodCommand command);
 }

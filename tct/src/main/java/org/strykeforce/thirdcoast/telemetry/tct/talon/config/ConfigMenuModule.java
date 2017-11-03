@@ -23,7 +23,7 @@ import org.strykeforce.thirdcoast.telemetry.tct.talon.config.voltage.VoltageMenu
 public abstract class ConfigMenuModule {
 
   public final static List<String> MENU_ORDER = Arrays.asList(
-      ModeCommand.NAME,
+      SelectOperatingModeCommand.NAME,
       PCommand.NAME,
       ICommand.NAME,
       DCommand.NAME,
@@ -53,7 +53,7 @@ public abstract class ConfigMenuModule {
   @Binds
   @IntoSet
   @TalonConfigMenu
-  public abstract Command modeCommand(ModeCommand command);
+  public abstract Command selectOperatingModeCommand(SelectOperatingModeCommand command);
 
   @ConfigScope
   @Binds

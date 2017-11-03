@@ -39,20 +39,22 @@ public class InspectCommand extends AbstractCommand {
     CANTalon talon = opt.get();
     logger.info("inspecting {}", talon.getDescription());
     writer.println();
-    writer
-        .printf("         %s %-2d                  %s %6.3f           %s %6.3f%n", bold("ID:"),
-            talon.getDeviceID(), bold("P:"), talon.getP(), bold("I-zone:"), talon.getIZone());
-    writer.printf("%s %13s       %s %6.3f      %s  %-6d%n", bold("Description:"),
-        talon.getDescription(), bold("I:"), talon.getI(), bold("Encoder Pos:"),
-        talon.getEncPosition());
-    writer.printf("       %s %-13s       %s %6.3f%n", bold("Mode:"), talon.getControlMode(),
-        bold("D:"), talon.getD());
-    writer.printf("                                 %s %6.3f%n", bold("F:"), talon.getF());
+    writer.printf("         %s %-2d                  %s %6.3f           %s %6.3f%n",
+        bold("ID:"), talon.getDeviceID(), bold("P:"), talon.getP(), bold("I-zone:"),
+        talon.getIZone());
+    writer.printf("%s %13s       %s %6.3f      %s  %-6d%n",
+        bold("Description:"), talon.getDescription(), bold("I:"), talon.getI(),
+        bold("Encoder Pos:"), talon.getEncPosition());
+    writer.printf("       %s %-13s       %s %6.3f%n", bold("Mode:"),
+        talon.getControlMode(), bold("D:"), talon.getD());
+    writer.printf("                                 %s %6.3f%n",
+        bold("F:"), talon.getF());
     writer.println();
-    writer.printf("%s %s       %s %5.2f%n", bold("Velocity Meas. Period:"),
-        talon.GetVelocityMeasurementPeriod(), bold("Closed-loop Ramp Rate:"),
-        talon.getCloseLoopRampRate());
-    writer.printf("%s %d              %s %5.2f%n", bold("Velocity Meas. Window:"),
+    writer.printf("%s %s       %s %5.2f%n",
+        bold("Velocity Meas. Period:"), talon.GetVelocityMeasurementPeriod(),
+        bold("Closed-loop Ramp Rate:"), talon.getCloseLoopRampRate());
+    writer.printf("%s %d              %s %5.2f%n",
+        bold("Velocity Meas. Window:"),
         talon.GetVelocityMeasurementWindow(), bold("Nom. Closed-loop Voltage:"),
         talon.GetNominalClosedLoopVoltage());
     writer.printf("                                                    %s %5.2f%n",
