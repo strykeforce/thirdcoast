@@ -1,10 +1,16 @@
 package org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc
 
-import org.strykeforce.thirdcoast.telemetry.tct.talon.config.TalonConfigCommandTest
+import org.strykeforce.thirdcoast.telemetry.tct.Command
+import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractTalonConfigCommandTest
 
-class ReverseSensorCommandTest extends TalonConfigCommandTest {
+class ReverseSensorCommandTest extends AbstractTalonConfigCommandTest {
 
-    def command = new ReverseSensorCommand(reader, talonSet)
+    Command command
+
+    @Override
+    void setup() {
+        command = new ReverseSensorCommand(reader, talonSet)
+    }
 
     def "nothing selected"() {
         given:

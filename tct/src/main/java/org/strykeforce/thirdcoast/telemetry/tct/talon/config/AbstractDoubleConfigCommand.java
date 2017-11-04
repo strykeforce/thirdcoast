@@ -1,39 +1,40 @@
 package org.strykeforce.thirdcoast.telemetry.tct.talon.config;
 
 import com.ctre.CANTalon;
-import java.util.OptionalInt;
+import java.io.PrintWriter;
+import java.util.OptionalDouble;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
 import org.jline.reader.UserInterruptException;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 
-public abstract class IntConfigCommand extends TalonConfigCommand {
+public abstract class AbstractDoubleConfigCommand extends AbstractTalonConfigCommand {
 
-  public IntConfigCommand(String name, int weight, LineReader reader, TalonSet talonSet) {
+  public AbstractDoubleConfigCommand(String name, int weight, LineReader reader, TalonSet talonSet) {
     super(name, weight, reader, talonSet);
   }
 
-  public IntConfigCommand(String name, LineReader reader, TalonSet talonSet) {
+  public AbstractDoubleConfigCommand(String name, LineReader reader, TalonSet talonSet) {
     super(name, reader, talonSet);
   }
 
-  protected abstract void config(CANTalon talon, int value);
+  protected abstract void config(CANTalon talon, double value);
 
   @Override
   public void perform() {
-    OptionalInt opt = getIntValue();
+    OptionalDouble opt = getDoubleValue();
     if (!opt.isPresent()) {
       return;
     }
-    int value = opt.getAsInt();
+    double value = opt.getAsDouble();
     for (CANTalon talon : talonSet.selected()) {
       config(talon, value);
       logger.info("set {} for {} to {}", name(), talon.getDescription(), value);
     }
   }
 
-  protected OptionalInt getIntValue() {
-    OptionalInt value = OptionalInt.empty();
+  protected OptionalDouble getDoubleValue() {
+    OptionalDouble value = OptionalDouble.empty();
 
     while (!value.isPresent()) {
       String line = null;
@@ -47,15 +48,17 @@ public abstract class IntConfigCommand extends TalonConfigCommand {
         logger.info("no value entered");
         break;
       }
-      int setpoint = 0;
+      double setpoint = 0;
       try {
-        setpoint = Integer.valueOf(line);
+        setpoint = Double.valueOf(line);
       } catch (NumberFormatException nfe) {
-        terminal.writer().println("please enter an integer");
+        PrintWriter writer = terminal.writer();
+        writer.println("please enter a number");
         continue;
       }
-      value = OptionalInt.of(setpoint);
+      value = OptionalDouble.of(setpoint);
     }
     return value;
   }
+
 }

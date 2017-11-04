@@ -9,13 +9,13 @@ import org.jline.reader.LineReader;
 import org.jline.reader.UserInterruptException;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 
-public abstract class FwdRevDoubleConfigCommand extends TalonConfigCommand {
+public abstract class AbstractFwdRevDoubleConfigCommand extends AbstractTalonConfigCommand {
 
-  public FwdRevDoubleConfigCommand(String name, int weight, LineReader reader, TalonSet talonSet) {
+  public AbstractFwdRevDoubleConfigCommand(String name, int weight, LineReader reader, TalonSet talonSet) {
     super(name, weight, reader, talonSet);
   }
 
-  public FwdRevDoubleConfigCommand(String name, LineReader reader, TalonSet talonSet) {
+  public AbstractFwdRevDoubleConfigCommand(String name, LineReader reader, TalonSet talonSet) {
     super(name, reader, talonSet);
   }
 

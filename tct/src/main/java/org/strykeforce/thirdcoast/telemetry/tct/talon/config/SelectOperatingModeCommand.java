@@ -8,7 +8,7 @@ import org.jline.reader.LineReader;
 import org.jline.reader.UserInterruptException;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 
-public class SelectOperatingModeCommand extends TalonConfigCommand {
+public class SelectOperatingModeCommand extends AbstractTalonConfigCommand {
 
   public final static String NAME = "Control Mode";
 

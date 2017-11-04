@@ -6,10 +6,15 @@ import spock.lang.Specification
 
 class AbstractCommandTest extends Specification {
 
-    LineReader reader = Stub(LineReader)
-    Terminal terminal = Stub(Terminal)
+    LineReader reader
+    Terminal terminal
+    PrintWriter writer
 
     void setup() {
+        writer = Mock(PrintWriter)
+        terminal = Mock(Terminal)
+        terminal.writer() >> writer
+        reader = Mock(LineReader)
         reader.getTerminal() >> terminal
     }
 }

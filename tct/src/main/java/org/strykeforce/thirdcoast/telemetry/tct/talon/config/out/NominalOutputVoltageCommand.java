@@ -4,12 +4,12 @@ import com.ctre.CANTalon;
 import javax.inject.Inject;
 import org.jline.reader.LineReader;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
-import org.strykeforce.thirdcoast.telemetry.tct.talon.config.FwdRevDoubleConfigCommand;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractFwdRevDoubleConfigCommand;
 
 /**
  * Configure F.
  */
-public class NominalOutputVoltageCommand extends FwdRevDoubleConfigCommand {
+public class NominalOutputVoltageCommand extends AbstractFwdRevDoubleConfigCommand {
 
   public final static String NAME = "Nominal Output Voltage";
 

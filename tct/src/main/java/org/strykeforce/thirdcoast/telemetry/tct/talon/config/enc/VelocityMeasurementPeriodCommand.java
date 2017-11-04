@@ -7,14 +7,14 @@ import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
 import org.jline.reader.UserInterruptException;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
-import org.strykeforce.thirdcoast.telemetry.tct.talon.config.TalonConfigCommand;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractTalonConfigCommand;
 
-public class VelocityMeasurementPeriodCommand extends TalonConfigCommand {
+public class VelocityMeasurementPeriodCommand extends AbstractTalonConfigCommand {
 
   public final static String NAME = "Velocity Measurement Period";
 
   @Inject
-  public VelocityMeasurementPeriodCommand(TalonSet talonSet, LineReader reader) {
+  public VelocityMeasurementPeriodCommand(LineReader reader, TalonSet talonSet) {
     super(NAME, EncoderMenuModule.MENU_ORDER.indexOf(NAME), reader, talonSet);
   }
 

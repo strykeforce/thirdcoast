@@ -7,25 +7,16 @@ import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
 import org.jline.reader.UserInterruptException;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
-import org.strykeforce.thirdcoast.telemetry.tct.talon.config.TalonConfigCommand;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractTalonConfigCommand;
 
-public class SelectTypeCommand extends TalonConfigCommand {
+public class SelectTypeCommand extends AbstractTalonConfigCommand {
 
   public final static String NAME = "Encoder Type";
 
   @Inject
-  public SelectTypeCommand(TalonSet talonSet, LineReader reader) {
+  public SelectTypeCommand(LineReader reader, TalonSet talonSet) {
     super(NAME, EncoderMenuModule.MENU_ORDER.indexOf(NAME), reader, talonSet);
   }
-
-//  AnalogEncoder
-//AnalogPot
-//    CtreMagEncoder_Absolute
-//  CtreMagEncoder_Relative
-//      EncFalling
-//  EncRising
-//      PulseWidth
-//  QuadEncoder
 
   @Override
   public void perform() {

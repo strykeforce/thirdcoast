@@ -3,11 +3,10 @@ package org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc;
 import com.ctre.CANTalon;
 import javax.inject.Inject;
 import org.jline.reader.LineReader;
-import org.jline.terminal.Terminal;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
-import org.strykeforce.thirdcoast.telemetry.tct.talon.config.BooleanConfigCommand;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractBooleanConfigCommand;
 
-public class ReverseSensorCommand extends BooleanConfigCommand {
+public class ReverseSensorCommand extends AbstractBooleanConfigCommand {
 
   public final static String NAME = "Sensor Reversed";
 

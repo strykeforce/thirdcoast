@@ -8,17 +8,17 @@ import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.telemetry.tct.AbstractCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 
-public abstract class TalonConfigCommand extends AbstractCommand {
+public abstract class AbstractTalonConfigCommand extends AbstractCommand {
 
-  protected final static Logger logger = LoggerFactory.getLogger(TalonConfigCommand.class);
+  protected final static Logger logger = LoggerFactory.getLogger(AbstractTalonConfigCommand.class);
   protected final TalonSet talonSet;
 
-  protected TalonConfigCommand(String name, int weight, LineReader reader, TalonSet talonSet) {
+  protected AbstractTalonConfigCommand(String name, int weight, LineReader reader, TalonSet talonSet) {
     super(name, weight, reader);
     this.talonSet = talonSet;
   }
 
-  protected TalonConfigCommand(String name, LineReader reader, TalonSet talonSet) {
+  protected AbstractTalonConfigCommand(String name, LineReader reader, TalonSet talonSet) {
     this(name, ConfigMenuModule.MENU_ORDER.indexOf(name), reader, talonSet);
   }
 

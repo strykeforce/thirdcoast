@@ -9,13 +9,13 @@ import org.jline.utils.AttributedStringBuilder;
 import org.jline.utils.AttributedStyle;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 
-public abstract class BooleanConfigCommand extends TalonConfigCommand {
+public abstract class AbstractBooleanConfigCommand extends AbstractTalonConfigCommand {
 
-  public BooleanConfigCommand(String name, int weight, LineReader reader, TalonSet talonSet) {
+  public AbstractBooleanConfigCommand(String name, int weight, LineReader reader, TalonSet talonSet) {
     super(name, weight, reader, talonSet);
   }
 
-  public BooleanConfigCommand(String name, LineReader reader, TalonSet talonSet) {
+  public AbstractBooleanConfigCommand(String name, LineReader reader, TalonSet talonSet) {
     this(name, 0, reader, talonSet);
   }
 

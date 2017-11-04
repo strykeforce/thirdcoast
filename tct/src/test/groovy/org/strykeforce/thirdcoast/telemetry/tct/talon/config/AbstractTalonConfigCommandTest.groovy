@@ -4,12 +4,14 @@ import com.ctre.CANTalon
 import org.strykeforce.thirdcoast.telemetry.tct.AbstractCommandTest
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet
 
-class TalonConfigCommandTest extends AbstractCommandTest {
+class AbstractTalonConfigCommandTest extends AbstractCommandTest {
 
-    TalonSet talonSet = new TalonSet()
-    CANTalon talon = Mock(CANTalon)
+    TalonSet talonSet
+    CANTalon talon
 
     void setup() {
+        talonSet = new TalonSet()
+        talon  = Mock(CANTalon)
         talonSet.selected() << talon
     }
 }
