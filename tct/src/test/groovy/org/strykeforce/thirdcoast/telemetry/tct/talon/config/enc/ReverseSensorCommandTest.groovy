@@ -1,9 +1,8 @@
 package org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc
 
-import org.jline.terminal.Terminal
-import org.strykeforce.thirdcoast.telemetry.tct.talon.config.BooleanConfigCommandTest
+import org.strykeforce.thirdcoast.telemetry.tct.talon.config.TalonConfigCommandTest
 
-class ReverseSensorCommandTest extends BooleanConfigCommandTest {
+class ReverseSensorCommandTest extends TalonConfigCommandTest {
 
     def command = new ReverseSensorCommand(reader, talonSet)
 
