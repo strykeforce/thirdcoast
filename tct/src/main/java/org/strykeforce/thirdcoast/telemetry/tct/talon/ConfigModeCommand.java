@@ -2,7 +2,7 @@ package org.strykeforce.thirdcoast.telemetry.tct.talon;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
-import org.jline.terminal.Terminal;
+import org.jline.reader.LineReader;
 import org.strykeforce.thirdcoast.telemetry.tct.AbstractCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.Menu;
 import org.strykeforce.thirdcoast.telemetry.tct.ModeScope;
@@ -20,8 +20,8 @@ public class ConfigModeCommand extends AbstractCommand {
 
   @Inject
   public ConfigModeCommand(TalonSet talonSet,
-      Provider<ConfigMenuComponent.Builder> talonMenuComponentProvider, Terminal terminal) {
-    super(NAME, TalonMenuModule.MENU_ORDER.indexOf(NAME), terminal);
+      Provider<ConfigMenuComponent.Builder> talonMenuComponentProvider, LineReader reader) {
+    super(NAME, TalonMenuModule.MENU_ORDER.indexOf(NAME), reader);
     this.talonMenuComponentProvider = talonMenuComponentProvider;
     this.talonSet = talonSet;
   }

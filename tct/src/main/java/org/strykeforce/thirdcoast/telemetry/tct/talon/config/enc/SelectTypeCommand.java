@@ -4,8 +4,8 @@ import com.ctre.CANTalon;
 import com.ctre.CANTalon.FeedbackDevice;
 import javax.inject.Inject;
 import org.jline.reader.EndOfFileException;
+import org.jline.reader.LineReader;
 import org.jline.reader.UserInterruptException;
-import org.jline.terminal.Terminal;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.ConfigCommand;
 
@@ -14,8 +14,8 @@ public class SelectTypeCommand extends ConfigCommand {
   public final static String NAME = "Encoder Type";
 
   @Inject
-  public SelectTypeCommand(TalonSet talonSet, Terminal terminal) {
-    super(NAME, EncoderMenuModule.MENU_ORDER.indexOf(NAME), terminal, talonSet);
+  public SelectTypeCommand(TalonSet talonSet, LineReader reader) {
+    super(NAME, EncoderMenuModule.MENU_ORDER.indexOf(NAME), reader, talonSet);
   }
 
 //  AnalogEncoder

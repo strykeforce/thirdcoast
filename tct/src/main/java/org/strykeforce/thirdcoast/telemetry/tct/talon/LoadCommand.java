@@ -6,7 +6,7 @@ import com.electronwill.nightconfig.core.file.FileConfig;
 import java.util.List;
 import java.util.Optional;
 import javax.inject.Inject;
-import org.jline.terminal.Terminal;
+import org.jline.reader.LineReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.talon.TalonConfiguration;
@@ -34,9 +34,9 @@ public class LoadCommand extends AbstractCommand {
 
 
   @Inject
-  public LoadCommand(TalonSet talonSet, Terminal terminal, TalonProvisioner talonProvisioner,
+  public LoadCommand(TalonSet talonSet, LineReader reader, TalonProvisioner talonProvisioner,
       TalonFactory talonFactory, TelemetryService telemetryService, ListCommand listCommand) {
-    super(NAME, TalonMenuModule.MENU_ORDER.indexOf(NAME), terminal);
+    super(NAME, TalonMenuModule.MENU_ORDER.indexOf(NAME), reader);
     this.talonSet = talonSet;
     this.talonProvisioner = talonProvisioner;
     this.talonFactory = talonFactory;

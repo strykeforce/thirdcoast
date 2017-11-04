@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 import javax.inject.Singleton;
+import org.jline.reader.LineReader;
+import org.jline.reader.LineReaderBuilder;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 
@@ -14,11 +16,11 @@ import org.jline.terminal.TerminalBuilder;
 public abstract class TerminalModule {
 
   // TODO: check if needed
-  @Provides
-  @Singleton
-  public static Set<CANTalon> provideTalons() {
-    return new HashSet<>();
-  }
+//  @Provides
+//  @Singleton
+//  public static Set<CANTalon> provideTalons() {
+//    return new HashSet<>();
+//  }
 
   @Provides
   @Singleton
@@ -28,5 +30,11 @@ public abstract class TerminalModule {
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
+  }
+
+  @Provides
+  @Singleton
+  public static LineReader provideLineReader(Terminal terminal) {
+    return LineReaderBuilder.builder().terminal(terminal).appName("TCT").build();
   }
 }

@@ -20,8 +20,8 @@ public abstract class TalonMenuModule {
   public static final List<String> MENU_ORDER = Arrays.asList(
       LoadCommand.NAME,
       SelectCommand.NAME,
-      ListCommand.NAME,
       ConfigModeCommand.NAME,
+      ListCommand.NAME,
       InspectCommand.NAME,
       RunCommand.NAME
   );

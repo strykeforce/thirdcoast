@@ -2,7 +2,7 @@ package org.strykeforce.thirdcoast.telemetry.tct.talon.config;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
-import org.jline.terminal.Terminal;
+import org.jline.reader.LineReader;
 import org.strykeforce.thirdcoast.telemetry.tct.AbstractCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.Menu;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
@@ -20,8 +20,8 @@ public class LimitConfigCommand extends AbstractCommand {
 
   @Inject
   public LimitConfigCommand(TalonSet talonSet,
-      Provider<LimitMenuComponent.Builder> voltageMenuComponentProvider, Terminal terminal) {
-    super(NAME, ConfigMenuModule.MENU_ORDER.indexOf(NAME), terminal);
+      Provider<LimitMenuComponent.Builder> voltageMenuComponentProvider, LineReader reader) {
+    super(NAME, ConfigMenuModule.MENU_ORDER.indexOf(NAME), reader);
     this.voltageMenuComponentProvider = voltageMenuComponentProvider;
     this.talonSet = talonSet;
   }

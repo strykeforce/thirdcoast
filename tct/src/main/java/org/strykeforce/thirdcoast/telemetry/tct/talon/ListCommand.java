@@ -2,7 +2,7 @@ package org.strykeforce.thirdcoast.telemetry.tct.talon;
 
 import com.ctre.CANTalon;
 import javax.inject.Inject;
-import org.jline.terminal.Terminal;
+import org.jline.reader.LineReader;
 import org.jline.utils.AttributedStringBuilder;
 import org.jline.utils.AttributedStyle;
 import org.strykeforce.thirdcoast.telemetry.tct.AbstractCommand;
@@ -18,8 +18,8 @@ public class ListCommand extends AbstractCommand {
   private final TalonSet talonSet;
 
   @Inject
-  public ListCommand(TalonSet talonSet, Terminal terminal) {
-    super(NAME, TalonMenuModule.MENU_ORDER.indexOf(NAME), terminal);
+  public ListCommand(TalonSet talonSet, LineReader reader) {
+    super(NAME, TalonMenuModule.MENU_ORDER.indexOf(NAME), reader);
     this.talonSet = talonSet;
   }
 

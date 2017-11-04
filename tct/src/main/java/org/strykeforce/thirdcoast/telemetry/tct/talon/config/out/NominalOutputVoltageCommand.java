@@ -2,7 +2,7 @@ package org.strykeforce.thirdcoast.telemetry.tct.talon.config.out;
 
 import com.ctre.CANTalon;
 import javax.inject.Inject;
-import org.jline.terminal.Terminal;
+import org.jline.reader.LineReader;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.FwdRevDoubleConfigCommand;
 
@@ -14,8 +14,8 @@ public class NominalOutputVoltageCommand extends FwdRevDoubleConfigCommand {
   public final static String NAME = "Nominal Output Voltage";
 
   @Inject
-  public NominalOutputVoltageCommand(TalonSet talonSet, Terminal terminal) {
-    super(NAME, terminal, talonSet);
+  public NominalOutputVoltageCommand(TalonSet talonSet, LineReader reader) {
+    super(NAME, reader, talonSet);
   }
 
   @Override

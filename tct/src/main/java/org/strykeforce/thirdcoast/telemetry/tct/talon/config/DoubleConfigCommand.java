@@ -3,18 +3,18 @@ package org.strykeforce.thirdcoast.telemetry.tct.talon.config;
 import com.ctre.CANTalon;
 import java.util.OptionalDouble;
 import org.jline.reader.EndOfFileException;
+import org.jline.reader.LineReader;
 import org.jline.reader.UserInterruptException;
-import org.jline.terminal.Terminal;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 
 public abstract class DoubleConfigCommand extends ConfigCommand {
 
-  public DoubleConfigCommand(String name, int weight, Terminal terminal, TalonSet talonSet) {
-    super(name, weight, terminal, talonSet);
+  public DoubleConfigCommand(String name, int weight, LineReader reader, TalonSet talonSet) {
+    super(name, weight, reader, talonSet);
   }
 
-  public DoubleConfigCommand(String name, Terminal terminal, TalonSet talonSet) {
-    super(name, terminal, talonSet);
+  public DoubleConfigCommand(String name, LineReader reader, TalonSet talonSet) {
+    super(name, reader, talonSet);
   }
 
   protected abstract void config(CANTalon talon, double value);

@@ -6,9 +6,7 @@ import java.util.Optional;
 import javax.inject.Inject;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
-import org.jline.reader.LineReaderBuilder;
 import org.jline.reader.UserInterruptException;
-import org.jline.terminal.Terminal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.telemetry.tct.AbstractCommand;
@@ -19,14 +17,12 @@ public class InspectCommand extends AbstractCommand {
 
   public final static String NAME = "Inspect Talon";
   final static Logger logger = LoggerFactory.getLogger(InspectCommand.class);
-  private final LineReader reader;
   private final TalonSet talonSet;
 
   @Inject
-  public InspectCommand(TalonSet talonSet, Terminal terminal) {
-    super(NAME, TalonMenuModule.MENU_ORDER.indexOf(NAME), terminal);
+  public InspectCommand(TalonSet talonSet, LineReader reader) {
+    super(NAME, TalonMenuModule.MENU_ORDER.indexOf(NAME), reader);
     this.talonSet = talonSet;
-    reader = LineReaderBuilder.builder().terminal(terminal).build();
   }
 
   @Override

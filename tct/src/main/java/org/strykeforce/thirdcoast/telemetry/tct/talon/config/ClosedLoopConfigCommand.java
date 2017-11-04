@@ -2,7 +2,7 @@ package org.strykeforce.thirdcoast.telemetry.tct.talon.config;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
-import org.jline.terminal.Terminal;
+import org.jline.reader.LineReader;
 import org.strykeforce.thirdcoast.telemetry.tct.AbstractCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.Menu;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
@@ -21,8 +21,8 @@ public class ClosedLoopConfigCommand extends AbstractCommand {
   @Inject
   public ClosedLoopConfigCommand(TalonSet talonSet,
       Provider<ClosedLoopMenuComponent.Builder> closedLoopMenuComponentProvider,
-      Terminal terminal) {
-    super(NAME, ConfigMenuModule.MENU_ORDER.indexOf(NAME), terminal);
+      LineReader reader) {
+    super(NAME, ConfigMenuModule.MENU_ORDER.indexOf(NAME), reader);
     this.closedLoopMenuComponentProvider = closedLoopMenuComponentProvider;
     this.talonSet = talonSet;
   }

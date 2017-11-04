@@ -2,7 +2,7 @@ package org.strykeforce.thirdcoast.telemetry.tct;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
-import org.jline.terminal.Terminal;
+import org.jline.reader.LineReader;
 import org.strykeforce.thirdcoast.telemetry.tct.servo.ServoMenuComponent;
 
 /**
@@ -15,8 +15,8 @@ public class ServoModeCommand extends AbstractCommand {
 
   @Inject
   public ServoModeCommand(Provider<ServoMenuComponent.Builder> servoMenuComponentProvider,
-      Terminal terminal) {
-    super(NAME, terminal);
+      LineReader reader) {
+    super(NAME, reader);
     this.servoMenuComponentProvider = servoMenuComponentProvider;
   }
 

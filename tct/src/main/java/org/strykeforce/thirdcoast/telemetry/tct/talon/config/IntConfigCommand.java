@@ -3,18 +3,18 @@ package org.strykeforce.thirdcoast.telemetry.tct.talon.config;
 import com.ctre.CANTalon;
 import java.util.OptionalInt;
 import org.jline.reader.EndOfFileException;
+import org.jline.reader.LineReader;
 import org.jline.reader.UserInterruptException;
-import org.jline.terminal.Terminal;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 
 public abstract class IntConfigCommand extends ConfigCommand {
 
-  public IntConfigCommand(String name, int weight, Terminal terminal, TalonSet talonSet) {
-    super(name, weight, terminal, talonSet);
+  public IntConfigCommand(String name, int weight, LineReader reader, TalonSet talonSet) {
+    super(name, weight, reader, talonSet);
   }
 
-  public IntConfigCommand(String name, Terminal terminal, TalonSet talonSet) {
-    super(name, terminal, talonSet);
+  public IntConfigCommand(String name, LineReader reader, TalonSet talonSet) {
+    super(name, reader, talonSet);
   }
 
   protected abstract void config(CANTalon talon, int value);

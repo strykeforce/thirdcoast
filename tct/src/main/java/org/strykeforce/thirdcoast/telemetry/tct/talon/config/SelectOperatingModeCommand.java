@@ -4,6 +4,7 @@ import com.ctre.CANTalon;
 import com.ctre.CANTalon.TalonControlMode;
 import javax.inject.Inject;
 import org.jline.reader.EndOfFileException;
+import org.jline.reader.LineReader;
 import org.jline.reader.UserInterruptException;
 import org.jline.terminal.Terminal;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
@@ -13,8 +14,8 @@ public class SelectOperatingModeCommand extends ConfigCommand {
   public final static String NAME = "Control Mode";
 
   @Inject
-  public SelectOperatingModeCommand(TalonSet talonSet, Terminal terminal) {
-    super(NAME, ConfigMenuModule.MENU_ORDER.indexOf(NAME), terminal, talonSet);
+  public SelectOperatingModeCommand(TalonSet talonSet, LineReader reader) {
+    super(NAME, ConfigMenuModule.MENU_ORDER.indexOf(NAME), reader, talonSet);
   }
 
   @Override

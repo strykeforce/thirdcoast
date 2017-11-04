@@ -3,22 +3,20 @@ package org.strykeforce.thirdcoast.telemetry.tct.talon.config;
 import com.ctre.CANTalon;
 import java.util.Optional;
 import org.jline.reader.EndOfFileException;
+import org.jline.reader.LineReader;
 import org.jline.reader.UserInterruptException;
-import org.jline.terminal.Terminal;
 import org.jline.utils.AttributedStringBuilder;
 import org.jline.utils.AttributedStyle;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 
 public abstract class BooleanConfigCommand extends ConfigCommand {
 
-  public BooleanConfigCommand(String name, int weight, Terminal terminal,
-      TalonSet talonSet) {
-    super(name, weight, terminal, talonSet);
+  public BooleanConfigCommand(String name, int weight, LineReader reader, TalonSet talonSet) {
+    super(name, weight, reader, talonSet);
   }
 
-  public BooleanConfigCommand(String name, Terminal terminal,
-      TalonSet talonSet) {
-    super(name, terminal, talonSet);
+  public BooleanConfigCommand(String name, LineReader reader, TalonSet talonSet) {
+    this(name, 0, reader, talonSet);
   }
 
   protected abstract void config(CANTalon talon, boolean value);
@@ -35,7 +33,6 @@ public abstract class BooleanConfigCommand extends ConfigCommand {
       logger.info("set {} for {} to {}", name(), talon.getDescription(), value);
     }
   }
-
 
 
   protected Optional<Boolean> getBooleanValue() {
@@ -71,7 +68,8 @@ public abstract class BooleanConfigCommand extends ConfigCommand {
   protected String prompt() {
     return new AttributedStringBuilder()
         .style(AttributedStyle.BOLD.foreground(AttributedStyle.YELLOW))
-        .append("configure " + name() + " (Y/N)> ").toAnsi();
+        .append("configure " + name() + " (Y/N)> ")
+        .toAnsi();
   }
 }
 

@@ -6,7 +6,6 @@ import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
 import org.jline.reader.UserInterruptException;
-import org.jline.terminal.Terminal;
 import org.strykeforce.thirdcoast.telemetry.tct.AbstractCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.ModeScope;
 
@@ -15,13 +14,11 @@ public class RunCommand extends AbstractCommand {
 
   public final static String NAME = "Run Selected Talons";
   private final TalonSet talonSet;
-  private final LineReader reader;
 
   @Inject
-  public RunCommand(TalonSet talonSet, Terminal terminal) {
-    super(NAME, TalonMenuModule.MENU_ORDER.indexOf(NAME), terminal);
+  public RunCommand(TalonSet talonSet, LineReader reader) {
+    super(NAME, TalonMenuModule.MENU_ORDER.indexOf(NAME), reader);
     this.talonSet = talonSet;
-    reader = LineReaderBuilder.builder().terminal(terminal).build();
   }
 
   @Override

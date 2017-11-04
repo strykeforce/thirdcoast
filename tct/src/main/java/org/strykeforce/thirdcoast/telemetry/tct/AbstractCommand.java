@@ -1,6 +1,7 @@
 package org.strykeforce.thirdcoast.telemetry.tct;
 
 import java.util.Optional;
+import org.jline.reader.LineReader;
 import org.jline.terminal.Terminal;
 import org.jline.utils.AttributedStringBuilder;
 import org.jline.utils.AttributedStyle;
@@ -11,30 +12,41 @@ import org.jline.utils.AttributedStyle;
 public abstract class AbstractCommand implements Command {
 
   protected final String name;
-  protected int weight;
   protected final Terminal terminal;
+  protected final LineReader reader;
+  protected int weight;
 
   /**
    * Construct a command.
    *
    * @param name the command menu name.
    * @param weight the display weight.
-   * @param terminal the Terminal to display to.
+   * @param reader the LineReader to use for terminal input.
    */
-  public AbstractCommand(String name, int weight, Terminal terminal) {
+  public AbstractCommand(String name, int weight, LineReader reader) {
     this.name = name;
     this.weight = weight;
-    this.terminal = terminal;
+    this.reader = reader;
+    this.terminal = reader.getTerminal();
   }
 
   /**
    * Construct a command with default display weight of zero.
    *
    * @param name the command menu name.
-   * @param terminal the Terminal to display to.
+   * @param reader the LineReader to use for terminal input.
    */
-  public AbstractCommand(String name, Terminal terminal) {
-    this(name, 0, terminal);
+  public AbstractCommand(String name, LineReader reader) {
+    this(name, 0, reader);
+  }
+
+  protected static String bold(String text) {
+    return new AttributedStringBuilder().style(AttributedStyle.BOLD).append(text).toAnsi();
+  }
+
+  protected static String boldYellow(String text) {
+    return new AttributedStringBuilder()
+        .style(AttributedStyle.BOLD.foreground(AttributedStyle.YELLOW)).append(text).toAnsi();
   }
 
   /**
@@ -68,20 +80,12 @@ public abstract class AbstractCommand implements Command {
 
   /**
    * Default post command is empty.
+   *
    * @return empty Optional
    */
   @Override
   public Optional<Command> post() {
     return Optional.empty();
-  }
-
-  protected static String bold(String text) {
-    return new AttributedStringBuilder().style(AttributedStyle.BOLD).append(text).toAnsi();
-  }
-
-  protected static String boldYellow(String text) {
-    return new AttributedStringBuilder()
-        .style(AttributedStyle.BOLD.foreground(AttributedStyle.YELLOW)).append(text).toAnsi();
   }
 
 

@@ -2,7 +2,7 @@ package org.strykeforce.thirdcoast.telemetry.tct;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
-import org.jline.terminal.Terminal;
+import org.jline.reader.LineReader;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonMenuComponent;
 
 /**
@@ -15,8 +15,8 @@ public class TalonModeCommand extends AbstractCommand {
 
   @Inject
   public TalonModeCommand(Provider<TalonMenuComponent.Builder> talonMenuComponentProvider,
-      Terminal terminal) {
-    super(NAME, terminal);
+      LineReader reader) {
+    super(NAME, reader);
     this.talonMenuComponentProvider = talonMenuComponentProvider;
   }
 

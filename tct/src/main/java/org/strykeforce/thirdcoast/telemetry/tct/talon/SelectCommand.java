@@ -7,9 +7,7 @@ import java.util.Optional;
 import javax.inject.Inject;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
-import org.jline.reader.LineReaderBuilder;
 import org.jline.reader.UserInterruptException;
-import org.jline.terminal.Terminal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.telemetry.tct.AbstractCommand;
@@ -25,15 +23,13 @@ public class SelectCommand extends AbstractCommand {
   public final static String NAME = "Select Talons";
   final static Logger logger = LoggerFactory.getLogger(SelectCommand.class);
   private final TalonSet talonSet;
-  private final LineReader reader;
   private final Optional<Command> listCommand;
 
   @Inject
-  public SelectCommand(TalonSet talonSet, Terminal terminal, ListCommand listCommand) {
-    super(NAME, TalonMenuModule.MENU_ORDER.indexOf(NAME), terminal);
+  public SelectCommand(TalonSet talonSet, LineReader reader, ListCommand listCommand) {
+    super(NAME, TalonMenuModule.MENU_ORDER.indexOf(NAME), reader);
     this.talonSet = talonSet;
     this.listCommand = Optional.of(listCommand);
-    reader = LineReaderBuilder.builder().terminal(terminal).build();
   }
 
   @Override

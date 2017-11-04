@@ -2,7 +2,7 @@ package org.strykeforce.thirdcoast.telemetry.tct;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
-import org.jline.terminal.Terminal;
+import org.jline.reader.LineReader;
 import org.strykeforce.thirdcoast.telemetry.tct.dio.DioMenuComponent;
 
 /**
@@ -15,8 +15,8 @@ public class DioModeCommand extends AbstractCommand {
 
   @Inject
   public DioModeCommand(Provider<DioMenuComponent.Builder> dioMenuComponentProvider,
-      Terminal terminal) {
-    super(NAME, terminal);
+      LineReader reader) {
+    super(NAME, reader);
     this.dioMenuComponentProvider = dioMenuComponentProvider;
   }
 

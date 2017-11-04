@@ -5,20 +5,19 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import org.jline.reader.EndOfFileException;
+import org.jline.reader.LineReader;
 import org.jline.reader.UserInterruptException;
 import org.jline.terminal.Terminal;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 
 public abstract class FwdRevDoubleConfigCommand extends ConfigCommand {
 
-  public FwdRevDoubleConfigCommand(String name, int weight, Terminal terminal,
-      TalonSet talonSet) {
-    super(name, weight, terminal, talonSet);
+  public FwdRevDoubleConfigCommand(String name, int weight, LineReader reader, TalonSet talonSet) {
+    super(name, weight, reader, talonSet);
   }
 
-  public FwdRevDoubleConfigCommand(String name, Terminal terminal,
-      TalonSet talonSet) {
-    super(name, terminal, talonSet);
+  public FwdRevDoubleConfigCommand(String name, LineReader reader, TalonSet talonSet) {
+    super(name, reader, talonSet);
   }
 
   protected abstract void config(CANTalon talon, double foward, double reverse);

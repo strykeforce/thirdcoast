@@ -2,7 +2,7 @@ package org.strykeforce.thirdcoast.telemetry.tct.talon.config.out;
 
 import com.ctre.CANTalon;
 import javax.inject.Inject;
-import org.jline.terminal.Terminal;
+import org.jline.reader.LineReader;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.IntConfigCommand;
 
@@ -14,8 +14,8 @@ public class CurrentLimitCommand extends IntConfigCommand {
   public final static String NAME = "Output Current Limit";
 
   @Inject
-  public CurrentLimitCommand(TalonSet talonSet, Terminal terminal) {
-    super(NAME, OutputMenuModule.MENU_ORDER.indexOf(NAME), terminal, talonSet);
+  public CurrentLimitCommand(TalonSet talonSet, LineReader reader) {
+    super(NAME, OutputMenuModule.MENU_ORDER.indexOf(NAME), reader, talonSet);
   }
 
   @Override
