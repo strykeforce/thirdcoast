@@ -12,14 +12,14 @@ import org.strykeforce.thirdcoast.telemetry.tct.talon.config.ConfigMenuComponent
  * Configure selected Talons.
  */
 @ModeScope
-public class ConfigCommand extends AbstractCommand {
+public class ConfigModeCommand extends AbstractCommand {
 
   public final static String NAME = "Configure Selected Talons";
   private final Provider<ConfigMenuComponent.Builder> talonMenuComponentProvider;
   private final TalonSet talonSet;
 
   @Inject
-  public ConfigCommand(TalonSet talonSet,
+  public ConfigModeCommand(TalonSet talonSet,
       Provider<ConfigMenuComponent.Builder> talonMenuComponentProvider, Terminal terminal) {
     super(NAME, TalonMenuModule.MENU_ORDER.indexOf(NAME), terminal);
     this.talonMenuComponentProvider = talonMenuComponentProvider;

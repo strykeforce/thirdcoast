@@ -21,7 +21,7 @@ public abstract class TalonMenuModule {
       LoadCommand.NAME,
       SelectCommand.NAME,
       ListCommand.NAME,
-      ConfigCommand.NAME,
+      ConfigModeCommand.NAME,
       InspectCommand.NAME,
       RunCommand.NAME
   );
@@ -44,7 +44,7 @@ public abstract class TalonMenuModule {
   @Binds
   @IntoSet
   @TalonMenu
-  public abstract Command configCommand(ConfigCommand command);
+  public abstract Command configCommand(ConfigModeCommand command);
 
   @ModeScope
   @Binds
