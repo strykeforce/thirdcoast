@@ -6,10 +6,9 @@ import javax.inject.Inject;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
 import org.jline.reader.UserInterruptException;
-import org.jline.terminal.Terminal;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 
-public class SelectOperatingModeCommand extends ConfigCommand {
+public class SelectOperatingModeCommand extends TalonConfigCommand {
 
   public final static String NAME = "Control Mode";
 

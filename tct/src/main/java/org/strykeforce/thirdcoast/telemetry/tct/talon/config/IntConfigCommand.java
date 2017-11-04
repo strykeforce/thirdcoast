@@ -7,7 +7,7 @@ import org.jline.reader.LineReader;
 import org.jline.reader.UserInterruptException;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 
-public abstract class IntConfigCommand extends ConfigCommand {
+public abstract class IntConfigCommand extends TalonConfigCommand {
 
   public IntConfigCommand(String name, int weight, LineReader reader, TalonSet talonSet) {
     super(name, weight, reader, talonSet);
