@@ -22,21 +22,20 @@ public abstract class AbstractDoubleConfigCommand extends AbstractTalonConfigCom
 
   @Override
   public void perform() {
-    OptionalDouble opt = getDoubleValue();
-    if (!opt.isPresent()) {
+    Double value = getDoubleValue();
+    if (value == null) {
       return;
     }
-    double value = opt.getAsDouble();
     for (CANTalon talon : talonSet.selected()) {
       config(talon, value);
       logger.info("set {} for {} to {}", name(), talon.getDescription(), value);
     }
   }
 
-  protected OptionalDouble getDoubleValue() {
-    OptionalDouble value = OptionalDouble.empty();
+  protected Double getDoubleValue() {
+    Double value = null;
 
-    while (!value.isPresent()) {
+    while (value == null) {
       String line = null;
       try {
         line = reader.readLine(prompt()).trim();
@@ -48,15 +47,13 @@ public abstract class AbstractDoubleConfigCommand extends AbstractTalonConfigCom
         logger.info("no value entered");
         break;
       }
-      double setpoint = 0;
       try {
-        setpoint = Double.valueOf(line);
+        value = Double.valueOf(line);
       } catch (NumberFormatException nfe) {
         PrintWriter writer = terminal.writer();
         writer.println("please enter a number");
         continue;
       }
-      value = OptionalDouble.of(setpoint);
     }
     return value;
   }

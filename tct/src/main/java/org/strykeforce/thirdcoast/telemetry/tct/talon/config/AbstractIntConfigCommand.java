@@ -21,21 +21,20 @@ public abstract class AbstractIntConfigCommand extends AbstractTalonConfigComman
 
   @Override
   public void perform() {
-    OptionalInt opt = getIntValue();
-    if (!opt.isPresent()) {
+    Integer value = getIntValue();
+    if (value == null) {
       return;
     }
-    int value = opt.getAsInt();
     for (CANTalon talon : talonSet.selected()) {
       config(talon, value);
       logger.info("set {} for {} to {}", name(), talon.getDescription(), value);
     }
   }
 
-  protected OptionalInt getIntValue() {
-    OptionalInt value = OptionalInt.empty();
+  protected Integer getIntValue() {
+    Integer value = null;
 
-    while (!value.isPresent()) {
+    while (value == null) {
       String line = null;
       try {
         line = reader.readLine(prompt()).trim();
@@ -47,14 +46,12 @@ public abstract class AbstractIntConfigCommand extends AbstractTalonConfigComman
         logger.info("no value entered");
         break;
       }
-      int setpoint = 0;
       try {
-        setpoint = Integer.valueOf(line);
+        value = Integer.valueOf(line);
       } catch (NumberFormatException nfe) {
         terminal.writer().println("please enter an integer");
         continue;
       }
-      value = OptionalInt.of(setpoint);
     }
     return value;
   }

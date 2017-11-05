@@ -3,7 +3,6 @@ package org.strykeforce.thirdcoast.telemetry.tct.talon.config;
 import com.ctre.CANTalon;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
 import org.jline.reader.UserInterruptException;
@@ -11,7 +10,8 @@ import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 
 public abstract class AbstractFwdRevDoubleConfigCommand extends AbstractTalonConfigCommand {
 
-  public AbstractFwdRevDoubleConfigCommand(String name, int weight, LineReader reader, TalonSet talonSet) {
+  public AbstractFwdRevDoubleConfigCommand(String name, int weight, LineReader reader,
+      TalonSet talonSet) {
     super(name, weight, reader, talonSet);
   }
 
@@ -23,21 +23,20 @@ public abstract class AbstractFwdRevDoubleConfigCommand extends AbstractTalonCon
 
   @Override
   public void perform() {
-    Optional<double[]> opt = getFwdRevDoubles();
-    if (!opt.isPresent()) {
+    double[] values = getFwdRevDoubles();
+    if (values == null) {
       return;
     }
-    double[] fr = opt.get();
     for (CANTalon talon : talonSet.selected()) {
-      config(talon, fr[0], fr[1]);
-      logger.info("set {} for {} to {}/{}", name(), talon.getDescription(), fr[0], fr[1]);
+      config(talon, values[0], values[1]);
+      logger.info("set {} for {} to {}/{}", name(), talon.getDescription(), values[0], values[1]);
     }
   }
 
-  protected Optional<double[]> getFwdRevDoubles() {
+  protected double[] getFwdRevDoubles() {
     terminal.writer().println("enter <forward>,<reverse> or a single number for both");
-    Optional<double[]> values = Optional.empty();
-    while (!values.isPresent()) {
+    double[] values = null;
+    while (values == null) {
       String line = null;
       try {
         line = reader.readLine(prompt()).trim();
@@ -67,7 +66,7 @@ public abstract class AbstractFwdRevDoubleConfigCommand extends AbstractTalonCon
         terminal.writer().println("please enter a number or two numbers separated by a commma");
         continue;
       }
-      values = Optional.of(doubles);
+      values = doubles;
     }
     return values;
   }

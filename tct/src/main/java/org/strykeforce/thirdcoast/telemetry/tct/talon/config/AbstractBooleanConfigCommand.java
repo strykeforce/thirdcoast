@@ -23,11 +23,10 @@ public abstract class AbstractBooleanConfigCommand extends AbstractTalonConfigCo
 
   @Override
   public void perform() {
-    Optional<Boolean> opt = getBooleanValue();
-    if (!opt.isPresent()) {
+    Boolean value = getBooleanValue();
+    if (value == null) {
       return;
     }
-    boolean value = opt.get().booleanValue();
     for (CANTalon talon : talonSet.selected()) {
       config(talon, value);
       logger.info("set {} for {} to {}", name(), talon.getDescription(), value);
@@ -35,10 +34,10 @@ public abstract class AbstractBooleanConfigCommand extends AbstractTalonConfigCo
   }
 
 
-  protected Optional<Boolean> getBooleanValue() {
-    Optional<Boolean> value = Optional.empty();
+  protected Boolean getBooleanValue() {
+    Boolean value = null;
 
-    while (!value.isPresent()) {
+    while (value == null) {
       String line = null;
       try {
         line = reader.readLine(prompt()).trim();
@@ -59,7 +58,7 @@ public abstract class AbstractBooleanConfigCommand extends AbstractTalonConfigCo
         terminal.writer().println(bold("enter <Y>, <N> or <enter> to go back"));
         continue;
       }
-      value = Optional.of(setpoint);
+      value = Boolean.valueOf(setpoint);
     }
     return value;
   }
