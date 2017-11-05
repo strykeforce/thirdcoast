@@ -14,7 +14,7 @@ public class NominalOutputVoltageCommand extends AbstractFwdRevDoubleConfigComma
   public final static String NAME = "Nominal Output Voltage";
 
   @Inject
-  public NominalOutputVoltageCommand(TalonSet talonSet, LineReader reader) {
+  public NominalOutputVoltageCommand(LineReader reader, TalonSet talonSet) {
     super(NAME, reader, talonSet);
   }
 

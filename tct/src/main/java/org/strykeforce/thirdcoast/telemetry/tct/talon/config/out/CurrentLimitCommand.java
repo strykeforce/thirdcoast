@@ -14,7 +14,7 @@ public class CurrentLimitCommand extends AbstractIntConfigCommand {
   public final static String NAME = "Output Current Limit";
 
   @Inject
-  public CurrentLimitCommand(TalonSet talonSet, LineReader reader) {
+  public CurrentLimitCommand(LineReader reader, TalonSet talonSet) {
     super(NAME, OutputMenuModule.MENU_ORDER.indexOf(NAME), reader, talonSet);
   }
 

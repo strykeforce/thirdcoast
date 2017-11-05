@@ -55,7 +55,8 @@ public abstract class AbstractFwdRevDoubleConfigCommand extends AbstractTalonCon
         if (entries.size() > 0) {
           doubles[0] = Double.valueOf(entries.get(0));
         } else {
-          throw new AssertionError("entries was zero-length");
+          help();
+          continue;
         }
         if (entries.size() > 1) {
           doubles[1] = Double.valueOf(entries.get(1));
@@ -63,7 +64,7 @@ public abstract class AbstractFwdRevDoubleConfigCommand extends AbstractTalonCon
           doubles[1] = doubles[0];
         }
       } catch (NumberFormatException nfe) {
-        terminal.writer().println("please enter a number or two numbers separated by a commma");
+        help();
         continue;
       }
       values = doubles;
@@ -71,4 +72,7 @@ public abstract class AbstractFwdRevDoubleConfigCommand extends AbstractTalonCon
     return values;
   }
 
+  protected void help() {
+    terminal.writer().println(bold("please enter a number or two numbers separated by a commma"));
+  }
 }

@@ -14,7 +14,7 @@ public class PeakOutputVoltageCommand extends AbstractFwdRevDoubleConfigCommand 
   public final static String NAME = "Peak Ouput Voltage";
 
   @Inject
-  public PeakOutputVoltageCommand(TalonSet talonSet, LineReader reader) {
+  public PeakOutputVoltageCommand(LineReader reader, TalonSet talonSet) {
     super(NAME, reader, talonSet);
   }
 

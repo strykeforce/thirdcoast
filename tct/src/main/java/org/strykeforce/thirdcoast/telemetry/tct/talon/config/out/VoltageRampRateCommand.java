@@ -14,7 +14,7 @@ public class VoltageRampRateCommand extends AbstractDoubleConfigCommand {
   public final static String NAME = "Voltage Ramp Rate";
 
   @Inject
-  public VoltageRampRateCommand(TalonSet talonSet, LineReader reader) {
+  public VoltageRampRateCommand(LineReader reader, TalonSet talonSet) {
     super(NAME, reader, talonSet);
   }
 
