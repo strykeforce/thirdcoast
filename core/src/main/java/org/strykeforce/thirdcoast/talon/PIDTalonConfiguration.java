@@ -5,18 +5,18 @@ import com.electronwill.nightconfig.core.UnmodifiableConfig;
 
 class PIDTalonConfiguration extends TalonConfiguration {
 
-  private final static String OUTPUT_VOLTAGE_MAX = "output_voltage_max";
-  private final static String FORWARD_OUTPUT_VOLTAGE_PEAK = "forward_output_voltage_peak";
-  private final static String REVERSE_OUTPUT_VOLTAGE_PEAK = "reverse_output_voltage_peak";
-  private final static String FORWARD_OUTPUT_VOLTAGE_NOMINAL = "forward_output_voltage_nominal";
-  private final static String REVERSE_OUTPUT_VOLTAGE_NOMINAL = "reverse_output_voltage_nominal";
-  private final static String ALLOWABLE_CLOSED_LOOP_ERROR = "allowable_closed_loop_error";
-  private final static String NOMINAL_CLOSED_LOOP_VOLTAGE = "nominal_closed_loop_voltage";
-  private final static String K_P = "P";
-  private final static String K_I = "I";
-  private final static String K_D = "D";
-  private final static String K_F = "F";
-  private final static String I_ZONE = "I_zone";
+  public final static String OUTPUT_VOLTAGE_MAX = "output_voltage_max";
+  public final static String FORWARD_OUTPUT_VOLTAGE_PEAK = "forward_output_voltage_peak";
+  public final static String REVERSE_OUTPUT_VOLTAGE_PEAK = "reverse_output_voltage_peak";
+  public final static String FORWARD_OUTPUT_VOLTAGE_NOMINAL = "forward_output_voltage_nominal";
+  public final static String REVERSE_OUTPUT_VOLTAGE_NOMINAL = "reverse_output_voltage_nominal";
+  public final static String ALLOWABLE_CLOSED_LOOP_ERROR = "allowable_closed_loop_error";
+  public final static String NOMINAL_CLOSED_LOOP_VOLTAGE = "nominal_closed_loop_voltage";
+  public final static String K_P = "P";
+  public final static String K_I = "I";
+  public final static String K_D = "D";
+  public final static String K_F = "F";
+  public final static String I_ZONE = "I_zone";
 
   private final double outputVoltageMax;
   private final double forwardOutputVoltagePeak;
