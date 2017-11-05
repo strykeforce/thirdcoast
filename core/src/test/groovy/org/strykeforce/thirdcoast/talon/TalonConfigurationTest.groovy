@@ -91,7 +91,7 @@ class TalonConfigurationTest extends Specification {
 
         then:
         IllegalArgumentException e = thrown()
-        e.message == "TALON setpoint_max parameter missing in: missing_required_setpoint_max"
+        e.message == "TALON setpoint_max missing for missing_required_setpoint_max"
     }
 
     def "sets defaults"() {

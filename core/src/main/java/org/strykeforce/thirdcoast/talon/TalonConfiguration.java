@@ -4,7 +4,6 @@ import com.ctre.CANTalon;
 import com.ctre.CANTalon.VelocityMeasurementPeriod;
 import com.electronwill.nightconfig.core.UnmodifiableConfig;
 import edu.wpi.first.wpilibj.MotorSafety;
-import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,8 +13,6 @@ import org.slf4j.LoggerFactory;
  * @see com.ctre.CANTalon
  */
 public abstract class TalonConfiguration {
-
-  final static Logger logger = LoggerFactory.getLogger(TalonConfiguration.class);
 
   public final static String NAME = "name";
   public final static String MODE = "mode";
@@ -32,7 +29,8 @@ public abstract class TalonConfiguration {
   public final static String FORWARD_SOFT_LIMIT = "forward_soft_limit";
   public final static String REVERSE_SOFT_LIMIT = "reverse_soft_limit";
   public final static String CURRENT_LIMIT = "current_limit";
-
+  final static Logger logger = LoggerFactory.getLogger(TalonConfiguration.class);
+  
   // required
   private final String name;
   private final double setpointMax;
@@ -50,17 +48,16 @@ public abstract class TalonConfiguration {
   private final int currentLimit;
 
   TalonConfiguration(UnmodifiableConfig toml) {
-    Optional<String> optString = toml.getOptional(NAME);
-    if (!optString.isPresent()) {
-      throw new IllegalArgumentException("TALON " + NAME + " parameter missing");
+    name = toml.get(NAME);
+    if (name == null) {
+      throw new IllegalArgumentException("TALON configuration name parameter missing");
     }
-    name = optString.get();
-    Optional<Double> optDouble = toml.getOptional(SETPOINT_MAX);
-    if (!optDouble.isPresent()) {
+    Double odouble = toml.get(SETPOINT_MAX);
+    if (odouble == null) {
       throw new IllegalArgumentException(
-          "TALON " + SETPOINT_MAX + " parameter missing in: " + name);
+          String.format("TALON %s missing for %s", SETPOINT_MAX, name));
     }
-    setpointMax = optDouble.get().doubleValue();
+    setpointMax = odouble;
 
     encoder = new Encoder(toml.getOptional(FEEDBACK_DEVICE), toml.getOptional(ENCODER_REVERSED),
         toml.getOptional(TICKS_PER_REVOLUTION));
