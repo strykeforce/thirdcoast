@@ -1,10 +1,11 @@
-package org.strykeforce.thirdcoast.telemetry.tct.talon.config.lim;
+package org.strykeforce.thirdcoast.telemetry.tct.talon.config.lim.di;
 
 import dagger.Subcomponent;
 import org.strykeforce.thirdcoast.telemetry.tct.Menu;
-import org.strykeforce.thirdcoast.telemetry.tct.SubConfigScope;
+import org.strykeforce.thirdcoast.telemetry.tct.di.SubConfigScoped;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.config.lim.LimitMenu;
 
-@SubConfigScope
+@SubConfigScoped
 @Subcomponent(modules = LimitMenuModule.class)
 public interface LimitMenuComponent {
 

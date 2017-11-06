@@ -1,9 +1,11 @@
-package org.strykeforce.thirdcoast.telemetry.tct.talon.config;
+package org.strykeforce.thirdcoast.telemetry.tct.talon.config.di;
 
 import dagger.Subcomponent;
 import org.strykeforce.thirdcoast.telemetry.tct.Menu;
+import org.strykeforce.thirdcoast.telemetry.tct.di.ConfigScoped;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.config.TalonConfigMenu;
 
-@ConfigScope
+@ConfigScoped
 @Subcomponent(modules = ConfigMenuModule.class)
 public interface ConfigMenuComponent {
 

@@ -5,13 +5,15 @@ import javax.inject.Provider;
 import org.jline.reader.LineReader;
 import org.strykeforce.thirdcoast.telemetry.tct.AbstractCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.Menu;
+import org.strykeforce.thirdcoast.telemetry.tct.di.ConfigScoped;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
-import org.strykeforce.thirdcoast.telemetry.tct.talon.config.out.OutputMenuComponent;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.config.di.ConfigMenuModule;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.config.out.di.OutputMenuComponent;
 
 /**
  * Configure selected Talons.
  */
-@ConfigScope
+@ConfigScoped
 public class OutputConfigCommand extends AbstractCommand {
 
   public final static String NAME = "Output Limits and Ramp Rates";

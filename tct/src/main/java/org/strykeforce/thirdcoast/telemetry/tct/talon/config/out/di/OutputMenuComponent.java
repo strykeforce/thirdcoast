@@ -1,10 +1,11 @@
-package org.strykeforce.thirdcoast.telemetry.tct.talon.config.out;
+package org.strykeforce.thirdcoast.telemetry.tct.talon.config.out.di;
 
 import dagger.Subcomponent;
 import org.strykeforce.thirdcoast.telemetry.tct.Menu;
-import org.strykeforce.thirdcoast.telemetry.tct.SubConfigScope;
+import org.strykeforce.thirdcoast.telemetry.tct.di.SubConfigScoped;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.config.out.OutputMenu;
 
-@SubConfigScope
+@SubConfigScoped
 @Subcomponent(modules = OutputMenuModule.class)
 public interface OutputMenuComponent {
 

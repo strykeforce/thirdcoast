@@ -8,6 +8,7 @@ import org.jline.reader.LineReader;
 import org.jline.reader.UserInterruptException;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractTalonConfigCommand;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc.di.EncoderMenuModule;
 
 public class VelocityMeasurementPeriodCommand extends AbstractTalonConfigCommand {
 

@@ -6,12 +6,13 @@ import org.jline.reader.LineReader;
 import org.jline.utils.AttributedStringBuilder;
 import org.jline.utils.AttributedStyle;
 import org.strykeforce.thirdcoast.telemetry.tct.AbstractCommand;
-import org.strykeforce.thirdcoast.telemetry.tct.ModeScope;
+import org.strykeforce.thirdcoast.telemetry.tct.di.ModeScoped;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.di.TalonMenuModule;
 
 /**
  * Display a list of all Talons.
  */
-@ModeScope
+@ModeScoped
 public class ListCommand extends AbstractCommand {
 
   public final static String NAME = "List Talons";

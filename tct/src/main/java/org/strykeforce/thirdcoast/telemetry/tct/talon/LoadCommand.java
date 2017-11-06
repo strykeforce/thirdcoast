@@ -9,19 +9,19 @@ import javax.inject.Inject;
 import org.jline.reader.LineReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.strykeforce.thirdcoast.talon.TalonConfiguration;
 import org.strykeforce.thirdcoast.talon.TalonConfigurationBuilder;
 import org.strykeforce.thirdcoast.talon.TalonFactory;
 import org.strykeforce.thirdcoast.talon.TalonProvisioner;
 import org.strykeforce.thirdcoast.telemetry.TelemetryService;
 import org.strykeforce.thirdcoast.telemetry.tct.AbstractCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.Command;
-import org.strykeforce.thirdcoast.telemetry.tct.ModeScope;
+import org.strykeforce.thirdcoast.telemetry.tct.di.ModeScoped;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.di.TalonMenuModule;
 
 /**
  * Loads Talons from TOML configuration file named {@code tct.toml}.
  */
-@ModeScope
+@ModeScoped
 public class LoadCommand extends AbstractCommand {
 
   public final static String NAME = "Load Talons";

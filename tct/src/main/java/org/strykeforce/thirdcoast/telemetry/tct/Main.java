@@ -3,6 +3,8 @@ package org.strykeforce.thirdcoast.telemetry.tct;
 import org.jline.terminal.Terminal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.strykeforce.thirdcoast.telemetry.tct.di.DaggerMainComponent;
+import org.strykeforce.thirdcoast.telemetry.tct.di.MainComponent;
 
 public class Main implements Runnable {
 

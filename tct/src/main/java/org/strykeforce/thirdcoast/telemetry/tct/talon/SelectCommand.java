@@ -12,12 +12,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.telemetry.tct.AbstractCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.Command;
-import org.strykeforce.thirdcoast.telemetry.tct.ModeScope;
+import org.strykeforce.thirdcoast.telemetry.tct.di.ModeScoped;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.di.TalonMenuModule;
 
 /**
  * Select Talons to work with.
  */
-@ModeScope
+@ModeScoped
 public class SelectCommand extends AbstractCommand {
 
   public final static String NAME = "Select Talons";

@@ -3,7 +3,7 @@ package org.strykeforce.thirdcoast.telemetry.tct;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import org.jline.reader.LineReader;
-import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonMenuComponent;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.di.TalonMenuComponent;
 
 /**
  * Command to enter mode for working with Talons.

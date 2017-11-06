@@ -1,4 +1,4 @@
-package org.strykeforce.thirdcoast.telemetry.tct.talon.config;
+package org.strykeforce.thirdcoast.telemetry.tct.di;
 
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
@@ -9,6 +9,6 @@ import javax.inject.Scope;
 @Documented
 @Retention(RUNTIME)
 @Scope
-public @interface ConfigScope {
+public @interface ModeScoped {
 
 }

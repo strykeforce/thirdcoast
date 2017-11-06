@@ -5,12 +5,12 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import javax.inject.Inject;
-import org.strykeforce.thirdcoast.telemetry.tct.ModeScope;
+import org.strykeforce.thirdcoast.telemetry.tct.di.ModeScoped;
 
 /**
  * Holds Talons being worked on.
  */
-@ModeScope
+@ModeScoped
 public class TalonSet {
 
   final Set<CANTalon> all = new HashSet<>();

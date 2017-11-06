@@ -1,13 +1,13 @@
 package org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc;
 
 import com.ctre.CANTalon;
-import com.ctre.CANTalon.VelocityMeasurementPeriod;
 import javax.inject.Inject;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
 import org.jline.reader.UserInterruptException;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractTalonConfigCommand;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc.di.EncoderMenuModule;
 
 public class VelocityMeasurementWindowCommand extends AbstractTalonConfigCommand {
 

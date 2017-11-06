@@ -1,4 +1,4 @@
-package org.strykeforce.thirdcoast.telemetry.tct;
+package org.strykeforce.thirdcoast.telemetry.tct.di;
 
 import com.electronwill.nightconfig.core.UnmodifiableConfig;
 import dagger.Module;

@@ -1,4 +1,4 @@
-package org.strykeforce.thirdcoast.telemetry.tct.talon.config;
+package org.strykeforce.thirdcoast.telemetry.tct.talon.config.di;
 
 import dagger.Binds;
 import dagger.Module;
@@ -11,10 +11,17 @@ import org.jline.terminal.Terminal;
 import org.strykeforce.thirdcoast.telemetry.tct.Command;
 import org.strykeforce.thirdcoast.telemetry.tct.CommandAdapter;
 import org.strykeforce.thirdcoast.telemetry.tct.Menu;
-import org.strykeforce.thirdcoast.telemetry.tct.talon.config.cl.ClosedLoopMenuComponent;
-import org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc.EncoderMenuComponent;
-import org.strykeforce.thirdcoast.telemetry.tct.talon.config.lim.LimitMenuComponent;
-import org.strykeforce.thirdcoast.telemetry.tct.talon.config.out.OutputMenuComponent;
+import org.strykeforce.thirdcoast.telemetry.tct.di.ConfigScoped;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.config.ClosedLoopConfigCommand;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.config.EncoderConfigCommand;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.config.LimitConfigCommand;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.config.OutputConfigCommand;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.config.SelectOperatingModeCommand;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.config.TalonConfigMenu;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.config.cl.di.ClosedLoopMenuComponent;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc.di.EncoderMenuComponent;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.config.lim.di.LimitMenuComponent;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.config.out.di.OutputMenuComponent;
 
 @Module(subcomponents = {
     ClosedLoopMenuComponent.class,
@@ -32,45 +39,45 @@ public abstract class ConfigMenuModule {
       LimitConfigCommand.NAME
   );
 
-  @ConfigScope
+  @ConfigScoped
   @Provides
   @TalonConfigMenu
   public static CommandAdapter configCommandsAdapter(@TalonConfigMenu Set<Command> commands) {
     return new CommandAdapter(commands);
   }
 
-  @ConfigScope
+  @ConfigScoped
   @Provides
   @TalonConfigMenu
   public static Menu configMenu(@TalonConfigMenu CommandAdapter commandAdapter, Terminal terminal) {
     return new Menu(commandAdapter, terminal);
   }
 
-  @ConfigScope
+  @ConfigScoped
   @Binds
   @IntoSet
   @TalonConfigMenu
   public abstract Command selectOperatingModeCommand(SelectOperatingModeCommand command);
 
-  @ConfigScope
+  @ConfigScoped
   @Binds
   @IntoSet
   @TalonConfigMenu
   public abstract Command closedLoopConfigCommand(ClosedLoopConfigCommand command);
 
-  @ConfigScope
+  @ConfigScoped
   @Binds
   @IntoSet
   @TalonConfigMenu
   public abstract Command voltageRampRateCommand(OutputConfigCommand command);
 
-  @ConfigScope
+  @ConfigScoped
   @Binds
   @IntoSet
   @TalonConfigMenu
   public abstract Command encoderConfigCommand(EncoderConfigCommand command);
 
-  @ConfigScope
+  @ConfigScoped
   @Binds
   @IntoSet
   @TalonConfigMenu

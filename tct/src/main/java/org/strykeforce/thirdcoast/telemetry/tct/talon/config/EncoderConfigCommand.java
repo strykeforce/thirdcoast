@@ -5,13 +5,15 @@ import javax.inject.Provider;
 import org.jline.reader.LineReader;
 import org.strykeforce.thirdcoast.telemetry.tct.AbstractCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.Menu;
+import org.strykeforce.thirdcoast.telemetry.tct.di.ConfigScoped;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
-import org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc.EncoderMenuComponent;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.config.di.ConfigMenuModule;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc.di.EncoderMenuComponent;
 
 /**
  * Configure selected Talons.
  */
-@ConfigScope
+@ConfigScoped
 public class EncoderConfigCommand extends AbstractCommand {
 
   public final static String NAME = "Encoders, Velocity Measurement and Frame Rates";

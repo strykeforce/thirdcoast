@@ -5,13 +5,15 @@ import javax.inject.Provider;
 import org.jline.reader.LineReader;
 import org.strykeforce.thirdcoast.telemetry.tct.AbstractCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.Menu;
+import org.strykeforce.thirdcoast.telemetry.tct.di.ConfigScoped;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
-import org.strykeforce.thirdcoast.telemetry.tct.talon.config.cl.ClosedLoopMenuComponent;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.config.cl.di.ClosedLoopMenuComponent;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.config.di.ConfigMenuModule;
 
 /**
  * Configure selected Talons.
  */
-@ConfigScope
+@ConfigScoped
 public class ClosedLoopConfigCommand extends AbstractCommand {
 
   public final static String NAME = "Closed-Loop Tuning";

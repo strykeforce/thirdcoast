@@ -10,9 +10,10 @@ import org.jline.reader.UserInterruptException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.telemetry.tct.AbstractCommand;
-import org.strykeforce.thirdcoast.telemetry.tct.ModeScope;
+import org.strykeforce.thirdcoast.telemetry.tct.di.ModeScoped;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.di.TalonMenuModule;
 
-@ModeScope
+@ModeScoped
 public class InspectCommand extends AbstractCommand {
 
   public final static String NAME = "Inspect Talon";

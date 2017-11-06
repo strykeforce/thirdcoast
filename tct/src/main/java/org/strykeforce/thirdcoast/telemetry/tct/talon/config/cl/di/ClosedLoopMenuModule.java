@@ -1,4 +1,4 @@
-package org.strykeforce.thirdcoast.telemetry.tct.talon.config.cl;
+package org.strykeforce.thirdcoast.telemetry.tct.talon.config.cl.di;
 
 import dagger.Binds;
 import dagger.Module;
@@ -11,7 +11,14 @@ import org.jline.terminal.Terminal;
 import org.strykeforce.thirdcoast.telemetry.tct.Command;
 import org.strykeforce.thirdcoast.telemetry.tct.CommandAdapter;
 import org.strykeforce.thirdcoast.telemetry.tct.Menu;
-import org.strykeforce.thirdcoast.telemetry.tct.SubConfigScope;
+import org.strykeforce.thirdcoast.telemetry.tct.di.SubConfigScoped;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.config.cl.AllowableClosedLoopErrorCommand;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.config.cl.ClosedLoopMenu;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.config.cl.DCommand;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.config.cl.FCommand;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.config.cl.ICommand;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.config.cl.IZoneCommand;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.config.cl.PCommand;
 
 @Module
 public abstract class ClosedLoopMenuModule {
@@ -25,51 +32,51 @@ public abstract class ClosedLoopMenuModule {
       AllowableClosedLoopErrorCommand.NAME
       );
 
-  @SubConfigScope
+  @SubConfigScoped
   @Provides
   @ClosedLoopMenu
   public static CommandAdapter configCommandsAdapter(@ClosedLoopMenu Set<Command> commands) {
     return new CommandAdapter(commands);
   }
 
-  @SubConfigScope
+  @SubConfigScoped
   @Provides
   @ClosedLoopMenu
   public static Menu configMenu(@ClosedLoopMenu CommandAdapter commandAdapter, Terminal terminal) {
     return new Menu(commandAdapter, terminal);
   }
 
-  @SubConfigScope
+  @SubConfigScoped
   @Binds
   @IntoSet
   @ClosedLoopMenu
   public abstract Command pCommand(PCommand command);
 
-  @SubConfigScope
+  @SubConfigScoped
   @Binds
   @IntoSet
   @ClosedLoopMenu
   public abstract Command iCommand(ICommand command);
 
-  @SubConfigScope
+  @SubConfigScoped
   @Binds
   @IntoSet
   @ClosedLoopMenu
   public abstract Command dCommand(DCommand command);
 
-  @SubConfigScope
+  @SubConfigScoped
   @Binds
   @IntoSet
   @ClosedLoopMenu
   public abstract Command fCommand(FCommand command);
 
-  @SubConfigScope
+  @SubConfigScoped
   @Binds
   @IntoSet
   @ClosedLoopMenu
   public abstract Command iZoneCommand(IZoneCommand command);
 
-  @SubConfigScope
+  @SubConfigScoped
   @Binds
   @IntoSet
   @ClosedLoopMenu

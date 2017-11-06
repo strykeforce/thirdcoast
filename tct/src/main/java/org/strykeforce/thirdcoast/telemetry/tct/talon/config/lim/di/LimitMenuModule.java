@@ -1,4 +1,4 @@
-package org.strykeforce.thirdcoast.telemetry.tct.talon.config.lim;
+package org.strykeforce.thirdcoast.telemetry.tct.talon.config.lim.di;
 
 import dagger.Binds;
 import dagger.Module;
@@ -11,7 +11,9 @@ import org.jline.terminal.Terminal;
 import org.strykeforce.thirdcoast.telemetry.tct.Command;
 import org.strykeforce.thirdcoast.telemetry.tct.CommandAdapter;
 import org.strykeforce.thirdcoast.telemetry.tct.Menu;
-import org.strykeforce.thirdcoast.telemetry.tct.SubConfigScope;
+import org.strykeforce.thirdcoast.telemetry.tct.di.SubConfigScoped;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.config.lim.ForwardSoftLimitCommand;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.config.lim.LimitMenu;
 
 @Module
 public abstract class LimitMenuModule {
@@ -20,21 +22,21 @@ public abstract class LimitMenuModule {
       ForwardSoftLimitCommand.NAME
   );
 
-  @SubConfigScope
+  @SubConfigScoped
   @Provides
   @LimitMenu
   public static CommandAdapter configCommandsAdapter(@LimitMenu Set<Command> commands) {
     return new CommandAdapter(commands);
   }
 
-  @SubConfigScope
+  @SubConfigScoped
   @Provides
   @LimitMenu
   public static Menu configMenu(@LimitMenu CommandAdapter commandAdapter, Terminal terminal) {
     return new Menu(commandAdapter, terminal);
   }
 
-   @SubConfigScope
+   @SubConfigScoped
    @Binds
    @IntoSet
    @LimitMenu

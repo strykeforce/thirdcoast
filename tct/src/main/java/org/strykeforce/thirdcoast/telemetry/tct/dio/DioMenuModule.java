@@ -11,9 +11,8 @@ import org.jline.terminal.Terminal;
 import org.strykeforce.thirdcoast.telemetry.tct.Command;
 import org.strykeforce.thirdcoast.telemetry.tct.CommandAdapter;
 import org.strykeforce.thirdcoast.telemetry.tct.Menu;
-import org.strykeforce.thirdcoast.telemetry.tct.ModeScope;
+import org.strykeforce.thirdcoast.telemetry.tct.di.ModeScoped;
 import org.strykeforce.thirdcoast.telemetry.tct.QuitCommand;
-import org.strykeforce.thirdcoast.telemetry.tct.talon.config.ConfigMenuComponent;
 
 @Module
 public abstract class DioMenuModule {
@@ -22,21 +21,21 @@ public abstract class DioMenuModule {
       QuitCommand.NAME
   );
 
-  @ModeScope
+  @ModeScoped
   @Provides
   @DioMenu
   public static CommandAdapter talonCommandsAdapter(@DioMenu Set<Command> commands) {
     return new CommandAdapter(commands);
   }
 
-  @ModeScope
+  @ModeScoped
   @Provides
   @DioMenu
   public static Menu talonMenu(@DioMenu CommandAdapter commandAdapter, Terminal terminal) {
     return new Menu(commandAdapter, terminal);
   }
 
-  @ModeScope
+  @ModeScoped
   @Binds
   @IntoSet
   @DioMenu

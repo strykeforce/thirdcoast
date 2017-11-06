@@ -1,4 +1,4 @@
-package org.strykeforce.thirdcoast.telemetry.tct.talon.config.out;
+package org.strykeforce.thirdcoast.telemetry.tct.talon.config.out.di;
 
 import dagger.Binds;
 import dagger.Module;
@@ -11,7 +11,13 @@ import org.jline.terminal.Terminal;
 import org.strykeforce.thirdcoast.telemetry.tct.Command;
 import org.strykeforce.thirdcoast.telemetry.tct.CommandAdapter;
 import org.strykeforce.thirdcoast.telemetry.tct.Menu;
-import org.strykeforce.thirdcoast.telemetry.tct.SubConfigScope;
+import org.strykeforce.thirdcoast.telemetry.tct.di.SubConfigScoped;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.config.out.ClosedLoopRampRateCommand;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.config.out.CurrentLimitCommand;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.config.out.NominalOutputVoltageCommand;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.config.out.OutputMenu;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.config.out.PeakOutputVoltageCommand;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.config.out.VoltageRampRateCommand;
 
 @Module
 public abstract class OutputMenuModule {
@@ -24,45 +30,45 @@ public abstract class OutputMenuModule {
       CurrentLimitCommand.NAME
   );
 
-  @SubConfigScope
+  @SubConfigScoped
   @Provides
   @OutputMenu
   public static CommandAdapter configCommandsAdapter(@OutputMenu Set<Command> commands) {
     return new CommandAdapter(commands);
   }
 
-  @SubConfigScope
+  @SubConfigScoped
   @Provides
   @OutputMenu
   public static Menu configMenu(@OutputMenu CommandAdapter commandAdapter, Terminal terminal) {
     return new Menu(commandAdapter, terminal);
   }
 
-  @SubConfigScope
+  @SubConfigScoped
   @Binds
   @IntoSet
   @OutputMenu
   public abstract Command voltageRampRateCommand(VoltageRampRateCommand command);
 
-  @SubConfigScope
+  @SubConfigScoped
   @Binds
   @IntoSet
   @OutputMenu
   public abstract Command peakOutputVoltageCommand(PeakOutputVoltageCommand command);
 
-  @SubConfigScope
+  @SubConfigScoped
   @Binds
   @IntoSet
   @OutputMenu
   public abstract Command closedLoopRampRateCommand(ClosedLoopRampRateCommand command);
 
-  @SubConfigScope
+  @SubConfigScoped
   @Binds
   @IntoSet
   @OutputMenu
   public abstract Command nominalOutputVoltageCommand(NominalOutputVoltageCommand command);
 
-  @SubConfigScope
+  @SubConfigScoped
   @Binds
   @IntoSet
   @OutputMenu

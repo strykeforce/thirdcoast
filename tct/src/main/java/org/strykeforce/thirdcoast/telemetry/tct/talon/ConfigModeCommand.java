@@ -5,13 +5,14 @@ import javax.inject.Provider;
 import org.jline.reader.LineReader;
 import org.strykeforce.thirdcoast.telemetry.tct.AbstractCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.Menu;
-import org.strykeforce.thirdcoast.telemetry.tct.ModeScope;
-import org.strykeforce.thirdcoast.telemetry.tct.talon.config.ConfigMenuComponent;
+import org.strykeforce.thirdcoast.telemetry.tct.di.ModeScoped;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.config.di.ConfigMenuComponent;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.di.TalonMenuModule;
 
 /**
  * Configure selected Talons.
  */
-@ModeScope
+@ModeScoped
 public class ConfigModeCommand extends AbstractCommand {
 
   public final static String NAME = "Configure Selected Talons";

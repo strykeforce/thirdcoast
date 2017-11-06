@@ -11,7 +11,7 @@ import org.jline.terminal.Terminal;
 import org.strykeforce.thirdcoast.telemetry.tct.Command;
 import org.strykeforce.thirdcoast.telemetry.tct.CommandAdapter;
 import org.strykeforce.thirdcoast.telemetry.tct.Menu;
-import org.strykeforce.thirdcoast.telemetry.tct.ModeScope;
+import org.strykeforce.thirdcoast.telemetry.tct.di.ModeScoped;
 import org.strykeforce.thirdcoast.telemetry.tct.QuitCommand;
 
 @Module
@@ -21,21 +21,21 @@ public abstract class ServoMenuModule {
       QuitCommand.NAME
   );
 
-  @ModeScope
+  @ModeScoped
   @Provides
   @ServoMenu
   public static CommandAdapter talonCommandsAdapter(@ServoMenu Set<Command> commands) {
     return new CommandAdapter(commands);
   }
 
-  @ModeScope
+  @ModeScoped
   @Provides
   @ServoMenu
   public static Menu talonMenu(@ServoMenu CommandAdapter commandAdapter, Terminal terminal) {
     return new Menu(commandAdapter, terminal);
   }
 
-  @ModeScope
+  @ModeScoped
   @Binds
   @IntoSet
   @ServoMenu

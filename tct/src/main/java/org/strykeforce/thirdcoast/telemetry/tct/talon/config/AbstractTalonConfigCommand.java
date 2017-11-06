@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.telemetry.tct.AbstractCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.config.di.ConfigMenuModule;
 
 public abstract class AbstractTalonConfigCommand extends AbstractCommand {
 

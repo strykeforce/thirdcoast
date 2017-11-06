@@ -1,4 +1,4 @@
-package org.strykeforce.thirdcoast.telemetry.tct.talon;
+package org.strykeforce.thirdcoast.telemetry.tct.talon.di;
 
 import dagger.Binds;
 import dagger.Module;
@@ -11,8 +11,15 @@ import org.jline.terminal.Terminal;
 import org.strykeforce.thirdcoast.telemetry.tct.Command;
 import org.strykeforce.thirdcoast.telemetry.tct.CommandAdapter;
 import org.strykeforce.thirdcoast.telemetry.tct.Menu;
-import org.strykeforce.thirdcoast.telemetry.tct.ModeScope;
-import org.strykeforce.thirdcoast.telemetry.tct.talon.config.ConfigMenuComponent;
+import org.strykeforce.thirdcoast.telemetry.tct.di.ModeScoped;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.ConfigModeCommand;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.InspectCommand;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.ListCommand;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.LoadCommand;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.RunCommand;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.SelectCommand;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonMenu;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.config.di.ConfigMenuComponent;
 
 @Module(subcomponents = ConfigMenuComponent.class)
 public abstract class TalonMenuModule {
@@ -26,51 +33,51 @@ public abstract class TalonMenuModule {
       RunCommand.NAME
   );
 
-  @ModeScope
+  @ModeScoped
   @Provides
   @TalonMenu
   public static CommandAdapter talonCommandsAdapter(@TalonMenu Set<Command> commands) {
     return new CommandAdapter(commands);
   }
 
-  @ModeScope
+  @ModeScoped
   @Provides
   @TalonMenu
   public static Menu talonMenu(@TalonMenu CommandAdapter commandAdapter, Terminal terminal) {
     return new Menu(commandAdapter, terminal);
   }
 
-  @ModeScope
+  @ModeScoped
   @Binds
   @IntoSet
   @TalonMenu
   public abstract Command configCommand(ConfigModeCommand command);
 
-  @ModeScope
+  @ModeScoped
   @Binds
   @IntoSet
   @TalonMenu
   public abstract Command listCommand(ListCommand command);
 
-  @ModeScope
+  @ModeScoped
   @Binds
   @IntoSet
   @TalonMenu
   public abstract Command selectCommand(SelectCommand command);
 
-  @ModeScope
+  @ModeScoped
   @Binds
   @IntoSet
   @TalonMenu
   public abstract Command loadCommand(LoadCommand command);
 
-  @ModeScope
+  @ModeScoped
   @Binds
   @IntoSet
   @TalonMenu
   public abstract Command inspectCommand(InspectCommand command);
 
-  @ModeScope
+  @ModeScoped
   @Binds
   @IntoSet
   @TalonMenu

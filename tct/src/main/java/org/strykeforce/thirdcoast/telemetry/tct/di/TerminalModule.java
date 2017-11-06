@@ -1,4 +1,4 @@
-package org.strykeforce.thirdcoast.telemetry.tct;
+package org.strykeforce.thirdcoast.telemetry.tct.di;
 
 import com.ctre.CANTalon;
 import dagger.Module;

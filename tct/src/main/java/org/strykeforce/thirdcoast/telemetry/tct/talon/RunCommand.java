@@ -4,12 +4,12 @@ import com.ctre.CANTalon;
 import javax.inject.Inject;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
-import org.jline.reader.LineReaderBuilder;
 import org.jline.reader.UserInterruptException;
 import org.strykeforce.thirdcoast.telemetry.tct.AbstractCommand;
-import org.strykeforce.thirdcoast.telemetry.tct.ModeScope;
+import org.strykeforce.thirdcoast.telemetry.tct.di.ModeScoped;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.di.TalonMenuModule;
 
-@ModeScope
+@ModeScoped
 public class RunCommand extends AbstractCommand {
 
   public final static String NAME = "Run Selected Talons";

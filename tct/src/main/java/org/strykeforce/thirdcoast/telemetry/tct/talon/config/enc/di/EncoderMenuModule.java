@@ -1,4 +1,4 @@
-package org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc;
+package org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc.di;
 
 import dagger.Binds;
 import dagger.Module;
@@ -11,7 +11,14 @@ import org.jline.terminal.Terminal;
 import org.strykeforce.thirdcoast.telemetry.tct.Command;
 import org.strykeforce.thirdcoast.telemetry.tct.CommandAdapter;
 import org.strykeforce.thirdcoast.telemetry.tct.Menu;
-import org.strykeforce.thirdcoast.telemetry.tct.SubConfigScope;
+import org.strykeforce.thirdcoast.telemetry.tct.di.SubConfigScoped;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc.EncoderMenu;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc.ReverseOutputCommand;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc.ReverseSensorCommand;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc.SelectTypeCommand;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc.SetPositionCommand;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc.VelocityMeasurementPeriodCommand;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc.VelocityMeasurementWindowCommand;
 
 @Module
 public abstract class EncoderMenuModule {
@@ -25,51 +32,51 @@ public abstract class EncoderMenuModule {
       VelocityMeasurementWindowCommand.NAME
   );
 
-  @SubConfigScope
+  @SubConfigScoped
   @Provides
   @EncoderMenu
   public static CommandAdapter configCommandsAdapter(@EncoderMenu Set<Command> commands) {
     return new CommandAdapter(commands);
   }
 
-  @SubConfigScope
+  @SubConfigScoped
   @Provides
   @EncoderMenu
   public static Menu configMenu(@EncoderMenu CommandAdapter commandAdapter, Terminal terminal) {
     return new Menu(commandAdapter, terminal);
   }
 
-   @SubConfigScope
+   @SubConfigScoped
    @Binds
    @IntoSet
    @EncoderMenu
    public abstract Command selectTypeCommand(SelectTypeCommand command);
 
-  @SubConfigScope
+  @SubConfigScoped
   @Binds
   @IntoSet
   @EncoderMenu
   public abstract Command setPositionCommand(SetPositionCommand command);
 
-  @SubConfigScope
+  @SubConfigScoped
   @Binds
   @IntoSet
   @EncoderMenu
   public abstract Command reverseSensorCommand(ReverseSensorCommand command);
 
-  @SubConfigScope
+  @SubConfigScoped
   @Binds
   @IntoSet
   @EncoderMenu
   public abstract Command reverseOutputCommand(ReverseOutputCommand command);
 
-  @SubConfigScope
+  @SubConfigScoped
   @Binds
   @IntoSet
   @EncoderMenu
   public abstract Command velocityMeasurementWindowCommand(VelocityMeasurementWindowCommand command);
 
-  @SubConfigScope
+  @SubConfigScoped
   @Binds
   @IntoSet
   @EncoderMenu
