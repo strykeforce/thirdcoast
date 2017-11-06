@@ -1,8 +1,7 @@
 package org.strykeforce.thirdcoast.talon
 
 import com.ctre.CANTalon
-import com.electronwill.nightconfig.core.Config
-import spock.lang.PendingFeature
+import com.electronwill.nightconfig.core.file.FileConfig
 import spock.lang.Specification
 
 class TalonConfigurationBuilderTest extends Specification {
@@ -92,7 +91,7 @@ class TalonConfigurationBuilderTest extends Specification {
 
     def "configure velocity measurement window"() {
         when:
-        def tc = tcb.velocityMeasurementWindow( 16).build()
+        def tc = tcb.velocityMeasurementWindow(16).build()
 
         then:
         tc.getVelocityMeasurementWindow() == 16
@@ -153,7 +152,7 @@ class TalonConfigurationBuilderTest extends Specification {
 
     def "configure peak output voltage limit"() {
         when:
-        PIDTalonConfiguration tc = tcb.mode(SPEED).outputVoltagePeak(2.7,6.7).build()
+        PIDTalonConfiguration tc = tcb.mode(SPEED).outputVoltagePeak(2.7, 6.7).build()
 
         then:
         tc.forwardOutputVoltagePeak == 2.7
@@ -162,7 +161,7 @@ class TalonConfigurationBuilderTest extends Specification {
 
     def "configure nominal output voltage limit"() {
         when:
-        PIDTalonConfiguration tc = tcb.mode(SPEED).outputVoltageNominal(2.7,6.7).build()
+        PIDTalonConfiguration tc = tcb.mode(SPEED).outputVoltageNominal(2.7, 6.7).build()
 
         then:
         tc.forwardOutputVoltageNominal == 2.7
@@ -223,6 +222,31 @@ class TalonConfigurationBuilderTest extends Specification {
 
         then:
         tc.iZone == 2767
+    }
+
+    def "creates a config"() {
+        when:
+        def config = tcb.name("SF")
+                .mode(CANTalon.TalonControlMode.Position)
+                .setpointMax(27.67)
+                .encoder(CANTalon.FeedbackDevice.CtreMagEncoder_Absolute, false, null)
+                .brakeInNeutral(false)
+                .forwardLimitSwitch(false)
+                .forwardSoftLimit(null)
+                .reverseSoftLimit(0)
+                .currentLimit(50)
+                .config
+
+        then:
+        config.get(TalonConfigurationBuilder.NAME) == "SF"
+        config.get(TalonConfigurationBuilder.MODE) == CANTalon.TalonControlMode.Position.name()
+        config.get(TalonConfigurationBuilder.SETPOINT_MAX) == 27.67
+        config.get(TalonConfigurationBuilder.BRAKE_IN_NEUTRAL) == false
+        config.get(TalonConfigurationBuilder.FORWARD_LIMIT_SWITCH) == "NormallyClosed"
+        !config.contains(TalonConfigurationBuilder.REVERSE_LIMIT_SWITCH)
+        !config.contains(TalonConfigurationBuilder.FORWARD_SOFT_LIMIT)
+        config.get(TalonConfigurationBuilder.REVERSE_SOFT_LIMIT) == 0.0
+        config.get(TalonConfigurationBuilder.CURRENT_LIMIT) == 50
     }
 }
 

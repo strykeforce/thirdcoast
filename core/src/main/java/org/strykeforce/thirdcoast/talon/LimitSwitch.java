@@ -29,6 +29,16 @@ final class LimitSwitch {
     }
   }
 
+  public String configString() {
+    if (enabled) {
+      if (normallyOpen) {
+        return "NormallyOpen";
+      }
+      return "NormallyClosed";
+    }
+    return "Disabled";
+  }
+
   public boolean isEnabled() {
     return enabled;
   }

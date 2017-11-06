@@ -3,6 +3,7 @@ package org.strykeforce.thirdcoast.talon;
 import com.ctre.CANTalon;
 import com.ctre.CANTalon.TalonControlMode;
 import com.ctre.CANTalon.VelocityMeasurementPeriod;
+import com.electronwill.nightconfig.core.Config;
 import com.electronwill.nightconfig.core.UnmodifiableConfig;
 
 /**
@@ -133,6 +134,59 @@ public class TalonConfigurationBuilder {
     iZone = config.get(I_ZONE);
   }
 
+  private static void addIfPresent(Config config, String path, Object value) {
+    if (value != null) {
+      config.add(path, value);
+    }
+  }
+
+  public UnmodifiableConfig getConfig() {
+    Config config = Config.inMemory();
+    config.add(NAME, name);
+    config.add(MODE, mode.name());
+    config.add(SETPOINT_MAX, setpointMax);
+    if (encoder != null) {
+      config.add(FEEDBACK_DEVICE, encoder.getFeedbackDevice().name());
+      config.add(ENCODER_REVERSED, encoder.isReversed());
+      if (encoder.isUnitScalingEnabled()) {
+        config.add(TICKS_PER_REVOLUTION, encoder.getTicksPerRevolution());
+      }
+    }
+    addIfPresent(config, BRAKE_IN_NEUTRAL, brakeInNeutral);
+    addIfPresent(config, OUTPUT_REVERSED, outputReversed);
+    if (velocityMeasurementPeriod != null) {
+      config.add(VELOCITY_MEASUREMENT_PERIOD, velocityMeasurementPeriod.name());
+    }
+    addIfPresent(config, VELOCITY_MEASUREMENT_WINDOW, velocityMeasurementWindow);
+    if (forwardLimitSwitch != null) {
+      config.add(FORWARD_LIMIT_SWITCH, forwardLimitSwitch.configString());
+    }
+    if (reverseLimitSwitch != null) {
+      config.add(REVERSE_LIMIT_SWITCH, reverseLimitSwitch.configString());
+    }
+    if (forwardSoftLimit != null && forwardSoftLimit.isEnabled()) {
+      config.add(FORWARD_SOFT_LIMIT, forwardSoftLimit.getValue());
+    }
+    if (reverseSoftLimit != null && reverseSoftLimit.isEnabled()) {
+      config.add(REVERSE_SOFT_LIMIT, reverseSoftLimit.getValue());
+    }
+    addIfPresent(config, CURRENT_LIMIT, currentLimit);
+    addIfPresent(config, OUTPUT_VOLTAGE_MAX, outputVoltageMax);
+    addIfPresent(config, FORWARD_OUTPUT_VOLTAGE_PEAK, forwardOutputVoltagePeak);
+    addIfPresent(config, REVERSE_OUTPUT_VOLTAGE_PEAK, reverseOutputVoltagePeak);
+    addIfPresent(config, FORWARD_OUTPUT_VOLTAGE_NOMINAL, forwardOutputVoltageNominal);
+    addIfPresent(config, REVERSE_OUTPUT_VOLTAGE_NOMINAL, reverseOutputVoltageNominal);
+    addIfPresent(config, ALLOWABLE_CLOSED_LOOP_ERROR, allowableClosedLoopError);
+    addIfPresent(config, NOMINAL_CLOSED_LOOP_VOLTAGE, nominalClosedLoopVoltage);
+    addIfPresent(config, K_P, pGain);
+    addIfPresent(config, K_I, iGain);
+    addIfPresent(config, K_D, dGain);
+    addIfPresent(config, K_F, fGain);
+    addIfPresent(config, I_ZONE, iZone);
+
+    return config.unmodifiable();
+  }
+
   /**
    * Creates a new {@link TalonConfiguration} with the provided settings.
    *
@@ -175,23 +229,31 @@ public class TalonConfigurationBuilder {
   }
 
   /**
-   * Set the configuration name.
+   * Set the configuration name, must not be null.
    *
    * @param name the configuration name.
    * @return this builder.
+   * @throws IllegalArgumentException if name is null
    */
   public TalonConfigurationBuilder name(String name) {
+    if (name == null) {
+      throw new IllegalArgumentException("name must not be null");
+    }
     this.name = name;
     return this;
   }
 
   /**
-   * Set the Talon mode.
+   * Set the Talon mode, must not be null.
    *
    * @param mode the mode.
    * @return this builder.
+   * @throws IllegalArgumentException if mode is null
    */
   public TalonConfigurationBuilder mode(CANTalon.TalonControlMode mode) {
+    if (mode == null) {
+      throw new IllegalArgumentException("mode must not be null");
+    }
     this.mode = mode;
     return this;
   }
@@ -210,13 +272,17 @@ public class TalonConfigurationBuilder {
   /**
    * Configure the Talon encoder in use.
    *
-   * @param feedbackDevice the encoder type.
+   * @param feedbackDevice the encoder type, must not be null.
    * @param isReversed encoder phase is reversed with respect to motor output.
-   * @param ticksPerRevolution encoder ticks per motor revolution.
+   * @param ticksPerRevolution encoder ticks per motor revolution, null to disable.
    * @return this builder.
+   * @throws IllegalArgumentException if feedbackDevice is null
    */
   public TalonConfigurationBuilder encoder(CANTalon.FeedbackDevice feedbackDevice,
-      boolean isReversed, int ticksPerRevolution) {
+      boolean isReversed, Integer ticksPerRevolution) {
+    if (feedbackDevice == null) {
+      throw new IllegalArgumentException("feedbackDevice must not be null");
+    }
     this.encoder = new Encoder(feedbackDevice, isReversed, ticksPerRevolution);
     return this;
   }
@@ -291,10 +357,10 @@ public class TalonConfigurationBuilder {
   /**
    * Enable and configure the Talon forward soft limit.
    *
-   * @param forwardSoftLimit the soft limit.
+   * @param forwardSoftLimit the soft limit, null to disable.
    * @return this builder.
    */
-  public TalonConfigurationBuilder forwardSoftLimit(double forwardSoftLimit) {
+  public TalonConfigurationBuilder forwardSoftLimit(Double forwardSoftLimit) {
     this.forwardSoftLimit = new SoftLimit(forwardSoftLimit);
     return this;
   }
@@ -302,10 +368,10 @@ public class TalonConfigurationBuilder {
   /**
    * Enable and configure the Talon reverse soft limit.
    *
-   * @param reverseSoftLimit the soft limit.
+   * @param reverseSoftLimit the soft limit, null to disable
    * @return this builder.
    */
-  public TalonConfigurationBuilder reverseSoftLimit(double reverseSoftLimit) {
+  public TalonConfigurationBuilder reverseSoftLimit(Double reverseSoftLimit) {
     this.reverseSoftLimit = new SoftLimit(reverseSoftLimit);
     return this;
   }
