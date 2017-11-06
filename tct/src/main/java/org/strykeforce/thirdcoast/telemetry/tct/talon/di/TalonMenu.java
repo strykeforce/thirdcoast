@@ -1,4 +1,4 @@
-package org.strykeforce.thirdcoast.telemetry.tct.talon.config.out;
+package org.strykeforce.thirdcoast.telemetry.tct.talon.di;
 
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
@@ -7,11 +7,11 @@ import java.lang.annotation.Retention;
 import javax.inject.Qualifier;
 
 /**
- * Qualifier for Talon lim lim and ramp rates config menu.
+ * Qualifier for Talon menu.
  */
 @Qualifier
 @Documented
 @Retention(RUNTIME)
-public @interface OutputMenu {
+public @interface TalonMenu {
 
 }

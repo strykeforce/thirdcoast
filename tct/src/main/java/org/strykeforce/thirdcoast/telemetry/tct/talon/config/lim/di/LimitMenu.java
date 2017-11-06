@@ -1,4 +1,4 @@
-package org.strykeforce.thirdcoast.telemetry.tct.talon.config.lim;
+package org.strykeforce.thirdcoast.telemetry.tct.talon.config.lim.di;
 
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 

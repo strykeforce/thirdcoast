@@ -1,4 +1,4 @@
-package org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc;
+package org.strykeforce.thirdcoast.telemetry.tct.di;
 
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
@@ -7,11 +7,9 @@ import java.lang.annotation.Retention;
 import javax.inject.Qualifier;
 
 /**
- * Qualifier for Talon encoder config menu.
+ * Qualifier for top-level menu.
  */
 @Qualifier
 @Documented
 @Retention(RUNTIME)
-public @interface EncoderMenu {
-
-}
+public @interface MainMenu { }

@@ -17,7 +17,6 @@ import org.strykeforce.thirdcoast.telemetry.tct.talon.config.EncoderConfigComman
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.LimitConfigCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.OutputConfigCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.SelectOperatingModeCommand;
-import org.strykeforce.thirdcoast.telemetry.tct.talon.config.TalonConfigMenu;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.cl.di.ClosedLoopMenuComponent;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc.di.EncoderMenuComponent;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.lim.di.LimitMenuComponent;

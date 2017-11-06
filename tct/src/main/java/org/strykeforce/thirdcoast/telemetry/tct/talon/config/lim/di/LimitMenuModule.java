@@ -13,7 +13,6 @@ import org.strykeforce.thirdcoast.telemetry.tct.CommandAdapter;
 import org.strykeforce.thirdcoast.telemetry.tct.Menu;
 import org.strykeforce.thirdcoast.telemetry.tct.di.SubConfigScoped;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.lim.ForwardSoftLimitCommand;
-import org.strykeforce.thirdcoast.telemetry.tct.talon.config.lim.LimitMenu;
 
 @Module
 public abstract class LimitMenuModule {

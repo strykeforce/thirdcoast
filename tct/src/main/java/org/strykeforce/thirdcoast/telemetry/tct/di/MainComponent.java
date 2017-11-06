@@ -3,7 +3,6 @@ package org.strykeforce.thirdcoast.telemetry.tct.di;
 import dagger.Component;
 import javax.inject.Singleton;
 import org.jline.terminal.Terminal;
-import org.strykeforce.thirdcoast.telemetry.tct.MainMenu;
 import org.strykeforce.thirdcoast.telemetry.tct.Menu;
 
 @Singleton

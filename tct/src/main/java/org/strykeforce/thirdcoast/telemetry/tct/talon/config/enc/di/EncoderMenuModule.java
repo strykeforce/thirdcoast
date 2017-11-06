@@ -12,7 +12,6 @@ import org.strykeforce.thirdcoast.telemetry.tct.Command;
 import org.strykeforce.thirdcoast.telemetry.tct.CommandAdapter;
 import org.strykeforce.thirdcoast.telemetry.tct.Menu;
 import org.strykeforce.thirdcoast.telemetry.tct.di.SubConfigScoped;
-import org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc.EncoderMenu;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc.ReverseOutputCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc.ReverseSensorCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc.SelectTypeCommand;

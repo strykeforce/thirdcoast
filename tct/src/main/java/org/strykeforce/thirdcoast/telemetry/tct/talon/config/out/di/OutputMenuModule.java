@@ -15,7 +15,6 @@ import org.strykeforce.thirdcoast.telemetry.tct.di.SubConfigScoped;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.out.ClosedLoopRampRateCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.out.CurrentLimitCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.out.NominalOutputVoltageCommand;
-import org.strykeforce.thirdcoast.telemetry.tct.talon.config.out.OutputMenu;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.out.PeakOutputVoltageCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.out.VoltageRampRateCommand;
 

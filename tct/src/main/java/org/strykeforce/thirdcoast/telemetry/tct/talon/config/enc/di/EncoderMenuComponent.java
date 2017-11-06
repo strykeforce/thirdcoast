@@ -3,7 +3,6 @@ package org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc.di;
 import dagger.Subcomponent;
 import org.strykeforce.thirdcoast.telemetry.tct.Menu;
 import org.strykeforce.thirdcoast.telemetry.tct.di.SubConfigScoped;
-import org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc.EncoderMenu;
 
 @SubConfigScoped
 @Subcomponent(modules = EncoderMenuModule.class)

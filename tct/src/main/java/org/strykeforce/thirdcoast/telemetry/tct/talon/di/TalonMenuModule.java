@@ -18,7 +18,6 @@ import org.strykeforce.thirdcoast.telemetry.tct.talon.ListCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.LoadCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.RunCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.SelectCommand;
-import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonMenu;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.di.ConfigMenuComponent;
 
 @Module(subcomponents = ConfigMenuComponent.class)
