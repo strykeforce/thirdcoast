@@ -1,26 +1,28 @@
 package org.strykeforce.thirdcoast.talon;
 
-import java.util.Optional;
-
 final class LimitSwitch {
 
-  private final boolean isEnabled;
-  private final boolean isNormallyOpen;
+  public final static LimitSwitch DEFAULT = new LimitSwitch(null);
 
-  LimitSwitch(Optional<String> state) {
-    String stateString = state.orElse("disabled");
-    switch (stateString.toLowerCase()) {
+  private final boolean enabled;
+  private final boolean normallyOpen;
+
+  LimitSwitch(String state) {
+    if (state == null) {
+      state = "disabled";
+    }
+    switch (state.toLowerCase()) {
       case "normallyopen":
-        isEnabled = true;
-        isNormallyOpen = true;
+        enabled = true;
+        normallyOpen = true;
         break;
       case "normallyclosed":
-        isEnabled = true;
-        isNormallyOpen = false;
+        enabled = true;
+        normallyOpen = false;
         break;
       case "disabled":
-        isEnabled = false;
-        isNormallyOpen = false;
+        enabled = false;
+        normallyOpen = false;
         break;
       default:
         throw new IllegalStateException("limit switch configuration invalid: " + state);
@@ -28,18 +30,18 @@ final class LimitSwitch {
   }
 
   public boolean isEnabled() {
-    return isEnabled;
+    return enabled;
   }
 
   public boolean isNormallyOpen() {
-    return isNormallyOpen;
+    return normallyOpen;
   }
 
   @Override
   public String toString() {
     return "LimitSwitch{" +
-        "isEnabled=" + isEnabled +
-        ", isNormallyOpen=" + isNormallyOpen +
+        "enabled=" + enabled +
+        ", normallyOpen=" + normallyOpen +
         '}';
   }
 

@@ -65,7 +65,62 @@ class TalonConfigurationTest extends Specification {
             1 * setForwardSoftLimit(10_000.0)
             1 * enableReverseSoftLimit(true)
             1 * setReverseSoftLimit(12_000.0)
+            1 * EnableCurrentLimit(true)
+            1 * setCurrentLimit(50)
+            1 * setSafetyEnabled(false)
+            1 * setProfile(0)
+            1 * talon.setExpiration(0.1)
+            1 * talon.configEncoderCodesPerRev(360)
+            1 * talon.isSensorPresent(CANTalon.FeedbackDevice.QuadEncoder)
+            0 * talon._
         }
+    }
+
+    def "no current limit set"() {
+        when:
+        def t = provisioner.configurationFor("all_defaults")
+        t.configure(talon)
+
+        then:
+        1 * talon.EnableCurrentLimit(false)
+        0 * talon.setCurrentLimit(_)
+    }
+
+    def "brake in neutral is default"() {
+        when:
+        def t = provisioner.configurationFor("all_defaults")
+        t.configure(talon)
+
+        then:
+        1 * talon.enableBrakeMode(true)
+    }
+
+    def "don't brake in neutral set"() {
+        when:
+        def t = provisioner.configurationFor("no_brake_in_neutral")
+        t.configure(talon)
+
+        then:
+        1 * talon.enableBrakeMode(false)
+    }
+
+    def "reverse output is default"() {
+        when:
+        def t = provisioner.configurationFor("all_defaults")
+        t.configure(talon)
+
+        then:
+        1 * talon.reverseOutput(false)
+    }
+
+    def "reverse output set"() {
+        when:
+        def t = provisioner.configurationFor("reverse_output")
+        t.configure(talon)
+
+        then:
+        t.outputReversed
+        1 * talon.reverseOutput(true)
     }
 
     def "handles missing name"() {
@@ -97,6 +152,7 @@ class TalonConfigurationTest extends Specification {
     def "sets defaults"() {
         when:
         def t = provisioner.configurationFor("all_defaults")
+        t.configure(talon)
 
         then:
         t.class == VoltageTalonConfiguration
@@ -104,15 +160,35 @@ class TalonConfigurationTest extends Specification {
         t.encoder.feedbackDevice == CANTalon.FeedbackDevice.QuadEncoder;
         !t.encoder.unitScalingEnabled
         !t.encoder.reversed
-        t.brakeInNeutral
+        t.brakeInNeutral == null
         !t.forwardLimitSwitch.enabled
         !t.reverseLimitSwitch.enabled
         !t.forwardSoftLimit.enabled
         !t.reverseSoftLimit.enabled
         !t.outputReversed
         t.velocityMeasurementPeriod == CANTalon.VelocityMeasurementPeriod.Period_100Ms
-        t.velocityMeasurementWindow == 64
-        t.currentLimit == 0
+        t.velocityMeasurementWindow == null
+        t.currentLimit == null
+
+        with(talon) {
+            1 * changeControlMode(CANTalon.TalonControlMode.Voltage)
+            1 * setFeedbackDevice(CANTalon.FeedbackDevice.QuadEncoder)
+            1 * enableBrakeMode(true)
+            1 * reverseSensor(false)
+            1 * reverseOutput(false)
+            1 * SetVelocityMeasurementPeriod(CANTalon.VelocityMeasurementPeriod.Period_100Ms)
+            1 * SetVelocityMeasurementWindow(64)
+            1 * enableLimitSwitch(false, false)
+            1 * enableForwardSoftLimit(false)
+            1 * enableReverseSoftLimit(false)
+            1 * EnableCurrentLimit(false)
+            1 * setSafetyEnabled(false)
+            1 * setProfile(0)
+            1 * talon.setExpiration(0.1)
+            1 * talon.isSensorPresent(CANTalon.FeedbackDevice.QuadEncoder)
+            0 * talon._
+        }
+
     }
 
     def "handles file when name is emoji"() {

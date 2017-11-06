@@ -105,3 +105,13 @@ I_zone = 0
 
 forward_output_voltage_peak =  6.0
 reverse_output_voltage_peak = -6.0
+
+[[TALON]]
+name = "no_brake_in_neutral"
+setpoint_max      = 0.0
+brake_in_neutral = false
+
+[[TALON]]
+name = "reverse_output"
+setpoint_max      = 0.0
+output_reversed = true

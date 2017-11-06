@@ -2,7 +2,6 @@ package org.strykeforce.thirdcoast.talon;
 
 import com.ctre.CANTalon;
 import com.ctre.CANTalon.VelocityMeasurementPeriod;
-import com.electronwill.nightconfig.core.UnmodifiableConfig;
 import edu.wpi.first.wpilibj.MotorSafety;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,74 +13,51 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class TalonConfiguration {
 
-  public final static String NAME = "name";
-  public final static String MODE = "mode";
-  public final static String SETPOINT_MAX = "setpoint_max";
-  public final static String FEEDBACK_DEVICE = "feedback_device";
-  public final static String ENCODER_REVERSED = "encoder_reversed";
-  public final static String TICKS_PER_REVOLUTION = "ticks_per_revolution";
-  public final static String BRAKE_IN_NEUTRAL = "brake_in_neutral";
-  public final static String OUTPUT_REVERSED = "output_reversed";
-  public final static String VELOCITY_MEASUREMENT_PERIOD = "velocity_measurement_period";
-  public final static String VELOCITY_MEASUREMENT_WINDOW = "velocity_measurement_window";
-  public final static String FORWARD_LIMIT_SWITCH = "forward_limit_switch";
-  public final static String REVERSE_LIMIT_SWITCH = "reverse_limit_switch";
-  public final static String FORWARD_SOFT_LIMIT = "forward_soft_limit";
-  public final static String REVERSE_SOFT_LIMIT = "reverse_soft_limit";
-  public final static String CURRENT_LIMIT = "current_limit";
   final static Logger logger = LoggerFactory.getLogger(TalonConfiguration.class);
-  
+
   // required
   private final String name;
   private final double setpointMax;
 
   // optional
   private final Encoder encoder;
-  private final boolean isBrakeInNeutral;
-  private final boolean isOutputReversed;
+  private final Boolean isBrakeInNeutral;
+  private final Boolean isOutputReversed;
   private final VelocityMeasurementPeriod velocityMeasurementPeriod;
-  private final int velocityMeasurementWindow;
+  private final Integer velocityMeasurementWindow;
   private final LimitSwitch forwardLimitSwitch;
   private final LimitSwitch reverseLimitSwitch;
   private final SoftLimit forwardSoftLimit;
   private final SoftLimit reverseSoftLimit;
-  private final int currentLimit;
+  private final Integer currentLimit;
 
-  TalonConfiguration(UnmodifiableConfig toml) {
-    name = toml.get(NAME);
-    if (name == null) {
-      throw new IllegalArgumentException("TALON configuration name parameter missing");
-    }
-    Double odouble = toml.get(SETPOINT_MAX);
-    if (odouble == null) {
-      throw new IllegalArgumentException(
-          String.format("TALON %s missing for %s", SETPOINT_MAX, name));
-    }
-    setpointMax = odouble;
-
-    encoder = new Encoder(toml.getOptional(FEEDBACK_DEVICE), toml.getOptional(ENCODER_REVERSED),
-        toml.getOptional(TICKS_PER_REVOLUTION));
-
-    isBrakeInNeutral = (boolean) toml.getOptional(BRAKE_IN_NEUTRAL).orElse(true);
-    isOutputReversed = (boolean) toml.getOptional(OUTPUT_REVERSED).orElse(false);
-
-    int vmp = (int) toml.getOptional(VELOCITY_MEASUREMENT_PERIOD).orElse(100);
-    velocityMeasurementPeriod = VelocityMeasurementPeriod.valueOf(vmp);
-    if (velocityMeasurementPeriod == null) {
-      throw new IllegalArgumentException(
-          "TALON " + VELOCITY_MEASUREMENT_PERIOD + " invalid: " + vmp);
-    }
-    velocityMeasurementWindow = (int) toml.getOptional(VELOCITY_MEASUREMENT_WINDOW).orElse(64);
-
-    forwardLimitSwitch = new LimitSwitch(toml.getOptional(FORWARD_LIMIT_SWITCH));
-    reverseLimitSwitch = new LimitSwitch(toml.getOptional(REVERSE_LIMIT_SWITCH));
-
-    forwardSoftLimit = new SoftLimit(toml.getOptional(FORWARD_SOFT_LIMIT));
-    reverseSoftLimit = new SoftLimit(toml.getOptional(REVERSE_SOFT_LIMIT));
-
-    currentLimit = (int) toml.getOptional(CURRENT_LIMIT).orElse(0);
+  public TalonConfiguration(String name, double setpointMax,
+      Encoder encoder, Boolean isBrakeInNeutral, Boolean isOutputReversed,
+      VelocityMeasurementPeriod velocityMeasurementPeriod, Integer velocityMeasurementWindow,
+      LimitSwitch forwardLimitSwitch, LimitSwitch reverseLimitSwitch,
+      SoftLimit forwardSoftLimit, SoftLimit reverseSoftLimit, Integer currentLimit) {
+    this.name = name;
+    this.setpointMax = setpointMax;
+    this.encoder = encoder != null ? encoder : Encoder.DEFAULT;
+    this.isBrakeInNeutral = isBrakeInNeutral;
+    this.isOutputReversed = isOutputReversed;
+    this.velocityMeasurementPeriod = velocityMeasurementPeriod;
+    this.velocityMeasurementWindow = velocityMeasurementWindow;
+    this.forwardLimitSwitch = forwardLimitSwitch != null ? forwardLimitSwitch : LimitSwitch.DEFAULT;
+    this.reverseLimitSwitch = reverseLimitSwitch != null ? reverseLimitSwitch : LimitSwitch.DEFAULT;
+    this.forwardSoftLimit = forwardSoftLimit != null ? forwardSoftLimit : SoftLimit.DEFAULT;
+    this.reverseSoftLimit = reverseSoftLimit != null ? reverseSoftLimit : SoftLimit.DEFAULT;
+    this.currentLimit = currentLimit;
   }
 
+  /**
+   * Create a {@code TalonConfiguration} builder.
+   *
+   * @return the TalonConfigurationBuilder
+   */
+  public static TalonConfigurationBuilder builder() {
+    return new TalonConfigurationBuilder();
+  }
 
   /**
    * Print the current state of the Talon.
@@ -102,10 +78,22 @@ public abstract class TalonConfiguration {
     talon.setProfile(0);
     talon.setExpiration(MotorSafety.DEFAULT_SAFETY_EXPIRATION);
     encoder.configure(talon);
-    talon.enableBrakeMode(isBrakeInNeutral);
-    talon.reverseOutput(isOutputReversed);
-    talon.SetVelocityMeasurementPeriod(velocityMeasurementPeriod);
-    talon.SetVelocityMeasurementWindow(velocityMeasurementWindow);
+
+    talon.enableBrakeMode(isBrakeInNeutral != null ? isBrakeInNeutral : true);
+    talon.reverseOutput(isOutputReversed != null ? isOutputReversed : false);
+
+    if (velocityMeasurementPeriod != null) {
+      talon.SetVelocityMeasurementPeriod(velocityMeasurementPeriod);
+    } else {
+      talon.SetVelocityMeasurementPeriod(VelocityMeasurementPeriod.Period_100Ms);
+    }
+
+    if (velocityMeasurementWindow != null) {
+      talon.SetVelocityMeasurementWindow(velocityMeasurementWindow);
+    } else {
+      talon.SetVelocityMeasurementWindow(64);
+    }
+
     talon.enableLimitSwitch(forwardLimitSwitch.isEnabled(), reverseLimitSwitch.isEnabled());
     if (forwardLimitSwitch.isEnabled()) {
       talon.ConfigFwdLimitSwitchNormallyOpen(forwardLimitSwitch.isNormallyOpen());
@@ -113,13 +101,19 @@ public abstract class TalonConfiguration {
     if (reverseLimitSwitch.isEnabled()) {
       talon.ConfigRevLimitSwitchNormallyOpen(reverseLimitSwitch.isNormallyOpen());
     }
+    talon.enableForwardSoftLimit(forwardSoftLimit.isEnabled());
     if (forwardSoftLimit.isEnabled()) {
-      talon.enableForwardSoftLimit(true);
       talon.setForwardSoftLimit(forwardSoftLimit.getValue());
     }
+    talon.enableReverseSoftLimit(reverseSoftLimit.isEnabled());
     if (reverseSoftLimit.isEnabled()) {
-      talon.enableReverseSoftLimit(true);
       talon.setReverseSoftLimit(reverseSoftLimit.getValue());
+    }
+    if (currentLimit != null && currentLimit > 0) {
+      talon.setCurrentLimit(currentLimit);
+      talon.EnableCurrentLimit(true);
+    } else {
+      talon.EnableCurrentLimit(false);
     }
   }
 
@@ -132,43 +126,48 @@ public abstract class TalonConfiguration {
     return name;
   }
 
-  Encoder getEncoder() {
+  public Encoder getEncoder() {
     return encoder;
   }
 
-  boolean isBrakeInNeutral() {
+  public Boolean isBrakeInNeutral() {
     return isBrakeInNeutral;
   }
 
-  boolean isOutputReversed() {
+  public Boolean isOutputReversed() {
     return isOutputReversed;
   }
 
-  VelocityMeasurementPeriod getVelocityMeasurementPeriod() {
+  public VelocityMeasurementPeriod getVelocityMeasurementPeriod() {
     return velocityMeasurementPeriod;
   }
 
-  int getVelocityMeasurementWindow() {
+  public Integer getVelocityMeasurementWindow() {
     return velocityMeasurementWindow;
   }
 
-  LimitSwitch getForwardLimitSwitch() {
+  public LimitSwitch getForwardLimitSwitch() {
     return forwardLimitSwitch;
   }
 
-  LimitSwitch getReverseLimitSwitch() {
+  public LimitSwitch getReverseLimitSwitch() {
     return reverseLimitSwitch;
   }
 
-  SoftLimit getForwardSoftLimit() {
+  public SoftLimit getForwardSoftLimit() {
     return forwardSoftLimit;
   }
 
-  SoftLimit getReverseSoftLimit() {
+  public SoftLimit getReverseSoftLimit() {
     return reverseSoftLimit;
   }
 
-  int getCurrentLimit() {
+  /**
+   * Get the current limit.
+   *
+   * @return the current limit, or null if not enabled.
+   */
+  public Integer getCurrentLimit() {
     return currentLimit;
   }
 

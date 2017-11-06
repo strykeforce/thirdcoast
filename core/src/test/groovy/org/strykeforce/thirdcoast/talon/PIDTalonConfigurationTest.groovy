@@ -45,13 +45,13 @@ class PIDTalonConfigurationTest extends Specification {
         def t = (PIDTalonConfiguration) provisioner.configurationFor("pid_defaults")
 
         then:
-        t.outputVoltageMax == 0.0
-        t.forwardOutputVoltagePeak == 0.0
-        t.reverseOutputVoltagePeak == 0.0
-        t.forwardOutputVoltageNominal == 0.0
-        t.reverseOutputVoltageNominal == 0.0
-        t.allowableClosedLoopError == 0
-        t.nominalClosedLoopVoltage == 0.0
+        t.outputVoltageMax == null
+        t.forwardOutputVoltagePeak == null
+        t.reverseOutputVoltagePeak == null
+        t.forwardOutputVoltageNominal == null
+        t.reverseOutputVoltageNominal == null
+        t.allowableClosedLoopError == null
+        t.nominalClosedLoopVoltage == null
     }
 
     def "configures PID position mode talon"() {

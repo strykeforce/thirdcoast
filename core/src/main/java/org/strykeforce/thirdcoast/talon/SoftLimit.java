@@ -1,29 +1,30 @@
 package org.strykeforce.thirdcoast.talon;
 
-import java.util.Optional;
+import com.ctre.CANTalon;
 
 final class SoftLimit {
 
-  private final boolean isEnabled;
+  public final static SoftLimit DEFAULT = new SoftLimit(null);
+  private final boolean enabled;
   private final double value;
 
-  SoftLimit(Optional<Double> value) {
-    this.isEnabled = value.isPresent();
-    this.value = value.orElse(0.0);
+  SoftLimit(Double value) {
+    this.enabled = value != null;
+    this.value = enabled ? value : 0;
   }
 
   public boolean isEnabled() {
-    return isEnabled;
+    return enabled;
   }
 
   public double getValue() {
     return value;
   }
-  
+
   @Override
   public String toString() {
     return "SoftLimit{" +
-        "isEnabled=" + isEnabled +
+        "enabled=" + enabled +
         ", value=" + value +
         '}';
   }

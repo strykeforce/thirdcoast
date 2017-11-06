@@ -1,3 +1,4 @@
 # should throw IllegalArgumentExeception
 [[TALON]]
 name = "missing_required_setpoint_max"
+mode = "Voltage"

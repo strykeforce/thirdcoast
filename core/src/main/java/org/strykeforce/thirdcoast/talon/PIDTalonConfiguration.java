@@ -1,115 +1,136 @@
 package org.strykeforce.thirdcoast.talon;
 
 import com.ctre.CANTalon;
+import com.ctre.CANTalon.VelocityMeasurementPeriod;
 import com.electronwill.nightconfig.core.UnmodifiableConfig;
 
 class PIDTalonConfiguration extends TalonConfiguration {
 
-  public final static String OUTPUT_VOLTAGE_MAX = "output_voltage_max";
-  public final static String FORWARD_OUTPUT_VOLTAGE_PEAK = "forward_output_voltage_peak";
-  public final static String REVERSE_OUTPUT_VOLTAGE_PEAK = "reverse_output_voltage_peak";
-  public final static String FORWARD_OUTPUT_VOLTAGE_NOMINAL = "forward_output_voltage_nominal";
-  public final static String REVERSE_OUTPUT_VOLTAGE_NOMINAL = "reverse_output_voltage_nominal";
-  public final static String ALLOWABLE_CLOSED_LOOP_ERROR = "allowable_closed_loop_error";
-  public final static String NOMINAL_CLOSED_LOOP_VOLTAGE = "nominal_closed_loop_voltage";
-  public final static String K_P = "P";
-  public final static String K_I = "I";
-  public final static String K_D = "D";
-  public final static String K_F = "F";
-  public final static String I_ZONE = "I_zone";
+  private final Double outputVoltageMax;
+  private final Double forwardOutputVoltagePeak;
+  private final Double reverseOutputVoltagePeak;
+  private final Double forwardOutputVoltageNominal;
+  private final Double reverseOutputVoltageNominal;
+  private final Integer allowableClosedLoopError;
+  private final Double nominalClosedLoopVoltage;
+  private final Double pGain;
+  private final Double iGain;
+  private final Double dGain;
+  private final Double fGain;
+  private final Integer iZone;
 
-  private final double outputVoltageMax;
-  private final double forwardOutputVoltagePeak;
-  private final double reverseOutputVoltagePeak;
-  private final double forwardOutputVoltageNominal;
-  private final double reverseOutputVoltageNominal;
-  private final int allowableClosedLoopError;
-  private final double nominalClosedLoopVoltage;
-  private final double pGain;
-  private final double iGain;
-  private final double dGain;
-  private final double fGain;
-  private final int iZone;
-
-  PIDTalonConfiguration(UnmodifiableConfig config) {
-    super(config);
-    outputVoltageMax = (double) config.getOptional(OUTPUT_VOLTAGE_MAX).orElse(0.0);
-    forwardOutputVoltagePeak = (double) config.getOptional(FORWARD_OUTPUT_VOLTAGE_PEAK).orElse(0.0);
-    reverseOutputVoltagePeak = (double) config.getOptional(REVERSE_OUTPUT_VOLTAGE_PEAK).orElse(0.0);
-    forwardOutputVoltageNominal = (double) config.getOptional(FORWARD_OUTPUT_VOLTAGE_NOMINAL)
-        .orElse(0.0);
-    reverseOutputVoltageNominal = (double) config.getOptional(REVERSE_OUTPUT_VOLTAGE_NOMINAL)
-        .orElse(0.0);
-    allowableClosedLoopError = (int) config.getOptional(ALLOWABLE_CLOSED_LOOP_ERROR).orElse(0);
-    nominalClosedLoopVoltage = (double) config.getOptional(NOMINAL_CLOSED_LOOP_VOLTAGE)
-        .orElse(0.0); // DisableNominalClosedLoopVoltage, SetNominalClosedLoopVoltage
-    pGain = (double) config.getOptional(K_P).orElse(0.0);
-    iGain = (double) config.getOptional(K_I).orElse(0.0);
-    dGain = (double) config.getOptional(K_D).orElse(0.0);
-    fGain = (double) config.getOptional(K_F).orElse(0.0);
-    iZone = (int) config.getOptional(I_ZONE).orElse(0);
+  public PIDTalonConfiguration(String name, double setpointMax,
+      Encoder encoder, Boolean isBrakeInNeutral, Boolean isOutputReversed,
+      VelocityMeasurementPeriod velocityMeasurementPeriod,
+      Integer velocityMeasurementWindow,
+      LimitSwitch forwardLimitSwitch, LimitSwitch reverseLimitSwitch,
+      SoftLimit forwardSoftLimit, SoftLimit reverseSoftLimit, Integer currentLimit,
+      Double outputVoltageMax, Double forwardOutputVoltagePeak,
+      Double reverseOutputVoltagePeak, Double forwardOutputVoltageNominal,
+      Double reverseOutputVoltageNominal, Integer allowableClosedLoopError,
+      Double nominalClosedLoopVoltage, Double pGain, Double iGain, Double dGain,
+      Double fGain, Integer iZone) {
+    super(name, setpointMax, encoder, isBrakeInNeutral, isOutputReversed, velocityMeasurementPeriod,
+        velocityMeasurementWindow, forwardLimitSwitch, reverseLimitSwitch, forwardSoftLimit,
+        reverseSoftLimit, currentLimit);
+    this.outputVoltageMax = outputVoltageMax;
+    this.forwardOutputVoltagePeak = forwardOutputVoltagePeak;
+    this.reverseOutputVoltagePeak = reverseOutputVoltagePeak;
+    this.forwardOutputVoltageNominal = forwardOutputVoltageNominal;
+    this.reverseOutputVoltageNominal = reverseOutputVoltageNominal;
+    this.allowableClosedLoopError = allowableClosedLoopError;
+    this.nominalClosedLoopVoltage = nominalClosedLoopVoltage;
+    this.pGain = pGain;
+    this.iGain = iGain;
+    this.dGain = dGain;
+    this.fGain = fGain;
+    this.iZone = iZone;
   }
 
   @Override
   public void configure(CANTalon talon) {
-    if (outputVoltageMax != 0) {
+    if (outputVoltageMax != null && outputVoltageMax != 0) {
       talon.configMaxOutputVoltage(outputVoltageMax);
     }
-    talon.configPeakOutputVoltage(forwardOutputVoltagePeak, reverseOutputVoltagePeak);
-    talon.configNominalOutputVoltage(forwardOutputVoltageNominal, reverseOutputVoltageNominal);
-    talon.setAllowableClosedLoopErr(allowableClosedLoopError);
-    talon.setNominalClosedLoopVoltage(nominalClosedLoopVoltage);
-    talon.setPID(pGain, iGain, dGain);
-    talon.setF(fGain);
-    talon.setIZone(iZone);
+
+    talon.configPeakOutputVoltage(
+        valueOrZero(forwardOutputVoltagePeak),
+        valueOrZero(reverseOutputVoltagePeak));
+
+    talon.configNominalOutputVoltage(
+        valueOrZero(forwardOutputVoltageNominal),
+        valueOrZero(reverseOutputVoltageNominal));
+
+    talon.setAllowableClosedLoopErr(valueOrZero(allowableClosedLoopError));
+
+    talon.setNominalClosedLoopVoltage(valueOrZero(nominalClosedLoopVoltage));
+
+    talon.setPID(valueOrZero(pGain), valueOrZero(iGain), valueOrZero(dGain));
+    talon.setF(valueOrZero(fGain));
+
+    talon.setIZone(valueOrZero(iZone));
     super.configure(talon);
   }
 
-  public double getOutputVoltageMax() {
+  double valueOrZero(Double value) {
+    if (value != null) {
+      return value;
+    }
+    return 0;
+  }
+
+  int valueOrZero(Integer value) {
+    if (value != null) {
+      return value;
+    }
+    return 0;
+  }
+
+  public Double getOutputVoltageMax() {
     return outputVoltageMax;
   }
 
-  public double getForwardOutputVoltagePeak() {
+  public Double getForwardOutputVoltagePeak() {
     return forwardOutputVoltagePeak;
   }
 
-  public double getReverseOutputVoltagePeak() {
+  public Double getReverseOutputVoltagePeak() {
     return reverseOutputVoltagePeak;
   }
 
-  public double getForwardOutputVoltageNominal() {
+  public Double getForwardOutputVoltageNominal() {
     return forwardOutputVoltageNominal;
   }
 
-  public double getReverseOutputVoltageNominal() {
+  public Double getReverseOutputVoltageNominal() {
     return reverseOutputVoltageNominal;
   }
 
-  public int getAllowableClosedLoopError() {
+  public Integer getAllowableClosedLoopError() {
     return allowableClosedLoopError;
   }
 
-  public double getNominalClosedLoopVoltage() {
+  public Double getNominalClosedLoopVoltage() {
     return nominalClosedLoopVoltage;
   }
 
-  public double getpGain() {
+  public Double getpGain() {
     return pGain;
   }
 
-  public double getiGain() {
+  public Double getiGain() {
     return iGain;
   }
 
-  public double getdGain() {
+  public Double getdGain() {
     return dGain;
   }
 
-  public double getfGain() {
+  public Double getfGain() {
     return fGain;
   }
 
-  public int getiZone() {
+  public Integer getiZone() {
     return iZone;
   }
 

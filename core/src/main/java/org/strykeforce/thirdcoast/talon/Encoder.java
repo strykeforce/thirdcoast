@@ -3,31 +3,37 @@ package org.strykeforce.thirdcoast.talon;
 import com.ctre.CANTalon;
 import com.ctre.CANTalon.FeedbackDevice;
 import com.ctre.CANTalon.FeedbackDeviceStatus;
-import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 final class Encoder {
 
+  final static Encoder DEFAULT = new Encoder((String)null, null, null);
+
   final static Logger logger = LoggerFactory.getLogger(Encoder.class);
   private final CANTalon.FeedbackDevice feedbackDevice;
   private final boolean isReversed;
-  private final boolean isUnitScalingEnabled;
+  private final boolean unitScalingEnabled;
   private final int ticksPerRevolution;
 
-  Encoder(Optional<String> feedbackDevice, Optional<Boolean> isReversed,
-      Optional<Integer> ticksPerRevolution) {
+  Encoder(CANTalon.FeedbackDevice feedbackDevice, Boolean isReversed, Integer ticksPerRevolution) {
+    this.feedbackDevice = feedbackDevice;
+    this.isReversed = isReversed != null ? isReversed : false;
+    unitScalingEnabled = ticksPerRevolution != null;
+    this.ticksPerRevolution = unitScalingEnabled ? ticksPerRevolution : -1;
 
-    this.feedbackDevice = CANTalon.FeedbackDevice.valueOf(feedbackDevice.orElse("QuadEncoder"));
-    this.isReversed = isReversed.orElse(false);
-    isUnitScalingEnabled = ticksPerRevolution.isPresent();
-    this.ticksPerRevolution = isUnitScalingEnabled ? ticksPerRevolution.get() : -1;
+  }
+
+  Encoder(String feedbackDevice, Boolean isReversed, Integer ticksPerRevolution) {
+    this(CANTalon.FeedbackDevice.valueOf(feedbackDevice != null ? feedbackDevice : "QuadEncoder"),
+        isReversed,
+        ticksPerRevolution);
   }
 
   public void configure(CANTalon talon) {
     talon.setFeedbackDevice(feedbackDevice);
     talon.reverseSensor(isReversed);
-    if (isUnitScalingEnabled) {
+    if (unitScalingEnabled) {
       talon.configEncoderCodesPerRev(ticksPerRevolution);
     }
     checkEncoder(talon);
@@ -48,7 +54,7 @@ final class Encoder {
         break;
       case FeedbackStatusUnknown:
         logger.info("{}: encoder is unknown, only CTRE Mag or Pulse-Width Encoder supported",
-                talon.getDescription());
+            talon.getDescription());
         break;
     }
   }
@@ -62,7 +68,7 @@ final class Encoder {
   }
 
   public boolean isUnitScalingEnabled() {
-    return isUnitScalingEnabled;
+    return unitScalingEnabled;
   }
 
   public int getTicksPerRevolution() {
@@ -74,7 +80,7 @@ final class Encoder {
     return "Encoder{" +
         "feedbackDevice=" + feedbackDevice +
         ", isReversed=" + isReversed +
-        ", isUnitScalingEnabled=" + isUnitScalingEnabled +
+        ", unitScalingEnabled=" + unitScalingEnabled +
         ", ticksPerRevolution=" + ticksPerRevolution +
         '}';
   }

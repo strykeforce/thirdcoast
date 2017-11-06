@@ -10,6 +10,7 @@ import org.jline.reader.LineReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.talon.TalonConfiguration;
+import org.strykeforce.thirdcoast.talon.TalonConfigurationBuilder;
 import org.strykeforce.thirdcoast.talon.TalonFactory;
 import org.strykeforce.thirdcoast.talon.TalonProvisioner;
 import org.strykeforce.thirdcoast.telemetry.TelemetryService;
@@ -62,7 +63,7 @@ public class LoadCommand extends AbstractCommand {
       for (Config config : configList) {
         List<Integer> ids = config.get("deviceId"); // FIXME: NPE if missing
         for (int i : ids) {
-          String name = (String) config.getOptional(TalonConfiguration.NAME)
+          String name = (String) config.getOptional(TalonConfigurationBuilder.NAME)
               .orElse(TalonProvisioner.DEFAULT_CONFIG);
           CANTalon talon = talonFactory.createTalonWithConfiguration(i, name);
           talonSet.all.add(talon);

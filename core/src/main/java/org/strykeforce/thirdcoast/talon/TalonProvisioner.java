@@ -5,7 +5,6 @@ import com.ctre.CANTalon.TalonControlMode;
 import com.electronwill.nightconfig.core.Config;
 import com.electronwill.nightconfig.core.InMemoryFormat;
 import com.electronwill.nightconfig.core.UnmodifiableConfig;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -27,16 +26,16 @@ import org.slf4j.LoggerFactory;
 @Singleton
 public class TalonProvisioner {
 
-  public final static UnmodifiableConfig DEFAULT;
+  public final static UnmodifiableConfig DEFAULT; // FIXME: = TalonConfigBuilder.DEFAULT
   public final static String TALON_TABLE = "TALON";
   public final static String DEFAULT_CONFIG = "voltage.default";
   final static Logger logger = LoggerFactory.getLogger(TalonProvisioner.class);
 
   static {
     Config c = Config.inMemory();
-    c.add(Arrays.asList(TalonConfiguration.NAME), DEFAULT_CONFIG);
-    c.add(Arrays.asList(TalonConfiguration.MODE), TalonControlMode.Voltage.name());
-    c.add(Arrays.asList(TalonConfiguration.SETPOINT_MAX), 12.0);
+    c.add(Arrays.asList(TalonConfigurationBuilder.NAME), DEFAULT_CONFIG);
+    c.add(Arrays.asList(TalonConfigurationBuilder.MODE), TalonControlMode.Voltage.name());
+    c.add(Arrays.asList(TalonConfigurationBuilder.SETPOINT_MAX), 12.0);
     Config d = InMemoryFormat.defaultInstance().createConfig();
     d.add(TALON_TABLE, Arrays.asList(c));
     DEFAULT = d.unmodifiable();
@@ -63,40 +62,20 @@ public class TalonProvisioner {
    * @param configs a parsed config collection
    */
   public void addConfigurations(UnmodifiableConfig configs) {
-    List<Config> configList = configs.get("TALON");
+    List<Config> configList = configs.get(TALON_TABLE);
     if (configList == null) {
-      logger.warn("no TALON tables in config");
+      logger.warn("no " + TALON_TABLE + " tables in config");
       return;
     }
 
     for (UnmodifiableConfig config : configList) {
-      String name = config.get(TalonConfiguration.NAME);
+      String name = config.get(TalonConfigurationBuilder.NAME);
       if (name == null) {
-        throw new IllegalArgumentException("TALON configuration name parameter missing");
+        throw new IllegalArgumentException(TALON_TABLE + " configuration name parameter missing");
       }
 
-      String mode = (String) config.getOptional(TalonConfiguration.MODE)
-          .orElse(TalonControlMode.Voltage.name());
-      TalonConfiguration talon = null;
-      switch (CANTalon.TalonControlMode.valueOf(mode)) {
-        case Voltage:
-          talon = new VoltageTalonConfiguration(config);
-          break;
-        case Position:
-          talon = new PositionTalonConfiguration(config);
-          break;
-        case Speed:
-          talon = new SpeedTalonConfiguration(config);
-          break;
-        case Follower:
-        case MotionMagic:
-        case Current:
-        case MotionProfile:
-        case Disabled:
-        case PercentVbus:
-          throw new IllegalStateException("talon mode not implemented: " + mode);
-      }
-      settings.put(name, talon);
+      TalonConfigurationBuilder builder = new TalonConfigurationBuilder(config);
+      settings.put(name, builder.build());
     }
   }
 

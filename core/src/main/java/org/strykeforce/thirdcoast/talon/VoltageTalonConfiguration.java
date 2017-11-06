@@ -2,12 +2,19 @@ package org.strykeforce.thirdcoast.talon;
 
 import com.ctre.CANTalon;
 import com.ctre.CANTalon.TalonControlMode;
+import com.ctre.CANTalon.VelocityMeasurementPeriod;
 import com.electronwill.nightconfig.core.UnmodifiableConfig;
 
 class VoltageTalonConfiguration extends TalonConfiguration {
 
-  VoltageTalonConfiguration(UnmodifiableConfig config) {
-    super(config);
+  VoltageTalonConfiguration(String name, double setpointMax,
+      Encoder encoder, Boolean isBrakeInNeutral, Boolean isOutputReversed,
+      VelocityMeasurementPeriod velocityMeasurementPeriod, Integer velocityMeasurementWindow,
+      LimitSwitch forwardLimitSwitch, LimitSwitch reverseLimitSwitch,
+      SoftLimit forwardSoftLimit, SoftLimit reverseSoftLimit, Integer currentLimit) {
+    super(name, setpointMax, encoder, isBrakeInNeutral, isOutputReversed, velocityMeasurementPeriod,
+        velocityMeasurementWindow, forwardLimitSwitch, reverseLimitSwitch, forwardSoftLimit,
+        reverseSoftLimit, currentLimit);
   }
 
   @Override

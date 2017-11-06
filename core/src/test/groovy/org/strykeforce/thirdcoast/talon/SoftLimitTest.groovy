@@ -6,7 +6,7 @@ class SoftLimitTest extends Specification {
 
     def "config missing"() {
         when:
-        def sl = new SoftLimit(Optional.empty())
+        def sl = new SoftLimit(null)
 
         then:
         !sl.enabled
@@ -14,7 +14,7 @@ class SoftLimitTest extends Specification {
 
     def "config present"() {
         when:
-        def sl = new SoftLimit(Optional.of(Double.valueOf(123.0)))
+        def sl = new SoftLimit(123.0)
 
         then:
         sl.enabled

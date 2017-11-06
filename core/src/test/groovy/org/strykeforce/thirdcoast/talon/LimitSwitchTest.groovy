@@ -6,7 +6,7 @@ class LimitSwitchTest extends Specification {
 
     def "switch config missing"() {
         when:
-        def ls = new LimitSwitch(Optional.empty())
+        def ls = new LimitSwitch(null)
 
         then:
         !ls.enabled
@@ -14,7 +14,7 @@ class LimitSwitchTest extends Specification {
 
     def "Disabled limit switch"() {
         when:
-        def ls = new LimitSwitch(Optional.of("Disabled"))
+        def ls = new LimitSwitch("Disabled")
 
         then:
         !ls.enabled
@@ -22,7 +22,7 @@ class LimitSwitchTest extends Specification {
 
     def "normally-open limit switch"() {
         when:
-        def ls = new LimitSwitch(Optional.of("NormallyOpen"))
+        def ls = new LimitSwitch("NormallyOpen")
 
 
         then:
@@ -32,7 +32,7 @@ class LimitSwitchTest extends Specification {
 
     def "normally-closed limit switch"() {
         when:
-        def ls = new LimitSwitch(Optional.of("NormallyClosed"))
+        def ls = new LimitSwitch("NormallyClosed")
 
         then:
         ls.enabled
@@ -41,7 +41,7 @@ class LimitSwitchTest extends Specification {
 
     def "misconfigured limit switch"() {
         when:
-        new LimitSwitch(Optional.of("FOO"))
+        new LimitSwitch("FOO")
 
         then:
         thrown(IllegalStateException)
