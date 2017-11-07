@@ -25,15 +25,15 @@ import org.strykeforce.thirdcoast.telemetry.tct.talon.di.TalonMenuComponent;
 })
 public abstract class MenuModule {
 
-  @Singleton
   @Provides
+  @Singleton
   @MainMenu
   public static CommandAdapter topCommandsAdapter(@MainMenu Set<Command> commands) {
     return new CommandAdapter(commands);
   }
 
-  @Singleton
   @Provides
+  @Singleton
   @MainMenu
   public static Menu menu(@MainMenu CommandAdapter commandsAdapter, Terminal terminal) {
     Menu menu = new Menu(commandsAdapter, terminal);
@@ -41,26 +41,26 @@ public abstract class MenuModule {
     return menu;
   }
 
-  @Singleton
   @Binds
+  @Singleton
   @IntoSet
   @MainMenu
   public abstract Command servoModeCommand(ServoModeCommand command);
 
-  @Singleton
   @Binds
+  @Singleton
   @IntoSet
   @MainMenu
   public abstract Command dioModeCommand(DioModeCommand command);
 
-  @Singleton
   @Binds
+  @Singleton
   @IntoSet
   @MainMenu
   public abstract Command talonModeCommand(TalonModeCommand command);
 
-  @Singleton
   @Binds
+  @Singleton
   @IntoSet
   @MainMenu
   public abstract Command quitCommand(QuitCommand command);

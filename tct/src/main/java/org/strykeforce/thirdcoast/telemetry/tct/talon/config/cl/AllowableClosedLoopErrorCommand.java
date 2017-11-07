@@ -20,6 +20,11 @@ public class AllowableClosedLoopErrorCommand extends AbstractIntConfigCommand {
   }
 
   @Override
+  protected void saveConfig(int value) {
+    talonSet.talonConfigurationBuilder().allowableClosedLoopError(value);
+  }
+
+  @Override
   protected void config(CANTalon talon, int value) {
     talon.setAllowableClosedLoopErr(value);
   }

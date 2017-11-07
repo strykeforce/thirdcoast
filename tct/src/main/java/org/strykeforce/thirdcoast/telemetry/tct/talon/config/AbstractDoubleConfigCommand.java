@@ -20,12 +20,15 @@ public abstract class AbstractDoubleConfigCommand extends AbstractTalonConfigCom
 
   protected abstract void config(CANTalon talon, double value);
 
+  protected abstract void saveConfig(double value);
+
   @Override
   public void perform() {
     Double value = getDoubleValue();
     if (value == null) {
       return;
     }
+    saveConfig(value);
     for (CANTalon talon : talonSet.selected()) {
       config(talon, value);
       logger.info("set {} for {} to {}", name(), talon.getDescription(), value);

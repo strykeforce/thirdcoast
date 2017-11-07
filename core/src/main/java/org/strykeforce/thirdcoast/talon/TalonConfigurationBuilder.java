@@ -5,6 +5,7 @@ import com.ctre.CANTalon.TalonControlMode;
 import com.ctre.CANTalon.VelocityMeasurementPeriod;
 import com.electronwill.nightconfig.core.Config;
 import com.electronwill.nightconfig.core.UnmodifiableConfig;
+import javax.inject.Inject;
 
 /**
  * Builder for {@link TalonConfiguration}.
@@ -77,6 +78,7 @@ public class TalonConfigurationBuilder {
   /**
    * Create a builder with defaults.
    */
+  @Inject
   public TalonConfigurationBuilder() {
   }
 
@@ -284,6 +286,28 @@ public class TalonConfigurationBuilder {
       throw new IllegalArgumentException("feedbackDevice must not be null");
     }
     this.encoder = new Encoder(feedbackDevice, isReversed, ticksPerRevolution);
+    return this;
+  }
+
+  /**
+   * Configure the Talon encoder in use.
+   *
+   * @param feedbackDevice the encoder type, must not be null.
+   * @return this builder.
+   */
+  public TalonConfigurationBuilder encoder(CANTalon.FeedbackDevice feedbackDevice) {
+    if (encoder == null) {
+      encoder = new Encoder(feedbackDevice);
+    } else {
+      encoder = encoder.copyWithEncoder(feedbackDevice);
+    }
+    return this;
+  }
+
+  public TalonConfigurationBuilder encoderReversed(boolean reversed) {
+    if (encoder == null) {
+      encoder = new Encoder(reversed);
+    }
     return this;
   }
 

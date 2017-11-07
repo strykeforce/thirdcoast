@@ -15,8 +15,9 @@ import org.strykeforce.thirdcoast.telemetry.tct.di.ModeScoped;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.ConfigModeCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.InspectCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.ListCommand;
-import org.strykeforce.thirdcoast.telemetry.tct.talon.LoadCommand;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.LoadConfigCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.RunCommand;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.SaveConfigCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.SelectCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.di.ConfigMenuComponent;
 
@@ -24,8 +25,9 @@ import org.strykeforce.thirdcoast.telemetry.tct.talon.config.di.ConfigMenuCompon
 public abstract class TalonMenuModule {
 
   public static final List<String> MENU_ORDER = Arrays.asList(
-      LoadCommand.NAME,
+      LoadConfigCommand.NAME,
       SelectCommand.NAME,
+      SaveConfigCommand.NAME,
       ConfigModeCommand.NAME,
       ListCommand.NAME,
       InspectCommand.NAME,
@@ -68,7 +70,7 @@ public abstract class TalonMenuModule {
   @Binds
   @IntoSet
   @TalonMenu
-  public abstract Command loadCommand(LoadCommand command);
+  public abstract Command loadCommand(LoadConfigCommand command);
 
   @ModeScoped
   @Binds
@@ -81,4 +83,12 @@ public abstract class TalonMenuModule {
   @IntoSet
   @TalonMenu
   public abstract Command runCommand(RunCommand command);
+
+  @ModeScoped
+  @Binds
+  @IntoSet
+  @TalonMenu
+  public abstract Command saveConfigCommand(SaveConfigCommand command);
+
+
 }

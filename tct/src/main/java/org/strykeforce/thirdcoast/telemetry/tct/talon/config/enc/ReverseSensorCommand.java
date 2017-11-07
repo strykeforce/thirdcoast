@@ -17,6 +17,11 @@ public class ReverseSensorCommand extends AbstractBooleanConfigCommand {
   }
 
   @Override
+  protected void saveConfig(boolean value) {
+    talonSet.talonConfigurationBuilder().encoderReversed(value);
+  }
+
+  @Override
   protected void config(CANTalon talon, boolean value) {
     talon.reverseSensor(value);
   }

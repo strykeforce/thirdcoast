@@ -20,6 +20,11 @@ public class CurrentLimitCommand extends AbstractIntConfigCommand {
   }
 
   @Override
+  protected void saveConfig(int value) {
+    talonSet.talonConfigurationBuilder().currentLimit(value);
+  }
+
+  @Override
   protected void config(CANTalon talon, int value) {
     if (value > 0) {
       talon.setCurrentLimit(value);

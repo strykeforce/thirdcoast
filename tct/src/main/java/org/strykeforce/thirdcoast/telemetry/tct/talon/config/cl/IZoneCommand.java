@@ -20,6 +20,11 @@ public class IZoneCommand extends AbstractIntConfigCommand {
   }
 
   @Override
+  protected void saveConfig(int value) {
+    talonSet.talonConfigurationBuilder().iZone(value);
+  }
+
+  @Override
   protected void config(CANTalon talon, int value) {
     talon.setIZone(value);
   }

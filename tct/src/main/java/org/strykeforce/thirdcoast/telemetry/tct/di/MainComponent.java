@@ -1,6 +1,8 @@
 package org.strykeforce.thirdcoast.telemetry.tct.di;
 
+import dagger.BindsInstance;
 import dagger.Component;
+import java.io.File;
 import javax.inject.Singleton;
 import org.jline.terminal.Terminal;
 import org.strykeforce.thirdcoast.telemetry.tct.Menu;
@@ -10,6 +12,7 @@ import org.strykeforce.thirdcoast.telemetry.tct.Menu;
     TerminalModule.class,
     MenuModule.class,
     TalonConfigModule.class,
+    FileConfigModule.class,
 })
 public interface MainComponent {
 
@@ -20,6 +23,9 @@ public interface MainComponent {
 
   @Component.Builder
   interface Builder {
+
+    @BindsInstance
+    Builder configFile(File file);
 
     MainComponent build();
   }

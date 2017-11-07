@@ -21,6 +21,8 @@ public abstract class AbstractFwdRevDoubleConfigCommand extends AbstractTalonCon
 
   protected abstract void config(CANTalon talon, double foward, double reverse);
 
+  protected abstract void saveConfig(double forward, double reverse);
+
   @Override
   public void perform() {
     double[] values = getFwdRevDoubles();

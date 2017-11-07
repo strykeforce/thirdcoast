@@ -17,6 +17,11 @@ public class SetPositionCommand extends AbstractDoubleConfigCommand {
   }
 
   @Override
+  protected void saveConfig(double value) {
+    // not a configuration value
+  }
+
+  @Override
   protected void config(CANTalon talon, double value) {
     talon.setPosition(value);
   }

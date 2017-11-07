@@ -77,6 +77,7 @@ public class SelectTypeCommand extends AbstractTalonConfigCommand {
         default:
           continue;
       }
+      talonSet.talonConfigurationBuilder().encoder(device);
       for (CANTalon talon : talonSet.selected()) {
         talon.setFeedbackDevice(device);
         logger.info("set {} for {} to {}", name(), talon.getDescription(), device);

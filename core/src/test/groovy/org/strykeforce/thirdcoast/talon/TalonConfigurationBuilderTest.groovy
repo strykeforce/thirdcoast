@@ -73,6 +73,16 @@ class TalonConfigurationBuilderTest extends Specification {
         tc.encoder.ticksPerRevolution == 2767
     }
 
+    def "configures only encoder reversed"() {
+        when:
+        def tc = tcb.encoderReversed(true).build()
+
+        then:
+        tc.encoder.feedbackDevice == CANTalon.FeedbackDevice.QuadEncoder
+        tc.encoder.reversed
+        !tc.encoder.unitScalingEnabled
+    }
+
     def "configure brake in neutral"() {
         when:
         def tc = tcb.brakeInNeutral(false).build()

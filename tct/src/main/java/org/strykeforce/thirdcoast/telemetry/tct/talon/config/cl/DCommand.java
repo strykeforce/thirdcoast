@@ -20,6 +20,11 @@ public class DCommand extends AbstractDoubleConfigCommand {
   }
 
   @Override
+  protected void saveConfig(double value) {
+    talonSet.talonConfigurationBuilder().D(value);
+  }
+
+  @Override
   protected void config(CANTalon talon, double value) {
     talon.setD(value);
   }

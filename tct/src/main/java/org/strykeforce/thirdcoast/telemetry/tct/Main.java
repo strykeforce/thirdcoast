@@ -1,5 +1,6 @@
 package org.strykeforce.thirdcoast.telemetry.tct;
 
+import java.io.File;
 import org.jline.terminal.Terminal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,9 +10,10 @@ import org.strykeforce.thirdcoast.telemetry.tct.di.MainComponent;
 public class Main implements Runnable {
 
   final static Logger logger = LoggerFactory.getLogger(Main.class);
-  private final MainComponent component = DaggerMainComponent.builder().build();
+  private final MainComponent component;
 
   public Main() {
+    component = DaggerMainComponent.builder().configFile(new File("tct.toml")).build();
   }
 
   @Override

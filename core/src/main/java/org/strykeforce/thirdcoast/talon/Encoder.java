@@ -8,17 +8,17 @@ import org.slf4j.LoggerFactory;
 
 final class Encoder {
 
-  final static Encoder DEFAULT = new Encoder((String)null, null, null);
+  final static Encoder DEFAULT = new Encoder((String) null, null, null);
 
   final static Logger logger = LoggerFactory.getLogger(Encoder.class);
   private final CANTalon.FeedbackDevice feedbackDevice;
-  private final boolean isReversed;
+  private final boolean reversed;
   private final boolean unitScalingEnabled;
   private final int ticksPerRevolution;
 
-  Encoder(CANTalon.FeedbackDevice feedbackDevice, Boolean isReversed, Integer ticksPerRevolution) {
+  Encoder(CANTalon.FeedbackDevice feedbackDevice, Boolean reversed, Integer ticksPerRevolution) {
     this.feedbackDevice = feedbackDevice;
-    this.isReversed = isReversed != null ? isReversed : false;
+    this.reversed = reversed != null ? reversed : false;
     unitScalingEnabled = ticksPerRevolution != null;
     this.ticksPerRevolution = unitScalingEnabled ? ticksPerRevolution : -1;
 
@@ -26,13 +26,32 @@ final class Encoder {
 
   Encoder(String feedbackDevice, Boolean isReversed, Integer ticksPerRevolution) {
     this(CANTalon.FeedbackDevice.valueOf(feedbackDevice != null ? feedbackDevice : "QuadEncoder"),
-        isReversed,
-        ticksPerRevolution);
+        isReversed, ticksPerRevolution);
+  }
+
+  Encoder(CANTalon.FeedbackDevice feedbackDevice) {
+    this(feedbackDevice, null, null);
+  }
+
+  Encoder(boolean reversed) {
+    this((String) null, reversed, null);
+  }
+
+  Encoder copyWithReversed(boolean reversed) {
+    return new Encoder(feedbackDevice, reversed, unitScalingEnabled ? ticksPerRevolution : null);
+  }
+
+  Encoder copyWithEncoder(CANTalon.FeedbackDevice feedbackDevice) {
+    return new Encoder(feedbackDevice, reversed, unitScalingEnabled ? ticksPerRevolution : null);
+  }
+
+  Encoder copyWithTicksPerRevolution(Integer ticksPerRevolution) {
+    return new Encoder(feedbackDevice, reversed, ticksPerRevolution);
   }
 
   public void configure(CANTalon talon) {
     talon.setFeedbackDevice(feedbackDevice);
-    talon.reverseSensor(isReversed);
+    talon.reverseSensor(reversed);
     if (unitScalingEnabled) {
       talon.configEncoderCodesPerRev(ticksPerRevolution);
     }
@@ -64,7 +83,7 @@ final class Encoder {
   }
 
   public boolean isReversed() {
-    return isReversed;
+    return reversed;
   }
 
   public boolean isUnitScalingEnabled() {
@@ -79,7 +98,7 @@ final class Encoder {
   public String toString() {
     return "Encoder{" +
         "feedbackDevice=" + feedbackDevice +
-        ", isReversed=" + isReversed +
+        ", reversed=" + reversed +
         ", unitScalingEnabled=" + unitScalingEnabled +
         ", ticksPerRevolution=" + ticksPerRevolution +
         '}';

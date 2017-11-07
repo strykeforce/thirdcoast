@@ -18,6 +18,11 @@ public class ReverseOutputCommand extends AbstractBooleanConfigCommand {
   }
 
   @Override
+  protected void saveConfig(boolean value) {
+    talonSet.talonConfigurationBuilder().outputReversed(value);
+  }
+
+  @Override
   protected void config(CANTalon talon, boolean value) {
     talon.reverseOutput(value);
   }

@@ -19,6 +19,12 @@ public class VoltageRampRateCommand extends AbstractDoubleConfigCommand {
   }
 
   @Override
+  protected void saveConfig(double value) {
+    // FIXME: not in TalonConfigurationBuilder
+    terminal.writer().println(boldYellow("not implemented"));
+  }
+
+  @Override
   protected void config(CANTalon talon, double value) {
     talon.setVoltageRampRate(value);
   }

@@ -16,6 +16,11 @@ public class ForwardSoftLimitCommand extends AbstractDoubleConfigCommand {
   }
 
   @Override
+  protected void saveConfig(double value) {
+    talonSet.talonConfigurationBuilder().forwardSoftLimit(value);
+  }
+
+  @Override
   protected void config(CANTalon talon, double value) {
     if (value == 0) {
       talon.enableForwardSoftLimit(false);

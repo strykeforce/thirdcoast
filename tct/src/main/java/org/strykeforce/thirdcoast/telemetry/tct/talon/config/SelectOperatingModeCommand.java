@@ -83,6 +83,8 @@ public class SelectOperatingModeCommand extends AbstractTalonConfigCommand {
         talon.changeControlMode(mode);
         logger.info("set {} for {} to {}", name(), talon.getDescription(), mode);
       }
+      talonSet.talonConfigurationBuilder().mode(mode);
+
     }
   }
 

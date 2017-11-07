@@ -20,6 +20,11 @@ public class FCommand extends AbstractDoubleConfigCommand {
   }
 
   @Override
+  protected void saveConfig(double value) {
+    talonSet.talonConfigurationBuilder().F(value);
+  }
+
+  @Override
   protected void config(CANTalon talon, double value) {
     talon.setF(value);
   }

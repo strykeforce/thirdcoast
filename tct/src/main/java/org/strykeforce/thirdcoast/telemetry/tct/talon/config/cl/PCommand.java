@@ -20,6 +20,11 @@ public class PCommand extends AbstractDoubleConfigCommand {
   }
 
   @Override
+  protected void saveConfig(double value) {
+    talonSet.talonConfigurationBuilder().P(value);
+  }
+
+  @Override
   protected void config(CANTalon talon, double value) {
     talon.setP(value);
   }

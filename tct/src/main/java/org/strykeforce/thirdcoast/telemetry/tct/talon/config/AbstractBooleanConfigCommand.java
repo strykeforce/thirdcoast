@@ -21,12 +21,15 @@ public abstract class AbstractBooleanConfigCommand extends AbstractTalonConfigCo
 
   protected abstract void config(CANTalon talon, boolean value);
 
+  protected abstract void saveConfig(boolean value);
+
   @Override
   public void perform() {
     Boolean value = getBooleanValue();
     if (value == null) {
       return;
     }
+    saveConfig(value);
     for (CANTalon talon : talonSet.selected()) {
       config(talon, value);
       logger.info("set {} for {} to {}", name(), talon.getDescription(), value);
