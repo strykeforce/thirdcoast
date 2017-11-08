@@ -67,11 +67,11 @@ class PIDTalonConfigurationTest extends Specification {
 //        t.forwardOutputVoltageNominal == 0.5
 //        t.reverseOutputVoltageNominal == -0.3
         t.allowableClosedLoopError == 10
-        t.pGain == 0.1
-        t.iGain == 0.2
-        t.dGain == 0.3
-        t.fGain == 0.4
-        t.iZone == 50
+        t.PGain == 0.1
+        t.IGain == 0.2
+        t.DGain == 0.3
+        t.FGain == 0.4
+        t.IZone == 50
     }
 
     def "configures default parameters"() {

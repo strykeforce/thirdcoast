@@ -3,6 +3,10 @@ package org.strykeforce.thirdcoast.talon;
 import com.ctre.CANTalon;
 import com.ctre.CANTalon.VelocityMeasurementPeriod;
 import edu.wpi.first.wpilibj.MotorSafety;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,11 +18,10 @@ import org.slf4j.LoggerFactory;
 public abstract class TalonConfiguration {
 
   final static Logger logger = LoggerFactory.getLogger(TalonConfiguration.class);
-
   // required
   private final String name;
+  private final CANTalon.TalonControlMode mode;
   private final double setpointMax;
-
   // optional
   private final Encoder encoder;
   private final Boolean brakeInNeutral;
@@ -30,13 +33,15 @@ public abstract class TalonConfiguration {
   private final SoftLimit forwardSoftLimit;
   private final SoftLimit reverseSoftLimit;
   private final Integer currentLimit;
+  private final Set<Integer> talonIds = new HashSet<>();
 
-  public TalonConfiguration(String name, double setpointMax,
+  public TalonConfiguration(String name, CANTalon.TalonControlMode mode, double setpointMax,
       Encoder encoder, Boolean brakeInNeutral, Boolean outputReversed,
       VelocityMeasurementPeriod velocityMeasurementPeriod, Integer velocityMeasurementWindow,
       LimitSwitch forwardLimitSwitch, LimitSwitch reverseLimitSwitch,
       SoftLimit forwardSoftLimit, SoftLimit reverseSoftLimit, Integer currentLimit) {
     this.name = name;
+    this.mode = mode;
     this.setpointMax = setpointMax;
     this.encoder = encoder;
     this.brakeInNeutral = brakeInNeutral;
@@ -121,6 +126,37 @@ public abstract class TalonConfiguration {
     } else {
       talon.EnableCurrentLimit(false);
     }
+    addTalonId(talon.getDeviceID());
+  }
+
+  /**
+   * Add Talon ID for tracking in TOML config.
+   *
+   * @param id the Talon ID.
+   */
+  public void addTalonId(int id) {
+    talonIds.add(id);
+  }
+
+  /**
+   * Add optional Talon IDs for tracking in TOML config.
+   *
+   * @param ids the Talon IDs to add.
+   */
+  public void addAllTalonIds(Collection<Integer> ids) {
+    talonIds.addAll(ids);
+  }
+
+  /**
+   * If tracking Talon IDs in TOML config, get the set of IDs.
+   *
+   * @return the Set of Talon IDs.
+   */
+  public Set<Integer> getTalonIds() {
+    if (talonIds == null) {
+      return Collections.emptySet();
+    }
+    return Collections.unmodifiableSet(talonIds);
   }
 
   /**

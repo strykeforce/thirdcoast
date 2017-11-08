@@ -6,9 +6,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import org.slf4j.Logger;
@@ -43,6 +46,7 @@ public class TalonProvisioner {
   public TalonProvisioner(File file) {
     checkFileExists(file);
     Toml toml = new Toml().read(file);
+    logger.info("adding configurations from {}", file);
     addConfigurations(toml);
   }
 
@@ -62,12 +66,23 @@ public class TalonProvisioner {
 
     for (Toml config : configList) {
       String name = config.getString(TalonConfigurationBuilder.NAME);
-      System.out.println("name = " + name);
       if (name == null) {
         throw new IllegalArgumentException(TALON_TABLE + " configuration name parameter missing");
       }
       settings.put(name, TalonConfigurationBuilder.create(config));
+      logger.info("added configuration: {}", name);
     }
+  }
+
+  /**
+   * Add a configuration.
+   *
+   * @param config the configuration to add.
+   */
+  public void addConfiguration(TalonConfiguration config) {
+    String name = config.getName();
+    settings.put(name, config);
+    logger.info("added configuration: {}", name);
   }
 
   /**
@@ -84,9 +99,28 @@ public class TalonProvisioner {
     return config;
   }
 
+  /**
+   * Get an unmodifiable snapshot of configuration names.
+   *
+   * @return the Set of configuration names.
+   */
+  public Set<String> getConfigurationNames() {
+    return Collections.unmodifiableSet(settings.keySet());
+  }
+
+  /**
+   * Get an unmodifiable snapshot of configurations.
+   *
+   * @return the Collection of configurations.
+   */
+  public Collection<TalonConfiguration> getConfigurations() {
+    return Collections.unmodifiableCollection(settings.values());
+  }
+
   static void checkFileExists(File file) {
     Path path = file.toPath();
     if (Files.notExists(path)) {
+      logger.info("{} missing, copying default", file);
       InputStream is = TalonProvisioner.class.getResourceAsStream(DEFAULT_CONFIG);
       try {
         Files.copy(is, path);

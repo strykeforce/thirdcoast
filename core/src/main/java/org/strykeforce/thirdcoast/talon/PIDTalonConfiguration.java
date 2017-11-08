@@ -18,7 +18,7 @@ class PIDTalonConfiguration extends TalonConfiguration {
   private final Double fGain;
   private final Integer iZone;
 
-  public PIDTalonConfiguration(String name, double setpointMax,
+  public PIDTalonConfiguration(String name, CANTalon.TalonControlMode mode, double setpointMax,
       Encoder encoder, Boolean isBrakeInNeutral, Boolean isOutputReversed,
       VelocityMeasurementPeriod velocityMeasurementPeriod,
       Integer velocityMeasurementWindow,
@@ -29,9 +29,9 @@ class PIDTalonConfiguration extends TalonConfiguration {
       Double reverseOutputVoltageNominal, Integer allowableClosedLoopError,
       Double nominalClosedLoopVoltage, Double pGain, Double iGain, Double dGain,
       Double fGain, Integer iZone) {
-    super(name, setpointMax, encoder, isBrakeInNeutral, isOutputReversed, velocityMeasurementPeriod,
-        velocityMeasurementWindow, forwardLimitSwitch, reverseLimitSwitch, forwardSoftLimit,
-        reverseSoftLimit, currentLimit);
+    super(name, mode, setpointMax, encoder, isBrakeInNeutral, isOutputReversed,
+        velocityMeasurementPeriod, velocityMeasurementWindow, forwardLimitSwitch,
+        reverseLimitSwitch, forwardSoftLimit, reverseSoftLimit, currentLimit);
     this.outputVoltageMax = outputVoltageMax;
     this.forwardOutputVoltagePeak = forwardOutputVoltagePeak;
     this.reverseOutputVoltagePeak = reverseOutputVoltagePeak;
@@ -113,23 +113,23 @@ class PIDTalonConfiguration extends TalonConfiguration {
     return nominalClosedLoopVoltage;
   }
 
-  public Double getpGain() {
+  public Double getPGain() {
     return pGain;
   }
 
-  public Double getiGain() {
+  public Double getIGain() {
     return iGain;
   }
 
-  public Double getdGain() {
+  public Double getDGain() {
     return dGain;
   }
 
-  public Double getfGain() {
+  public Double getFGain() {
     return fGain;
   }
 
-  public Integer getiZone() {
+  public Integer getIZone() {
     return iZone;
   }
 

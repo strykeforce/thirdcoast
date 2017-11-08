@@ -54,6 +54,44 @@ public class TalonConfigurationBuilder {
   public TalonConfigurationBuilder() {
   }
 
+  public TalonConfigurationBuilder(final TalonConfiguration config) {
+    name = config.getName() != null ? config.getName() : DEFAULT_NAME;
+    setpointMax = config.getSetpointMax();
+    encoder = config.getEncoder();
+    brakeInNeutral = config.isBrakeInNeutral();
+    outputReversed = config.isOutputReversed();
+    velocityMeasurementPeriod = config.getVelocityMeasurementPeriod();
+    velocityMeasurementWindow = config.getVelocityMeasurementWindow();
+    forwardLimitSwitch = config.getForwardLimitSwitch();
+    reverseLimitSwitch = config.getReverseLimitSwitch();
+    forwardSoftLimit = config.getForwardSoftLimit();
+    reverseSoftLimit = config.getReverseSoftLimit();
+    currentLimit = config.getCurrentLimit();
+
+    if (config instanceof VoltageTalonConfiguration) {
+      mode = TalonControlMode.Voltage;
+      return;
+    } else if (config instanceof SpeedTalonConfiguration) {
+      mode = TalonControlMode.Speed;
+    } else if (config instanceof PositionTalonConfiguration) {
+      mode = TalonControlMode.Position;
+    } else {
+      throw new AssertionError(config.getClass().getCanonicalName());
+    }
+    PIDTalonConfiguration pid = (PIDTalonConfiguration) config;
+    outputVoltageMax = pid.getOutputVoltageMax();
+    forwardOutputVoltagePeak = pid.getForwardOutputVoltagePeak();
+    reverseOutputVoltagePeak = pid.getReverseOutputVoltagePeak();
+    forwardOutputVoltageNominal = pid.getForwardOutputVoltageNominal();
+    reverseOutputVoltageNominal = pid.getReverseOutputVoltageNominal();
+    allowableClosedLoopError = pid.getAllowableClosedLoopError();
+    pGain = pid.getPGain();
+    iGain = pid.getIGain();
+    dGain = pid.getDGain();
+    fGain = pid.getFGain();
+    iZone = pid.getIZone();
+  }
+
   /**
    * Create a {@link TalonConfiguration} based on supplied config.
    *
@@ -116,7 +154,7 @@ public class TalonConfigurationBuilder {
    *
    * @return a new TalonConfiguration.
    */
-  TalonConfiguration build() {
+  public TalonConfiguration build() {
     TalonConfiguration tc = null;
     switch (mode) {
       case Voltage:

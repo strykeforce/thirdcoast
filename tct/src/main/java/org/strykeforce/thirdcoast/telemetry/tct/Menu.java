@@ -50,9 +50,14 @@ public class Menu {
 
   public void display() {
     int menuCount = commandsAdapter.getCount();
+    boolean help = false;
     while (true) {
       for (int i = 0; i < menuCount; i++) {
         terminal.writer().printf("%2d - %s%n", i + 1, commandsAdapter.getMenuText(i));
+      }
+      if (help) {
+        help();
+        help = false;
       }
       String line = null;
       try {
@@ -63,8 +68,8 @@ public class Menu {
           return; // go up a menu level
         }
       }
-      if (line ==null || line.isEmpty()) {
-        help();
+      if (line == null || line.isEmpty()) { // redisplay menu and show help message
+        help = true;
         continue;
       }
 
@@ -79,7 +84,7 @@ public class Menu {
         choice = -1;
       }
       if (choice < 0 || choice >= menuCount) {
-        help();
+        help = true;
         continue;
       }
       commandsAdapter.perform(choice);

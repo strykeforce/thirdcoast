@@ -29,7 +29,7 @@ public class ConfigModeCommand extends AbstractCommand {
 
   @Override
   public void perform() {
-    if (talonSet.selected.isEmpty()) {
+    if (talonSet.selected().isEmpty()) {
       terminal.writer().println(bold("no talons selected"));
       return;
     }

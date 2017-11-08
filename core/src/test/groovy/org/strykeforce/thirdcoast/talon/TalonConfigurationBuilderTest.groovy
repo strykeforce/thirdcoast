@@ -1,7 +1,6 @@
 package org.strykeforce.thirdcoast.talon
 
 import com.moandjiezana.toml.Toml
-import spock.lang.PendingFeature
 import spock.lang.Specification
 
 import static com.ctre.CANTalon.FeedbackDevice.*
@@ -41,7 +40,7 @@ pGain = 1.2
         then:
         stc.name == 'bar'
         stc.setpointMax == 120.0
-        stc.pGain == 1.2
+        stc.PGain == 1.2
     }
 
     def "builds VoltageTalonConfiguration with defaults"() {
@@ -278,7 +277,7 @@ pGain = 1.2
         PIDTalonConfiguration tc = tcb.mode(Speed).P(27.67).build()
 
         then:
-        tc.pGain == 27.67
+        tc.PGain == 27.67
     }
 
     def "configure I"() {
@@ -286,7 +285,7 @@ pGain = 1.2
         PIDTalonConfiguration tc = tcb.mode(Speed).I(27.67).build()
 
         then:
-        tc.iGain == 27.67
+        tc.IGain == 27.67
     }
 
     def "configure D"() {
@@ -294,7 +293,7 @@ pGain = 1.2
         PIDTalonConfiguration tc = tcb.mode(Speed).D(27.67).build()
 
         then:
-        tc.dGain == 27.67
+        tc.DGain == 27.67
     }
 
     def "configure F"() {
@@ -302,7 +301,7 @@ pGain = 1.2
         PIDTalonConfiguration tc = tcb.mode(Speed).F(27.67).build()
 
         then:
-        tc.fGain == 27.67
+        tc.FGain == 27.67
     }
 
     def "configure I-zone"() {
@@ -310,7 +309,7 @@ pGain = 1.2
         PIDTalonConfiguration tc = tcb.mode(Speed).iZone(2767).build()
 
         then:
-        tc.iZone == 2767
+        tc.IZone == 2767
     }
 
     def "checks config for proper operating mode"() {

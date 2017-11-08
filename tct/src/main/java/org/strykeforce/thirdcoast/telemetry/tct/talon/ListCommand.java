@@ -27,9 +27,9 @@ public class ListCommand extends AbstractCommand {
   @Override
   public void perform() {
     terminal.writer().printf(header());
-    for (CANTalon talon : talonSet.all) {
+    for (CANTalon talon : talonSet.selected()) {
       terminal.writer().printf("%d: %15s %8s %2s%n", talon.getDeviceID(), talon.getDescription(),
-          talon.getControlMode(), talonSet.selected.contains(talon) ? "Y" : "");
+          talon.getControlMode(), talonSet.selected().contains(talon) ? "Y" : "");
     }
     terminal.writer().println();
   }

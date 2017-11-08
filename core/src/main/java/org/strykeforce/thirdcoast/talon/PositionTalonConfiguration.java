@@ -17,11 +17,12 @@ class PositionTalonConfiguration extends PIDTalonConfiguration {
       Double reverseOutputVoltageNominal, Integer allowableClosedLoopError,
       Double nominalClosedLoopVoltage, Double pGain, Double iGain, Double dGain,
       Double fGain, Integer iZone) {
-    super(name, setpointMax, encoder, isBrakeInNeutral, isOutputReversed, velocityMeasurementPeriod,
-        velocityMeasurementWindow, forwardLimitSwitch, reverseLimitSwitch, forwardSoftLimit,
-        reverseSoftLimit, currentLimit, outputVoltageMax, forwardOutputVoltagePeak,
-        reverseOutputVoltagePeak, forwardOutputVoltageNominal, reverseOutputVoltageNominal,
-        allowableClosedLoopError, nominalClosedLoopVoltage, pGain, iGain, dGain, fGain, iZone);
+    super(name, TalonControlMode.Position, setpointMax, encoder, isBrakeInNeutral, isOutputReversed,
+        velocityMeasurementPeriod, velocityMeasurementWindow, forwardLimitSwitch,
+        reverseLimitSwitch, forwardSoftLimit, reverseSoftLimit, currentLimit, outputVoltageMax,
+        forwardOutputVoltagePeak, reverseOutputVoltagePeak, forwardOutputVoltageNominal,
+        reverseOutputVoltageNominal, allowableClosedLoopError, nominalClosedLoopVoltage, pGain,
+        iGain, dGain, fGain, iZone);
   }
 
   @Override

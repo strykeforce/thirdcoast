@@ -2,6 +2,9 @@ package org.strykeforce.thirdcoast.talon;
 
 import com.ctre.CANTalon;
 import com.ctre.CANTalon.TalonControlMode;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import org.slf4j.Logger;
@@ -12,10 +15,11 @@ import org.slf4j.LoggerFactory;
  */
 @Singleton
 public class TalonFactory {
-  // TODO: look at caching instance singletons, talons seem to behave badly if multiple copies made
 
   public final static int CONTROL_FRAME_MS = 10;
   final static Logger logger = LoggerFactory.getLogger(TalonFactory.class);
+
+  private final static Set<CANTalon> seen = new HashSet<>();
 
   private final TalonProvisioner provisioner;
   private final WrapperFactory wrapperFactory;
@@ -27,6 +31,10 @@ public class TalonFactory {
     this.wrapperFactory = wrapperFactory;
   }
 
+  public boolean hasSeen(int id) {
+    return seen.stream().anyMatch(it -> it.getDeviceID() == id);
+  }
+
   /**
    * Create a wrapped {@link CANTalon} with appropriate default values.
    *
@@ -34,7 +42,7 @@ public class TalonFactory {
    * @return the wrapped CANTalon
    * @see Wrapper
    */
-  public CANTalon createTalon(int id) {
+  private CANTalon createTalon(int id) {
     CANTalon talon = wrapperFactory.createWrapper(id, CONTROL_FRAME_MS);
     talon.changeControlMode(TalonControlMode.Voltage);
     talon.clearIAccum();
@@ -51,11 +59,32 @@ public class TalonFactory {
     talon.setPosition(0);
     talon.setProfile(0);
     talon.setPulseWidthPosition(0);
+    if (!seen.add(talon)) {
+      throw new IllegalStateException("creating an already-existing talon");
+    }
+    logger.info("added {} to seen Set", talon);
     return talon;
   }
 
   /**
-   * A convenience method to create a wrapped {@link CANTalon} with the specified {@link
+   * Gets a wrapped {@link CANTalon} with appropriate default values.
+   *
+   * @param id the device ID of the CANTalon to create
+   * @return the wrapped CANTalon
+   * @see Wrapper
+   */
+  public CANTalon getTalon(final int id) {
+    Optional<CANTalon> optTalon = seen.stream().filter(it -> it.getDeviceID() == id).findFirst();
+    if (optTalon.isPresent()) {
+      logger.info("returning cached talon {}", id);
+      return optTalon.get();
+    }
+    logger.info("talon not cached, creating talon {}", id);
+    return createTalon(id);
+  }
+
+  /**
+   * A convenience method to get a wrapped {@link CANTalon} with the specified {@link
    * TalonConfiguration}.
    *
    * @param id the device ID of the CANTalon to create
@@ -64,8 +93,8 @@ public class TalonFactory {
    * @see Wrapper
    * @see TalonProvisioner
    */
-  public CANTalon createTalonWithConfiguration(int id, String config) {
-    CANTalon talon = createTalon(id);
+  public CANTalon getTalonWithConfiguration(int id, String config) {
+    CANTalon talon = getTalon(id);
     provisioner.configurationFor(config).configure(talon);
     return talon;
   }

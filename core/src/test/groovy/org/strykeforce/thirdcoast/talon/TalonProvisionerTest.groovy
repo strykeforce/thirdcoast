@@ -1,7 +1,6 @@
 package org.strykeforce.thirdcoast.talon
 
 import com.ctre.CANTalon
-import com.moandjiezana.toml.Toml
 import spock.lang.Specification
 
 import java.nio.file.Files
@@ -52,11 +51,11 @@ class TalonProvisionerTest extends Specification {
         !config.encoder.unitScalingEnabled
         !config.brakeInNeutral
         !config.outputReversed
-        config.pGain == 0.0
-        config.iGain == 0.0
-        config.dGain == 0.0
-        config.fGain == 0.0
-        config.iZone == 0
+        config.PGain == 0.0
+        config.IGain == 0.0
+        config.DGain == 0.0
+        config.FGain == 0.0
+        config.IZone == 0
     }
 
     def "empty config file"() {

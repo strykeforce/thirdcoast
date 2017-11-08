@@ -23,7 +23,7 @@ public class RunCommand extends AbstractCommand {
 
   @Override
   public void perform() {
-    if (talonSet.selected.isEmpty()) {
+    if (talonSet.selected().isEmpty()) {
       terminal.writer().println(bold("no talons selected"));
       return;
     }
@@ -47,7 +47,7 @@ public class RunCommand extends AbstractCommand {
         continue;
       }
       terminal.writer().print(bold(String.format("setting talons to %.2f%n", setpoint)));
-      for (CANTalon talon : talonSet.selected) {
+      for (CANTalon talon : talonSet.selected()) {
         talon.set(setpoint);
       }
     }
