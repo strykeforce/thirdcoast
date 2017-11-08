@@ -8,7 +8,7 @@ import java.nio.file.Files
 
 class TalonProvisionerTest extends Specification {
 
-    def "creates config file copy from default"() {
+    def "copies default config into missing config file"() {
         given:
         File temp = File.createTempFile("thirdcoast_", ".toml")
         temp.delete()

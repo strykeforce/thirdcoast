@@ -17,34 +17,6 @@ public class TalonConfigurationBuilder {
   // TalonConfiguration
   public final static String NAME = "name";
   public final static String MODE = "mode";
-  public final static String SETPOINT_MAX = "setpoint_max";
-  public final static String FEEDBACK_DEVICE = "feedback_device";
-  public final static String ENCODER_REVERSED = "encoder_reversed";
-  public final static String TICKS_PER_REVOLUTION = "ticks_per_revolution";
-  public final static String BRAKE_IN_NEUTRAL = "brake_in_neutral";
-  public final static String OUTPUT_REVERSED = "output_reversed";
-  public final static String VELOCITY_MEASUREMENT_PERIOD = "velocity_measurement_period";
-  public final static String VELOCITY_MEASUREMENT_WINDOW = "velocity_measurement_window";
-  public final static String FORWARD_LIMIT_SWITCH = "forward_limit_switch";
-  public final static String REVERSE_LIMIT_SWITCH = "reverse_limit_switch";
-  public final static String FORWARD_SOFT_LIMIT = "forward_soft_limit";
-  public final static String REVERSE_SOFT_LIMIT = "reverse_soft_limit";
-  public final static String CURRENT_LIMIT = "current_limit";
-
-  // PIDTalonConfiguration
-  public final static String OUTPUT_VOLTAGE_MAX = "output_voltage_max";
-  public final static String FORWARD_OUTPUT_VOLTAGE_PEAK = "forward_output_voltage_peak";
-  public final static String REVERSE_OUTPUT_VOLTAGE_PEAK = "reverse_output_voltage_peak";
-  public final static String FORWARD_OUTPUT_VOLTAGE_NOMINAL = "forward_output_voltage_nominal";
-  public final static String REVERSE_OUTPUT_VOLTAGE_NOMINAL = "reverse_output_voltage_nominal";
-  public final static String ALLOWABLE_CLOSED_LOOP_ERROR = "allowable_closed_loop_error";
-  public final static String NOMINAL_CLOSED_LOOP_VOLTAGE = "nominal_closed_loop_voltage";
-  public final static String K_P = "P";
-  public final static String K_I = "I";
-  public final static String K_D = "D";
-  public final static String K_F = "F";
-  public final static String I_ZONE = "I_zone";
-
 
   // TalonConfiguration
   private String name = DEFAULT_NAME;
