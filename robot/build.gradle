@@ -20,8 +20,8 @@ dependencies {
     compile ctre()
     compile navx()
     compile project(':core')
-    compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
-    apt 'com.google.dagger:dagger-compiler:2.12'
+    compile libs.logback
+    apt libs.dagger_compiler
 }
 
 def robotManifest = {

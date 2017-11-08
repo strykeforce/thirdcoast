@@ -15,18 +15,18 @@ dependencies {
     compile wpilib()
     compile ctre()
     compile navx()
-    compile group: 'com.moandjiezana.toml', name: 'toml4j', version: '0.7.2'
-    compile group: 'com.squareup.moshi', name: 'moshi', version: '1.5.0'
-    compile group: 'org.nanohttpd', name: 'nanohttpd', version: '2.3.2-SNAPSHOT'
-    compile group: 'com.google.dagger', name: 'dagger', version: '2.12'
-    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
+    compile libs.toml4j
+    compile libs.moshi
+    compile libs.nanohttpd
+    compile libs.dagger
+    compile libs.slf4j
 
-    apt 'com.google.dagger:dagger-compiler:2.12'
+    apt libs.dagger_compiler
 
-    testCompile group: 'org.spockframework', name: 'spock-core', version: '1.1-groovy-2.4'
-    testRuntime group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
-    testRuntime group: 'net.bytebuddy', name: 'byte-buddy', version: '1.7.1'
-    testRuntime group: 'org.objenesis', name: 'objenesis', version: '2.6'
+    testCompile libs.spock
+    testRuntime libs.logback
+    testRuntime libs.bytebuddy
+    testRuntime libs.objenesis
 }
 
 javadoc {
