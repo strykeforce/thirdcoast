@@ -1,20 +1,52 @@
 package org.strykeforce.thirdcoast.swerve
 
-import com.electronwill.nightconfig.core.file.FileConfig
+import com.moandjiezana.toml.Toml
 import org.strykeforce.thirdcoast.talon.TalonProvisioner
 import spock.lang.Shared
 
 class SwerveDriveTest extends spock.lang.Specification {
 
+    static tomlString = '''
+    [[TALON]]
+    name = "drive"
+    mode = "Voltage"
+    setpointMax    = 12.0
+    currentLimit   = 50
+    [TALON.encoder]
+    device = "QuadEncoder"
+
+    [[TALON]]
+    name = "azimuth"
+    mode = "Position"
+    setpointMax     = 4095.0
+    brakeInNeutral = false
+    pGain =   1.0
+    iGain =   2.0
+    dGain =   3.0
+    fGain =   4.0
+    iZone = 0
+    forward_output_voltage_peak =  6.0
+    reverse_output_voltage_peak = -6.0
+    [TALON.encoder]
+    device  = "CtreMagEncoder_Relative"
+    
+    [[TALON]]
+    name = "speed"
+    mode = "Speed"
+    setpointMax = 1.0
+'''
+
+
     @Shared
     TalonProvisioner provisioner
 
     void setupSpec() {
-        URL url = this.getClass().getResource("/org/strykeforce/thirdcoast/talon/testdata/talons.toml")
-        FileConfig config = FileConfig.of(url.file)
-        config.load()
-        config.close()
-        provisioner = new TalonProvisioner(config.unmodifiable())
+        File temp = File.createTempFile("thirdcoast_", ".toml")
+        temp.delete()
+        temp.deleteOnExit()
+        def toml = new Toml().read(tomlString)
+        provisioner = new TalonProvisioner(temp)
+        provisioner.addConfigurations(toml)
     }
 
     def "calculates inverse kinematics"() {

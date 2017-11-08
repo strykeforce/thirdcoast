@@ -1,7 +1,6 @@
 package org.strykeforce.thirdcoast.swerve;
 
 import com.ctre.CANTalon;
-import com.electronwill.nightconfig.core.UnmodifiableConfig;
 import org.strykeforce.thirdcoast.talon.TalonConfiguration;
 import org.strykeforce.thirdcoast.talon.TalonProvisioner;
 
@@ -39,7 +38,6 @@ public class Wheel {
    * @param talonProvisioner the TalonProvisioner used to provision Talons
    * @param azimuth the azimuthTalon CANTalon
    * @param drive the driveTalon CANTalon
-   * @see org.strykeforce.thirdcoast.talon.TalonProvisioner#addConfigurations(UnmodifiableConfig)
    */
   public Wheel(TalonProvisioner talonProvisioner, CANTalon azimuth, CANTalon drive) {
     final String AZIMUTH_PARAMETERS = "azimuth";
@@ -66,8 +64,8 @@ public class Wheel {
    * This method calculates the optimal driveTalon settings and applies them.
    *
    * <p>The drive setpoint is scaled by the drive Talon {@code setpoint_max} parameter configured in
-   * {@link TalonConfiguration}. For instance, with an open-loop {@code setpoint_max = 12.0} volts, a
-   * drive setpoint of 1.0 would result in the drive Talon being set to 12.0.
+   * {@link TalonConfiguration}. For instance, with an open-loop {@code setpoint_max = 12.0} volts,
+   * a drive setpoint of 1.0 would result in the drive Talon being set to 12.0.
    *
    * @param azimuth -0.5 to 0.5 rotations, measured clockwise with zero being the wheel's zeroed
    * position

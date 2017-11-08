@@ -3,8 +3,8 @@ package org.strykeforce.thirdcoast.talon;
 import com.ctre.CANTalon;
 import com.ctre.CANTalon.TalonControlMode;
 import com.ctre.CANTalon.VelocityMeasurementPeriod;
-import com.electronwill.nightconfig.core.Config;
-import com.electronwill.nightconfig.core.UnmodifiableConfig;
+import com.moandjiezana.toml.Toml;
+import com.moandjiezana.toml.TomlWriter;
 import javax.inject.Inject;
 
 /**
@@ -83,110 +83,60 @@ public class TalonConfigurationBuilder {
   }
 
   /**
-   * Create a builder based on supplied config.
+   * Create a {@link TalonConfiguration} based on supplied config.
    *
    * @param config the configuration
+   * @return the TalonConfiguration
+   * @throws IllegalArgumentException if mode is missing from config
+   * @throws UnsupportedOperationException if mode not implemented yet
    */
-  TalonConfigurationBuilder(UnmodifiableConfig config) {
-    name = config.get(NAME);
-    if (name == null) {
-      throw new IllegalArgumentException("TALON configuration name parameter missing");
+  public static TalonConfiguration create(Toml config) {
+    TalonConfiguration talonConfiguration = null;
+    CANTalon.TalonControlMode mode = getMode(config);
+    switch (mode) {
+      case Voltage:
+        talonConfiguration = config.to(VoltageTalonConfiguration.class);
+        break;
+      case Position:
+        talonConfiguration = config.to(PositionTalonConfiguration.class);
+        break;
+      case Speed:
+        talonConfiguration = config.to(SpeedTalonConfiguration.class);
+        break;
+      case PercentVbus:
+      case Current:
+      case Follower:
+      case MotionProfile:
+      case MotionMagic:
+      case Disabled:
+        throw new UnsupportedOperationException(mode.name());
     }
-    String mode = config.get(MODE);
-    if (mode != null) {
-      this.mode = TalonControlMode.valueOf(mode);
+    return talonConfiguration;
+  }
+
+  static CANTalon.TalonControlMode getMode(Toml config) {
+    String mode = config.getString(MODE);
+    if (mode == null) {
+      throw new IllegalArgumentException("mode missing from configuration");
     }
-    Double setpointMax = config.get(SETPOINT_MAX);
+    Double setpointMax = config.getDouble("setpointMax");
     if (setpointMax == null) {
-      throw new IllegalArgumentException(
-          String.format("TALON %s missing for %s", SETPOINT_MAX, name));
+      throw new IllegalArgumentException("setpointMax missing from configuration");
     }
-    this.setpointMax = setpointMax;
-    encoder = new Encoder((String) config.get(FEEDBACK_DEVICE), config.get(ENCODER_REVERSED),
-        config.get(TICKS_PER_REVOLUTION));
-    brakeInNeutral = config.get(BRAKE_IN_NEUTRAL);
-    outputReversed = config.get(OUTPUT_REVERSED);
-    Integer period = config.get(VELOCITY_MEASUREMENT_PERIOD);
-    velocityMeasurementPeriod = period != null ? VelocityMeasurementPeriod.valueOf(period)
-        : VelocityMeasurementPeriod.Period_100Ms;
-    if (velocityMeasurementPeriod == null) {
-      throw new IllegalArgumentException(
-          "TALON " + VELOCITY_MEASUREMENT_PERIOD + " invalid: " + period);
-    }
-    velocityMeasurementWindow = config.get(VELOCITY_MEASUREMENT_WINDOW);
-    forwardLimitSwitch = new LimitSwitch(config.get(FORWARD_LIMIT_SWITCH));
-    reverseLimitSwitch = new LimitSwitch(config.get(REVERSE_LIMIT_SWITCH));
-    forwardSoftLimit = new SoftLimit(config.get(FORWARD_SOFT_LIMIT));
-    reverseSoftLimit = new SoftLimit(config.get(REVERSE_SOFT_LIMIT));
-    currentLimit = config.get(CURRENT_LIMIT);
-
-    // PIDTalonConfig
-    outputVoltageMax = config.get(OUTPUT_VOLTAGE_MAX);
-    forwardOutputVoltagePeak = config.get(FORWARD_OUTPUT_VOLTAGE_PEAK);
-    reverseOutputVoltagePeak = config.get(REVERSE_OUTPUT_VOLTAGE_PEAK);
-    forwardOutputVoltageNominal = config.get(FORWARD_OUTPUT_VOLTAGE_NOMINAL);
-    reverseOutputVoltageNominal = config.get(REVERSE_OUTPUT_VOLTAGE_NOMINAL);
-    allowableClosedLoopError = config.get(ALLOWABLE_CLOSED_LOOP_ERROR);
-    nominalClosedLoopVoltage = config.get(NOMINAL_CLOSED_LOOP_VOLTAGE);
-    // DisableNominalClosedLoopVoltage, SetNominalClosedLoopVoltage
-    pGain = config.get(K_P);
-    iGain = config.get(K_I);
-    dGain = config.get(K_D);
-    fGain = config.get(K_F);
-    iZone = config.get(I_ZONE);
+    return CANTalon.TalonControlMode.valueOf(mode);
   }
 
-  private static void addIfPresent(Config config, String path, Object value) {
-    if (value != null) {
-      config.add(path, value);
-    }
-  }
-
-  public UnmodifiableConfig getConfig() {
-    Config config = Config.inMemory();
-    config.add(NAME, name);
-    config.add(MODE, mode.name());
-    config.add(SETPOINT_MAX, setpointMax);
-    if (encoder != null) {
-      config.add(FEEDBACK_DEVICE, encoder.getFeedbackDevice().name());
-      config.add(ENCODER_REVERSED, encoder.isReversed());
-      if (encoder.isUnitScalingEnabled()) {
-        config.add(TICKS_PER_REVOLUTION, encoder.getTicksPerRevolution());
-      }
-    }
-    addIfPresent(config, BRAKE_IN_NEUTRAL, brakeInNeutral);
-    addIfPresent(config, OUTPUT_REVERSED, outputReversed);
-    if (velocityMeasurementPeriod != null) {
-      config.add(VELOCITY_MEASUREMENT_PERIOD, velocityMeasurementPeriod.name());
-    }
-    addIfPresent(config, VELOCITY_MEASUREMENT_WINDOW, velocityMeasurementWindow);
-    if (forwardLimitSwitch != null) {
-      config.add(FORWARD_LIMIT_SWITCH, forwardLimitSwitch.configString());
-    }
-    if (reverseLimitSwitch != null) {
-      config.add(REVERSE_LIMIT_SWITCH, reverseLimitSwitch.configString());
-    }
-    if (forwardSoftLimit != null && forwardSoftLimit.isEnabled()) {
-      config.add(FORWARD_SOFT_LIMIT, forwardSoftLimit.getValue());
-    }
-    if (reverseSoftLimit != null && reverseSoftLimit.isEnabled()) {
-      config.add(REVERSE_SOFT_LIMIT, reverseSoftLimit.getValue());
-    }
-    addIfPresent(config, CURRENT_LIMIT, currentLimit);
-    addIfPresent(config, OUTPUT_VOLTAGE_MAX, outputVoltageMax);
-    addIfPresent(config, FORWARD_OUTPUT_VOLTAGE_PEAK, forwardOutputVoltagePeak);
-    addIfPresent(config, REVERSE_OUTPUT_VOLTAGE_PEAK, reverseOutputVoltagePeak);
-    addIfPresent(config, FORWARD_OUTPUT_VOLTAGE_NOMINAL, forwardOutputVoltageNominal);
-    addIfPresent(config, REVERSE_OUTPUT_VOLTAGE_NOMINAL, reverseOutputVoltageNominal);
-    addIfPresent(config, ALLOWABLE_CLOSED_LOOP_ERROR, allowableClosedLoopError);
-    addIfPresent(config, NOMINAL_CLOSED_LOOP_VOLTAGE, nominalClosedLoopVoltage);
-    addIfPresent(config, K_P, pGain);
-    addIfPresent(config, K_I, iGain);
-    addIfPresent(config, K_D, dGain);
-    addIfPresent(config, K_F, fGain);
-    addIfPresent(config, I_ZONE, iZone);
-
-    return config.unmodifiable();
+  /**
+   * Get the {@code Toml} String representation for the {@link TalonConfiguration} that would be
+   * built by this builder.
+   *
+   * @return the Toml String.
+   */
+  public String getToml() {
+    TalonConfiguration talonConfiguration = build();
+    TomlWriter writer = new TomlWriter();
+    System.out.println("writer.write(talonConfiguration) = " + writer.write(talonConfiguration));
+    return writer.write(talonConfiguration);
   }
 
   /**
@@ -363,7 +313,7 @@ public class TalonConfigurationBuilder {
    * @return this builder.
    */
   public TalonConfigurationBuilder forwardLimitSwitch(boolean normallyOpen) {
-    forwardLimitSwitch = new LimitSwitch(normallyOpen ? "normallyOpen" : "normallyClosed");
+    forwardLimitSwitch = new LimitSwitch(true, normallyOpen);
     return this;
   }
 
@@ -374,7 +324,7 @@ public class TalonConfigurationBuilder {
    * @return this builder.
    */
   public TalonConfigurationBuilder reverseLimitSwitch(boolean normallyOpen) {
-    reverseLimitSwitch = new LimitSwitch(normallyOpen ? "normallyOpen" : "normallyClosed");
+    reverseLimitSwitch = new LimitSwitch(true, normallyOpen);
     return this;
   }
 

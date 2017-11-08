@@ -3,7 +3,6 @@ package org.strykeforce.thirdcoast.talon;
 import com.ctre.CANTalon;
 import com.ctre.CANTalon.TalonControlMode;
 import com.ctre.CANTalon.VelocityMeasurementPeriod;
-import com.electronwill.nightconfig.core.UnmodifiableConfig;
 
 class VoltageTalonConfiguration extends TalonConfiguration {
 

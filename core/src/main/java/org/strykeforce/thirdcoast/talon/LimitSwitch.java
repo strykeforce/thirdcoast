@@ -2,41 +2,18 @@ package org.strykeforce.thirdcoast.talon;
 
 final class LimitSwitch {
 
-  public final static LimitSwitch DEFAULT = new LimitSwitch(null);
+  public final static LimitSwitch DEFAULT = new LimitSwitch();
 
   private final boolean enabled;
   private final boolean normallyOpen;
 
-  LimitSwitch(String state) {
-    if (state == null) {
-      state = "disabled";
-    }
-    switch (state.toLowerCase()) {
-      case "normallyopen":
-        enabled = true;
-        normallyOpen = true;
-        break;
-      case "normallyclosed":
-        enabled = true;
-        normallyOpen = false;
-        break;
-      case "disabled":
-        enabled = false;
-        normallyOpen = false;
-        break;
-      default:
-        throw new IllegalStateException("limit switch configuration invalid: " + state);
-    }
+  public LimitSwitch(boolean enabled, boolean normallyOpen) {
+    this.enabled = enabled;
+    this.normallyOpen = normallyOpen;
   }
 
-  public String configString() {
-    if (enabled) {
-      if (normallyOpen) {
-        return "NormallyOpen";
-      }
-      return "NormallyClosed";
-    }
-    return "Disabled";
+  public LimitSwitch() {
+    this(false,false);
   }
 
   public boolean isEnabled() {

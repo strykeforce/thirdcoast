@@ -1,8 +1,7 @@
 package org.strykeforce.thirdcoast.telemetry.tct.talon;
 
 import com.ctre.CANTalon;
-import com.electronwill.nightconfig.core.Config;
-import com.electronwill.nightconfig.core.UnmodifiableConfig;
+import com.moandjiezana.toml.Toml;
 import java.util.List;
 import java.util.Optional;
 import javax.inject.Inject;
@@ -51,9 +50,9 @@ public class LoadConfigCommand extends AbstractCommand {
 
   @Override
   public void perform() {
-    UnmodifiableConfig configs = configFile.load();
+    Toml configs = configFile.load();
     talonProvisioner.addConfigurations(configs);
-    List<Config> configList = configs.get("TALON");
+    List<Toml> configList = configs.getTables("TALON");
     if (configList == null) {
       String message = "no talons available to load";
       logger.error(message);
@@ -63,12 +62,11 @@ public class LoadConfigCommand extends AbstractCommand {
     telemetryService.stop();
     telemetryService.clear();
     talonSet.all.clear();
-    for (Config config : configList) {
-      List<Integer> ids = config.get("deviceId"); // FIXME: NPE if missing
-      for (int i : ids) {
-        String name = (String) config.getOptional(TalonConfigurationBuilder.NAME)
-            .orElse(TalonProvisioner.DEFAULT_CONFIG);
-        CANTalon talon = talonFactory.createTalonWithConfiguration(i, name);
+    for (Toml config : configList) {
+      List<Long> ids = config.getList("deviceId"); // FIXME: NPE if missing, still?
+      for (long i : ids) {
+        String name = (String) config.getString(TalonConfigurationBuilder.NAME);
+        CANTalon talon = talonFactory.createTalonWithConfiguration((int) i, name);
         talonSet.all.add(talon);
         telemetryService.register(talon);
         logger.info("adding talon with id {} and configuration {}", i, name);

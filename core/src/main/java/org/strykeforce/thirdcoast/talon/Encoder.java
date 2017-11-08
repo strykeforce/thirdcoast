@@ -8,37 +8,35 @@ import org.slf4j.LoggerFactory;
 
 final class Encoder {
 
-  final static Encoder DEFAULT = new Encoder((String) null, null, null);
+  final static Encoder DEFAULT = new Encoder();
 
   final static Logger logger = LoggerFactory.getLogger(Encoder.class);
-  private final CANTalon.FeedbackDevice feedbackDevice;
+  private final CANTalon.FeedbackDevice device;
   private final boolean reversed;
   private final boolean unitScalingEnabled;
   private final int ticksPerRevolution;
 
-  Encoder(CANTalon.FeedbackDevice feedbackDevice, Boolean reversed, Integer ticksPerRevolution) {
-    this.feedbackDevice = feedbackDevice;
+  Encoder(CANTalon.FeedbackDevice device, Boolean reversed, Integer ticksPerRevolution) {
+    this.device = device;
     this.reversed = reversed != null ? reversed : false;
     unitScalingEnabled = ticksPerRevolution != null;
-    this.ticksPerRevolution = unitScalingEnabled ? ticksPerRevolution : -1;
-
+    this.ticksPerRevolution = unitScalingEnabled ? ticksPerRevolution : 0;
   }
 
-  Encoder(String feedbackDevice, Boolean isReversed, Integer ticksPerRevolution) {
-    this(CANTalon.FeedbackDevice.valueOf(feedbackDevice != null ? feedbackDevice : "QuadEncoder"),
-        isReversed, ticksPerRevolution);
+  Encoder(CANTalon.FeedbackDevice device) {
+    this(device, null, null);
   }
 
-  Encoder(CANTalon.FeedbackDevice feedbackDevice) {
-    this(feedbackDevice, null, null);
+  Encoder() {
+    this((CANTalon.FeedbackDevice) null, null, null);
   }
 
   Encoder(boolean reversed) {
-    this((String) null, reversed, null);
+    this((CANTalon.FeedbackDevice) null, reversed, null);
   }
 
   Encoder copyWithReversed(boolean reversed) {
-    return new Encoder(feedbackDevice, reversed, unitScalingEnabled ? ticksPerRevolution : null);
+    return new Encoder(device, reversed, unitScalingEnabled ? ticksPerRevolution : null);
   }
 
   Encoder copyWithEncoder(CANTalon.FeedbackDevice feedbackDevice) {
@@ -46,11 +44,11 @@ final class Encoder {
   }
 
   Encoder copyWithTicksPerRevolution(Integer ticksPerRevolution) {
-    return new Encoder(feedbackDevice, reversed, ticksPerRevolution);
+    return new Encoder(device, reversed, ticksPerRevolution);
   }
 
   public void configure(CANTalon talon) {
-    talon.setFeedbackDevice(feedbackDevice);
+    talon.setFeedbackDevice(getDevice());
     talon.reverseSensor(reversed);
     if (unitScalingEnabled) {
       talon.configEncoderCodesPerRev(ticksPerRevolution);
@@ -59,7 +57,7 @@ final class Encoder {
   }
 
   public void checkEncoder(CANTalon talon) {
-    FeedbackDeviceStatus status = talon.isSensorPresent(feedbackDevice);
+    FeedbackDeviceStatus status = talon.isSensorPresent(getDevice());
     if (status == null) {
       return; // unit testing
     }
@@ -78,8 +76,8 @@ final class Encoder {
     }
   }
 
-  public FeedbackDevice getFeedbackDevice() {
-    return feedbackDevice;
+  public FeedbackDevice getDevice() {
+    return device != null ? device : FeedbackDevice.QuadEncoder;
   }
 
   public boolean isReversed() {
@@ -97,7 +95,7 @@ final class Encoder {
   @Override
   public String toString() {
     return "Encoder{" +
-        "feedbackDevice=" + feedbackDevice +
+        "device=" + device +
         ", reversed=" + reversed +
         ", unitScalingEnabled=" + unitScalingEnabled +
         ", ticksPerRevolution=" + ticksPerRevolution +

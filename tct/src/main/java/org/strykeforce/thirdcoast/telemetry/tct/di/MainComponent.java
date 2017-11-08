@@ -11,8 +11,6 @@ import org.strykeforce.thirdcoast.telemetry.tct.Menu;
 @Component(modules = {
     TerminalModule.class,
     MenuModule.class,
-    TalonConfigModule.class,
-    FileConfigModule.class,
 })
 public interface MainComponent {
 

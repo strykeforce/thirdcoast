@@ -1,8 +1,8 @@
 package org.strykeforce.thirdcoast.robot;
 
-import com.electronwill.nightconfig.core.file.FileConfig;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.IterativeRobot;
+import java.io.File;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.swerve.SwerveDrive;
@@ -15,8 +15,7 @@ import org.strykeforce.thirdcoast.telemetry.TelemetryService;
 public class Robot extends IterativeRobot {
 
   final static Logger logger = LoggerFactory.getLogger(Robot.class);
-  private final static String CONFIG = "/home/lvuser/thirdcoast.toml";
-  private final static String DEFAULT_CONFIG = "/org/strykeforce/thirdcoast/defaults.toml";
+  final static File CONFIG_FILE = new File("/home/lvuser/thirdcoast.toml");
 
   private TelemetryService telemetryService;
   private SwerveDrive swerve;
@@ -101,11 +100,8 @@ public class Robot extends IterativeRobot {
 
   private RobotComponent getComponent() {
     RobotComponent component;
-    try (FileConfig toml = FileConfig.builder(CONFIG).defaultResource(DEFAULT_CONFIG).build()) {
-      logger.info("loading robot configuration from {}", CONFIG);
-      toml.load();
-      component = DaggerRobotComponent.builder().toml(toml.unmodifiable()).build();
-    }
+    logger.info("loading robot configuration from {}", CONFIG_FILE);
+    component = DaggerRobotComponent.builder().config(CONFIG_FILE).build();
     return component;
   }
 

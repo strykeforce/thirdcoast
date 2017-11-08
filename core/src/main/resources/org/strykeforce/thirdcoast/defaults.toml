@@ -5,27 +5,28 @@
 ###############################################################################
 
 [[TALON]]
-name = "drive"
-mode = "Voltage"
-setpoint_max    = 12.0
-feedback_device = "QuadEncoder"
-current_limit   = 50
+  name = "drive"
+  mode = "Voltage"
+  setpointMax    = 12.0
+  currentLimit   = 50
+  [TALON.encoder]
+    device = "QuadEncoder"
+    reversed = false
 
 [[TALON]]
-name = "azimuth"
-mode = "Position"
-setpoint_max     = 4095.0
-feedback_device  = "CtreMagEncoder_Relative"
-brake_in_neutral = false
-encoder_reversed = false
-output_reversed = false
-
-# NOTE: you must provide azimuth Talon closed-loop tuning parameters below
-P =   0.0
-I =   0.0
-D =   0.0
-F =   0.0
-I_zone = 0
-
-forward_output_voltage_peak =  6.0
-reverse_output_voltage_peak = -6.0
+  name = "azimuth"
+  mode = "Position"
+  setpointMax     = 4095.0
+  brakeInNeutral = false
+  outputReversed = false
+  forward_output_voltage_peak =  6.0
+  reverse_output_voltage_peak = -6.0
+  # NOTE: you must provide azimuth Talon closed-loop tuning parameters below
+  pGain =   0.0
+  iGain =   0.0
+  dGain =   0.0
+  fGain =   0.0
+  iZone =   0
+  [TALON.encoder]
+    device  = "CtreMagEncoder_Relative"
+    reversed = false

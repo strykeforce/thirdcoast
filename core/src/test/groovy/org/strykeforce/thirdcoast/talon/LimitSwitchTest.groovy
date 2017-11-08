@@ -1,12 +1,14 @@
 package org.strykeforce.thirdcoast.talon
 
+import com.moandjiezana.toml.Toml
+import com.moandjiezana.toml.TomlWriter
 import spock.lang.Specification
 
 class LimitSwitchTest extends Specification {
 
     def "switch config missing"() {
         when:
-        def ls = new LimitSwitch(null)
+        def ls = new LimitSwitch()
 
         then:
         !ls.enabled
@@ -14,7 +16,7 @@ class LimitSwitchTest extends Specification {
 
     def "Disabled limit switch"() {
         when:
-        def ls = new LimitSwitch("Disabled")
+        def ls = new LimitSwitch(false,false)
 
         then:
         !ls.enabled
@@ -22,7 +24,7 @@ class LimitSwitchTest extends Specification {
 
     def "normally-open limit switch"() {
         when:
-        def ls = new LimitSwitch("NormallyOpen")
+        def ls = new LimitSwitch(true, true)
 
 
         then:
@@ -32,19 +34,70 @@ class LimitSwitchTest extends Specification {
 
     def "normally-closed limit switch"() {
         when:
-        def ls = new LimitSwitch("NormallyClosed")
+        def ls = new LimitSwitch(true, false)
 
         then:
         ls.enabled
         !ls.normallyOpen
     }
 
-    def "misconfigured limit switch"() {
+    def "creates instance from full TOML"() {
+        def input = '''
+enabled = true
+normallyOpen = true
+'''
+        given:
+        def toml = new Toml().read(input)
         when:
-        new LimitSwitch("FOO")
+        def limitSwitch = toml.to(LimitSwitch.class)
 
         then:
-        thrown(IllegalStateException)
+        with(limitSwitch) {
+            enabled
+            normallyOpen
+        }
     }
 
- }
+    def "creates instance from partial TOML"() {
+        def input = '''
+enabled = false
+'''
+        given:
+        def toml = new Toml().read(input)
+        when:
+        def limitSwitch = toml.to(LimitSwitch.class)
+
+        then:
+        with(limitSwitch) {
+            !enabled
+            !normallyOpen
+        }
+    }
+
+    def "creates instance from no TOML"() {
+        given:
+        def toml = new Toml().read('')
+        when:
+        def limitSwitch = toml.to(LimitSwitch.class)
+
+        then:
+        with(limitSwitch) {
+            !enabled
+            !normallyOpen
+        }
+    }
+
+    def "serializes into TOML"() {
+        given:
+        def limitSwitch = new LimitSwitch(true,false)
+        def writer = new TomlWriter()
+
+        when:
+        def output = writer.write(limitSwitch)
+
+        then:
+        output == '''enabled = true
+normallyOpen = false
+'''
+    }
+}

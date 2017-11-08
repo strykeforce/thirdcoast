@@ -1,7 +1,7 @@
 package org.strykeforce.thirdcoast.robot;
 
-import com.electronwill.nightconfig.core.file.FileConfig;
 import edu.wpi.first.wpilibj.IterativeRobot;
+import javax.inject.Inject;
 import org.strykeforce.thirdcoast.swerve.Wheel;
 import org.strykeforce.thirdcoast.talon.TalonProvisioner;
 
@@ -46,13 +46,9 @@ public class WheelTestRobot extends IterativeRobot {
 
   @Override
   public void robotInit() {
-    FileConfig config = FileConfig.builder("/home/lvuser/thirdcoast.toml")
-        .defaultResource("/org/strykeforce/thirdcoast/defaults.toml")
-        .build();
-
-    RobotComponent component = DaggerRobotComponent.builder().toml(config).build();
+    RobotComponent component = DaggerRobotComponent.builder().config(Robot.CONFIG_FILE).build();
     controls = component.controls();
-    TalonProvisioner provisioner = new TalonProvisioner(config);
+    TalonProvisioner provisioner = component.talonProvisioner();
     wheel = new Wheel(provisioner, 0);
     wheel.setAzimuthZero(2281);
   }

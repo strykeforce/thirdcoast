@@ -3,7 +3,6 @@ package org.strykeforce.thirdcoast.talon;
 import com.ctre.CANTalon;
 import com.ctre.CANTalon.TalonControlMode;
 import com.ctre.CANTalon.VelocityMeasurementPeriod;
-import com.electronwill.nightconfig.core.UnmodifiableConfig;
 
 class SpeedTalonConfiguration extends PIDTalonConfiguration {
 
@@ -29,5 +28,10 @@ class SpeedTalonConfiguration extends PIDTalonConfiguration {
   public void configure(CANTalon talon) {
     super.configure(talon);
     talon.changeControlMode(TalonControlMode.Speed);
+  }
+
+  @Override
+  public String toString() {
+    return "SpeedTalonConfiguration{} " + super.toString();
   }
 }

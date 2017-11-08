@@ -11,8 +11,8 @@ import java.util.function.DoubleSupplier
 
 class SubscriptionTest extends Specification {
     def "parse request JSON"() {
-    given:
-    def json = """
+        given:
+        def json = """
 {
     "type": "start",
     "subscription": [
@@ -70,7 +70,7 @@ class SubscriptionTest extends Specification {
         given:
         def json = """
 {
-    "type": "start",
+    "device": "start",
     "subscription": [
         {
             "itemId": 0,
@@ -117,7 +117,7 @@ class SubscriptionTest extends Specification {
         given:
         def json = """
 {
-    "type": "start",
+    "device": "start",
     "subscription": [
         {
             "itemId": 0,
@@ -133,11 +133,11 @@ class SubscriptionTest extends Specification {
         def inventory = Stub(Inventory)
         def item = Stub(Item)
         item.measurementFor(_) >> new DoubleSupplier() {
-                    @Override
-                    double getAsDouble() {
-                        return 1.23
-                    }
-                }
+            @Override
+            double getAsDouble() {
+                return 1.23
+            }
+        }
         item.description() >>> ["Test 1", "Test 2"]
         inventory.itemForId(_) >>> item
         def subscription = new Subscription(inventory, "localhost", json)

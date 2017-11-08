@@ -15,7 +15,7 @@ dependencies {
     compile wpilib()
     compile ctre()
     compile navx()
-    compile group: 'com.github.TheElectronWill.Night-Config', name: 'toml', version: '3.0.2'
+    compile group: 'com.moandjiezana.toml', name: 'toml4j', version: '0.7.2'
     compile group: 'com.squareup.moshi', name: 'moshi', version: '1.5.0'
     compile group: 'org.nanohttpd', name: 'nanohttpd', version: '2.3.2-SNAPSHOT'
     compile group: 'com.google.dagger', name: 'dagger', version: '2.12'

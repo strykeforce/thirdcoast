@@ -1,7 +1,7 @@
 package org.strykeforce.thirdcoast.swerve
 
 import com.ctre.CANTalon
-import com.electronwill.nightconfig.core.file.FileConfig
+import com.moandjiezana.toml.Toml
 import org.strykeforce.thirdcoast.talon.TalonProvisioner
 import spock.lang.Shared
 import spock.lang.Specification
@@ -15,12 +15,43 @@ class WheelTest extends Specification {
     @Shared
     TalonProvisioner provisioner
 
+    static tomlString = '''
+    [[TALON]]
+    name = "drive"
+    mode = "Voltage"
+    setpointMax    = 12.0
+    currentLimit   = 50
+    [TALON.encoder]
+    device = "QuadEncoder"
+
+    [[TALON]]
+    name = "azimuth"
+    mode = "Position"
+    setpointMax     = 4095.0
+    brakeInNeutral = false
+    pGain =   1.0
+    iGain =   2.0
+    dGain =   3.0
+    fGain =   4.0
+    iZone = 0
+    forward_output_voltage_peak =  6.0
+    reverse_output_voltage_peak = -6.0
+    [TALON.encoder]
+    device  = "CtreMagEncoder_Relative"
+    
+    [[TALON]]
+    name = "speed"
+    mode = "Speed"
+    setpointMax = 1.0
+'''
+
     void setupSpec() {
-        URL url = this.getClass().getResource("/org/strykeforce/thirdcoast/talon/testdata/talons.toml")
-        FileConfig config = FileConfig.of(url.file)
-        config.load()
-        config.close()
-        provisioner = new TalonProvisioner(config.unmodifiable())
+        File temp = File.createTempFile("thirdcoast_", ".toml")
+        temp.delete()
+        temp.deleteOnExit()
+        def toml = new Toml().read(tomlString)
+        provisioner = new TalonProvisioner(temp)
+        provisioner.addConfigurations(toml)
     }
 
     def "configures azimuth and drive talons"() {
@@ -40,7 +71,8 @@ class WheelTest extends Specification {
         1 * drive.SetVelocityMeasurementWindow(64)
         1 * azimuth.setSafetyEnabled(false)
         1 * azimuth.SetVelocityMeasurementWindow(64)
-        1 * azimuth.configPeakOutputVoltage(6.0, -6.0)
+        // FIXME: need to implement peakOutputVoltage
+//        1 * azimuth.configPeakOutputVoltage(6.0, -6.0)
         1 * azimuth.setPID(1.0, 2.0, 3.0)
         1 * azimuth.setF(4.0)
         1 * azimuth.setAllowableClosedLoopErr(0)

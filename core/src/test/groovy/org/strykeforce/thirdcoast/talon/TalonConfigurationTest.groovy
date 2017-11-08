@@ -1,61 +1,47 @@
 package org.strykeforce.thirdcoast.talon
 
 import com.ctre.CANTalon
-import com.electronwill.nightconfig.core.Config
-import com.electronwill.nightconfig.core.file.FileConfig
+import com.moandjiezana.toml.Toml
 import spock.lang.Shared
 import spock.lang.Specification
+
+import static com.ctre.CANTalon.FeedbackDevice.QuadEncoder
+import static com.ctre.CANTalon.TalonControlMode.Voltage
+import static com.ctre.CANTalon.VelocityMeasurementPeriod.Period_100Ms
+import static com.ctre.CANTalon.VelocityMeasurementPeriod.Period_1Ms
+import static com.ctre.CANTalon.VelocityMeasurementPeriod.Period_5Ms
 
 class TalonConfigurationTest extends Specification {
 
     def talon = Mock(CANTalon)
-    @Shared TalonProvisioner provisioner
+    def tcb = new TalonConfigurationBuilder()
 
-    void setupSpec() {
-        URL url = this.getClass().getResource("testdata/talons.toml")
-        FileConfig config = FileConfig.of(url.file)
-        config.load()
-        config.close()
-        provisioner = new TalonProvisioner(config.unmodifiable())
-    }
-
-     def "reads talon parameters"() {
-        when:
-        def t = provisioner.configurationFor("test")
-
-        then:
-        t.name == "test"
-        t.encoder.feedbackDevice == CANTalon.FeedbackDevice.QuadEncoder;
-        t.encoder.reversed
-        t.encoder.unitScalingEnabled
-        t.encoder.ticksPerRevolution == 360
-        t.brakeInNeutral
-        t.forwardLimitSwitch.enabled
-        t.forwardLimitSwitch.normallyOpen
-        !t.reverseLimitSwitch.enabled
-        t.forwardSoftLimit.enabled
-        t.forwardSoftLimit.value == 10000
-        t.reverseSoftLimit.enabled
-        t.reverseSoftLimit.value == 12000
-        t.outputReversed
-        t.velocityMeasurementPeriod == CANTalon.VelocityMeasurementPeriod.Period_5Ms
-        t.velocityMeasurementWindow == 16
-        t.currentLimit == 50
-    }
 
     def "configures voltage mode talon"() {
         when:
-        def t = provisioner.configurationFor("test")
-        t.configure(talon)
+        def tc = tcb.name("test")
+                .mode(Voltage)
+                .setpointMax(12)
+                .encoder(QuadEncoder, true, 360)
+                .brakeInNeutral(true)
+                .forwardLimitSwitch(true)
+                .forwardSoftLimit(10000)
+                .reverseSoftLimit(12000)
+                .outputReversed(true)
+                .velocityMeasurementPeriod(Period_5Ms)
+                .velocityMeasurementWindow(16)
+                .currentLimit(50)
+                .build()
+        tc.configure(talon)
 
         then:
         with(talon) {
-            1 * changeControlMode(CANTalon.TalonControlMode.Voltage)
-            1 * setFeedbackDevice(CANTalon.FeedbackDevice.QuadEncoder)
+            1 * changeControlMode(Voltage)
+            1 * setFeedbackDevice(QuadEncoder)
             1 * enableBrakeMode(true)
             1 * reverseSensor(true)
             1 * reverseOutput(true)
-            1 * SetVelocityMeasurementPeriod(CANTalon.VelocityMeasurementPeriod.Period_5Ms)
+            1 * SetVelocityMeasurementPeriod(Period_5Ms)
             1 * SetVelocityMeasurementWindow(16)
             1 * enableLimitSwitch(true, false)
             1 * ConfigFwdLimitSwitchNormallyOpen(true)
@@ -71,15 +57,15 @@ class TalonConfigurationTest extends Specification {
             1 * setProfile(0)
             1 * talon.setExpiration(0.1)
             1 * talon.configEncoderCodesPerRev(360)
-            1 * talon.isSensorPresent(CANTalon.FeedbackDevice.QuadEncoder)
+            1 * talon.isSensorPresent(QuadEncoder)
             0 * talon._
         }
     }
 
-    def "no current limit set"() {
+    def "no current limit set for all defaults"() {
         when:
-        def t = provisioner.configurationFor("all_defaults")
-        t.configure(talon)
+        def tc = tcb.build()
+        tc.configure(talon)
 
         then:
         1 * talon.EnableCurrentLimit(false)
@@ -88,8 +74,8 @@ class TalonConfigurationTest extends Specification {
 
     def "brake in neutral is default"() {
         when:
-        def t = provisioner.configurationFor("all_defaults")
-        t.configure(talon)
+        def tc = tcb.build()
+        tc.configure(talon)
 
         then:
         1 * talon.enableBrakeMode(true)
@@ -97,8 +83,8 @@ class TalonConfigurationTest extends Specification {
 
     def "don't brake in neutral set"() {
         when:
-        def t = provisioner.configurationFor("no_brake_in_neutral")
-        t.configure(talon)
+        def tc = tcb.brakeInNeutral(false).build()
+        tc.configure(talon)
 
         then:
         1 * talon.enableBrakeMode(false)
@@ -106,8 +92,8 @@ class TalonConfigurationTest extends Specification {
 
     def "reverse output is default"() {
         when:
-        def t = provisioner.configurationFor("all_defaults")
-        t.configure(talon)
+        def tc = tcb.build()
+        tc.configure(talon)
 
         then:
         1 * talon.reverseOutput(false)
@@ -115,68 +101,27 @@ class TalonConfigurationTest extends Specification {
 
     def "reverse output set"() {
         when:
-        def t = provisioner.configurationFor("reverse_output")
-        t.configure(talon)
+        def tc = tcb.outputReversed(true).build()
+        tc.configure(talon)
 
         then:
-        t.outputReversed
+        tc.outputReversed
         1 * talon.reverseOutput(true)
-    }
-
-    def "handles missing name"() {
-        when:
-        URL url = this.getClass().getResource("testdata/no_name.toml")
-        FileConfig config = FileConfig.of(url.file)
-        config.load()
-        config.close()
-        def provisioner = new TalonProvisioner(config.unmodifiable())
-
-        then:
-        IllegalArgumentException e = thrown()
-        e.message == "TALON configuration name parameter missing"
-    }
-
-    def "handles missing setpoint_max"() {
-        when:
-        URL url = this.getClass().getResource("testdata/no_setpoint_max.toml")
-        FileConfig config = FileConfig.of(url.file)
-        config.load()
-        config.close()
-        def provisioner = new TalonProvisioner(config.unmodifiable())
-
-        then:
-        IllegalArgumentException e = thrown()
-        e.message == "TALON setpoint_max missing for missing_required_setpoint_max"
     }
 
     def "sets defaults"() {
         when:
-        def t = provisioner.configurationFor("all_defaults")
-        t.configure(talon)
+        def tc = tcb.build()
+        tc.configure(talon)
 
         then:
-        t.class == VoltageTalonConfiguration
-        t.name == "all_defaults"
-        t.encoder.feedbackDevice == CANTalon.FeedbackDevice.QuadEncoder;
-        !t.encoder.unitScalingEnabled
-        !t.encoder.reversed
-        t.brakeInNeutral == null
-        !t.forwardLimitSwitch.enabled
-        !t.reverseLimitSwitch.enabled
-        !t.forwardSoftLimit.enabled
-        !t.reverseSoftLimit.enabled
-        !t.outputReversed
-        t.velocityMeasurementPeriod == CANTalon.VelocityMeasurementPeriod.Period_100Ms
-        t.velocityMeasurementWindow == null
-        t.currentLimit == null
-
         with(talon) {
-            1 * changeControlMode(CANTalon.TalonControlMode.Voltage)
-            1 * setFeedbackDevice(CANTalon.FeedbackDevice.QuadEncoder)
+            1 * changeControlMode(Voltage)
+            1 * setFeedbackDevice(QuadEncoder)
             1 * enableBrakeMode(true)
             1 * reverseSensor(false)
             1 * reverseOutput(false)
-            1 * SetVelocityMeasurementPeriod(CANTalon.VelocityMeasurementPeriod.Period_100Ms)
+            1 * SetVelocityMeasurementPeriod(Period_100Ms)
             1 * SetVelocityMeasurementWindow(64)
             1 * enableLimitSwitch(false, false)
             1 * enableForwardSoftLimit(false)
@@ -185,49 +130,9 @@ class TalonConfigurationTest extends Specification {
             1 * setSafetyEnabled(false)
             1 * setProfile(0)
             1 * talon.setExpiration(0.1)
-            1 * talon.isSensorPresent(CANTalon.FeedbackDevice.QuadEncoder)
+            1 * talon.isSensorPresent(QuadEncoder)
             0 * talon._
         }
 
-    }
-
-    def "handles file when name is emoji"() {
-        when:
-        def t = provisioner.configurationFor("😀🕹")
-
-        then:
-        t.name == "😀🕹"
-        t.encoder.feedbackDevice == CANTalon.FeedbackDevice.QuadEncoder;
-    }
-
-    def "handles truncate_velocity_measurement_window 100"() {
-        when:
-        def t = provisioner.configurationFor("truncate_velocity_measurement_window_100")
-
-        then:
-        t.name == "truncate_velocity_measurement_window_100"
-        t.velocityMeasurementWindow == 64
-    }
-
-    def "handles truncate_velocity_measurement_window 3"() {
-        when:
-        def t = provisioner.configurationFor("truncate_velocity_measurement_window_3")
-
-        then:
-        t.name == "truncate_velocity_measurement_window_3"
-        t.velocityMeasurementWindow == 2
-    }
-
-    def "non-allowed velocity measurement period"() {
-        when:
-        URL url = this.getClass().getResource("testdata/bad_velocity_measurement_period.toml")
-        FileConfig config = FileConfig.of(url.file)
-        config.load()
-        config.close()
-        def provisioner = new TalonProvisioner(config.unmodifiable())
-
-        then:
-        IllegalArgumentException e = thrown()
-        e.message == "TALON velocity_measurement_period invalid: 51"
     }
 }

@@ -1,17 +1,50 @@
 package org.strykeforce.thirdcoast.talon
 
-import com.ctre.CANTalon
-import com.electronwill.nightconfig.core.file.FileConfig
+import com.moandjiezana.toml.Toml
+import spock.lang.PendingFeature
 import spock.lang.Specification
+
+import static com.ctre.CANTalon.FeedbackDevice.*
+import static com.ctre.CANTalon.TalonControlMode.*
+import static com.ctre.CANTalon.VelocityMeasurementPeriod.Period_25Ms
+import static com.ctre.CANTalon.VelocityMeasurementPeriod.Period_5Ms
 
 class TalonConfigurationBuilderTest extends Specification {
 
-    final static CANTalon.TalonControlMode SPEED = CANTalon.TalonControlMode.Speed
-    final static CANTalon.TalonControlMode POSITION = CANTalon.TalonControlMode.Position
-
     TalonConfigurationBuilder tcb = new TalonConfigurationBuilder()
 
-    def "builds Voltage with defaults"() {
+    def "creates VoltageTalonConfiguration from TOML config"() {
+        def input = '''
+name = "foo"
+mode = "Voltage"
+setpointMax = 12.0
+'''
+        when:
+        def vtc = TalonConfigurationBuilder.create(new Toml().read(input))
+
+        then:
+        vtc instanceof VoltageTalonConfiguration
+        vtc.name == 'foo'
+        vtc.setpointMax == 12.0
+    }
+
+    def "creates SpeedTalonConfiguration from TOML config"() {
+        def input = '''
+name = "bar"
+mode = "Speed"
+setpointMax = 120.0
+pGain = 1.2
+'''
+        when:
+        def stc = (SpeedTalonConfiguration) TalonConfigurationBuilder.create(new Toml().read(input))
+
+        then:
+        stc.name == 'bar'
+        stc.setpointMax == 120.0
+        stc.pGain == 1.2
+    }
+
+    def "builds VoltageTalonConfiguration with defaults"() {
         when:
         def tc = tcb.build()
 
@@ -20,20 +53,66 @@ class TalonConfigurationBuilderTest extends Specification {
         tc.name == TalonConfigurationBuilder.DEFAULT_NAME
         tc.setpointMax == 12.0
         tc.currentLimit == null
-        tc.encoder == Encoder.DEFAULT
+        tc.encoder == null
         tc.brakeInNeutral == null
         tc.outputReversed == null
         tc.velocityMeasurementPeriod == null
         tc.velocityMeasurementWindow == null
-        tc.forwardLimitSwitch == LimitSwitch.DEFAULT
-        tc.reverseLimitSwitch == LimitSwitch.DEFAULT
-        tc.forwardSoftLimit == SoftLimit.DEFAULT
-        tc.reverseSoftLimit == SoftLimit.DEFAULT
+        tc.forwardLimitSwitch == null
+        tc.reverseLimitSwitch == null
+        tc.forwardSoftLimit == null
+        tc.reverseSoftLimit == null
+    }
+
+    def "reads talon parameters"() {
+        when:
+        def tc = tcb.name("test")
+                .mode(Voltage)
+                .setpointMax(12)
+                .encoder(QuadEncoder, true, 360)
+                .brakeInNeutral(true)
+                .forwardLimitSwitch(true)
+                .forwardSoftLimit(10000)
+                .reverseSoftLimit(12000)
+                .outputReversed(true)
+                .velocityMeasurementPeriod(Period_5Ms)
+                .velocityMeasurementWindow(16)
+                .currentLimit(50)
+                .build()
+
+        then:
+        tc.name == "test"
+        tc.encoder.device == QuadEncoder;
+        tc.encoder.reversed
+        tc.encoder.unitScalingEnabled
+        tc.encoder.ticksPerRevolution == 360
+        tc.brakeInNeutral
+        tc.forwardLimitSwitch.enabled
+        tc.forwardLimitSwitch.normallyOpen
+        tc.forwardSoftLimit.enabled
+        tc.forwardSoftLimit.position == 10000
+        tc.reverseSoftLimit.enabled
+        tc.reverseSoftLimit.position == 12000
+        tc.outputReversed
+        tc.velocityMeasurementPeriod == Period_5Ms
+        tc.velocityMeasurementWindow == 16
+        tc.currentLimit == 50
+    }
+
+
+    def "creates TOML for SpeedTalonConfiguration"() {
+        when:
+        def toml = new Toml().read(tcb.mode(Speed).P(27.67).getToml())
+
+        then:
+        toml.getString("name") == TalonConfigurationBuilder.DEFAULT_NAME
+        toml.getDouble("setpointMax") == 12.0
+        toml.getDouble("pGain") == 27.67
     }
 
     def "builds Position with defaults"() {
         when:
-        def tc = tcb.mode(POSITION).build()
+        def tc = tcb.mode(Position).build()
 
         then:
         tc instanceof PositionTalonConfiguration
@@ -41,7 +120,7 @@ class TalonConfigurationBuilderTest extends Specification {
 
     def "builds Speed with defaults"() {
         when:
-        def tc = tcb.mode(SPEED).build()
+        def tc = tcb.mode(Speed).build()
 
         then:
         tc instanceof SpeedTalonConfiguration
@@ -65,10 +144,10 @@ class TalonConfigurationBuilderTest extends Specification {
 
     def "configures encoder"() {
         when:
-        def tc = tcb.encoder(CANTalon.FeedbackDevice.EncRising, true, 2767).build()
+        def tc = tcb.encoder(EncRising, true, 2767).build()
 
         then:
-        tc.encoder.feedbackDevice == CANTalon.FeedbackDevice.EncRising
+        tc.encoder.device == EncRising
         tc.encoder.reversed
         tc.encoder.ticksPerRevolution == 2767
     }
@@ -78,7 +157,7 @@ class TalonConfigurationBuilderTest extends Specification {
         def tc = tcb.encoderReversed(true).build()
 
         then:
-        tc.encoder.feedbackDevice == CANTalon.FeedbackDevice.QuadEncoder
+        tc.encoder.device == QuadEncoder
         tc.encoder.reversed
         !tc.encoder.unitScalingEnabled
     }
@@ -93,10 +172,10 @@ class TalonConfigurationBuilderTest extends Specification {
 
     def "configure velocity measurement period"() {
         when:
-        def tc = tcb.velocityMeasurementPeriod(CANTalon.VelocityMeasurementPeriod.Period_25Ms).build()
+        def tc = tcb.velocityMeasurementPeriod(Period_25Ms).build()
 
         then:
-        tc.velocityMeasurementPeriod == CANTalon.VelocityMeasurementPeriod.Period_25Ms
+        tc.velocityMeasurementPeriod == Period_25Ms
     }
 
     def "configure velocity measurement window"() {
@@ -131,7 +210,7 @@ class TalonConfigurationBuilderTest extends Specification {
 
         then:
         tc.forwardSoftLimit.enabled
-        tc.forwardSoftLimit.value == 27.67
+        tc.forwardSoftLimit.position == 27.67
     }
 
     def "configure reverse soft limit"() {
@@ -140,7 +219,7 @@ class TalonConfigurationBuilderTest extends Specification {
 
         then:
         tc.reverseSoftLimit.enabled
-        tc.reverseSoftLimit.value == 27.67
+        tc.reverseSoftLimit.position == 27.67
     }
 
     def "configure current limit"() {
@@ -154,7 +233,7 @@ class TalonConfigurationBuilderTest extends Specification {
     // PIDTalonConfig
     def "configure max output voltage limit"() {
         when:
-        PIDTalonConfiguration tc = tcb.mode(SPEED).outputVoltageMax(27.67).build()
+        PIDTalonConfiguration tc = tcb.mode(Speed).outputVoltageMax(27.67).build()
 
         then:
         tc.outputVoltageMax == 27.67
@@ -162,7 +241,7 @@ class TalonConfigurationBuilderTest extends Specification {
 
     def "configure peak output voltage limit"() {
         when:
-        PIDTalonConfiguration tc = tcb.mode(SPEED).outputVoltagePeak(2.7, 6.7).build()
+        PIDTalonConfiguration tc = tcb.mode(Speed).outputVoltagePeak(2.7, 6.7).build()
 
         then:
         tc.forwardOutputVoltagePeak == 2.7
@@ -171,7 +250,7 @@ class TalonConfigurationBuilderTest extends Specification {
 
     def "configure nominal output voltage limit"() {
         when:
-        PIDTalonConfiguration tc = tcb.mode(SPEED).outputVoltageNominal(2.7, 6.7).build()
+        PIDTalonConfiguration tc = tcb.mode(Speed).outputVoltageNominal(2.7, 6.7).build()
 
         then:
         tc.forwardOutputVoltageNominal == 2.7
@@ -180,7 +259,7 @@ class TalonConfigurationBuilderTest extends Specification {
 
     def "configure allowable closed loop error"() {
         when:
-        PIDTalonConfiguration tc = tcb.mode(SPEED).allowableClosedLoopError(2767).build()
+        PIDTalonConfiguration tc = tcb.mode(Speed).allowableClosedLoopError(2767).build()
 
         then:
         tc.allowableClosedLoopError == 2767
@@ -188,7 +267,7 @@ class TalonConfigurationBuilderTest extends Specification {
 
     def "configure nominal closed-loop voltage"() {
         when:
-        PIDTalonConfiguration tc = tcb.mode(SPEED).nominalClosedLoopVoltage(27.67).build()
+        PIDTalonConfiguration tc = tcb.mode(Speed).nominalClosedLoopVoltage(27.67).build()
 
         then:
         tc.nominalClosedLoopVoltage == 27.67
@@ -196,7 +275,7 @@ class TalonConfigurationBuilderTest extends Specification {
 
     def "configure P"() {
         when:
-        PIDTalonConfiguration tc = tcb.mode(SPEED).P(27.67).build()
+        PIDTalonConfiguration tc = tcb.mode(Speed).P(27.67).build()
 
         then:
         tc.pGain == 27.67
@@ -204,7 +283,7 @@ class TalonConfigurationBuilderTest extends Specification {
 
     def "configure I"() {
         when:
-        PIDTalonConfiguration tc = tcb.mode(SPEED).I(27.67).build()
+        PIDTalonConfiguration tc = tcb.mode(Speed).I(27.67).build()
 
         then:
         tc.iGain == 27.67
@@ -212,7 +291,7 @@ class TalonConfigurationBuilderTest extends Specification {
 
     def "configure D"() {
         when:
-        PIDTalonConfiguration tc = tcb.mode(SPEED).D(27.67).build()
+        PIDTalonConfiguration tc = tcb.mode(Speed).D(27.67).build()
 
         then:
         tc.dGain == 27.67
@@ -220,7 +299,7 @@ class TalonConfigurationBuilderTest extends Specification {
 
     def "configure F"() {
         when:
-        PIDTalonConfiguration tc = tcb.mode(SPEED).F(27.67).build()
+        PIDTalonConfiguration tc = tcb.mode(Speed).F(27.67).build()
 
         then:
         tc.fGain == 27.67
@@ -228,35 +307,36 @@ class TalonConfigurationBuilderTest extends Specification {
 
     def "configure I-zone"() {
         when:
-        PIDTalonConfiguration tc = tcb.mode(SPEED).iZone(2767).build()
+        PIDTalonConfiguration tc = tcb.mode(Speed).iZone(2767).build()
 
         then:
         tc.iZone == 2767
     }
 
-    def "creates a config"() {
+    def "checks config for proper operating mode"() {
+        given:
+        def toml = new Toml().read("mode = \"Disabled\"\nsetpointMax = 0.0")
+
+        expect:
+        TalonConfigurationBuilder.getMode(toml) == Disabled
+    }
+
+    def "checks config for bad mode"() {
+        given:
+        def toml = new Toml().read(input)
+
         when:
-        def config = tcb.name("SF")
-                .mode(CANTalon.TalonControlMode.Position)
-                .setpointMax(27.67)
-                .encoder(CANTalon.FeedbackDevice.CtreMagEncoder_Absolute, false, null)
-                .brakeInNeutral(false)
-                .forwardLimitSwitch(false)
-                .forwardSoftLimit(null)
-                .reverseSoftLimit(0)
-                .currentLimit(50)
-                .config
+        TalonConfigurationBuilder.getMode(toml)
 
         then:
-        config.get(TalonConfigurationBuilder.NAME) == "SF"
-        config.get(TalonConfigurationBuilder.MODE) == CANTalon.TalonControlMode.Position.name()
-        config.get(TalonConfigurationBuilder.SETPOINT_MAX) == 27.67
-        config.get(TalonConfigurationBuilder.BRAKE_IN_NEUTRAL) == false
-        config.get(TalonConfigurationBuilder.FORWARD_LIMIT_SWITCH) == "NormallyClosed"
-        !config.contains(TalonConfigurationBuilder.REVERSE_LIMIT_SWITCH)
-        !config.contains(TalonConfigurationBuilder.FORWARD_SOFT_LIMIT)
-        config.get(TalonConfigurationBuilder.REVERSE_SOFT_LIMIT) == 0.0
-        config.get(TalonConfigurationBuilder.CURRENT_LIMIT) == 50
+        IllegalArgumentException e = thrown()
+        e.message == message
+
+        where:
+        input                                 | message
+        ''                                    | 'mode missing from configuration'
+        "mode = \"Bogus\"\nsetpointMax = 0.0" | 'No enum constant com.ctre.CANTalon.TalonControlMode.Bogus'
+        'mode = "Voltage"'                    | 'setpointMax missing from configuration'
     }
 }
 

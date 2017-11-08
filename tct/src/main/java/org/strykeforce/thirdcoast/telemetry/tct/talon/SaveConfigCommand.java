@@ -1,9 +1,6 @@
 package org.strykeforce.thirdcoast.telemetry.tct.talon;
 
 import com.ctre.CANTalon;
-import com.electronwill.nightconfig.core.Config;
-import com.electronwill.nightconfig.core.UnmodifiableConfig;
-import com.electronwill.nightconfig.core.file.FileConfig;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -31,11 +28,11 @@ public class SaveConfigCommand extends AbstractTalonConfigCommand {
 
   @Override
   public void perform() {
-    Config config = Config.copy(talonSet.talonConfigurationBuilder().getConfig());
-    config.add("deviceId", selectedTalonIds());
-    String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date());
-    config.set(TalonConfigurationBuilder.NAME, timeStamp);
-    configFile.save(config);
+//    Config config = Config.copy(talonSet.talonConfigurationBuilder().getConfig());
+//    config.add("deviceId", selectedTalonIds());
+//    String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date());
+//    config.set(TalonConfigurationBuilder.NAME, timeStamp);
+//    configFile.save(config);
   }
 
   private List<Integer> selectedTalonIds() {

@@ -1,12 +1,13 @@
 package org.strykeforce.thirdcoast.robot;
 
-import com.electronwill.nightconfig.core.UnmodifiableConfig;
 import dagger.BindsInstance;
 import dagger.Component;
+import java.io.File;
 import javax.inject.Singleton;
 import org.strykeforce.thirdcoast.swerve.GyroModule;
 import org.strykeforce.thirdcoast.swerve.SwerveDrive;
 import org.strykeforce.thirdcoast.swerve.WheelModule;
+import org.strykeforce.thirdcoast.talon.TalonProvisioner;
 import org.strykeforce.thirdcoast.telemetry.TelemetryService;
 
 /**
@@ -25,11 +26,13 @@ interface RobotComponent {
 
   TelemetryService telemetryService();
 
+  TalonProvisioner talonProvisioner();
+
   @Component.Builder
   interface Builder {
 
     @BindsInstance
-    Builder toml(UnmodifiableConfig config);
+    Builder config(File config);
 
     RobotComponent build();
   }

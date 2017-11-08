@@ -2,7 +2,6 @@ package org.strykeforce.thirdcoast.talon;
 
 import com.ctre.CANTalon;
 import com.ctre.CANTalon.VelocityMeasurementPeriod;
-import com.electronwill.nightconfig.core.UnmodifiableConfig;
 
 class PIDTalonConfiguration extends TalonConfiguration {
 

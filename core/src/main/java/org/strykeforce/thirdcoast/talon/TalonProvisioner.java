@@ -1,11 +1,11 @@
 package org.strykeforce.thirdcoast.talon;
 
-import com.ctre.CANTalon;
-import com.ctre.CANTalon.TalonControlMode;
-import com.electronwill.nightconfig.core.Config;
-import com.electronwill.nightconfig.core.InMemoryFormat;
-import com.electronwill.nightconfig.core.UnmodifiableConfig;
-import java.util.Arrays;
+import com.moandjiezana.toml.Toml;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,8 +16,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A service for provisioning Talons. This class will read CANTalon configurations located in TOML
- * configuration objects registered using the {@link #addConfigurations(UnmodifiableConfig)} class
- * method.
+ * configuration objects registered using the {@link #addConfigurations(Toml)} class method.
  *
  * <p>Multiple configurations can be registered by calling the {@code register} method repeatedly.
  *
@@ -26,20 +25,10 @@ import org.slf4j.LoggerFactory;
 @Singleton
 public class TalonProvisioner {
 
-  public final static UnmodifiableConfig DEFAULT; // FIXME: = TalonConfigBuilder.DEFAULT
   public final static String TALON_TABLE = "TALON";
-  public final static String DEFAULT_CONFIG = "voltage.default";
-  final static Logger logger = LoggerFactory.getLogger(TalonProvisioner.class);
+  private final static String DEFAULT_CONFIG = "/org/strykeforce/thirdcoast/defaults.toml";
 
-  static {
-    Config c = Config.inMemory();
-    c.add(Arrays.asList(TalonConfigurationBuilder.NAME), DEFAULT_CONFIG);
-    c.add(Arrays.asList(TalonConfigurationBuilder.MODE), TalonControlMode.Voltage.name());
-    c.add(Arrays.asList(TalonConfigurationBuilder.SETPOINT_MAX), 12.0);
-    Config d = InMemoryFormat.defaultInstance().createConfig();
-    d.add(TALON_TABLE, Arrays.asList(c));
-    DEFAULT = d.unmodifiable();
-  }
+  final static Logger logger = LoggerFactory.getLogger(TalonProvisioner.class);
 
   private final Map<String, TalonConfiguration> settings = new HashMap<>();
 
@@ -47,11 +36,14 @@ public class TalonProvisioner {
    * Construct the TalonProvisioner with base talon configurations that include swerve drive
    * motors.
    *
-   * @param configs base configuration that should include swerve azimuth and drive configs
+   * @param file base configuration that should include swerve azimuth and drive configs
+   * @throws IllegalStateException if file contains invalid TOML
    */
   @Inject
-  public TalonProvisioner(UnmodifiableConfig configs) {
-    addConfigurations(configs);
+  public TalonProvisioner(File file) {
+    checkFileExists(file);
+    Toml toml = new Toml().read(file);
+    addConfigurations(toml);
   }
 
   /**
@@ -61,21 +53,20 @@ public class TalonProvisioner {
    *
    * @param configs a parsed config collection
    */
-  public void addConfigurations(UnmodifiableConfig configs) {
-    List<Config> configList = configs.get(TALON_TABLE);
+  public void addConfigurations(Toml configs) {
+    List<Toml> configList = configs.getTables(TALON_TABLE);
     if (configList == null) {
-      logger.warn("no " + TALON_TABLE + " tables in config");
+      logger.error("no " + TALON_TABLE + " tables in config");
       return;
     }
 
-    for (UnmodifiableConfig config : configList) {
-      String name = config.get(TalonConfigurationBuilder.NAME);
+    for (Toml config : configList) {
+      String name = config.getString(TalonConfigurationBuilder.NAME);
+      System.out.println("name = " + name);
       if (name == null) {
         throw new IllegalArgumentException(TALON_TABLE + " configuration name parameter missing");
       }
-
-      TalonConfigurationBuilder builder = new TalonConfigurationBuilder(config);
-      settings.put(name, builder.build());
+      settings.put(name, TalonConfigurationBuilder.create(config));
     }
   }
 
@@ -91,6 +82,18 @@ public class TalonProvisioner {
       throw new IllegalArgumentException("Talon configuration not found: " + name);
     }
     return config;
+  }
+
+  static void checkFileExists(File file) {
+    Path path = file.toPath();
+    if (Files.notExists(path)) {
+      InputStream is = TalonProvisioner.class.getResourceAsStream(DEFAULT_CONFIG);
+      try {
+        Files.copy(is, path);
+      } catch (IOException e) {
+        logger.error("unable to copy default config to " + path, e);
+      }
+    }
   }
 
   @Override
