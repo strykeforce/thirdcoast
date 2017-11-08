@@ -33,7 +33,7 @@ public abstract class TalonConfiguration {
   private final SoftLimit forwardSoftLimit;
   private final SoftLimit reverseSoftLimit;
   private final Integer currentLimit;
-  private final Set<Integer> talonIds = new HashSet<>();
+  private Set<Integer> talonIds;
 
   public TalonConfiguration(String name, CANTalon.TalonControlMode mode, double setpointMax,
       Encoder encoder, Boolean brakeInNeutral, Boolean outputReversed,
@@ -135,6 +135,9 @@ public abstract class TalonConfiguration {
    * @param id the Talon ID.
    */
   public void addTalonId(int id) {
+    if (talonIds == null) {
+      talonIds = new HashSet<>();
+    }
     talonIds.add(id);
   }
 
@@ -144,6 +147,9 @@ public abstract class TalonConfiguration {
    * @param ids the Talon IDs to add.
    */
   public void addAllTalonIds(Collection<Integer> ids) {
+    if (talonIds == null) {
+      talonIds = new HashSet<>();
+    }
     talonIds.addAll(ids);
   }
 

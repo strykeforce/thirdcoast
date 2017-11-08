@@ -58,6 +58,7 @@ class TalonConfigurationTest extends Specification {
             1 * talon.setExpiration(0.1)
             1 * talon.configEncoderCodesPerRev(360)
             1 * talon.isSensorPresent(QuadEncoder)
+            1 * talon.getDeviceID()
             0 * talon._
         }
     }
@@ -131,6 +132,7 @@ class TalonConfigurationTest extends Specification {
             1 * setProfile(0)
             1 * talon.setExpiration(0.1)
             1 * talon.isSensorPresent(QuadEncoder)
+            1 * talon.getDeviceID()
             0 * talon._
         }
 

@@ -69,6 +69,7 @@ class WheelTest extends Specification {
         1 * drive.reverseSensor(false)
         1 * drive.enableBrakeMode(true)
         1 * drive.SetVelocityMeasurementWindow(64)
+        1 * drive.getDeviceID() >> 1
         1 * azimuth.setSafetyEnabled(false)
         1 * azimuth.SetVelocityMeasurementWindow(64)
         // FIXME: need to implement peakOutputVoltage
@@ -87,6 +88,7 @@ class WheelTest extends Specification {
         1 * azimuth.enableLimitSwitch(false, false)
         1 * azimuth.setFeedbackDevice(CANTalon.FeedbackDevice.CtreMagEncoder_Relative)
         1 * azimuth.SetVelocityMeasurementPeriod(CANTalon.VelocityMeasurementPeriod.Period_100Ms)
+        1 * azimuth.getDeviceID() >> 2
 
         when:
         wheel.azimuthParameters = "speed"
