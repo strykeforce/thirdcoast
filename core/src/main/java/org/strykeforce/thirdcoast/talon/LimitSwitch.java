@@ -1,7 +1,12 @@
 package org.strykeforce.thirdcoast.talon;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+import org.jetbrains.annotations.NotNull;
+
+@ParametersAreNonnullByDefault
 final class LimitSwitch {
 
+  @NotNull
   public final static LimitSwitch DEFAULT = new LimitSwitch();
 
   private final boolean enabled;

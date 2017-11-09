@@ -81,7 +81,7 @@ pGain = 1.2
 
         then:
         tc.name == "test"
-        tc.encoder.device == QuadEncoder;
+        tc.encoder.device == QuadEncoder
         tc.encoder.reversed
         tc.encoder.unitScalingEnabled
         tc.encoder.ticksPerRevolution == 360

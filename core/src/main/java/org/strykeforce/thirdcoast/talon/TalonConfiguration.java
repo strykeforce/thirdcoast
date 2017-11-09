@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +20,10 @@ public abstract class TalonConfiguration {
 
   final static Logger logger = LoggerFactory.getLogger(TalonConfiguration.class);
   // required
+  @NotNull
   private final String name;
+  @SuppressWarnings("FieldCanBeLocal")
+  @NotNull
   private final CANTalon.TalonControlMode mode;
   private final double setpointMax;
   // optional
@@ -35,8 +39,8 @@ public abstract class TalonConfiguration {
   private final Integer currentLimit;
   private Set<Integer> talonIds;
 
-  public TalonConfiguration(String name, CANTalon.TalonControlMode mode, double setpointMax,
-      Encoder encoder, Boolean brakeInNeutral, Boolean outputReversed,
+  TalonConfiguration(@NotNull String name, @NotNull CANTalon.TalonControlMode mode,
+      double setpointMax, Encoder encoder, Boolean brakeInNeutral, Boolean outputReversed,
       VelocityMeasurementPeriod velocityMeasurementPeriod, Integer velocityMeasurementWindow,
       LimitSwitch forwardLimitSwitch, LimitSwitch reverseLimitSwitch,
       SoftLimit forwardSoftLimit, SoftLimit reverseSoftLimit, Integer currentLimit) {
@@ -60,6 +64,7 @@ public abstract class TalonConfiguration {
    *
    * @return the TalonConfigurationBuilder
    */
+  @NotNull
   public static TalonConfigurationBuilder builder() {
     return new TalonConfigurationBuilder();
   }
@@ -78,7 +83,7 @@ public abstract class TalonConfiguration {
    *
    * @param talon the Talon to registerWith
    */
-  public void configure(CANTalon talon) {
+  public void configure(@NotNull CANTalon talon) {
     talon.setSafetyEnabled(false);
     talon.setProfile(0);
     talon.setExpiration(MotorSafety.DEFAULT_SAFETY_EXPIRATION);
@@ -146,7 +151,7 @@ public abstract class TalonConfiguration {
    *
    * @param ids the Talon IDs to add.
    */
-  public void addAllTalonIds(Collection<Integer> ids) {
+  public void addAllTalonIds(@NotNull Collection<Integer> ids) {
     if (talonIds == null) {
       talonIds = new HashSet<>();
     }
@@ -158,6 +163,7 @@ public abstract class TalonConfiguration {
    *
    * @return the Set of Talon IDs.
    */
+  @NotNull
   public Set<Integer> getTalonIds() {
     if (talonIds == null) {
       return Collections.emptySet();
@@ -170,6 +176,7 @@ public abstract class TalonConfiguration {
    *
    * @return configuration name
    */
+  @NotNull
   public String getName() {
     return name;
   }
@@ -230,6 +237,7 @@ public abstract class TalonConfiguration {
   }
 
   @Override
+  @NotNull
   public String toString() {
     return "TalonParameters{" +
         "name='" + name + '\'' +

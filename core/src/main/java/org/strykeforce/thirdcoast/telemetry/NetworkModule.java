@@ -2,7 +2,6 @@ package org.strykeforce.thirdcoast.telemetry;
 
 import dagger.Module;
 import dagger.Provides;
-import java.lang.invoke.MethodHandles;
 import java.net.DatagramSocket;
 import java.net.SocketException;
 import javax.inject.Named;
@@ -15,6 +14,7 @@ import org.slf4j.LoggerFactory;
  */
 @Module
 public abstract class NetworkModule {
+
   final static Logger logger = LoggerFactory.getLogger(NetworkModule.class);
 
   @Provides

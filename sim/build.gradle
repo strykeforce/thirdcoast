@@ -8,7 +8,7 @@ mainClassName = 'org.strykeforce.thirdcoast.telemetry.sim.Main'
 dependencies {
     compile project(':core')
     compile libs.logback
-    apt libs.dagger_compiler
+    apt libs.daggerCompiler
 }
 
 shadowJar {

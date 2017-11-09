@@ -1,12 +1,18 @@
 package org.strykeforce.thirdcoast.talon;
 
+import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
+import org.jetbrains.annotations.NotNull;
+
+@ParametersAreNonnullByDefault
 final class SoftLimit {
 
+  @NotNull
   public final static SoftLimit DEFAULT = new SoftLimit(null);
   private final boolean enabled;
   private final double position;
 
-  SoftLimit(Double position) {
+  SoftLimit(@Nullable Double position) {
     this.enabled = position != null;
     this.position = enabled ? position : 0;
   }
@@ -20,6 +26,7 @@ final class SoftLimit {
   }
 
   @Override
+  @NotNull
   public String toString() {
     return "SoftLimit{" +
         "enabled=" + enabled +

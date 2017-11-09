@@ -3,10 +3,11 @@ package org.strykeforce.thirdcoast.talon;
 import com.ctre.CANTalon;
 import com.ctre.CANTalon.TalonControlMode;
 import com.ctre.CANTalon.VelocityMeasurementPeriod;
+import org.jetbrains.annotations.NotNull;
 
 class SpeedTalonConfiguration extends PIDTalonConfiguration {
 
-  public SpeedTalonConfiguration(String name, double setpointMax,
+  SpeedTalonConfiguration(@NotNull String name, double setpointMax,
       Encoder encoder, Boolean isBrakeInNeutral, Boolean isOutputReversed,
       VelocityMeasurementPeriod velocityMeasurementPeriod,
       Integer velocityMeasurementWindow,
@@ -26,12 +27,13 @@ class SpeedTalonConfiguration extends PIDTalonConfiguration {
   }
 
   @Override
-  public void configure(CANTalon talon) {
+  public void configure(@NotNull CANTalon talon) {
     super.configure(talon);
     talon.changeControlMode(TalonControlMode.Speed);
   }
 
   @Override
+  @NotNull
   public String toString() {
     return "SpeedTalonConfiguration{} " + super.toString();
   }

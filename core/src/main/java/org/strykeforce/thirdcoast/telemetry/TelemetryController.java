@@ -13,9 +13,11 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.ParametersAreNonnullByDefault;
 import javax.inject.Inject;
 import javax.inject.Named;
 import okio.Buffer;
+import org.jetbrains.annotations.NotNull;
 import org.nanohttpd.protocols.http.NanoHTTPD;
 import org.nanohttpd.protocols.http.request.Method;
 import org.nanohttpd.protocols.http.response.Response;
@@ -28,12 +30,12 @@ import org.strykeforce.thirdcoast.telemetry.grapher.Subscription;
 /**
  * Provides a web service to control telemetry.
  */
+@ParametersAreNonnullByDefault
 public class TelemetryController extends NanoHTTPD {
 
   final static Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
   private final static String JSON = "application/json";
 
-  private final Inventory inventory;
   private final ClientHandler clientHandler;
   private final int port;
 
@@ -41,7 +43,6 @@ public class TelemetryController extends NanoHTTPD {
   public TelemetryController(final Inventory inventory, final ClientHandler clientHandler,
       final @Named("server") int port) {
     super(port);
-    this.inventory = inventory;
     this.clientHandler = clientHandler;
     this.port = port;
 
@@ -134,6 +135,7 @@ public class TelemetryController extends NanoHTTPD {
     logger.info("Stopped web server");
   }
 
+  @NotNull
   private Response errorResponseFor(final Throwable e) {
     Buffer buffer = new Buffer();
     JsonWriter writer = JsonWriter.of(buffer);

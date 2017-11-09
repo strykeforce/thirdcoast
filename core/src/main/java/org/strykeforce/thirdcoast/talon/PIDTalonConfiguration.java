@@ -2,6 +2,8 @@ package org.strykeforce.thirdcoast.talon;
 
 import com.ctre.CANTalon;
 import com.ctre.CANTalon.VelocityMeasurementPeriod;
+import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
 
 class PIDTalonConfiguration extends TalonConfiguration {
 
@@ -18,10 +20,9 @@ class PIDTalonConfiguration extends TalonConfiguration {
   private final Double fGain;
   private final Integer iZone;
 
-  public PIDTalonConfiguration(String name, CANTalon.TalonControlMode mode, double setpointMax,
-      Encoder encoder, Boolean isBrakeInNeutral, Boolean isOutputReversed,
-      VelocityMeasurementPeriod velocityMeasurementPeriod,
-      Integer velocityMeasurementWindow,
+  PIDTalonConfiguration(@NotNull String name, @NotNull CANTalon.TalonControlMode mode,
+      double setpointMax, Encoder encoder, Boolean isBrakeInNeutral, Boolean isOutputReversed,
+      VelocityMeasurementPeriod velocityMeasurementPeriod, Integer velocityMeasurementWindow,
       LimitSwitch forwardLimitSwitch, LimitSwitch reverseLimitSwitch,
       SoftLimit forwardSoftLimit, SoftLimit reverseSoftLimit, Integer currentLimit,
       Double outputVoltageMax, Double forwardOutputVoltagePeak,
@@ -47,7 +48,7 @@ class PIDTalonConfiguration extends TalonConfiguration {
   }
 
   @Override
-  public void configure(CANTalon talon) {
+  public void configure(@NotNull CANTalon talon) {
     if (outputVoltageMax != null && outputVoltageMax != 0) {
       talon.configMaxOutputVoltage(outputVoltageMax);
     }
@@ -71,14 +72,14 @@ class PIDTalonConfiguration extends TalonConfiguration {
     super.configure(talon);
   }
 
-  double valueOrZero(Double value) {
+  double valueOrZero(@Nullable Double value) {
     if (value != null) {
       return value;
     }
     return 0;
   }
 
-  int valueOrZero(Integer value) {
+  int valueOrZero(@Nullable Integer value) {
     if (value != null) {
       return value;
     }
@@ -134,6 +135,7 @@ class PIDTalonConfiguration extends TalonConfiguration {
   }
 
   @Override
+  @NotNull
   public String toString() {
     return "PIDTalonParameters{" +
         "outputVoltageMax=" + outputVoltageMax +

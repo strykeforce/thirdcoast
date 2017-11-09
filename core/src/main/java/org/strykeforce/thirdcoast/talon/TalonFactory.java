@@ -5,8 +5,11 @@ import com.ctre.CANTalon.TalonControlMode;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,14 +17,18 @@ import org.slf4j.LoggerFactory;
  * Instantiate {@link CANTalon} instances with defaults.
  */
 @Singleton
+@ParametersAreNonnullByDefault
 public class TalonFactory {
 
   public final static int CONTROL_FRAME_MS = 10;
   final static Logger logger = LoggerFactory.getLogger(TalonFactory.class);
 
+  @NotNull
   private final static Set<CANTalon> seen = new HashSet<>();
 
+  @NotNull
   private final TalonProvisioner provisioner;
+  @NotNull
   private final WrapperFactory wrapperFactory;
 
   @Inject
@@ -42,6 +49,7 @@ public class TalonFactory {
    * @return the wrapped CANTalon
    * @see Wrapper
    */
+  @NotNull
   private CANTalon createTalon(int id) {
     CANTalon talon = wrapperFactory.createWrapper(id, CONTROL_FRAME_MS);
     talon.changeControlMode(TalonControlMode.Voltage);
@@ -73,6 +81,7 @@ public class TalonFactory {
    * @return the wrapped CANTalon
    * @see Wrapper
    */
+  @NotNull
   public CANTalon getTalon(final int id) {
     Optional<CANTalon> optTalon = seen.stream().filter(it -> it.getDeviceID() == id).findFirst();
     if (optTalon.isPresent()) {
@@ -93,6 +102,7 @@ public class TalonFactory {
    * @see Wrapper
    * @see TalonProvisioner
    */
+  @NotNull
   public CANTalon getTalonWithConfiguration(int id, String config) {
     CANTalon talon = getTalon(id);
     provisioner.configurationFor(config).configure(talon);
@@ -109,6 +119,7 @@ public class TalonFactory {
       logger.debug("initializing WrapperFactory");
     }
 
+    @NotNull
     public Wrapper createWrapper(int id, int controlPeriodMs) {
       return new Wrapper(id, CONTROL_FRAME_MS);
     }
@@ -126,6 +137,7 @@ public class TalonFactory {
 
     final static Logger logger = LoggerFactory.getLogger(Wrapper.class);
     private double setpoint = Double.NaN;
+    @Nullable
     private TalonControlMode controlMode = null;
 
     public Wrapper(int deviceNumber) {

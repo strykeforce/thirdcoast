@@ -12,7 +12,7 @@ public abstract class SignalGenerator {
   protected final double amplitude;
   protected final double offset;
   protected final double invert;
-  protected double phase;
+  protected final double phase;
   private long startTime = System.nanoTime();
   private double time;
 
@@ -56,7 +56,7 @@ public abstract class SignalGenerator {
    * Available signal types.
    */
   public enum SignalType {
-    SINE, SQUARE, TRIANGLE, SAWTOOTH;
+    SINE, SQUARE, TRIANGLE, SAWTOOTH
   }
 
   /**
@@ -64,7 +64,7 @@ public abstract class SignalGenerator {
    */
   public static class Builder {
 
-    private SignalType type;
+    private final SignalType type;
     private double frequency = 1.0;
     private double phase = 0.0;
     private double amplitude = 1.0;

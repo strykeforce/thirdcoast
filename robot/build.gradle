@@ -21,7 +21,7 @@ dependencies {
     compile navx()
     compile project(':core')
     compile libs.logback
-    apt libs.dagger_compiler
+    apt libs.daggerCompiler
 }
 
 def robotManifest = {

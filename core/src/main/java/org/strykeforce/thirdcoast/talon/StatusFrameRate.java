@@ -1,6 +1,8 @@
 package org.strykeforce.thirdcoast.talon;
 
 import com.ctre.CANTalon;
+import javax.annotation.ParametersAreNonnullByDefault;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Represents a set of frame update rates for a {@link com.ctre.CANTalon}.
@@ -16,8 +18,10 @@ import com.ctre.CANTalon;
  *   <li>Analog In/Temp/Bus Voltage <b>100ms</b>: analog pos/vel, temp, bus voltage</li>
  * </ul>
  */
+@ParametersAreNonnullByDefault
 public final class StatusFrameRate {
 
+  @NotNull
   public final static StatusFrameRate DEFAULT = StatusFrameRate.builder().build();
 
   public final int analogTempVbat;
@@ -48,6 +52,7 @@ public final class StatusFrameRate {
   }
 
   @Override
+  @NotNull
   public String toString() {
     return "StatusFrameRate{" +
         "analogTempVbat=" + analogTempVbat +
@@ -63,6 +68,7 @@ public final class StatusFrameRate {
    *
    * @return the builder for StatusFrameRate
    */
+  @ParametersAreNonnullByDefault
   public static Builder builder() {
     return new Builder();
   }
@@ -80,30 +86,36 @@ public final class StatusFrameRate {
 
     Builder() {}
 
+    @NotNull
     public StatusFrameRate build() {
       return new StatusFrameRate(analogTempVbat, feedback, general, pulseWidth, quadEncoder);
     }
 
+    @NotNull
     public Builder analogTempVbat(int ms) {
       analogTempVbat = ms;
       return this;
     }
 
+    @NotNull
     public Builder feedback(int ms) {
       feedback = ms;
       return this;
     }
 
+    @NotNull
     public Builder general(int ms) {
       general = ms;
       return this;
     }
 
+    @NotNull
     public Builder pulseWidth(int ms) {
       pulseWidth = ms;
       return this;
     }
 
+    @NotNull
     public Builder quadEncoder(int ms) {
       quadEncoder = ms;
       return this;

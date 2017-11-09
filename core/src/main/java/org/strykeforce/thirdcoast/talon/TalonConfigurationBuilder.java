@@ -5,46 +5,77 @@ import com.ctre.CANTalon.TalonControlMode;
 import com.ctre.CANTalon.VelocityMeasurementPeriod;
 import com.moandjiezana.toml.Toml;
 import com.moandjiezana.toml.TomlWriter;
+import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import javax.inject.Inject;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Builder for {@link TalonConfiguration}.
  */
+@ParametersAreNonnullByDefault
 public class TalonConfigurationBuilder {
 
+  @NotNull
   public final static String DEFAULT_NAME = "DEFAULT";
 
   // TalonConfiguration
+  @NotNull
   public final static String NAME = "name";
+  @NotNull
   public final static String MODE = "mode";
 
   // TalonConfiguration
+  @NotNull
   private String name = DEFAULT_NAME;
+  @NotNull
   private CANTalon.TalonControlMode mode = TalonControlMode.Voltage;
   private double setpointMax = 12;
+  @Nullable
   private Encoder encoder;
+  @Nullable
   private Boolean brakeInNeutral;
+  @Nullable
   private Boolean outputReversed;
+  @Nullable
   private VelocityMeasurementPeriod velocityMeasurementPeriod;
+  @Nullable
   private Integer velocityMeasurementWindow;
+  @Nullable
   private LimitSwitch forwardLimitSwitch;
+  @Nullable
   private LimitSwitch reverseLimitSwitch;
+  @Nullable
   private SoftLimit forwardSoftLimit;
+  @Nullable
   private SoftLimit reverseSoftLimit;
+  @Nullable
   private Integer currentLimit;
 
   // PIDTalonConfiguration
+  @Nullable
   private Double outputVoltageMax;
+  @Nullable
   private Double forwardOutputVoltagePeak;
+  @Nullable
   private Double reverseOutputVoltagePeak;
+  @Nullable
   private Double forwardOutputVoltageNominal;
+  @Nullable
   private Double reverseOutputVoltageNominal;
+  @Nullable
   private Integer allowableClosedLoopError;
+  @Nullable
   private Double nominalClosedLoopVoltage;
+  @Nullable
   private Double pGain;
+  @Nullable
   private Double iGain;
+  @Nullable
   private Double dGain;
+  @Nullable
   private Double fGain;
+  @Nullable
   private Integer iZone;
 
   /**
@@ -55,7 +86,7 @@ public class TalonConfigurationBuilder {
   }
 
   public TalonConfigurationBuilder(final TalonConfiguration config) {
-    name = config.getName() != null ? config.getName() : DEFAULT_NAME;
+    name = config.getName();
     setpointMax = config.getSetpointMax();
     encoder = config.getEncoder();
     brakeInNeutral = config.isBrakeInNeutral();
@@ -100,6 +131,7 @@ public class TalonConfigurationBuilder {
    * @throws IllegalArgumentException if mode is missing from config
    * @throws UnsupportedOperationException if mode not implemented yet
    */
+  @NotNull
   public static TalonConfiguration create(Toml config) {
     TalonConfiguration talonConfiguration = null;
     CANTalon.TalonControlMode mode = getMode(config);
@@ -154,6 +186,7 @@ public class TalonConfigurationBuilder {
    *
    * @return a new TalonConfiguration.
    */
+  @NotNull
   public TalonConfiguration build() {
     TalonConfiguration tc = null;
     switch (mode) {
@@ -197,10 +230,8 @@ public class TalonConfigurationBuilder {
    * @return this builder.
    * @throws IllegalArgumentException if name is null
    */
+  @NotNull
   public TalonConfigurationBuilder name(String name) {
-    if (name == null) {
-      throw new IllegalArgumentException("name must not be null");
-    }
     this.name = name;
     return this;
   }
@@ -212,10 +243,8 @@ public class TalonConfigurationBuilder {
    * @return this builder.
    * @throws IllegalArgumentException if mode is null
    */
+  @NotNull
   public TalonConfigurationBuilder mode(CANTalon.TalonControlMode mode) {
-    if (mode == null) {
-      throw new IllegalArgumentException("mode must not be null");
-    }
     this.mode = mode;
     return this;
   }
@@ -226,6 +255,7 @@ public class TalonConfigurationBuilder {
    * @param setpointMax the max setpoint.
    * @return this builder.
    */
+  @NotNull
   public TalonConfigurationBuilder setpointMax(double setpointMax) {
     this.setpointMax = setpointMax;
     return this;
@@ -240,11 +270,9 @@ public class TalonConfigurationBuilder {
    * @return this builder.
    * @throws IllegalArgumentException if feedbackDevice is null
    */
+  @NotNull
   public TalonConfigurationBuilder encoder(CANTalon.FeedbackDevice feedbackDevice,
-      boolean isReversed, Integer ticksPerRevolution) {
-    if (feedbackDevice == null) {
-      throw new IllegalArgumentException("feedbackDevice must not be null");
-    }
+      boolean isReversed, @Nullable Integer ticksPerRevolution) {
     this.encoder = new Encoder(feedbackDevice, isReversed, ticksPerRevolution);
     return this;
   }
@@ -255,6 +283,7 @@ public class TalonConfigurationBuilder {
    * @param feedbackDevice the encoder type, must not be null.
    * @return this builder.
    */
+  @NotNull
   public TalonConfigurationBuilder encoder(CANTalon.FeedbackDevice feedbackDevice) {
     if (encoder == null) {
       encoder = new Encoder(feedbackDevice);
@@ -264,6 +293,13 @@ public class TalonConfigurationBuilder {
     return this;
   }
 
+  /**
+   * Configure the Talon encoder.
+   *
+   * @param reversed true if encoder is out of phase with motor output.
+   * @return this builder.
+   */
+  @NotNull
   public TalonConfigurationBuilder encoderReversed(boolean reversed) {
     if (encoder == null) {
       encoder = new Encoder(reversed);
@@ -277,6 +313,7 @@ public class TalonConfigurationBuilder {
    * @param brakeInNeutral true if Talon brakes in neutral
    * @return this builder.
    */
+  @NotNull
   public TalonConfigurationBuilder brakeInNeutral(boolean brakeInNeutral) {
     this.brakeInNeutral = brakeInNeutral;
     return this;
@@ -288,6 +325,7 @@ public class TalonConfigurationBuilder {
    * @param outputReversed true if Talon output is reversed.
    * @return this builder.
    */
+  @NotNull
   public TalonConfigurationBuilder outputReversed(boolean outputReversed) {
     this.outputReversed = outputReversed;
     return this;
@@ -299,6 +337,7 @@ public class TalonConfigurationBuilder {
    * @param velocityMeasurementPeriod the velocity measurement period.
    * @return this builder.
    */
+  @NotNull
   public TalonConfigurationBuilder velocityMeasurementPeriod(
       VelocityMeasurementPeriod velocityMeasurementPeriod) {
     this.velocityMeasurementPeriod = velocityMeasurementPeriod;
@@ -311,6 +350,7 @@ public class TalonConfigurationBuilder {
    * @param velocityMeasurementWindow the velocity measurement window.
    * @return this builder.
    */
+  @NotNull
   public TalonConfigurationBuilder velocityMeasurementWindow(int velocityMeasurementWindow) {
     this.velocityMeasurementWindow = velocityMeasurementWindow;
     return this;
@@ -322,6 +362,7 @@ public class TalonConfigurationBuilder {
    * @param normallyOpen limit switch is normally open.
    * @return this builder.
    */
+  @NotNull
   public TalonConfigurationBuilder forwardLimitSwitch(boolean normallyOpen) {
     forwardLimitSwitch = new LimitSwitch(true, normallyOpen);
     return this;
@@ -333,6 +374,7 @@ public class TalonConfigurationBuilder {
    * @param normallyOpen limit switch is normally open.
    * @return this builder.
    */
+  @NotNull
   public TalonConfigurationBuilder reverseLimitSwitch(boolean normallyOpen) {
     reverseLimitSwitch = new LimitSwitch(true, normallyOpen);
     return this;
@@ -344,7 +386,8 @@ public class TalonConfigurationBuilder {
    * @param forwardSoftLimit the soft limit, null to disable.
    * @return this builder.
    */
-  public TalonConfigurationBuilder forwardSoftLimit(Double forwardSoftLimit) {
+  @NotNull
+  public TalonConfigurationBuilder forwardSoftLimit(@Nullable Double forwardSoftLimit) {
     this.forwardSoftLimit = new SoftLimit(forwardSoftLimit);
     return this;
   }
@@ -355,7 +398,8 @@ public class TalonConfigurationBuilder {
    * @param reverseSoftLimit the soft limit, null to disable
    * @return this builder.
    */
-  public TalonConfigurationBuilder reverseSoftLimit(Double reverseSoftLimit) {
+  @NotNull
+  public TalonConfigurationBuilder reverseSoftLimit(@Nullable Double reverseSoftLimit) {
     this.reverseSoftLimit = new SoftLimit(reverseSoftLimit);
     return this;
   }
@@ -366,6 +410,7 @@ public class TalonConfigurationBuilder {
    * @param currentLimit the current limit.
    * @return this builder.
    */
+  @NotNull
   public TalonConfigurationBuilder currentLimit(int currentLimit) {
     this.currentLimit = currentLimit;
     return this;
@@ -377,6 +422,7 @@ public class TalonConfigurationBuilder {
    * @param outputVoltageMax the maximum output voltage.
    * @return this builder.
    */
+  @NotNull
   public TalonConfigurationBuilder outputVoltageMax(double outputVoltageMax) {
     this.outputVoltageMax = outputVoltageMax;
     return this;
@@ -389,6 +435,7 @@ public class TalonConfigurationBuilder {
    * @param reverse the reverse peak output voltage allowed.
    * @return this builder.
    */
+  @NotNull
   public TalonConfigurationBuilder outputVoltagePeak(double forward, double reverse) {
     this.forwardOutputVoltagePeak = forward;
     this.reverseOutputVoltagePeak = reverse;
@@ -402,6 +449,7 @@ public class TalonConfigurationBuilder {
    * @param reverse the reverse nominal output voltage allowed.
    * @return this builder.
    */
+  @NotNull
   public TalonConfigurationBuilder outputVoltageNominal(double forward, double reverse) {
     this.forwardOutputVoltageNominal = forward;
     this.reverseOutputVoltageNominal = reverse;
@@ -414,6 +462,7 @@ public class TalonConfigurationBuilder {
    * @param allowableClosedLoopError the allowable closed-loop error.
    * @return this builder.
    */
+  @NotNull
   public TalonConfigurationBuilder allowableClosedLoopError(int allowableClosedLoopError) {
     this.allowableClosedLoopError = allowableClosedLoopError;
     return this;
@@ -425,6 +474,7 @@ public class TalonConfigurationBuilder {
    * @param nominalClosedLoopVoltage the nominal closed-loop output voltage.
    * @return this builder.
    */
+  @NotNull
   public TalonConfigurationBuilder nominalClosedLoopVoltage(double nominalClosedLoopVoltage) {
     this.nominalClosedLoopVoltage = nominalClosedLoopVoltage;
     return this;
@@ -436,6 +486,7 @@ public class TalonConfigurationBuilder {
    * @param pGain value for P.
    * @return this builder.
    */
+  @NotNull
   public TalonConfigurationBuilder P(double pGain) {
     this.pGain = pGain;
     return this;
@@ -447,6 +498,7 @@ public class TalonConfigurationBuilder {
    * @param iGain value for I.
    * @return this builder.
    */
+  @NotNull
   public TalonConfigurationBuilder I(double iGain) {
     this.iGain = iGain;
     return this;
@@ -458,6 +510,7 @@ public class TalonConfigurationBuilder {
    * @param dGain value for D.
    * @return this builder.
    */
+  @NotNull
   public TalonConfigurationBuilder D(double dGain) {
     this.dGain = dGain;
     return this;
@@ -469,6 +522,7 @@ public class TalonConfigurationBuilder {
    * @param fGain value for F.
    * @return this builder.
    */
+  @NotNull
   public TalonConfigurationBuilder F(double fGain) {
     this.fGain = fGain;
     return this;
@@ -480,6 +534,7 @@ public class TalonConfigurationBuilder {
    * @param iZone value for I-zone.
    * @return this builder.
    */
+  @NotNull
   public TalonConfigurationBuilder iZone(int iZone) {
     this.iZone = iZone;
     return this;

@@ -3,20 +3,27 @@ package org.strykeforce.thirdcoast.talon;
 import com.ctre.CANTalon;
 import com.ctre.CANTalon.FeedbackDevice;
 import com.ctre.CANTalon.FeedbackDeviceStatus;
+import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@ParametersAreNonnullByDefault
 final class Encoder {
 
+  @NotNull
   final static Encoder DEFAULT = new Encoder();
 
   final static Logger logger = LoggerFactory.getLogger(Encoder.class);
+  @Nullable
   private final CANTalon.FeedbackDevice device;
   private final boolean reversed;
   private final boolean unitScalingEnabled;
   private final int ticksPerRevolution;
 
-  Encoder(CANTalon.FeedbackDevice device, Boolean reversed, Integer ticksPerRevolution) {
+  Encoder(@Nullable CANTalon.FeedbackDevice device, @Nullable Boolean reversed,
+      @Nullable Integer ticksPerRevolution) {
     this.device = device;
     this.reversed = reversed != null ? reversed : false;
     unitScalingEnabled = ticksPerRevolution != null;
@@ -27,22 +34,25 @@ final class Encoder {
     this(device, null, null);
   }
 
-  Encoder() {
-    this((CANTalon.FeedbackDevice) null, null, null);
+  private Encoder() {
+    this(null, null, null);
   }
 
   Encoder(boolean reversed) {
-    this((CANTalon.FeedbackDevice) null, reversed, null);
+    this(null, reversed, null);
   }
 
+  @NotNull
   Encoder copyWithReversed(boolean reversed) {
     return new Encoder(device, reversed, unitScalingEnabled ? ticksPerRevolution : null);
   }
 
+  @NotNull
   Encoder copyWithEncoder(CANTalon.FeedbackDevice feedbackDevice) {
     return new Encoder(feedbackDevice, reversed, unitScalingEnabled ? ticksPerRevolution : null);
   }
 
+  @NotNull
   Encoder copyWithTicksPerRevolution(Integer ticksPerRevolution) {
     return new Encoder(device, reversed, ticksPerRevolution);
   }
@@ -56,7 +66,7 @@ final class Encoder {
     checkEncoder(talon);
   }
 
-  public void checkEncoder(CANTalon talon) {
+  private void checkEncoder(CANTalon talon) {
     FeedbackDeviceStatus status = talon.isSensorPresent(getDevice());
     if (status == null) {
       return; // unit testing
@@ -76,6 +86,7 @@ final class Encoder {
     }
   }
 
+  @NotNull
   public FeedbackDevice getDevice() {
     return device != null ? device : FeedbackDevice.QuadEncoder;
   }

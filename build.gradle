@@ -10,18 +10,20 @@ description = 'Third Coast Framework'
 
 ext {
     libs = [
-            bytebuddy: 'net.bytebuddy:byte-buddy:1.7.9',
-            dagger: 'com.google.dagger:dagger:2.13',
-            dagger_compiler: 'com.google.dagger:dagger-compiler:2.13',
-            jline_terminal: 'org.jline:jline-terminal:3.5.1',
-            jline_reader: 'org.jline:jline-reader:3.5.1',
-            logback: 'ch.qos.logback:logback-classic:1.2.3',
-            moshi: 'com.squareup.moshi:moshi:1.5.0',
-            nanohttpd: 'org.nanohttpd:nanohttpd:2.3.2-SNAPSHOT',
-            objenesis: 'org.objenesis:objenesis:2.6',
-            slf4j: 'org.slf4j:slf4j-api:1.7.25',
-            spock: 'org.spockframework:spock-core:1.1-groovy-2.4',
-            toml4j: 'com.moandjiezana.toml:toml4j:0.7.2',
+            jetbrainsAnnotations: 'org.jetbrains:annotations:15.0',
+            jsr305              : 'com.google.code.findbugs:jsr305:3.0.2',
+            bytebuddy           : 'net.bytebuddy:byte-buddy:1.7.9',
+            dagger              : 'com.google.dagger:dagger:2.13',
+            daggerCompiler      : 'com.google.dagger:dagger-compiler:2.13',
+            jlineTerminal       : 'org.jline:jline-terminal:3.5.1',
+            jlineReader         : 'org.jline:jline-reader:3.5.1',
+            logback             : 'ch.qos.logback:logback-classic:1.2.3',
+            moshi               : 'com.squareup.moshi:moshi:1.5.0',
+            nanohttpd           : 'org.nanohttpd:nanohttpd:2.3.2-SNAPSHOT',
+            objenesis           : 'org.objenesis:objenesis:2.6',
+            slf4j               : 'org.slf4j:slf4j-api:1.7.25',
+            spock               : 'org.spockframework:spock-core:1.1-groovy-2.4',
+            toml4j              : 'com.moandjiezana.toml:toml4j:0.7.2',
     ]
     fullVersion = '17.0.15'
 }

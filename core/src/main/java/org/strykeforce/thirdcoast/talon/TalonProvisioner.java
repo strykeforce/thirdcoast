@@ -12,8 +12,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.annotation.ParametersAreNonnullByDefault;
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,13 +28,17 @@ import org.slf4j.LoggerFactory;
  * @see com.ctre.CANTalon
  */
 @Singleton
+@ParametersAreNonnullByDefault
 public class TalonProvisioner {
 
+  @NotNull
   public final static String TALON_TABLE = "TALON";
+  @NotNull
   private final static String DEFAULT_CONFIG = "/org/strykeforce/thirdcoast/defaults.toml";
 
   final static Logger logger = LoggerFactory.getLogger(TalonProvisioner.class);
 
+  @NotNull
   private final Map<String, TalonConfiguration> settings = new HashMap<>();
 
   /**
@@ -91,6 +97,7 @@ public class TalonProvisioner {
    * @param name the name of the Talon set of parameters
    * @return configured Talon parameter immutable object
    */
+  @NotNull
   public TalonConfiguration configurationFor(String name) {
     TalonConfiguration config = settings.get(name);
     if (config == null) {
@@ -104,6 +111,7 @@ public class TalonProvisioner {
    *
    * @return the Set of configuration names.
    */
+  @NotNull
   public Set<String> getConfigurationNames() {
     return Collections.unmodifiableSet(settings.keySet());
   }
@@ -113,6 +121,7 @@ public class TalonProvisioner {
    *
    * @return the Collection of configurations.
    */
+  @NotNull
   public Collection<TalonConfiguration> getConfigurations() {
     return Collections.unmodifiableCollection(settings.values());
   }
@@ -131,6 +140,7 @@ public class TalonProvisioner {
   }
 
   @Override
+  @NotNull
   public String toString() {
     return "TalonProvisioner{" +
         "settings=" + settings +

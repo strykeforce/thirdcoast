@@ -7,11 +7,11 @@ dependencies {
     compile ctre()
     compile navx()
     compile project(':core')
-    compile libs.jline_terminal
-    compile libs.jline_reader
+    compile libs.jlineTerminal
+    compile libs.jlineReader
     compile libs.logback
 
-    apt libs.dagger_compiler
+    apt libs.daggerCompiler
 
     testCompile libs.spock
     testRuntime libs.bytebuddy

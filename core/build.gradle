@@ -20,8 +20,10 @@ dependencies {
     compile libs.nanohttpd
     compile libs.dagger
     compile libs.slf4j
+    compileOnly libs.jetbrainsAnnotations
+    compileOnly libs.jsr305
 
-    apt libs.dagger_compiler
+    apt libs.daggerCompiler
 
     testCompile libs.spock
     testRuntime libs.logback

@@ -22,8 +22,8 @@ import org.strykeforce.thirdcoast.telemetry.item.TalonItem;
 public class TelemetryService {
 
   final static Logger logger = LoggerFactory.getLogger(TelemetryService.class);
+  final List<Item> items = new ArrayList<>(16);
   TelemetryController telemetryController;
-  List<Item> items = new ArrayList<>(16);
   boolean running = false;
 
   /**
@@ -120,9 +120,8 @@ public class TelemetryService {
       logger.warn("setting status frame rates while telemetry service is running");
     }
 
-    Optional<Item> item = items.stream().filter(it -> {
-      return it instanceof TalonItem && it.id() == talonId;
-    }).findFirst();
+    Optional<Item> item = items.stream().filter(it -> it instanceof TalonItem && it.id() == talonId)
+        .findFirst();
 
     if (!item.isPresent()) {
       throw new IllegalArgumentException("Talon with id " + talonId + " not found");

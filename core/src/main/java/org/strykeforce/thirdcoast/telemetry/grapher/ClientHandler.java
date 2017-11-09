@@ -15,7 +15,6 @@ import javax.inject.Named;
 import okio.Buffer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.strykeforce.thirdcoast.telemetry.NetworkModule;
 
 /**
  * Handles data streaming with Grapher client.
@@ -23,8 +22,8 @@ import org.strykeforce.thirdcoast.telemetry.NetworkModule;
 public class ClientHandler {
 
   final static Logger logger = LoggerFactory.getLogger(ClientHandler.class);
+  final DatagramSocket socket;
   private final int port;
-  DatagramSocket socket;
   ScheduledExecutorService scheduler;
   private SocketAddress socketAddress;
   private int count = 0;
