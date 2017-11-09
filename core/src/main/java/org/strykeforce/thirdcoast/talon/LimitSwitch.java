@@ -21,6 +21,13 @@ public final class LimitSwitch {
     this(false,false);
   }
 
+  public LimitSwitch copyWithEnabled(boolean enabled) {
+    return new LimitSwitch(enabled, normallyOpen);
+  }
+
+  public LimitSwitch copyWithNormallyOpen(boolean normallyOpen) {
+    return new LimitSwitch(enabled, normallyOpen);
+  }
   public boolean isEnabled() {
     return enabled;
   }

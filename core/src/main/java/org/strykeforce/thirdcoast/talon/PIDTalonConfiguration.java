@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 public class PIDTalonConfiguration extends TalonConfiguration {
 
   private final Double outputVoltageMax;
+  private final Double closedLoopRampRate;
   private final Double forwardOutputVoltagePeak;
   private final Double reverseOutputVoltagePeak;
   private final Double forwardOutputVoltageNominal;
@@ -35,6 +36,7 @@ public class PIDTalonConfiguration extends TalonConfiguration {
       Integer currentLimit,
       Double voltageRampRate,
       Double outputVoltageMax,
+      Double closedLoopRampRate,
       Double forwardOutputVoltagePeak,
       Double reverseOutputVoltagePeak,
       Double forwardOutputVoltageNominal,
@@ -46,6 +48,7 @@ public class PIDTalonConfiguration extends TalonConfiguration {
         velocityMeasurementPeriod, velocityMeasurementWindow, forwardLimitSwitch,
         reverseLimitSwitch, forwardSoftLimit, reverseSoftLimit, currentLimit, voltageRampRate);
     this.outputVoltageMax = outputVoltageMax;
+    this.closedLoopRampRate = closedLoopRampRate;
     this.forwardOutputVoltagePeak = forwardOutputVoltagePeak;
     this.reverseOutputVoltagePeak = reverseOutputVoltagePeak;
     this.forwardOutputVoltageNominal = forwardOutputVoltageNominal;
@@ -61,45 +64,49 @@ public class PIDTalonConfiguration extends TalonConfiguration {
 
   @Override
   public void configure(@NotNull CANTalon talon) {
-    if (outputVoltageMax != null && outputVoltageMax != 0) {
-      talon.configMaxOutputVoltage(outputVoltageMax);
-    }
+    talon.configMaxOutputVoltage(valueOrElse(outputVoltageMax,12));
+
+    talon.setCloseLoopRampRate(closedLoopRampRate != null ? closedLoopRampRate : 0);
 
     talon.configPeakOutputVoltage(
-        valueOrZero(forwardOutputVoltagePeak),
-        valueOrZero(reverseOutputVoltagePeak));
+        valueOrElse(forwardOutputVoltagePeak, 12),
+        valueOrElse(reverseOutputVoltagePeak, -12));
 
     talon.configNominalOutputVoltage(
-        valueOrZero(forwardOutputVoltageNominal),
-        valueOrZero(reverseOutputVoltageNominal));
+        valueOrElse(forwardOutputVoltageNominal, 0),
+        valueOrElse(reverseOutputVoltageNominal, 0));
 
-    talon.setAllowableClosedLoopErr(valueOrZero(allowableClosedLoopError));
+    talon.setAllowableClosedLoopErr(valueOrElse(allowableClosedLoopError, 0));
 
-    talon.setNominalClosedLoopVoltage(valueOrZero(nominalClosedLoopVoltage));
+    talon.setNominalClosedLoopVoltage(valueOrElse(nominalClosedLoopVoltage, 0));
 
-    talon.setPID(valueOrZero(pGain), valueOrZero(iGain), valueOrZero(dGain));
-    talon.setF(valueOrZero(fGain));
+    talon.setPID(valueOrElse(pGain, 0), valueOrElse(iGain, 0), valueOrElse(dGain, 0));
+    talon.setF(valueOrElse(fGain, 0));
 
-    talon.setIZone(valueOrZero(iZone));
+    talon.setIZone(valueOrElse(iZone, 0));
     super.configure(talon);
   }
 
-  private double valueOrZero(@Nullable Double value) {
+  private double valueOrElse(@Nullable Double value, double def) {
     if (value != null) {
       return value;
     }
-    return 0;
+    return def;
   }
 
-  private int valueOrZero(@Nullable Integer value) {
+  private int valueOrElse(@Nullable Integer value, int def) {
     if (value != null) {
       return value;
     }
-    return 0;
+    return def;
   }
 
   public Double getOutputVoltageMax() {
     return outputVoltageMax;
+  }
+
+  public Double getClosedLoopRampRate() {
+    return closedLoopRampRate;
   }
 
   public Double getForwardOutputVoltagePeak() {

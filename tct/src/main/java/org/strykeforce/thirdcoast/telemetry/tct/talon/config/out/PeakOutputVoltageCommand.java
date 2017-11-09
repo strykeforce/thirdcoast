@@ -20,9 +20,7 @@ public class PeakOutputVoltageCommand extends AbstractFwdRevDoubleConfigCommand 
 
   @Override
   protected void saveConfig(double forward, double reverse) {
-//    talonSet.talonConfigurationBuilder().peakOutputVoltage(forward, reverse);
-    // FIXME: not in TalonConfigurationBuilder
-    terminal.writer().println(boldYellow("not implemented"));
+    talonSet.talonConfigurationBuilder().outputVoltagePeak(forward, reverse);
   }
 
   @Override

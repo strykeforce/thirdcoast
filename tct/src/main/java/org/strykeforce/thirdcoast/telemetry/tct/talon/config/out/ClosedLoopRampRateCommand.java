@@ -20,8 +20,7 @@ public class ClosedLoopRampRateCommand extends AbstractDoubleConfigCommand {
 
   @Override
   protected void saveConfig(double value) {
-    // FIXME: not in TalonConfigBuilder
-    terminal.writer().println(boldYellow("not implemented"));
+    talonSet.talonConfigurationBuilder().closedLoopRampRate(value);
   }
 
   @Override

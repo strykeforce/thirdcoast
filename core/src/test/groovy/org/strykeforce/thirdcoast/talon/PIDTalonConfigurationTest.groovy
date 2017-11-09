@@ -12,11 +12,12 @@ class PIDTalonConfigurationTest extends Specification {
     name = "pid"
     mode = "Position"
     setpointMax = 1.0
-#    output_voltage_max = 12.0
-#    forward_output_voltage_peak = 5.0
-#    reverse_output_voltage_peak = -3.0
-#    forward_output_voltage_nominal = 0.5
-#    reverse_output_voltage_nominal = -0.3
+    outputVoltageMax = 12.0
+    closedLoopRampRate = 27.67
+    forwardOutputVoltagePeak = 5.0
+    reverseOutputVoltagePeak = -3.0
+    forwardOutputVoltageNominal = 0.5
+    reverseOutputVoltageNominal = -0.3
     allowableClosedLoopError = 10
     nominalClosedLoopVoltage = 12.0
     pGain = 0.1
@@ -61,11 +62,12 @@ class PIDTalonConfigurationTest extends Specification {
         t.class == PositionTalonConfiguration
         t.encoder.device == CANTalon.FeedbackDevice.CtreMagEncoder_Relative
         // FIXME: implement outputVoltage parms
-//        t.outputVoltageMax == 12.0
-//        t.forwardOutputVoltagePeak == 5.0
-//        t.reverseOutputVoltagePeak == -3.0
-//        t.forwardOutputVoltageNominal == 0.5
-//        t.reverseOutputVoltageNominal == -0.3
+        t.outputVoltageMax == 12.0
+        t.closedLoopRampRate == 27.67
+        t.forwardOutputVoltagePeak == 5.0
+        t.reverseOutputVoltagePeak == -3.0
+        t.forwardOutputVoltageNominal == 0.5
+        t.reverseOutputVoltageNominal == -0.3
         t.allowableClosedLoopError == 10
         t.PGain == 0.1
         t.IGain == 0.2
@@ -77,15 +79,49 @@ class PIDTalonConfigurationTest extends Specification {
     def "configures default parameters"() {
         when:
         def t = (PIDTalonConfiguration) provisioner.configurationFor("pid_defaults")
+        t.configure(talon)
 
         then:
         t.outputVoltageMax == null
+        t.closedLoopRampRate == null
         t.forwardOutputVoltagePeak == null
         t.reverseOutputVoltagePeak == null
         t.forwardOutputVoltageNominal == null
         t.reverseOutputVoltageNominal == null
         t.allowableClosedLoopError == null
         t.nominalClosedLoopVoltage == null
+
+        and:
+        1 * talon.setFeedbackDevice(CANTalon.FeedbackDevice.QuadEncoder)
+        1 * talon.configMaxOutputVoltage(12.0)
+        1 * talon.setCloseLoopRampRate(0)
+        1 * talon.configPeakOutputVoltage(12.0, -12.0)
+        1 * talon.configNominalOutputVoltage(0, 0)
+        1 * talon.setAllowableClosedLoopErr(0)
+        1 * talon.setPID(0, 0, 0)
+        1 * talon.setF(0)
+        1 * talon.setIZone(0)
+
+        1 * talon.enableBrakeMode(true)
+        1 * talon.setSafetyEnabled(false)
+        1 * talon.reverseOutput(false)
+        1 * talon.setVoltageRampRate(0.0)
+        1 * talon.getDeviceID()
+        1 * talon.setNominalClosedLoopVoltage(0.0)
+        1 * talon.reverseSensor(false)
+        1 * talon.enableReverseSoftLimit(false)
+        1 * talon.EnableCurrentLimit(false)
+        1 * talon.SetVelocityMeasurementWindow(64)
+        1 * talon.enableForwardSoftLimit(false)
+        1 * talon.setProfile(0)
+        1 * talon.SetVelocityMeasurementPeriod(CANTalon.VelocityMeasurementPeriod.Period_100Ms)
+        1 * talon.isSensorPresent(CANTalon.FeedbackDevice.QuadEncoder)
+        1 * talon.enableLimitSwitch(false, false)
+        1 * talon.changeControlMode(CANTalon.TalonControlMode.Speed)
+        1 * talon.setExpiration(0.1)
+        0 * talon._
+
+
     }
 
     def "configures PID position mode talon"() {
@@ -96,10 +132,10 @@ class PIDTalonConfigurationTest extends Specification {
         then:
         1 * talon.changeControlMode(CANTalon.TalonControlMode.Position)
         1 * talon.setFeedbackDevice(CANTalon.FeedbackDevice.CtreMagEncoder_Relative)
-        // FIXME: not implemented
-//        1 * talon.configMaxOutputVoltage(12.0)
-//        1 * talon.configPeakOutputVoltage(5.0, -3.0)
-//        1 * talon.configNominalOutputVoltage(0.5, -0.3)
+        1 * talon.configMaxOutputVoltage(12.0)
+        1 * talon.setCloseLoopRampRate(27.67)
+        1 * talon.configPeakOutputVoltage(5.0, -3.0)
+        1 * talon.configNominalOutputVoltage(0.5, -0.3)
         1 * talon.setAllowableClosedLoopErr(10)
         1 * talon.setPID(0.1, 0.2, 0.3)
         1 * talon.setF(0.4)

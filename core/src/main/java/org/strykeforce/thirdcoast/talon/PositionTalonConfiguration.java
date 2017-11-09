@@ -21,6 +21,7 @@ class PositionTalonConfiguration extends PIDTalonConfiguration {
       Integer currentLimit,
       Double voltageRampRate,
       Double outputVoltageMax,
+      Double closedLoopRampRate,
       Double forwardOutputVoltagePeak,
       Double reverseOutputVoltagePeak,
       Double forwardOutputVoltageNominal,
@@ -31,7 +32,7 @@ class PositionTalonConfiguration extends PIDTalonConfiguration {
     super(name, TalonControlMode.Position, setpointMax, encoder, isBrakeInNeutral, isOutputReversed,
         velocityMeasurementPeriod, velocityMeasurementWindow, forwardLimitSwitch,
         reverseLimitSwitch, forwardSoftLimit, reverseSoftLimit, currentLimit, voltageRampRate,
-        outputVoltageMax, forwardOutputVoltagePeak, reverseOutputVoltagePeak,
+        outputVoltageMax, closedLoopRampRate, forwardOutputVoltagePeak, reverseOutputVoltagePeak,
         forwardOutputVoltageNominal, reverseOutputVoltageNominal, allowableClosedLoopError,
         nominalClosedLoopVoltage, pGain, iGain, dGain, fGain, iZone);
   }

@@ -8,36 +8,37 @@ import org.jline.reader.LineReader;
 import org.jline.reader.UserInterruptException;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 
-public abstract class AbstractFwdRevDoubleConfigCommand extends AbstractTalonConfigCommand {
+public abstract class AbstractFwdRevBooleanConfigCommand extends AbstractTalonConfigCommand {
 
-  public AbstractFwdRevDoubleConfigCommand(String name, int weight, LineReader reader,
+  public AbstractFwdRevBooleanConfigCommand(String name, int weight, LineReader reader,
       TalonSet talonSet) {
     super(name, weight, reader, talonSet);
   }
 
-  public AbstractFwdRevDoubleConfigCommand(String name, LineReader reader, TalonSet talonSet) {
+  public AbstractFwdRevBooleanConfigCommand(String name, LineReader reader, TalonSet talonSet) {
     super(name, reader, talonSet);
   }
 
-  protected abstract void config(CANTalon talon, double foward, double reverse);
+  protected abstract void config(CANTalon talon, boolean foward, boolean reverse);
 
-  protected abstract void saveConfig(double forward, double reverse);
+  protected abstract void saveConfig(boolean forward, boolean reverse);
 
   @Override
   public void perform() {
-    double[] values = getFwdRevDoubles();
+    boolean[] values = getFwdRevBooleans();
     if (values == null) {
       return;
     }
+    saveConfig(values[0], values[1]);
     for (CANTalon talon : talonSet.selected()) {
       config(talon, values[0], values[1]);
       logger.info("set {} for {} to {}/{}", name(), talon.getDescription(), values[0], values[1]);
     }
   }
 
-  protected double[] getFwdRevDoubles() {
-    terminal.writer().println(bold("enter <forward>,<reverse> or a single number for both"));
-    double[] values = null;
+  private boolean[] getFwdRevBooleans() {
+    terminal.writer().println(bold("enter <Y>/<N> for forward,reverse or a single value for both"));
+    boolean[] values = null;
     while (values == null) {
       String line = null;
       try {
@@ -52,29 +53,41 @@ public abstract class AbstractFwdRevDoubleConfigCommand extends AbstractTalonCon
       }
 
       List<String> entries = Arrays.asList(line.split(","));
-      double[] doubles = new double[2];
+      boolean[] booleans = new boolean[2];
       try {
         if (entries.size() > 0) {
-          doubles[0] = Double.valueOf(entries.get(0));
+          booleans[0] = fromYN(entries.get(0));
         } else {
           help();
           continue;
         }
         if (entries.size() > 1) {
-          doubles[1] = Double.valueOf(entries.get(1));
+          booleans[1] = fromYN(entries.get(1));
         } else {
-          doubles[1] = doubles[0];
+          booleans[1] = booleans[0];
         }
-      } catch (NumberFormatException nfe) {
+      } catch (IllegalArgumentException e) {
         help();
         continue;
       }
-      values = doubles;
+      values = booleans;
     }
     return values;
   }
 
+  private boolean fromYN(String in) {
+    boolean setpoint;
+    if (in.equalsIgnoreCase("Y")) {
+      setpoint = true;
+    } else if (in.equalsIgnoreCase("N")) {
+      setpoint = false;
+    } else {
+      throw new IllegalArgumentException();
+    }
+    return setpoint;
+  }
+
   protected void help() {
-    terminal.writer().println(bold("please enter a number or two numbers separated by a commma"));
+    terminal.writer().println(bold("please enter <Y>, <N> or two values separated by a commma"));
   }
 }

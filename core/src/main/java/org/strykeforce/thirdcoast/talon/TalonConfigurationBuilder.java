@@ -58,6 +58,8 @@ public class TalonConfigurationBuilder {
   @Nullable
   private Double outputVoltageMax;
   @Nullable
+  private Double closedLoopRampRate;
+  @Nullable
   private Double forwardOutputVoltagePeak;
   @Nullable
   private Double reverseOutputVoltagePeak;
@@ -202,7 +204,8 @@ public class TalonConfigurationBuilder {
         tc = new PositionTalonConfiguration(name, setpointMax, encoder, brakeInNeutral,
             outputReversed, velocityMeasurementPeriod, velocityMeasurementWindow,
             forwardLimitSwitch, reverseLimitSwitch, forwardSoftLimit, reverseSoftLimit,
-            currentLimit, voltageRampRate, outputVoltageMax, forwardOutputVoltagePeak,
+            currentLimit, voltageRampRate, outputVoltageMax, closedLoopRampRate,
+            forwardOutputVoltagePeak,
             reverseOutputVoltagePeak, forwardOutputVoltageNominal, reverseOutputVoltageNominal,
             allowableClosedLoopError, nominalClosedLoopVoltage, pGain, iGain, dGain, fGain, iZone);
         break;
@@ -210,7 +213,8 @@ public class TalonConfigurationBuilder {
         tc = new SpeedTalonConfiguration(name, setpointMax, encoder, brakeInNeutral,
             outputReversed, velocityMeasurementPeriod, velocityMeasurementWindow,
             forwardLimitSwitch, reverseLimitSwitch, forwardSoftLimit, reverseSoftLimit,
-            currentLimit, voltageRampRate, outputVoltageMax, forwardOutputVoltagePeak,
+            currentLimit, voltageRampRate, outputVoltageMax, closedLoopRampRate,
+            forwardOutputVoltagePeak,
             reverseOutputVoltagePeak, forwardOutputVoltageNominal, reverseOutputVoltageNominal,
             allowableClosedLoopError, nominalClosedLoopVoltage, pGain, iGain, dGain, fGain, iZone);
         break;
@@ -305,6 +309,8 @@ public class TalonConfigurationBuilder {
   public TalonConfigurationBuilder encoderReversed(boolean reversed) {
     if (encoder == null) {
       encoder = new Encoder(reversed);
+    } else {
+      encoder = encoder.copyWithReversed(reversed);
     }
     return this;
   }
@@ -361,24 +367,32 @@ public class TalonConfigurationBuilder {
   /**
    * Enable and configure the Talon forward limit switch.
    *
-   * @param normallyOpen limit switch is normally open.
+   * @param normallyOpen limit switch is normally open, null to disable.
    * @return this builder.
    */
   @NotNull
-  public TalonConfigurationBuilder forwardLimitSwitch(boolean normallyOpen) {
-    forwardLimitSwitch = new LimitSwitch(true, normallyOpen);
+  public TalonConfigurationBuilder forwardLimitSwitch(@Nullable Boolean normallyOpen) {
+    if (normallyOpen != null) {
+      forwardLimitSwitch = new LimitSwitch(true, normallyOpen);
+    } else {
+      forwardLimitSwitch = null;
+    }
     return this;
   }
 
   /**
    * Enable and configure the Talon reverse limit switch.
    *
-   * @param normallyOpen limit switch is normally open.
+   * @param normallyOpen limit switch is normally open, null to disable.
    * @return this builder.
    */
   @NotNull
-  public TalonConfigurationBuilder reverseLimitSwitch(boolean normallyOpen) {
-    reverseLimitSwitch = new LimitSwitch(true, normallyOpen);
+  public TalonConfigurationBuilder reverseLimitSwitch(@Nullable Boolean normallyOpen) {
+    if (normallyOpen != null) {
+      reverseLimitSwitch = new LimitSwitch(true, normallyOpen);
+    } else {
+      reverseLimitSwitch = null;
+    }
     return this;
   }
 
@@ -419,9 +433,10 @@ public class TalonConfigurationBuilder {
   }
 
   /**
-   * Configure the Talon voltage ramp rate, enabled if greater than 0.
+   * Set the voltage ramp rate. Limits the rate at which the throttle will change. Affects all
+   * modes.
    *
-   * @param voltageRampRate the voltage ramp rate
+   * @param voltageRampRate maximum change in voltage, in volts / sec.
    * @return this builder.
    */
   @NotNull
@@ -439,6 +454,19 @@ public class TalonConfigurationBuilder {
   @NotNull
   public TalonConfigurationBuilder outputVoltageMax(double outputVoltageMax) {
     this.outputVoltageMax = outputVoltageMax;
+    return this;
+  }
+
+  /**
+   * Set the closed loop ramp rate for the current profile. Limits the rate at which the throttle
+   * will change. Only affects position and speed closed loop modes.
+   *
+   * @param closedLoopRampRate maximum change in voltage, in volts / sec.
+   * @return this builder.
+   */
+  @NotNull
+  public TalonConfigurationBuilder closedLoopRampRate(double closedLoopRampRate) {
+    this.closedLoopRampRate = closedLoopRampRate;
     return this;
   }
 
@@ -543,7 +571,7 @@ public class TalonConfigurationBuilder {
   }
 
   /**
-   * Configure I-zone.
+   * Set the integration zone of the current closed-loop profile.
    *
    * @param iZone value for I-zone.
    * @return this builder.
@@ -552,5 +580,43 @@ public class TalonConfigurationBuilder {
   public TalonConfigurationBuilder iZone(int iZone) {
     this.iZone = iZone;
     return this;
+  }
+
+  /**
+   * Get the forward limit switch.
+   *
+   * @return the forward limit switch.
+   */
+  @Nullable
+  public LimitSwitch getForwardLimitSwitch() {
+    return forwardLimitSwitch;
+  }
+
+  /**
+   * Get the reverse limit switch.
+   *
+   * @return the reverse limit switch.
+   */
+  @Nullable
+  public LimitSwitch getReverseLimitSwitch() {
+    return reverseLimitSwitch;
+  }
+
+  /**
+   * Set the forward limit switch.
+   *
+   * @param forwardLimitSwitch the forward limit switch.
+   */
+  public void setForwardLimitSwitch(@Nullable LimitSwitch forwardLimitSwitch) {
+    this.forwardLimitSwitch = forwardLimitSwitch;
+  }
+
+  /**
+   * Set the reverse limit switch.
+   *
+   * @param reverseLimitSwitch the forward limit switch.
+   */
+  public void setReverseLimitSwitch(@Nullable LimitSwitch reverseLimitSwitch) {
+    this.reverseLimitSwitch = reverseLimitSwitch;
   }
 }

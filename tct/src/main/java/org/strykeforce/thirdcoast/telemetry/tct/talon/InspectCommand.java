@@ -67,7 +67,6 @@ public class InspectCommand extends AbstractCommand {
       writer.println();
       booleanLine("Fwd Limit Switch:", limit.isEnabled());
       booleanLine("  Normally Open :", limit.isNormallyOpen());
-      writer.println();
     } else {
       stringLine("Fwd Limit Switch:", "DEFAULT");
     }

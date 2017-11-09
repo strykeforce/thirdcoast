@@ -21,6 +21,7 @@ public class ConfigurationsManager {
 
   private final static Logger logger = LoggerFactory.getLogger(ConfigurationsManager.class);
   private final TalonProvisioner talonProvisioner;
+  private final File file;
 
   /**
    * Construct an instance.
@@ -28,8 +29,9 @@ public class ConfigurationsManager {
    * @param talonProvisioner the TalonProvisioner used to manage TalonConfigurations
    */
   @Inject
-  ConfigurationsManager(TalonProvisioner talonProvisioner) {
+  ConfigurationsManager(TalonProvisioner talonProvisioner, File file) {
     this.talonProvisioner = talonProvisioner;
+    this.file = file;
   }
 
   public TalonProvisioner getTalonProvisioner() {
@@ -40,7 +42,6 @@ public class ConfigurationsManager {
     Map<String, Collection<TalonConfiguration>> tomlMap = new HashMap<>(2);
     Collection<TalonConfiguration> configs = talonProvisioner.getConfigurations();
     tomlMap.put(TalonProvisioner.TALON_TABLE, configs);
-    File file = new File("test.toml");
     TomlWriter writer = new TomlWriter();
     try {
       writer.write(tomlMap, file);

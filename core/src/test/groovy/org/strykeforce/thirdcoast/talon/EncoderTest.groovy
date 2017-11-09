@@ -7,6 +7,7 @@ import spock.lang.Specification
 
 import static com.ctre.CANTalon.FeedbackDevice.AnalogEncoder
 import static com.ctre.CANTalon.FeedbackDevice.CtreMagEncoder_Absolute
+import static com.ctre.CANTalon.FeedbackDevice.CtreMagEncoder_Relative
 import static com.ctre.CANTalon.FeedbackDevice.EncRising
 import static com.ctre.CANTalon.FeedbackDevice.PulseWidth
 import static com.ctre.CANTalon.FeedbackDevice.QuadEncoder
@@ -110,5 +111,51 @@ reversed = true
 unitScalingEnabled = false
 ticksPerRevolution = 0
 '''
+    }
+
+    def "creates a copy with reversed set"() {
+        given:
+        def encoder = new Encoder(CtreMagEncoder_Absolute)
+
+        expect:
+        !encoder.reversed
+        encoder.device == CtreMagEncoder_Absolute
+        !encoder.unitScalingEnabled
+
+        when:
+        encoder = encoder.copyWithReversed(true)
+
+        then:
+        encoder.reversed
+        encoder.device == CtreMagEncoder_Absolute
+        !encoder.unitScalingEnabled
+    }
+
+    def "creates a copy with new device set"() {
+        given:
+        def encoder = new Encoder()
+
+        expect:
+        !encoder.reversed
+        encoder.device == QuadEncoder
+        !encoder.unitScalingEnabled
+
+        when:
+        encoder = encoder.copyWithEncoder(CtreMagEncoder_Relative)
+
+        then:
+        !encoder.reversed
+        encoder.device == CtreMagEncoder_Relative
+        !encoder.unitScalingEnabled
+    }
+
+    def "creates a default with reverse set"() {
+        when:
+        def encoder = new Encoder(true)
+
+        then:
+        encoder.reversed
+        encoder.device == QuadEncoder
+        !encoder.unitScalingEnabled
     }
 }

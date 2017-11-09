@@ -246,6 +246,14 @@ pGain = 1.2
         tc.outputVoltageMax == 27.67
     }
 
+    def "configure closed loop ramp rate limit"() {
+        when:
+        PIDTalonConfiguration tc = tcb.mode(Speed).closedLoopRampRate(27.67).build()
+
+        then:
+        tc.closedLoopRampRate == 27.67
+    }
+
     def "configure peak output voltage limit"() {
         when:
         PIDTalonConfiguration tc = tcb.mode(Speed).outputVoltagePeak(2.7, 6.7).build()

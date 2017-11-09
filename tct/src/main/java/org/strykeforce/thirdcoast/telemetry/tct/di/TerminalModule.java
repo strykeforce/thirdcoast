@@ -12,13 +12,6 @@ import org.jline.terminal.TerminalBuilder;
 @Module
 abstract class TerminalModule {
 
-  // TODO: check if needed
-//  @Provides
-//  @Singleton
-//  public static Set<CANTalon> provideTalons() {
-//    return new HashSet<>();
-//  }
-
   @Provides
   @Singleton
   static Terminal provideTerminal() {

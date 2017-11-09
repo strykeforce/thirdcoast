@@ -20,9 +20,7 @@ public class NominalOutputVoltageCommand extends AbstractFwdRevDoubleConfigComma
 
   @Override
   protected void saveConfig(double forward, double reverse) {
-//    talonSet.talonConfigurationBuilder().nominalOutputVoltage(forward, reverse);
-    // FIXME: not in TalonConfigurationBuilder
-    terminal.writer().println(boldYellow("not implemented"));
+    talonSet.talonConfigurationBuilder().outputVoltageNominal(forward, reverse);
   }
 
   @Override
