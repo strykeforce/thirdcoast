@@ -9,6 +9,8 @@ dependencies {
     compile project(':core')
     compile libs.logback
     apt libs.daggerCompiler
+    compileOnly libs.jetbrainsAnnotations
+    compileOnly libs.jsr305
 }
 
 shadowJar {
