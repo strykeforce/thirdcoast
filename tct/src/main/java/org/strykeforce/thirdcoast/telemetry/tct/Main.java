@@ -9,10 +9,10 @@ import org.strykeforce.thirdcoast.telemetry.tct.di.MainComponent;
 
 public class Main implements Runnable {
 
-  final static Logger logger = LoggerFactory.getLogger(Main.class);
+  private final static Logger logger = LoggerFactory.getLogger(Main.class);
   private final MainComponent component;
 
-  public Main() {
+  Main() {
     component = DaggerMainComponent.builder().configFile(new File("tct.toml")).build();
   }
 

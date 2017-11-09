@@ -1,6 +1,7 @@
 package org.strykeforce.thirdcoast.telemetry.tct.talon;
 
 import com.ctre.CANTalon;
+import javax.annotation.ParametersAreNonnullByDefault;
 import javax.inject.Inject;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
@@ -10,13 +11,14 @@ import org.strykeforce.thirdcoast.telemetry.tct.di.ModeScoped;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.di.TalonMenuModule;
 
 @ModeScoped
+@ParametersAreNonnullByDefault
 public class RunCommand extends AbstractCommand {
 
   public final static String NAME = "Run Selected Talons";
   private final TalonSet talonSet;
 
   @Inject
-  public RunCommand(TalonSet talonSet, LineReader reader) {
+  RunCommand(TalonSet talonSet, LineReader reader) {
     super(NAME, TalonMenuModule.MENU_ORDER.indexOf(NAME), reader);
     this.talonSet = talonSet;
   }
@@ -29,7 +31,7 @@ public class RunCommand extends AbstractCommand {
     }
     terminal.writer().println(bold("Enter motor setpoint, press <enter> to go back"));
     while (true) {
-      String line = null;
+      String line;
       try {
         line = reader.readLine(boldYellow("setpoint> ")).trim();
       } catch (EndOfFileException | UserInterruptException e) {
@@ -39,7 +41,7 @@ public class RunCommand extends AbstractCommand {
       if (line.isEmpty()) {
         return;
       }
-      double setpoint = 0;
+      double setpoint;
       try {
         setpoint = Double.valueOf(line);
       } catch (NumberFormatException nfe) {

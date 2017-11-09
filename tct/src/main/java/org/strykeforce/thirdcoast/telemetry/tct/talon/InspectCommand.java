@@ -3,6 +3,7 @@ package org.strykeforce.thirdcoast.telemetry.tct.talon;
 import com.ctre.CANTalon;
 import java.io.PrintWriter;
 import java.util.Optional;
+import javax.annotation.ParametersAreNonnullByDefault;
 import javax.inject.Inject;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
@@ -14,14 +15,15 @@ import org.strykeforce.thirdcoast.telemetry.tct.di.ModeScoped;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.di.TalonMenuModule;
 
 @ModeScoped
+@ParametersAreNonnullByDefault
 public class InspectCommand extends AbstractCommand {
 
   public final static String NAME = "Inspect Talon";
-  final static Logger logger = LoggerFactory.getLogger(InspectCommand.class);
+  private final static Logger logger = LoggerFactory.getLogger(InspectCommand.class);
   private final TalonSet talonSet;
 
   @Inject
-  public InspectCommand(TalonSet talonSet, LineReader reader) {
+  InspectCommand(TalonSet talonSet, LineReader reader) {
     super(NAME, TalonMenuModule.MENU_ORDER.indexOf(NAME), reader);
     this.talonSet = talonSet;
   }
@@ -63,7 +65,7 @@ public class InspectCommand extends AbstractCommand {
   private Optional<CANTalon> getTalon() {
     Optional<CANTalon> talon = Optional.empty();
     while (!talon.isPresent()) {
-      String line = null;
+      String line;
       try {
         line = reader.readLine(boldYellow("talon id> ")).trim();
       } catch (EndOfFileException | UserInterruptException e) {

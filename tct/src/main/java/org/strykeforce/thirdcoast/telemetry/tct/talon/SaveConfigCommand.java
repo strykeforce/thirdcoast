@@ -1,5 +1,6 @@
 package org.strykeforce.thirdcoast.telemetry.tct.talon;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import javax.inject.Inject;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
@@ -14,15 +15,16 @@ import org.strykeforce.thirdcoast.telemetry.tct.AbstractCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.ConfigurationsManager;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.di.TalonMenuModule;
 
+@ParametersAreNonnullByDefault
 public class SaveConfigCommand extends AbstractCommand {
 
   public final static String NAME = "Save Active Configuration";
-  final static Logger logger = LoggerFactory.getLogger(SaveConfigCommand.class);
+  private final static Logger logger = LoggerFactory.getLogger(SaveConfigCommand.class);
   private final ConfigurationsManager configurationsManager;
   private final TalonSet talonSet;
 
   @Inject
-  public SaveConfigCommand(LineReader reader, TalonSet talonSet,
+  SaveConfigCommand(LineReader reader, TalonSet talonSet,
       ConfigurationsManager configurationsManager) {
     super(NAME, TalonMenuModule.MENU_ORDER.indexOf(NAME), reader);
     this.configurationsManager = configurationsManager;
@@ -39,7 +41,7 @@ public class SaveConfigCommand extends AbstractCommand {
   public void perform() {
     terminal.writer().println(bold("enter name to save configuration with" +
         " or <enter> to return without saving"));
-    String name = null;
+    String name;
     try {
       name = reader.readLine(prompt()).trim();
     } catch (EndOfFileException | UserInterruptException e) {

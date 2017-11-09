@@ -4,7 +4,9 @@ import com.ctre.CANTalon;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import javax.annotation.ParametersAreNonnullByDefault;
 import javax.inject.Inject;
+import org.jetbrains.annotations.NotNull;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
 import org.jline.reader.UserInterruptException;
@@ -24,21 +26,22 @@ import org.strykeforce.thirdcoast.telemetry.tct.talon.di.TalonMenuModule;
  * Select Talons to work with.
  */
 @ModeScoped
+@ParametersAreNonnullByDefault
 public class SelectCommand extends AbstractCommand {
 
   public final static String NAME = "Select Talons to Work With";
-  final static Logger logger = LoggerFactory.getLogger(SelectCommand.class);
+  private final static Logger logger = LoggerFactory.getLogger(SelectCommand.class);
   private final TalonFactory talonFactory;
   private final TalonSet talonSet;
-  private final Optional<Command> listCommand;
+  private final Command listCommand;
 
   @Inject
-  public SelectCommand(TalonSet talonSet, TalonFactory talonFactory, LineReader reader,
+  SelectCommand(TalonSet talonSet, TalonFactory talonFactory, LineReader reader,
       ListCommand listCommand) {
     super(NAME, TalonMenuModule.MENU_ORDER.indexOf(NAME), reader);
     this.talonSet = talonSet;
     this.talonFactory = talonFactory;
-    this.listCommand = Optional.of(listCommand);
+    this.listCommand = listCommand;
   }
 
   protected static String prompt() {
@@ -51,7 +54,7 @@ public class SelectCommand extends AbstractCommand {
   public void perform() {
     terminal.writer().println(bold("enter comma-separated list of Talon IDs"));
 
-    String line = null;
+    String line;
     try {
       line = reader.readLine(prompt()).trim();
     } catch (EndOfFileException | UserInterruptException e) {
@@ -85,8 +88,9 @@ public class SelectCommand extends AbstractCommand {
     talonSet.restartTelemetryService();
   }
 
+  @NotNull
   @Override
   public Optional<Command> post() {
-    return listCommand;
+    return Optional.of(listCommand);
   }
 }

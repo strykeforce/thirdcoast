@@ -12,6 +12,6 @@ import javax.inject.Qualifier;
 @Qualifier
 @Documented
 @Retention(RUNTIME)
-public @interface DioMenu {
+@interface DioMenu {
 
 }

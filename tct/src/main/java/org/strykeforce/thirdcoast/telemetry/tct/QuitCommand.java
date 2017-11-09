@@ -1,14 +1,16 @@
 package org.strykeforce.thirdcoast.telemetry.tct;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import javax.inject.Inject;
 import org.jline.reader.LineReader;
 
+@ParametersAreNonnullByDefault
 public class QuitCommand extends AbstractCommand {
 
   public final static String NAME = "Quit";
 
   @Inject
-  public QuitCommand(LineReader reader) {
+  QuitCommand(LineReader reader) {
     super(NAME, reader);
   }
 

@@ -28,7 +28,7 @@ public abstract class MenuModule {
   @Provides
   @Singleton
   @MainMenu
-  public static CommandAdapter topCommandsAdapter(@MainMenu Set<Command> commands) {
+  static CommandAdapter topCommandsAdapter(@MainMenu Set<Command> commands) {
     return new CommandAdapter(commands);
   }
 

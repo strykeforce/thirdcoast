@@ -12,4 +12,4 @@ import javax.inject.Qualifier;
 @Qualifier
 @Documented
 @Retention(RUNTIME)
-public @interface MainMenu { }
+@interface MainMenu { }

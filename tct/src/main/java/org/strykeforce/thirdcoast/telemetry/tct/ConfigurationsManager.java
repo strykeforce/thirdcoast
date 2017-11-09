@@ -19,7 +19,7 @@ import org.strykeforce.thirdcoast.talon.TalonProvisioner;
 @Singleton
 public class ConfigurationsManager {
 
-  final static Logger logger = LoggerFactory.getLogger(ConfigurationsManager.class);
+  private final static Logger logger = LoggerFactory.getLogger(ConfigurationsManager.class);
   private final TalonProvisioner talonProvisioner;
 
   /**
@@ -28,7 +28,7 @@ public class ConfigurationsManager {
    * @param talonProvisioner the TalonProvisioner used to manage TalonConfigurations
    */
   @Inject
-  public ConfigurationsManager(TalonProvisioner talonProvisioner) {
+  ConfigurationsManager(TalonProvisioner talonProvisioner) {
     this.talonProvisioner = talonProvisioner;
   }
 

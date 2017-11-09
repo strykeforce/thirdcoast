@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 
 public class Robot extends SampleRobot {
 
-  final static Logger logger = LoggerFactory.getLogger(Robot.class);
+  private final static Logger logger = LoggerFactory.getLogger(Robot.class);
   private Executor executor = Executors.newSingleThreadExecutor();
 
   @Override

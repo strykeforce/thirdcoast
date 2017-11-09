@@ -38,9 +38,11 @@ public class Menu {
     return new AttributedStringBuilder().style(AttributedStyle.BOLD).append(text).toAnsi();
   }
 
-  private static String boldYellow(String text) {
+  private static String prompt() {
     return new AttributedStringBuilder()
-        .style(AttributedStyle.BOLD.foreground(AttributedStyle.YELLOW)).append(text).toAnsi();
+        .style(AttributedStyle.BOLD.foreground(AttributedStyle.YELLOW))
+        .append("select> ")
+        .toAnsi();
   }
 
   private static String rightPrompt() {
@@ -61,7 +63,7 @@ public class Menu {
       }
       String line = null;
       try {
-        line = reader.readLine(boldYellow("select> "), rightPrompt(), (Character) null, null)
+        line = reader.readLine(prompt(), rightPrompt(), (Character) null, null)
             .trim();
       } catch (EndOfFileException | UserInterruptException e) {
         if (!mainMenu) {

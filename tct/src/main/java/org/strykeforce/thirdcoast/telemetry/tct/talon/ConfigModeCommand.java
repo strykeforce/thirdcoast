@@ -1,5 +1,6 @@
 package org.strykeforce.thirdcoast.telemetry.tct.talon;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import org.jline.reader.LineReader;
@@ -13,6 +14,7 @@ import org.strykeforce.thirdcoast.telemetry.tct.talon.di.TalonMenuModule;
  * Configure selected Talons.
  */
 @ModeScoped
+@ParametersAreNonnullByDefault
 public class ConfigModeCommand extends AbstractCommand {
 
   public final static String NAME = "Configure Selected Talons";
@@ -20,7 +22,7 @@ public class ConfigModeCommand extends AbstractCommand {
   private final TalonSet talonSet;
 
   @Inject
-  public ConfigModeCommand(TalonSet talonSet,
+  ConfigModeCommand(TalonSet talonSet,
       Provider<ConfigMenuComponent.Builder> talonMenuComponentProvider, LineReader reader) {
     super(NAME, TalonMenuModule.MENU_ORDER.indexOf(NAME), reader);
     this.talonMenuComponentProvider = talonMenuComponentProvider;

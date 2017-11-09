@@ -1,6 +1,7 @@
 package org.strykeforce.thirdcoast.telemetry.tct.talon;
 
 import com.ctre.CANTalon;
+import javax.annotation.ParametersAreNonnullByDefault;
 import javax.inject.Inject;
 import org.jline.reader.LineReader;
 import org.jline.utils.AttributedStringBuilder;
@@ -13,13 +14,14 @@ import org.strykeforce.thirdcoast.telemetry.tct.talon.di.TalonMenuModule;
  * Display a list of all Talons.
  */
 @ModeScoped
+@ParametersAreNonnullByDefault
 public class ListCommand extends AbstractCommand {
 
   public final static String NAME = "List Talons";
   private final TalonSet talonSet;
 
   @Inject
-  public ListCommand(TalonSet talonSet, LineReader reader) {
+  ListCommand(TalonSet talonSet, LineReader reader) {
     super(NAME, TalonMenuModule.MENU_ORDER.indexOf(NAME), reader);
     this.talonSet = talonSet;
   }

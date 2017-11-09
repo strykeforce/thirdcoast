@@ -5,8 +5,10 @@ import static java.util.Comparator.comparing;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import javax.annotation.ParametersAreNonnullByDefault;
 import javax.inject.Inject;
 
+@ParametersAreNonnullByDefault
 public class CommandAdapter {
 
   private final List<Command> commands;
@@ -18,11 +20,11 @@ public class CommandAdapter {
         .collect(Collectors.toList());
   }
 
-  public String getMenuText(int position) {
+  String getMenuText(int position) {
     return commands.get(position).name();
   }
 
-  public int getCount() {
+  int getCount() {
     return commands.size();
   }
 

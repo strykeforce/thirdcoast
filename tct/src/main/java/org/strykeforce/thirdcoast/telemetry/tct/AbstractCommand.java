@@ -1,6 +1,8 @@
 package org.strykeforce.thirdcoast.telemetry.tct;
 
 import java.util.Optional;
+import javax.annotation.ParametersAreNonnullByDefault;
+import org.jetbrains.annotations.NotNull;
 import org.jline.reader.LineReader;
 import org.jline.terminal.Terminal;
 import org.jline.utils.AttributedStringBuilder;
@@ -9,12 +11,13 @@ import org.jline.utils.AttributedStyle;
 /**
  * Abstract implementation of a menu command.
  */
+@ParametersAreNonnullByDefault
 public abstract class AbstractCommand implements Command {
 
   protected final String name;
   protected final Terminal terminal;
   protected final LineReader reader;
-  protected int weight;
+  private int weight;
 
   /**
    * Construct a command.
@@ -55,6 +58,7 @@ public abstract class AbstractCommand implements Command {
    * @return the command menu name.
    */
   @Override
+  @NotNull
   public String name() {
     return name;
   }
@@ -84,6 +88,7 @@ public abstract class AbstractCommand implements Command {
    * @return empty Optional
    */
   @Override
+  @NotNull
   public Optional<Command> post() {
     return Optional.empty();
   }

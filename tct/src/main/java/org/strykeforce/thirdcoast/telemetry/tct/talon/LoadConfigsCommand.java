@@ -4,7 +4,9 @@ import com.ctre.CANTalon;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import javax.annotation.ParametersAreNonnullByDefault;
 import javax.inject.Inject;
+import org.jetbrains.annotations.NotNull;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
 import org.jline.reader.UserInterruptException;
@@ -15,7 +17,6 @@ import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.talon.TalonConfiguration;
 import org.strykeforce.thirdcoast.talon.TalonFactory;
 import org.strykeforce.thirdcoast.talon.TalonProvisioner;
-import org.strykeforce.thirdcoast.telemetry.TelemetryService;
 import org.strykeforce.thirdcoast.telemetry.tct.AbstractCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.Command;
 import org.strykeforce.thirdcoast.telemetry.tct.ConfigurationsManager;
@@ -26,25 +27,26 @@ import org.strykeforce.thirdcoast.telemetry.tct.talon.di.TalonMenuModule;
  * Loads Talons from TOML configuration file named {@code tct.toml}.
  */
 @ModeScoped
+@ParametersAreNonnullByDefault
 public class LoadConfigsCommand extends AbstractCommand {
 
   public final static String NAME = "Load Talons";
-  final static Logger logger = LoggerFactory.getLogger(LoadConfigsCommand.class);
+  private final static Logger logger = LoggerFactory.getLogger(LoadConfigsCommand.class);
 
   private final ConfigurationsManager configurationsManager;
   private final TalonSet talonSet;
   private final TalonFactory talonFactory;
-  private final Optional<Command> listCommand;
+  private final Command listCommand;
 
 
   @Inject
-  public LoadConfigsCommand(ConfigurationsManager configurationsManager, TalonSet talonSet,
+  LoadConfigsCommand(ConfigurationsManager configurationsManager, TalonSet talonSet,
       LineReader reader, TalonFactory talonFactory, ListCommand listCommand) {
     super(NAME, TalonMenuModule.MENU_ORDER.indexOf(NAME), reader);
     this.configurationsManager = configurationsManager;
     this.talonSet = talonSet;
     this.talonFactory = talonFactory;
-    this.listCommand = Optional.of(listCommand);
+    this.listCommand = listCommand;
   }
 
   protected static String prompt() {
@@ -63,7 +65,7 @@ public class LoadConfigsCommand extends AbstractCommand {
     }
     String selected = null;
     while (selected == null) {
-      String line = null;
+      String line;
       try {
         line = reader.readLine(prompt()).trim();
       } catch (EndOfFileException | UserInterruptException e) {
@@ -111,9 +113,10 @@ public class LoadConfigsCommand extends AbstractCommand {
    *
    * @return the ListCommand
    */
+  @NotNull
   @Override
   public Optional<Command> post() {
-    return listCommand;
+    return Optional.of(listCommand);
   }
 
   private void help(int size) {
