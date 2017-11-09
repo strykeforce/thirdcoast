@@ -229,6 +229,14 @@ pGain = 1.2
         tc.currentLimit == 2767
     }
 
+    def "configure voltage ramp rate"() {
+        when:
+        def tc = tcb.voltageRampRate(27.67).build()
+
+        then:
+        tc.voltageRampRate == 27.67
+    }
+
     // PIDTalonConfig
     def "configure max output voltage limit"() {
         when:

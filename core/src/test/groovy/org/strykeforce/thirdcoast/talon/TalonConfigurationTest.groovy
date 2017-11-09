@@ -52,6 +52,7 @@ class TalonConfigurationTest extends Specification {
             1 * enableReverseSoftLimit(true)
             1 * setReverseSoftLimit(12_000.0)
             1 * EnableCurrentLimit(true)
+            1 * talon.setVoltageRampRate(0.0)
             1 * setCurrentLimit(50)
             1 * setSafetyEnabled(false)
             1 * setProfile(0)
@@ -110,6 +111,16 @@ class TalonConfigurationTest extends Specification {
         1 * talon.reverseOutput(true)
     }
 
+    def "voltage ramp rate set"() {
+        when:
+        def tc = tcb.voltageRampRate(27.67).build()
+        tc.configure(talon)
+
+        then:
+        tc.voltageRampRate == 27.67
+        1 * talon.setVoltageRampRate(27.67)
+    }
+
     def "sets defaults"() {
         when:
         def tc = tcb.build()
@@ -122,6 +133,7 @@ class TalonConfigurationTest extends Specification {
             1 * enableBrakeMode(true)
             1 * reverseSensor(false)
             1 * reverseOutput(false)
+            1 * setVoltageRampRate(0.0)
             1 * SetVelocityMeasurementPeriod(Period_100Ms)
             1 * SetVelocityMeasurementWindow(64)
             1 * enableLimitSwitch(false, false)

@@ -5,7 +5,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import org.jetbrains.annotations.NotNull;
 
 @ParametersAreNonnullByDefault
-final class SoftLimit {
+public final class SoftLimit {
 
   @NotNull
   public final static SoftLimit DEFAULT = new SoftLimit(null);

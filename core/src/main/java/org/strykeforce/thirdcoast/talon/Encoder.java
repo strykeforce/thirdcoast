@@ -10,7 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @ParametersAreNonnullByDefault
-final class Encoder {
+public final class Encoder {
 
   @NotNull
   final static Encoder DEFAULT = new Encoder();

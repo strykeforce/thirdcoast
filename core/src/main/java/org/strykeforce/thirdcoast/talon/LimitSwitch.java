@@ -4,7 +4,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import org.jetbrains.annotations.NotNull;
 
 @ParametersAreNonnullByDefault
-final class LimitSwitch {
+public final class LimitSwitch {
 
   @NotNull
   public final static LimitSwitch DEFAULT = new LimitSwitch();

@@ -30,11 +30,12 @@ public class TalonSet {
   @Inject
   public TalonSet(TelemetryService telemetryService) {
     this.telemetryService = telemetryService;
+    talonConfigurationBuilder = new TalonConfigurationBuilder();
   }
 
-//  public TalonConfiguration getActiveTalonConfiguration() {
-//    return activeTalonConfiguration;
-//  }
+  public TalonConfiguration getActiveTalonConfiguration() {
+    return talonConfigurationBuilder.build();
+  }
 
   void setActiveTalonConfiguration(TalonConfiguration activeTalonConfiguration) {
     talonConfigurationBuilder = new TalonConfigurationBuilder(activeTalonConfiguration);

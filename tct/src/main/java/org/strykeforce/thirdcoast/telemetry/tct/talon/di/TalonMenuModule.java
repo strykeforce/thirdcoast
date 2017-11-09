@@ -31,9 +31,9 @@ public abstract class TalonMenuModule {
       SelectCommand.NAME,
       ListCommand.NAME,
       ConfigModeCommand.NAME,
+      InspectCommand.NAME,
       SaveConfigCommand.NAME,
-      RunCommand.NAME,
-      InspectCommand.NAME
+      RunCommand.NAME
   );
 
   @ModeScoped
@@ -77,13 +77,13 @@ public abstract class TalonMenuModule {
   @org.strykeforce.thirdcoast.telemetry.tct.talon.di.TalonMenu
   public abstract Command loadCommand(LoadConfigsCommand command);
 
-/*
+
   @ModeScoped
   @Binds
   @IntoSet
   @org.strykeforce.thirdcoast.telemetry.tct.talon.di.TalonMenu
   public abstract Command inspectCommand(InspectCommand command);
-*/
+
 
   @ModeScoped
   @Binds

@@ -11,10 +11,11 @@ class VoltageTalonConfiguration extends TalonConfiguration {
       Encoder encoder, Boolean isBrakeInNeutral, Boolean isOutputReversed,
       VelocityMeasurementPeriod velocityMeasurementPeriod, Integer velocityMeasurementWindow,
       LimitSwitch forwardLimitSwitch, LimitSwitch reverseLimitSwitch,
-      SoftLimit forwardSoftLimit, SoftLimit reverseSoftLimit, Integer currentLimit) {
-    super(name, TalonControlMode.Voltage, setpointMax, encoder, isBrakeInNeutral, isOutputReversed, velocityMeasurementPeriod,
-        velocityMeasurementWindow, forwardLimitSwitch, reverseLimitSwitch, forwardSoftLimit,
-        reverseSoftLimit, currentLimit);
+      SoftLimit forwardSoftLimit, SoftLimit reverseSoftLimit, Integer currentLimit,
+      Double voltageRampRate) {
+    super(name, TalonControlMode.Voltage, setpointMax, encoder, isBrakeInNeutral, isOutputReversed,
+        velocityMeasurementPeriod, velocityMeasurementWindow, forwardLimitSwitch,
+        reverseLimitSwitch, forwardSoftLimit, reverseSoftLimit, currentLimit, voltageRampRate);
   }
 
   @Override

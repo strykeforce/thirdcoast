@@ -51,6 +51,8 @@ public class TalonConfigurationBuilder {
   private SoftLimit reverseSoftLimit;
   @Nullable
   private Integer currentLimit;
+  @Nullable
+  private Double voltageRampRate;
 
   // PIDTalonConfiguration
   @Nullable
@@ -194,23 +196,23 @@ public class TalonConfigurationBuilder {
         tc = new VoltageTalonConfiguration(name, setpointMax, encoder, brakeInNeutral,
             outputReversed, velocityMeasurementPeriod, velocityMeasurementWindow,
             forwardLimitSwitch, reverseLimitSwitch, forwardSoftLimit, reverseSoftLimit,
-            currentLimit);
+            currentLimit, voltageRampRate);
         break;
       case Position:
         tc = new PositionTalonConfiguration(name, setpointMax, encoder, brakeInNeutral,
             outputReversed, velocityMeasurementPeriod, velocityMeasurementWindow,
             forwardLimitSwitch, reverseLimitSwitch, forwardSoftLimit, reverseSoftLimit,
-            currentLimit, outputVoltageMax, forwardOutputVoltagePeak, reverseOutputVoltagePeak,
-            forwardOutputVoltageNominal, reverseOutputVoltageNominal, allowableClosedLoopError,
-            nominalClosedLoopVoltage, pGain, iGain, dGain, fGain, iZone);
+            currentLimit, voltageRampRate, outputVoltageMax, forwardOutputVoltagePeak,
+            reverseOutputVoltagePeak, forwardOutputVoltageNominal, reverseOutputVoltageNominal,
+            allowableClosedLoopError, nominalClosedLoopVoltage, pGain, iGain, dGain, fGain, iZone);
         break;
       case Speed:
         tc = new SpeedTalonConfiguration(name, setpointMax, encoder, brakeInNeutral,
             outputReversed, velocityMeasurementPeriod, velocityMeasurementWindow,
             forwardLimitSwitch, reverseLimitSwitch, forwardSoftLimit, reverseSoftLimit,
-            currentLimit, outputVoltageMax, forwardOutputVoltagePeak, reverseOutputVoltagePeak,
-            forwardOutputVoltageNominal, reverseOutputVoltageNominal, allowableClosedLoopError,
-            nominalClosedLoopVoltage, pGain, iGain, dGain, fGain, iZone);
+            currentLimit, voltageRampRate, outputVoltageMax, forwardOutputVoltagePeak,
+            reverseOutputVoltagePeak, forwardOutputVoltageNominal, reverseOutputVoltageNominal,
+            allowableClosedLoopError, nominalClosedLoopVoltage, pGain, iGain, dGain, fGain, iZone);
         break;
       case Follower:
       case MotionMagic:
@@ -413,6 +415,18 @@ public class TalonConfigurationBuilder {
   @NotNull
   public TalonConfigurationBuilder currentLimit(int currentLimit) {
     this.currentLimit = currentLimit;
+    return this;
+  }
+
+  /**
+   * Configure the Talon voltage ramp rate, enabled if greater than 0.
+   *
+   * @param voltageRampRate the voltage ramp rate
+   * @return this builder.
+   */
+  @NotNull
+  public TalonConfigurationBuilder voltageRampRate(double voltageRampRate) {
+    this.voltageRampRate = voltageRampRate;
     return this;
   }
 

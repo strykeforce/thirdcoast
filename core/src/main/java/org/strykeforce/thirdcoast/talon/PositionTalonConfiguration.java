@@ -7,23 +7,33 @@ import org.jetbrains.annotations.NotNull;
 
 class PositionTalonConfiguration extends PIDTalonConfiguration {
 
-  PositionTalonConfiguration(@NotNull String name, double setpointMax,
-      Encoder encoder, Boolean isBrakeInNeutral, Boolean isOutputReversed,
+  PositionTalonConfiguration(@NotNull String name,
+      double setpointMax,
+      Encoder encoder,
+      Boolean isBrakeInNeutral,
+      Boolean isOutputReversed,
       VelocityMeasurementPeriod velocityMeasurementPeriod,
       Integer velocityMeasurementWindow,
-      LimitSwitch forwardLimitSwitch, LimitSwitch reverseLimitSwitch,
-      SoftLimit forwardSoftLimit, SoftLimit reverseSoftLimit, Integer currentLimit,
-      Double outputVoltageMax, Double forwardOutputVoltagePeak,
-      Double reverseOutputVoltagePeak, Double forwardOutputVoltageNominal,
-      Double reverseOutputVoltageNominal, Integer allowableClosedLoopError,
-      Double nominalClosedLoopVoltage, Double pGain, Double iGain, Double dGain,
-      Double fGain, Integer iZone) {
+      LimitSwitch forwardLimitSwitch,
+      LimitSwitch reverseLimitSwitch,
+      SoftLimit forwardSoftLimit,
+      SoftLimit reverseSoftLimit,
+      Integer currentLimit,
+      Double voltageRampRate,
+      Double outputVoltageMax,
+      Double forwardOutputVoltagePeak,
+      Double reverseOutputVoltagePeak,
+      Double forwardOutputVoltageNominal,
+      Double reverseOutputVoltageNominal,
+      Integer allowableClosedLoopError,
+      Double nominalClosedLoopVoltage,
+      Double pGain, Double iGain, Double dGain, Double fGain, Integer iZone) {
     super(name, TalonControlMode.Position, setpointMax, encoder, isBrakeInNeutral, isOutputReversed,
         velocityMeasurementPeriod, velocityMeasurementWindow, forwardLimitSwitch,
-        reverseLimitSwitch, forwardSoftLimit, reverseSoftLimit, currentLimit, outputVoltageMax,
-        forwardOutputVoltagePeak, reverseOutputVoltagePeak, forwardOutputVoltageNominal,
-        reverseOutputVoltageNominal, allowableClosedLoopError, nominalClosedLoopVoltage, pGain,
-        iGain, dGain, fGain, iZone);
+        reverseLimitSwitch, forwardSoftLimit, reverseSoftLimit, currentLimit, voltageRampRate,
+        outputVoltageMax, forwardOutputVoltagePeak, reverseOutputVoltagePeak,
+        forwardOutputVoltageNominal, reverseOutputVoltageNominal, allowableClosedLoopError,
+        nominalClosedLoopVoltage, pGain, iGain, dGain, fGain, iZone);
   }
 
   @Override

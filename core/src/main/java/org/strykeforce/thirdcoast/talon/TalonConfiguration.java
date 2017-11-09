@@ -1,6 +1,7 @@
 package org.strykeforce.thirdcoast.talon;
 
 import com.ctre.CANTalon;
+import com.ctre.CANTalon.TalonControlMode;
 import com.ctre.CANTalon.VelocityMeasurementPeriod;
 import edu.wpi.first.wpilibj.MotorSafety;
 import java.util.Collection;
@@ -8,8 +9,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Represents a Talon configuration.
@@ -18,11 +17,10 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class TalonConfiguration {
 
-  final static Logger logger = LoggerFactory.getLogger(TalonConfiguration.class);
   // required
   @NotNull
   private final String name;
-  @SuppressWarnings("FieldCanBeLocal")
+  @SuppressWarnings({"FieldCanBeLocal", "unused"})
   @NotNull
   private final CANTalon.TalonControlMode mode;
   private final double setpointMax;
@@ -37,13 +35,23 @@ public abstract class TalonConfiguration {
   private final SoftLimit forwardSoftLimit;
   private final SoftLimit reverseSoftLimit;
   private final Integer currentLimit;
+  private final Double voltageRampRate;
   private Set<Integer> talonIds;
 
-  TalonConfiguration(@NotNull String name, @NotNull CANTalon.TalonControlMode mode,
-      double setpointMax, Encoder encoder, Boolean brakeInNeutral, Boolean outputReversed,
-      VelocityMeasurementPeriod velocityMeasurementPeriod, Integer velocityMeasurementWindow,
-      LimitSwitch forwardLimitSwitch, LimitSwitch reverseLimitSwitch,
-      SoftLimit forwardSoftLimit, SoftLimit reverseSoftLimit, Integer currentLimit) {
+  TalonConfiguration(@NotNull String name,
+      @NotNull CANTalon.TalonControlMode mode,
+      double setpointMax,
+      Encoder encoder,
+      Boolean brakeInNeutral,
+      Boolean outputReversed,
+      VelocityMeasurementPeriod velocityMeasurementPeriod,
+      Integer velocityMeasurementWindow,
+      LimitSwitch forwardLimitSwitch,
+      LimitSwitch reverseLimitSwitch,
+      SoftLimit forwardSoftLimit,
+      SoftLimit reverseSoftLimit,
+      Integer currentLimit,
+      Double voltageRampRate) {
     this.name = name;
     this.mode = mode;
     this.setpointMax = setpointMax;
@@ -57,25 +65,7 @@ public abstract class TalonConfiguration {
     this.forwardSoftLimit = forwardSoftLimit;
     this.reverseSoftLimit = reverseSoftLimit;
     this.currentLimit = currentLimit;
-  }
-
-  /**
-   * Create a {@code TalonConfiguration} builder.
-   *
-   * @return the TalonConfigurationBuilder
-   */
-  @NotNull
-  public static TalonConfigurationBuilder builder() {
-    return new TalonConfigurationBuilder();
-  }
-
-  /**
-   * Print the current state of the Talon.
-   *
-   * @param talon the Talon to print
-   */
-  public static void log(CANTalon talon) {
-    logger.info("TODO {}", talon);
+    this.voltageRampRate = voltageRampRate;
   }
 
   /**
@@ -131,6 +121,7 @@ public abstract class TalonConfiguration {
     } else {
       talon.EnableCurrentLimit(false);
     }
+    talon.setVoltageRampRate(voltageRampRate != null ? voltageRampRate : 0);
     addTalonId(talon.getDeviceID());
   }
 
@@ -139,7 +130,7 @@ public abstract class TalonConfiguration {
    *
    * @param id the Talon ID.
    */
-  public void addTalonId(int id) {
+  private void addTalonId(int id) {
     if (talonIds == null) {
       talonIds = new HashSet<>();
     }
@@ -185,11 +176,11 @@ public abstract class TalonConfiguration {
     return encoder;
   }
 
-  public Boolean isBrakeInNeutral() {
+  Boolean isBrakeInNeutral() {
     return brakeInNeutral;
   }
 
-  public Boolean isOutputReversed() {
+  Boolean isOutputReversed() {
     return outputReversed;
   }
 
@@ -224,6 +215,23 @@ public abstract class TalonConfiguration {
    */
   public Integer getCurrentLimit() {
     return currentLimit;
+  }
+
+  @NotNull
+  public TalonControlMode getMode() {
+    return mode;
+  }
+
+  public Boolean getBrakeInNeutral() {
+    return brakeInNeutral;
+  }
+
+  public Boolean getOutputReversed() {
+    return outputReversed;
+  }
+
+  public Double getVoltageRampRate() {
+    return voltageRampRate;
   }
 
   /**

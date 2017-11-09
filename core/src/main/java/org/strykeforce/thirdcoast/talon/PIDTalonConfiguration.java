@@ -5,7 +5,7 @@ import com.ctre.CANTalon.VelocityMeasurementPeriod;
 import javax.annotation.Nullable;
 import org.jetbrains.annotations.NotNull;
 
-class PIDTalonConfiguration extends TalonConfiguration {
+public class PIDTalonConfiguration extends TalonConfiguration {
 
   private final Double outputVoltageMax;
   private final Double forwardOutputVoltagePeak;
@@ -20,19 +20,31 @@ class PIDTalonConfiguration extends TalonConfiguration {
   private final Double fGain;
   private final Integer iZone;
 
-  PIDTalonConfiguration(@NotNull String name, @NotNull CANTalon.TalonControlMode mode,
-      double setpointMax, Encoder encoder, Boolean isBrakeInNeutral, Boolean isOutputReversed,
-      VelocityMeasurementPeriod velocityMeasurementPeriod, Integer velocityMeasurementWindow,
-      LimitSwitch forwardLimitSwitch, LimitSwitch reverseLimitSwitch,
-      SoftLimit forwardSoftLimit, SoftLimit reverseSoftLimit, Integer currentLimit,
-      Double outputVoltageMax, Double forwardOutputVoltagePeak,
-      Double reverseOutputVoltagePeak, Double forwardOutputVoltageNominal,
-      Double reverseOutputVoltageNominal, Integer allowableClosedLoopError,
-      Double nominalClosedLoopVoltage, Double pGain, Double iGain, Double dGain,
-      Double fGain, Integer iZone) {
+  PIDTalonConfiguration(@NotNull String name,
+      @NotNull CANTalon.TalonControlMode mode,
+      double setpointMax,
+      Encoder encoder,
+      Boolean isBrakeInNeutral,
+      Boolean isOutputReversed,
+      VelocityMeasurementPeriod velocityMeasurementPeriod,
+      Integer velocityMeasurementWindow,
+      LimitSwitch forwardLimitSwitch,
+      LimitSwitch reverseLimitSwitch,
+      SoftLimit forwardSoftLimit,
+      SoftLimit reverseSoftLimit,
+      Integer currentLimit,
+      Double voltageRampRate,
+      Double outputVoltageMax,
+      Double forwardOutputVoltagePeak,
+      Double reverseOutputVoltagePeak,
+      Double forwardOutputVoltageNominal,
+      Double reverseOutputVoltageNominal,
+      Integer allowableClosedLoopError,
+      Double nominalClosedLoopVoltage,
+      Double pGain, Double iGain, Double dGain, Double fGain, Integer iZone) {
     super(name, mode, setpointMax, encoder, isBrakeInNeutral, isOutputReversed,
         velocityMeasurementPeriod, velocityMeasurementWindow, forwardLimitSwitch,
-        reverseLimitSwitch, forwardSoftLimit, reverseSoftLimit, currentLimit);
+        reverseLimitSwitch, forwardSoftLimit, reverseSoftLimit, currentLimit, voltageRampRate);
     this.outputVoltageMax = outputVoltageMax;
     this.forwardOutputVoltagePeak = forwardOutputVoltagePeak;
     this.reverseOutputVoltagePeak = reverseOutputVoltagePeak;
@@ -72,14 +84,14 @@ class PIDTalonConfiguration extends TalonConfiguration {
     super.configure(talon);
   }
 
-  double valueOrZero(@Nullable Double value) {
+  private double valueOrZero(@Nullable Double value) {
     if (value != null) {
       return value;
     }
     return 0;
   }
 
-  int valueOrZero(@Nullable Integer value) {
+  private int valueOrZero(@Nullable Integer value) {
     if (value != null) {
       return value;
     }
