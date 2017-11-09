@@ -12,6 +12,8 @@ import org.strykeforce.thirdcoast.telemetry.tct.Command;
 import org.strykeforce.thirdcoast.telemetry.tct.CommandAdapter;
 import org.strykeforce.thirdcoast.telemetry.tct.Menu;
 import org.strykeforce.thirdcoast.telemetry.tct.di.ConfigScoped;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonMenu;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.ClosedLoopConfigCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.EncoderConfigCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.LimitConfigCommand;
@@ -48,8 +50,9 @@ public abstract class ConfigMenuModule {
   @ConfigScoped
   @Provides
   @TalonConfigMenu
-  public static Menu configMenu(@TalonConfigMenu CommandAdapter commandAdapter, Terminal terminal) {
-    return new Menu(commandAdapter, terminal);
+  public static Menu configMenu(@TalonConfigMenu CommandAdapter commandAdapter, Terminal terminal,
+      TalonSet talonSet) {
+    return new TalonMenu(commandAdapter, terminal, talonSet);
   }
 
   @ConfigScoped

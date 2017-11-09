@@ -34,7 +34,7 @@ public class Menu {
     reader = LineReaderBuilder.builder().terminal(terminal).build();
   }
 
-  private static String bold(String text) {
+  protected String bold(String text) {
     return new AttributedStringBuilder().style(AttributedStyle.BOLD).append(text).toAnsi();
   }
 
@@ -50,10 +50,15 @@ public class Menu {
     return enabled ? ENABLED : DISABLED;
   }
 
+  protected String header() {
+    return "";
+  }
+
   public void display() {
     int menuCount = commandsAdapter.getCount();
     boolean help = false;
     while (true) {
+      terminal.writer().print(header());
       for (int i = 0; i < menuCount; i++) {
         terminal.writer().printf("%2d - %s%n", i + 1, commandsAdapter.getMenuText(i));
       }

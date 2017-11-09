@@ -12,6 +12,8 @@ import org.strykeforce.thirdcoast.telemetry.tct.Command;
 import org.strykeforce.thirdcoast.telemetry.tct.CommandAdapter;
 import org.strykeforce.thirdcoast.telemetry.tct.Menu;
 import org.strykeforce.thirdcoast.telemetry.tct.di.SubConfigScoped;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonMenu;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.lim.ForwardSoftLimitCommand;
 
 @Module
@@ -31,13 +33,14 @@ public abstract class LimitMenuModule {
   @SubConfigScoped
   @Provides
   @LimitMenu
-  public static Menu configMenu(@LimitMenu CommandAdapter commandAdapter, Terminal terminal) {
-    return new Menu(commandAdapter, terminal);
+  public static Menu configMenu(@LimitMenu CommandAdapter commandAdapter, Terminal terminal,
+      TalonSet talonSet) {
+    return new TalonMenu(commandAdapter, terminal, talonSet);
   }
 
-   @SubConfigScoped
-   @Binds
-   @IntoSet
-   @LimitMenu
-   public abstract Command forwardSoftLimitCommand(ForwardSoftLimitCommand command);
+  @SubConfigScoped
+  @Binds
+  @IntoSet
+  @LimitMenu
+  public abstract Command forwardSoftLimitCommand(ForwardSoftLimitCommand command);
 }

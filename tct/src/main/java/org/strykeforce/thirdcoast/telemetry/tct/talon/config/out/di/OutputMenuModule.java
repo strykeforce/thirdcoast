@@ -12,6 +12,8 @@ import org.strykeforce.thirdcoast.telemetry.tct.Command;
 import org.strykeforce.thirdcoast.telemetry.tct.CommandAdapter;
 import org.strykeforce.thirdcoast.telemetry.tct.Menu;
 import org.strykeforce.thirdcoast.telemetry.tct.di.SubConfigScoped;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonMenu;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.out.ClosedLoopRampRateCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.out.CurrentLimitCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.out.NominalOutputVoltageCommand;
@@ -39,8 +41,9 @@ public abstract class OutputMenuModule {
   @SubConfigScoped
   @Provides
   @OutputMenu
-  public static Menu configMenu(@OutputMenu CommandAdapter commandAdapter, Terminal terminal) {
-    return new Menu(commandAdapter, terminal);
+  public static Menu configMenu(@OutputMenu CommandAdapter commandAdapter, Terminal terminal,
+      TalonSet talonSet) {
+    return new TalonMenu(commandAdapter, terminal, talonSet);
   }
 
   @SubConfigScoped

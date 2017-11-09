@@ -19,6 +19,8 @@ import org.strykeforce.thirdcoast.telemetry.tct.talon.LoadConfigsCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.RunCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.SaveConfigCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.SelectCommand;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonMenu;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.di.ConfigMenuComponent;
 
 @Module(subcomponents = ConfigMenuComponent.class)
@@ -27,67 +29,72 @@ public abstract class TalonMenuModule {
   public static final List<String> MENU_ORDER = Arrays.asList(
       LoadConfigsCommand.NAME,
       SelectCommand.NAME,
-      SaveConfigCommand.NAME,
-      ConfigModeCommand.NAME,
       ListCommand.NAME,
-      InspectCommand.NAME,
-      RunCommand.NAME
+      ConfigModeCommand.NAME,
+      SaveConfigCommand.NAME,
+      RunCommand.NAME,
+      InspectCommand.NAME
   );
 
   @ModeScoped
   @Provides
-  @TalonMenu
-  public static CommandAdapter talonCommandsAdapter(@TalonMenu Set<Command> commands) {
+  @org.strykeforce.thirdcoast.telemetry.tct.talon.di.TalonMenu
+  public static CommandAdapter talonCommandsAdapter(
+      @org.strykeforce.thirdcoast.telemetry.tct.talon.di.TalonMenu Set<Command> commands) {
     return new CommandAdapter(commands);
   }
 
   @ModeScoped
   @Provides
-  @TalonMenu
-  public static Menu talonMenu(@TalonMenu CommandAdapter commandAdapter, Terminal terminal) {
-    return new Menu(commandAdapter, terminal);
+  @org.strykeforce.thirdcoast.telemetry.tct.talon.di.TalonMenu
+  public static Menu talonMenu(
+      @org.strykeforce.thirdcoast.telemetry.tct.talon.di.TalonMenu CommandAdapter commandAdapter,
+      Terminal terminal, TalonSet talonSet) {
+    return new TalonMenu(commandAdapter, terminal, talonSet);
   }
 
   @ModeScoped
   @Binds
   @IntoSet
-  @TalonMenu
+  @org.strykeforce.thirdcoast.telemetry.tct.talon.di.TalonMenu
   public abstract Command configCommand(ConfigModeCommand command);
 
   @ModeScoped
   @Binds
   @IntoSet
-  @TalonMenu
+  @org.strykeforce.thirdcoast.telemetry.tct.talon.di.TalonMenu
   public abstract Command listCommand(ListCommand command);
 
   @ModeScoped
   @Binds
   @IntoSet
-  @TalonMenu
+  @org.strykeforce.thirdcoast.telemetry.tct.talon.di.TalonMenu
   public abstract Command selectCommand(SelectCommand command);
 
   @ModeScoped
   @Binds
   @IntoSet
-  @TalonMenu
+  @org.strykeforce.thirdcoast.telemetry.tct.talon.di.TalonMenu
   public abstract Command loadCommand(LoadConfigsCommand command);
 
+/*
   @ModeScoped
   @Binds
   @IntoSet
-  @TalonMenu
+  @org.strykeforce.thirdcoast.telemetry.tct.talon.di.TalonMenu
   public abstract Command inspectCommand(InspectCommand command);
+*/
 
   @ModeScoped
   @Binds
   @IntoSet
-  @TalonMenu
+  @org.strykeforce.thirdcoast.telemetry.tct.talon.di.TalonMenu
   public abstract Command runCommand(RunCommand command);
 
   @ModeScoped
   @Binds
   @IntoSet
-  @TalonMenu
+  @org.strykeforce.thirdcoast.telemetry.tct.talon.di.TalonMenu
   public abstract Command saveConfigCommand(SaveConfigCommand command);
 
 

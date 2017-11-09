@@ -12,6 +12,8 @@ import org.strykeforce.thirdcoast.telemetry.tct.Command;
 import org.strykeforce.thirdcoast.telemetry.tct.CommandAdapter;
 import org.strykeforce.thirdcoast.telemetry.tct.Menu;
 import org.strykeforce.thirdcoast.telemetry.tct.di.SubConfigScoped;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonMenu;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc.ReverseOutputCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc.ReverseSensorCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc.SelectTypeCommand;
@@ -41,15 +43,16 @@ public abstract class EncoderMenuModule {
   @SubConfigScoped
   @Provides
   @EncoderMenu
-  public static Menu configMenu(@EncoderMenu CommandAdapter commandAdapter, Terminal terminal) {
-    return new Menu(commandAdapter, terminal);
+  public static Menu configMenu(@EncoderMenu CommandAdapter commandAdapter, Terminal terminal,
+      TalonSet talonSet) {
+    return new TalonMenu(commandAdapter, terminal, talonSet);
   }
 
-   @SubConfigScoped
-   @Binds
-   @IntoSet
-   @EncoderMenu
-   public abstract Command selectTypeCommand(SelectTypeCommand command);
+  @SubConfigScoped
+  @Binds
+  @IntoSet
+  @EncoderMenu
+  public abstract Command selectTypeCommand(SelectTypeCommand command);
 
   @SubConfigScoped
   @Binds
@@ -73,11 +76,13 @@ public abstract class EncoderMenuModule {
   @Binds
   @IntoSet
   @EncoderMenu
-  public abstract Command velocityMeasurementWindowCommand(VelocityMeasurementWindowCommand command);
+  public abstract Command velocityMeasurementWindowCommand(
+      VelocityMeasurementWindowCommand command);
 
   @SubConfigScoped
   @Binds
   @IntoSet
   @EncoderMenu
-  public abstract Command velocityMeasurementPeriodCommand(VelocityMeasurementPeriodCommand command);
+  public abstract Command velocityMeasurementPeriodCommand(
+      VelocityMeasurementPeriodCommand command);
 }
