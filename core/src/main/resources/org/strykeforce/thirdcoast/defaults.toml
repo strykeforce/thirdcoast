@@ -18,9 +18,8 @@
   mode = "Position"
   setpointMax     = 4095.0
   brakeInNeutral = false
-  outputReversed = false
-  forward_output_voltage_peak =  6.0
-  reverse_output_voltage_peak = -6.0
+  forwardOutputVoltagePeak =  6.0
+  reverseOutputVoltagePeak = -6.0
   # NOTE: you must provide azimuth Talon closed-loop tuning parameters below
   pGain =   0.0
   iGain =   0.0

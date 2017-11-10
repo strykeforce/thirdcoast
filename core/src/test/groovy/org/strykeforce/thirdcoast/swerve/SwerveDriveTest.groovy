@@ -25,8 +25,8 @@ class SwerveDriveTest extends spock.lang.Specification {
     dGain =   3.0
     fGain =   4.0
     iZone = 0
-    forward_output_voltage_peak =  6.0
-    reverse_output_voltage_peak = -6.0
+    forwardOutputVoltagePeak =  6.0
+    reverseOutputVoltagePeak = -6.0
     [TALON.encoder]
     device  = "CtreMagEncoder_Relative"
     
