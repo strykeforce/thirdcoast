@@ -7,7 +7,6 @@ import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
 import org.jline.reader.UserInterruptException;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
-import org.strykeforce.thirdcoast.telemetry.tct.talon.config.di.ConfigMenuModule;
 
 public class SelectOperatingModeCommand extends AbstractTalonConfigCommand {
 
@@ -15,7 +14,7 @@ public class SelectOperatingModeCommand extends AbstractTalonConfigCommand {
 
   @Inject
   public SelectOperatingModeCommand(TalonSet talonSet, LineReader reader) {
-    super(NAME, ConfigMenuModule.MENU_ORDER.indexOf(NAME), reader, talonSet);
+    super(NAME, reader, talonSet);
   }
 
   @Override
@@ -27,7 +26,7 @@ public class SelectOperatingModeCommand extends AbstractTalonConfigCommand {
     }
     boolean done = false;
     while (!done) {
-      String line = null;
+      String line;
       try {
         line = reader.readLine(prompt()).trim();
       } catch (EndOfFileException | UserInterruptException e) {

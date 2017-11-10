@@ -2,17 +2,12 @@ package org.strykeforce.thirdcoast.telemetry.tct.talon.config;
 
 import com.ctre.CANTalon;
 import java.io.PrintWriter;
-import java.util.OptionalDouble;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
 import org.jline.reader.UserInterruptException;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 
 public abstract class AbstractDoubleConfigCommand extends AbstractTalonConfigCommand {
-
-  public AbstractDoubleConfigCommand(String name, int weight, LineReader reader, TalonSet talonSet) {
-    super(name, weight, reader, talonSet);
-  }
 
   public AbstractDoubleConfigCommand(String name, LineReader reader, TalonSet talonSet) {
     super(name, reader, talonSet);
@@ -39,7 +34,7 @@ public abstract class AbstractDoubleConfigCommand extends AbstractTalonConfigCom
     Double value = null;
 
     while (value == null) {
-      String line = null;
+      String line;
       try {
         line = reader.readLine(prompt()).trim();
       } catch (EndOfFileException | UserInterruptException e) {
@@ -55,7 +50,6 @@ public abstract class AbstractDoubleConfigCommand extends AbstractTalonConfigCom
       } catch (NumberFormatException nfe) {
         PrintWriter writer = terminal.writer();
         writer.println("please enter a number");
-        continue;
       }
     }
     return value;

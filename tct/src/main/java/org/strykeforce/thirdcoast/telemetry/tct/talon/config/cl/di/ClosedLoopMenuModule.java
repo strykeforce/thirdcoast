@@ -4,8 +4,6 @@ import dagger.Binds;
 import dagger.Module;
 import dagger.Provides;
 import dagger.multibindings.IntoSet;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Set;
 import org.jline.reader.LineReader;
 import org.strykeforce.thirdcoast.telemetry.tct.Command;
@@ -23,20 +21,11 @@ import org.strykeforce.thirdcoast.telemetry.tct.talon.config.cl.PCommand;
 @Module
 public abstract class ClosedLoopMenuModule {
 
-  public final static List<String> MENU_ORDER = Arrays.asList(
-      PCommand.NAME,
-      ICommand.NAME,
-      DCommand.NAME,
-      FCommand.NAME,
-      IZoneCommand.NAME,
-      AllowableClosedLoopErrorCommand.NAME
-      );
-
   @SubConfigScoped
   @Provides
   @ClosedLoopMenu
   public static CommandAdapter configCommandsAdapter(@ClosedLoopMenu Set<Command> commands) {
-    return new CommandAdapter(commands);
+    return new CommandAdapter("TALON_CONFIG_CL", commands);
   }
 
   @SubConfigScoped

@@ -10,11 +10,6 @@ import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 
 public abstract class AbstractFwdRevBooleanConfigCommand extends AbstractTalonConfigCommand {
 
-  public AbstractFwdRevBooleanConfigCommand(String name, int weight, LineReader reader,
-      TalonSet talonSet) {
-    super(name, weight, reader, talonSet);
-  }
-
   public AbstractFwdRevBooleanConfigCommand(String name, LineReader reader, TalonSet talonSet) {
     super(name, reader, talonSet);
   }
@@ -40,7 +35,7 @@ public abstract class AbstractFwdRevBooleanConfigCommand extends AbstractTalonCo
     terminal.writer().println(bold("enter <Y>/<N> for forward,reverse or a single value for both"));
     boolean[] values = null;
     while (values == null) {
-      String line = null;
+      String line;
       try {
         line = reader.readLine(prompt()).trim();
       } catch (EndOfFileException | UserInterruptException e) {

@@ -17,7 +17,6 @@ import org.strykeforce.thirdcoast.talon.SoftLimit;
 import org.strykeforce.thirdcoast.talon.TalonConfiguration;
 import org.strykeforce.thirdcoast.telemetry.tct.AbstractCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.di.ModeScoped;
-import org.strykeforce.thirdcoast.telemetry.tct.talon.di.TalonMenuModule;
 
 @ModeScoped
 @ParametersAreNonnullByDefault
@@ -33,7 +32,7 @@ public class InspectCommand extends AbstractCommand {
 
   @Inject
   InspectCommand(TalonSet talonSet, LineReader reader) {
-    super(NAME, TalonMenuModule.MENU_ORDER.indexOf(NAME), reader);
+    super(NAME, reader);
     this.talonSet = talonSet;
   }
 
@@ -154,7 +153,7 @@ public class InspectCommand extends AbstractCommand {
     terminal.writer().println(sb.toString());
   }
 
-  private void doubleLine(String description, Double value) {
+  private void doubleLine(String description, @Nullable Double value) {
     StringBuilder sb = new StringBuilder();
     Formatter formatter = new Formatter(sb);
     sb.append(bold(String.format(FORMAT_DESCRIPTION, description)));

@@ -5,7 +5,6 @@ import javax.inject.Inject;
 import org.jline.reader.LineReader;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractDoubleConfigCommand;
-import org.strykeforce.thirdcoast.telemetry.tct.talon.config.cl.di.ClosedLoopMenuModule;
 
 /**
  * Configure I.
@@ -16,7 +15,7 @@ public class ICommand extends AbstractDoubleConfigCommand {
 
   @Inject
   public ICommand(LineReader reader, TalonSet talonSet) {
-    super(NAME, ClosedLoopMenuModule.MENU_ORDER.indexOf(NAME), reader, talonSet);
+    super(NAME, reader, talonSet);
   }
 
   @Override

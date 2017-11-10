@@ -7,25 +7,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.telemetry.tct.AbstractCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
-import org.strykeforce.thirdcoast.telemetry.tct.talon.config.di.ConfigMenuModule;
 
 public abstract class AbstractTalonConfigCommand extends AbstractCommand {
 
   protected final static Logger logger = LoggerFactory.getLogger(AbstractTalonConfigCommand.class);
   protected final TalonSet talonSet;
 
-  protected AbstractTalonConfigCommand(String name, int weight, LineReader reader, TalonSet talonSet) {
-    super(name, weight, reader);
-    this.talonSet = talonSet;
-  }
-
   protected AbstractTalonConfigCommand(String name, LineReader reader, TalonSet talonSet) {
-    this(name, ConfigMenuModule.MENU_ORDER.indexOf(name), reader, talonSet);
+    super(name, reader);
+    this.talonSet = talonSet;
   }
 
   protected String prompt() {
     return new AttributedStringBuilder()
         .style(AttributedStyle.BOLD.foreground(AttributedStyle.YELLOW))
-        .append("configure " + name() + "> ").toAnsi();
+        .append("configure ").append(name()).append("> ").toAnsi();
   }
 }

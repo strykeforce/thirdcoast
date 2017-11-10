@@ -4,8 +4,6 @@ import dagger.Binds;
 import dagger.Module;
 import dagger.Provides;
 import dagger.multibindings.IntoSet;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Set;
 import org.jline.reader.LineReader;
 import org.strykeforce.thirdcoast.telemetry.tct.Command;
@@ -24,20 +22,11 @@ import org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc.VelocityMeasure
 @Module
 public abstract class EncoderMenuModule {
 
-  public final static List<String> MENU_ORDER = Arrays.asList(
-      SelectTypeCommand.NAME,
-      SetPositionCommand.NAME,
-      ReverseSensorCommand.NAME,
-      ReverseOutputCommand.NAME,
-      VelocityMeasurementPeriodCommand.NAME,
-      VelocityMeasurementWindowCommand.NAME
-  );
-
   @SubConfigScoped
   @Provides
   @EncoderMenu
   public static CommandAdapter configCommandsAdapter(@EncoderMenu Set<Command> commands) {
-    return new CommandAdapter(commands);
+    return new CommandAdapter("TALON_CONFIG_ENC", commands);
   }
 
   @SubConfigScoped

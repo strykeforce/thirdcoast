@@ -8,7 +8,6 @@ import org.strykeforce.thirdcoast.telemetry.tct.AbstractCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.Menu;
 import org.strykeforce.thirdcoast.telemetry.tct.di.ModeScoped;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.di.ConfigMenuComponent;
-import org.strykeforce.thirdcoast.telemetry.tct.talon.di.TalonMenuModule;
 
 /**
  * Configure selected Talons.
@@ -24,7 +23,7 @@ public class ConfigModeCommand extends AbstractCommand {
   @Inject
   ConfigModeCommand(TalonSet talonSet,
       Provider<ConfigMenuComponent.Builder> talonMenuComponentProvider, LineReader reader) {
-    super(NAME, TalonMenuModule.MENU_ORDER.indexOf(NAME), reader);
+    super(NAME, reader);
     this.talonMenuComponentProvider = talonMenuComponentProvider;
     this.talonSet = talonSet;
   }

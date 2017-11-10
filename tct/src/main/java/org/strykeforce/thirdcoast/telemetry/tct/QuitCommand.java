@@ -15,11 +15,6 @@ public class QuitCommand extends AbstractCommand {
   }
 
   @Override
-  public int weight() {
-    return 100; // push to bottom of menu
-  }
-
-  @Override
   public void perform() {
     terminal.writer().println("Bye.");
     terminal.flush();

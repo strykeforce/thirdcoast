@@ -20,7 +20,6 @@ import org.strykeforce.thirdcoast.talon.TalonFactory;
 import org.strykeforce.thirdcoast.telemetry.tct.AbstractCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.Command;
 import org.strykeforce.thirdcoast.telemetry.tct.di.ModeScoped;
-import org.strykeforce.thirdcoast.telemetry.tct.talon.di.TalonMenuModule;
 
 /**
  * Select Talons to work with.
@@ -38,7 +37,7 @@ public class SelectCommand extends AbstractCommand {
   @Inject
   SelectCommand(TalonSet talonSet, TalonFactory talonFactory, LineReader reader,
       ListCommand listCommand) {
-    super(NAME, TalonMenuModule.MENU_ORDER.indexOf(NAME), reader);
+    super(NAME, reader);
     this.talonSet = talonSet;
     this.talonFactory = talonFactory;
     this.listCommand = listCommand;

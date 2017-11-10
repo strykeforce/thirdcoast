@@ -10,11 +10,6 @@ import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 
 public abstract class AbstractFwdRevDoubleConfigCommand extends AbstractTalonConfigCommand {
 
-  public AbstractFwdRevDoubleConfigCommand(String name, int weight, LineReader reader,
-      TalonSet talonSet) {
-    super(name, weight, reader, talonSet);
-  }
-
   public AbstractFwdRevDoubleConfigCommand(String name, LineReader reader, TalonSet talonSet) {
     super(name, reader, talonSet);
   }
@@ -39,7 +34,7 @@ public abstract class AbstractFwdRevDoubleConfigCommand extends AbstractTalonCon
     terminal.writer().println(bold("enter <forward>,<reverse> or a single number for both"));
     double[] values = null;
     while (values == null) {
-      String line = null;
+      String line;
       try {
         line = reader.readLine(prompt()).trim();
       } catch (EndOfFileException | UserInterruptException e) {

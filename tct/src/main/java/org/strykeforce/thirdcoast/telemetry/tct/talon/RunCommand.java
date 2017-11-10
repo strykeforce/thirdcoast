@@ -8,7 +8,6 @@ import org.jline.reader.LineReader;
 import org.jline.reader.UserInterruptException;
 import org.strykeforce.thirdcoast.telemetry.tct.AbstractCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.di.ModeScoped;
-import org.strykeforce.thirdcoast.telemetry.tct.talon.di.TalonMenuModule;
 
 @ModeScoped
 @ParametersAreNonnullByDefault
@@ -19,7 +18,7 @@ public class RunCommand extends AbstractCommand {
 
   @Inject
   RunCommand(TalonSet talonSet, LineReader reader) {
-    super(NAME, TalonMenuModule.MENU_ORDER.indexOf(NAME), reader);
+    super(NAME, reader);
     this.talonSet = talonSet;
   }
 

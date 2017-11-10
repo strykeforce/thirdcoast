@@ -13,7 +13,6 @@ import javax.inject.Inject;
 import org.jline.reader.LineReader;
 import org.strykeforce.thirdcoast.telemetry.tct.AbstractCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.di.ModeScoped;
-import org.strykeforce.thirdcoast.telemetry.tct.talon.di.TalonMenuModule;
 
 /**
  * Display a list of all Talons.
@@ -32,8 +31,34 @@ public class ListCommand extends AbstractCommand {
 
   @Inject
   ListCommand(LineReader reader, TalonSet talonSet) {
-    super(NAME, TalonMenuModule.MENU_ORDER.indexOf(NAME), reader);
+    super(NAME, reader);
     this.talonSet = talonSet;
+  }
+
+  private static int intValue(@Nullable VelocityMeasurementPeriod period) {
+    if (period == null) {
+      return 0;
+    }
+    switch (period) {
+      case Period_1Ms:
+        return 1;
+      case Period_2Ms:
+        return 2;
+      case Period_5Ms:
+        return 5;
+      case Period_10Ms:
+        return 10;
+      case Period_20Ms:
+        return 20;
+      case Period_25Ms:
+        return 25;
+      case Period_50Ms:
+        return 50;
+      case Period_100Ms:
+        return 100;
+      default:
+        return 0;
+    }
   }
 
   @Override
@@ -127,31 +152,5 @@ public class ListCommand extends AbstractCommand {
     }
     sb.append("\n");
     return bold(sb.toString());
-  }
-
-  private static int intValue(@Nullable VelocityMeasurementPeriod period) {
-    if (period == null) {
-      return 0;
-    }
-    switch (period) {
-      case Period_1Ms:
-        return 1;
-      case Period_2Ms:
-        return 2;
-      case Period_5Ms:
-        return 5;
-      case Period_10Ms:
-        return 10;
-      case Period_20Ms:
-        return 20;
-      case Period_25Ms:
-        return 25;
-      case Period_50Ms:
-        return 50;
-      case Period_100Ms:
-        return 100;
-      default:
-        return 0;
-    }
   }
 }

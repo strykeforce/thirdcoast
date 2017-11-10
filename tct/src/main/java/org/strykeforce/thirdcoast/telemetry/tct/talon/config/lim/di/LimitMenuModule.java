@@ -23,7 +23,7 @@ public abstract class LimitMenuModule {
   @Provides
   @LimitMenu
   public static CommandAdapter configCommandsAdapter(@LimitMenu Set<Command> commands) {
-    return new CommandAdapter(commands);
+    return new CommandAdapter("TALON_CONFIG_LIM", commands);
   }
 
   @SubConfigScoped

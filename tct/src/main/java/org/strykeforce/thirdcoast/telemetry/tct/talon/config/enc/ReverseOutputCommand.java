@@ -5,7 +5,6 @@ import javax.inject.Inject;
 import org.jline.reader.LineReader;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractBooleanConfigCommand;
-import org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc.di.EncoderMenuModule;
 
 public class ReverseOutputCommand extends AbstractBooleanConfigCommand {
 
@@ -14,7 +13,7 @@ public class ReverseOutputCommand extends AbstractBooleanConfigCommand {
 
   @Inject
   public ReverseOutputCommand(LineReader reader, TalonSet talonSet) {
-    super(NAME, EncoderMenuModule.MENU_ORDER.indexOf(NAME), reader, talonSet);
+    super(NAME, reader, talonSet);
   }
 
   @Override

@@ -1,4 +1,4 @@
-package org.strykeforce.thirdcoast.telemetry.tct.talon.config.cl
+package org.strykeforce.thirdcoast.telemetry.tct.talon.config.out
 
 import org.strykeforce.thirdcoast.telemetry.tct.Command
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractTalonConfigCommandTest

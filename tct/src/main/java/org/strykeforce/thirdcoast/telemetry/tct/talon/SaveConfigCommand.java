@@ -13,7 +13,6 @@ import org.strykeforce.thirdcoast.talon.TalonConfiguration;
 import org.strykeforce.thirdcoast.talon.TalonConfigurationBuilder;
 import org.strykeforce.thirdcoast.telemetry.tct.AbstractCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.ConfigurationsManager;
-import org.strykeforce.thirdcoast.telemetry.tct.talon.di.TalonMenuModule;
 
 @ParametersAreNonnullByDefault
 public class SaveConfigCommand extends AbstractCommand {
@@ -26,7 +25,7 @@ public class SaveConfigCommand extends AbstractCommand {
   @Inject
   SaveConfigCommand(LineReader reader, TalonSet talonSet,
       ConfigurationsManager configurationsManager) {
-    super(NAME, TalonMenuModule.MENU_ORDER.indexOf(NAME), reader);
+    super(NAME, reader);
     this.configurationsManager = configurationsManager;
     this.talonSet = talonSet;
   }

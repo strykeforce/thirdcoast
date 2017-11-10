@@ -8,7 +8,6 @@ import org.strykeforce.thirdcoast.telemetry.tct.Menu;
 import org.strykeforce.thirdcoast.telemetry.tct.di.ConfigScoped;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.cl.di.ClosedLoopMenuComponent;
-import org.strykeforce.thirdcoast.telemetry.tct.talon.config.di.ConfigMenuModule;
 
 /**
  * Configure selected Talons.
@@ -24,7 +23,7 @@ public class ClosedLoopConfigCommand extends AbstractCommand {
   public ClosedLoopConfigCommand(TalonSet talonSet,
       Provider<ClosedLoopMenuComponent.Builder> closedLoopMenuComponentProvider,
       LineReader reader) {
-    super(NAME, ConfigMenuModule.MENU_ORDER.indexOf(NAME), reader);
+    super(NAME, reader);
     this.closedLoopMenuComponentProvider = closedLoopMenuComponentProvider;
     this.talonSet = talonSet;
   }

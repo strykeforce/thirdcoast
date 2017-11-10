@@ -7,7 +7,6 @@ import org.strykeforce.thirdcoast.telemetry.tct.AbstractCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.Menu;
 import org.strykeforce.thirdcoast.telemetry.tct.di.ConfigScoped;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
-import org.strykeforce.thirdcoast.telemetry.tct.talon.config.di.ConfigMenuModule;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc.di.EncoderMenuComponent;
 
 /**
@@ -23,7 +22,7 @@ public class EncoderConfigCommand extends AbstractCommand {
   @Inject
   public EncoderConfigCommand(TalonSet talonSet,
       Provider<EncoderMenuComponent.Builder> voltageMenuComponentProvider, LineReader reader) {
-    super(NAME, ConfigMenuModule.MENU_ORDER.indexOf(NAME), reader);
+    super(NAME, reader);
     this.voltageMenuComponentProvider = voltageMenuComponentProvider;
     this.talonSet = talonSet;
   }

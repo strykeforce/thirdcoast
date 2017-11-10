@@ -7,7 +7,6 @@ import org.jline.reader.LineReader;
 import org.jline.reader.UserInterruptException;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractTalonConfigCommand;
-import org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc.di.EncoderMenuModule;
 
 public class VelocityMeasurementWindowCommand extends AbstractTalonConfigCommand {
 
@@ -15,7 +14,7 @@ public class VelocityMeasurementWindowCommand extends AbstractTalonConfigCommand
 
   @Inject
   public VelocityMeasurementWindowCommand(LineReader reader, TalonSet talonSet) {
-    super(NAME, EncoderMenuModule.MENU_ORDER.indexOf(NAME), reader, talonSet);
+    super(NAME, reader, talonSet);
   }
 
   @Override
@@ -26,7 +25,7 @@ public class VelocityMeasurementWindowCommand extends AbstractTalonConfigCommand
     }
     boolean done = false;
     while (!done) {
-      String line = null;
+      String line;
       try {
         line = reader.readLine(prompt()).trim();
       } catch (EndOfFileException | UserInterruptException e) {

@@ -15,13 +15,6 @@ public interface Command {
   String name();
 
   /**
-   * Influence order of menus, lower numbers higher, defaults to zero.
-   *
-   * @return the weight.
-   */
-  int weight();
-
-  /**
    * Perform action associated with this command.
    */
   void perform();

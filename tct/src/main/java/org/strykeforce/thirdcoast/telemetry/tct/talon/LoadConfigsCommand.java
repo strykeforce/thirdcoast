@@ -21,7 +21,6 @@ import org.strykeforce.thirdcoast.telemetry.tct.AbstractCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.Command;
 import org.strykeforce.thirdcoast.telemetry.tct.ConfigurationsManager;
 import org.strykeforce.thirdcoast.telemetry.tct.di.ModeScoped;
-import org.strykeforce.thirdcoast.telemetry.tct.talon.di.TalonMenuModule;
 
 /**
  * Loads Talons from TOML configuration file named {@code tct.toml}.
@@ -42,7 +41,7 @@ public class LoadConfigsCommand extends AbstractCommand {
   @Inject
   LoadConfigsCommand(ConfigurationsManager configurationsManager, TalonSet talonSet,
       LineReader reader, TalonFactory talonFactory, ListCommand listCommand) {
-    super(NAME, TalonMenuModule.MENU_ORDER.indexOf(NAME), reader);
+    super(NAME, reader);
     this.configurationsManager = configurationsManager;
     this.talonSet = talonSet;
     this.talonFactory = talonFactory;

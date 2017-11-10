@@ -1,7 +1,6 @@
 package org.strykeforce.thirdcoast.telemetry.tct.talon.config;
 
 import com.ctre.CANTalon;
-import java.util.Optional;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
 import org.jline.reader.UserInterruptException;
@@ -11,12 +10,8 @@ import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 
 public abstract class AbstractBooleanConfigCommand extends AbstractTalonConfigCommand {
 
-  public AbstractBooleanConfigCommand(String name, int weight, LineReader reader, TalonSet talonSet) {
-    super(name, weight, reader, talonSet);
-  }
-
   public AbstractBooleanConfigCommand(String name, LineReader reader, TalonSet talonSet) {
-    this(name, 0, reader, talonSet);
+    super(name, reader, talonSet);
   }
 
   protected abstract void config(CANTalon talon, boolean value);
@@ -41,7 +36,7 @@ public abstract class AbstractBooleanConfigCommand extends AbstractTalonConfigCo
     Boolean value = null;
 
     while (value == null) {
-      String line = null;
+      String line;
       try {
         line = reader.readLine(prompt()).trim();
       } catch (EndOfFileException | UserInterruptException e) {
@@ -61,7 +56,7 @@ public abstract class AbstractBooleanConfigCommand extends AbstractTalonConfigCo
         terminal.writer().println(bold("enter <Y>, <N> or <enter> to go back"));
         continue;
       }
-      value = Boolean.valueOf(setpoint);
+      value = setpoint;
     }
     return value;
   }
@@ -70,7 +65,7 @@ public abstract class AbstractBooleanConfigCommand extends AbstractTalonConfigCo
   protected String prompt() {
     return new AttributedStringBuilder()
         .style(AttributedStyle.BOLD.foreground(AttributedStyle.YELLOW))
-        .append("configure " + name() + " (Y/N)> ")
+        .append("configure ").append(name()).append(" (Y/N)> ")
         .toAnsi();
   }
 }

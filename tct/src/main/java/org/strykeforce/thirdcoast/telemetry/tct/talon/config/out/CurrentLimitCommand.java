@@ -5,7 +5,6 @@ import javax.inject.Inject;
 import org.jline.reader.LineReader;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractIntConfigCommand;
-import org.strykeforce.thirdcoast.telemetry.tct.talon.config.out.di.OutputMenuModule;
 
 /**
  * Configure F.
@@ -16,7 +15,7 @@ public class CurrentLimitCommand extends AbstractIntConfigCommand {
 
   @Inject
   public CurrentLimitCommand(LineReader reader, TalonSet talonSet) {
-    super(NAME, OutputMenuModule.MENU_ORDER.indexOf(NAME), reader, talonSet);
+    super(NAME, reader, talonSet);
   }
 
   @Override

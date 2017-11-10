@@ -1,17 +1,12 @@
 package org.strykeforce.thirdcoast.telemetry.tct.talon.config;
 
 import com.ctre.CANTalon;
-import java.util.OptionalInt;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
 import org.jline.reader.UserInterruptException;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 
 public abstract class AbstractIntConfigCommand extends AbstractTalonConfigCommand {
-
-  public AbstractIntConfigCommand(String name, int weight, LineReader reader, TalonSet talonSet) {
-    super(name, weight, reader, talonSet);
-  }
 
   public AbstractIntConfigCommand(String name, LineReader reader, TalonSet talonSet) {
     super(name, reader, talonSet);
@@ -38,7 +33,7 @@ public abstract class AbstractIntConfigCommand extends AbstractTalonConfigComman
     Integer value = null;
 
     while (value == null) {
-      String line = null;
+      String line;
       try {
         line = reader.readLine(prompt()).trim();
       } catch (EndOfFileException | UserInterruptException e) {
@@ -53,7 +48,6 @@ public abstract class AbstractIntConfigCommand extends AbstractTalonConfigComman
         value = Integer.valueOf(line);
       } catch (NumberFormatException nfe) {
         terminal.writer().println("please enter an integer");
-        continue;
       }
     }
     return value;

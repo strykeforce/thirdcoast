@@ -17,30 +17,17 @@ public abstract class AbstractCommand implements Command {
   protected final String name;
   protected final Terminal terminal;
   protected final LineReader reader;
-  private int weight;
 
   /**
    * Construct a command.
    *
    * @param name the command menu name.
-   * @param weight the display weight.
-   * @param reader the LineReader to use for terminal input.
-   */
-  public AbstractCommand(String name, int weight, LineReader reader) {
-    this.name = name;
-    this.weight = weight;
-    this.reader = reader;
-    this.terminal = reader.getTerminal();
-  }
-
-  /**
-   * Construct a command with default display weight of zero.
-   *
-   * @param name the command menu name.
    * @param reader the LineReader to use for terminal input.
    */
   public AbstractCommand(String name, LineReader reader) {
-    this(name, 0, reader);
+    this.name = name;
+    this.reader = reader;
+    this.terminal = reader.getTerminal();
   }
 
   protected static String bold(String text) {
@@ -61,16 +48,6 @@ public abstract class AbstractCommand implements Command {
   @NotNull
   public String name() {
     return name;
-  }
-
-  /**
-   * Get the display weight. The menu is sorted by weight and then sorted alphabetically.
-   *
-   * @return the display weight.
-   */
-  @Override
-  public int weight() {
-    return weight;
   }
 
   /**

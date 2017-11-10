@@ -5,7 +5,6 @@ import javax.inject.Inject;
 import org.jline.reader.LineReader;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractIntConfigCommand;
-import org.strykeforce.thirdcoast.telemetry.tct.talon.config.cl.di.ClosedLoopMenuModule;
 
 /**
  * Configure allowable closed-loop error.
@@ -16,7 +15,7 @@ public class AllowableClosedLoopErrorCommand extends AbstractIntConfigCommand {
 
   @Inject
   public AllowableClosedLoopErrorCommand(LineReader reader, TalonSet talonSet) {
-    super(NAME, ClosedLoopMenuModule.MENU_ORDER.indexOf(NAME), reader, talonSet);
+    super(NAME, reader, talonSet);
   }
 
   @Override
