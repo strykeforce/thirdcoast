@@ -165,10 +165,6 @@ public class TalonConfigurationBuilder {
     if (mode == null) {
       throw new IllegalArgumentException("mode missing from configuration");
     }
-    Double setpointMax = config.getDouble("setpointMax");
-    if (setpointMax == null) {
-      throw new IllegalArgumentException("setpointMax missing from configuration");
-    }
     return CANTalon.TalonControlMode.valueOf(mode);
   }
 

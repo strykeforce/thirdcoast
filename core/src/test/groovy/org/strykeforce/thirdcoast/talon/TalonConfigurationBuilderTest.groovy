@@ -351,7 +351,6 @@ pGain = 1.2
         input                                 | message
         ''                                    | 'mode missing from configuration'
         "mode = \"Bogus\"\nsetpointMax = 0.0" | 'No enum constant com.ctre.CANTalon.TalonControlMode.Bogus'
-        'mode = "Voltage"'                    | 'setpointMax missing from configuration'
     }
 }
 
