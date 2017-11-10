@@ -34,10 +34,6 @@ public class Menu {
     reader = LineReaderBuilder.builder().terminal(terminal).build();
   }
 
-  protected String bold(String text) {
-    return new AttributedStringBuilder().style(AttributedStyle.BOLD).append(text).toAnsi();
-  }
-
   private static String prompt() {
     return new AttributedStringBuilder()
         .style(AttributedStyle.BOLD.foreground(AttributedStyle.YELLOW))
@@ -50,6 +46,10 @@ public class Menu {
     return enabled ? ENABLED : DISABLED;
   }
 
+  protected String bold(String text) {
+    return new AttributedStringBuilder().style(AttributedStyle.BOLD).append(text).toAnsi();
+  }
+
   protected String header() {
     return "";
   }
@@ -60,7 +60,8 @@ public class Menu {
     while (true) {
       terminal.writer().print(header());
       for (int i = 0; i < menuCount; i++) {
-        terminal.writer().printf("%2d - %s%n", i + 1, commandsAdapter.getMenuText(i));
+        terminal.writer().printf(bold("%2d"), i + 1);
+        terminal.writer().printf(" - %s%n", commandsAdapter.getMenuText(i));
       }
       if (help) {
         help();
