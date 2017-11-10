@@ -7,7 +7,7 @@ import dagger.multibindings.IntoSet;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import org.jline.terminal.Terminal;
+import org.jline.reader.LineReader;
 import org.strykeforce.thirdcoast.telemetry.tct.Command;
 import org.strykeforce.thirdcoast.telemetry.tct.CommandAdapter;
 import org.strykeforce.thirdcoast.telemetry.tct.Menu;
@@ -31,8 +31,8 @@ public abstract class ServoMenuModule {
   @ModeScoped
   @Provides
   @ServoMenu
-  static Menu talonMenu(@ServoMenu CommandAdapter commandAdapter, Terminal terminal) {
-    return new Menu(commandAdapter, terminal);
+  static Menu talonMenu(@ServoMenu CommandAdapter commandAdapter, LineReader reader) {
+    return new Menu(commandAdapter, reader);
   }
 
   @ModeScoped

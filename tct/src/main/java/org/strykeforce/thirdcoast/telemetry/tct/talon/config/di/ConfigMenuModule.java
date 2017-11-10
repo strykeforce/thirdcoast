@@ -7,12 +7,12 @@ import dagger.multibindings.IntoSet;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
-import org.jline.terminal.Terminal;
+import org.jline.reader.LineReader;
 import org.strykeforce.thirdcoast.telemetry.tct.Command;
 import org.strykeforce.thirdcoast.telemetry.tct.CommandAdapter;
 import org.strykeforce.thirdcoast.telemetry.tct.Menu;
 import org.strykeforce.thirdcoast.telemetry.tct.di.ConfigScoped;
-import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonMenu;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonModeMenu;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.ClosedLoopConfigCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.EncoderConfigCommand;
@@ -50,9 +50,9 @@ public abstract class ConfigMenuModule {
   @ConfigScoped
   @Provides
   @TalonConfigMenu
-  public static Menu configMenu(@TalonConfigMenu CommandAdapter commandAdapter, Terminal terminal,
+  public static Menu configMenu(@TalonConfigMenu CommandAdapter commandAdapter, LineReader reader,
       TalonSet talonSet) {
-    return new TalonMenu(commandAdapter, terminal, talonSet);
+    return new TalonModeMenu(commandAdapter, reader, talonSet);
   }
 
   @ConfigScoped

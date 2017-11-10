@@ -7,7 +7,7 @@ import dagger.multibindings.IntoSet;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
-import org.jline.terminal.Terminal;
+import org.jline.reader.LineReader;
 import org.strykeforce.thirdcoast.telemetry.tct.Command;
 import org.strykeforce.thirdcoast.telemetry.tct.CommandAdapter;
 import org.strykeforce.thirdcoast.telemetry.tct.Menu;
@@ -42,8 +42,8 @@ public abstract class ClosedLoopMenuModule {
   @SubConfigScoped
   @Provides
   @ClosedLoopMenu
-  public static Menu configMenu(@ClosedLoopMenu CommandAdapter commandAdapter, Terminal terminal) {
-    return new Menu(commandAdapter, terminal);
+  public static Menu configMenu(@ClosedLoopMenu CommandAdapter commandAdapter, LineReader reader) {
+    return new Menu(commandAdapter, reader);
   }
 
   @SubConfigScoped

@@ -4,7 +4,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 import javax.inject.Inject;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
-import org.jline.reader.LineReaderBuilder;
 import org.jline.reader.UserInterruptException;
 import org.jline.terminal.Terminal;
 import org.jline.utils.AttributedStringBuilder;
@@ -28,10 +27,10 @@ public class Menu {
   private boolean mainMenu = false;
 
   @Inject
-  public Menu(CommandAdapter commandsAdapter, Terminal terminal) {
+  public Menu(CommandAdapter commandsAdapter, LineReader reader) {
     this.commandsAdapter = commandsAdapter;
-    this.terminal = terminal;
-    reader = LineReaderBuilder.builder().terminal(terminal).build();
+    this.reader = reader;
+    this.terminal = reader.getTerminal();
   }
 
   private static String prompt() {

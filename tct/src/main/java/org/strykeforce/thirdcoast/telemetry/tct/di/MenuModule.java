@@ -6,7 +6,7 @@ import dagger.Provides;
 import dagger.multibindings.IntoSet;
 import java.util.Set;
 import javax.inject.Singleton;
-import org.jline.terminal.Terminal;
+import org.jline.reader.LineReader;
 import org.strykeforce.thirdcoast.telemetry.tct.Command;
 import org.strykeforce.thirdcoast.telemetry.tct.CommandAdapter;
 import org.strykeforce.thirdcoast.telemetry.tct.DioModeCommand;
@@ -35,8 +35,8 @@ public abstract class MenuModule {
   @Provides
   @Singleton
   @MainMenu
-  public static Menu menu(@MainMenu CommandAdapter commandsAdapter, Terminal terminal) {
-    Menu menu = new Menu(commandsAdapter, terminal);
+  public static Menu menu(@MainMenu CommandAdapter commandsAdapter, LineReader reader) {
+    Menu menu = new Menu(commandsAdapter, reader);
     menu.setMainMenu(true);
     return menu;
   }
