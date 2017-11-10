@@ -41,6 +41,11 @@ TALON_CONFIG_ENC = [
   "org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc.ReverseOutputCommand",
   "org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc.VelocityMeasurementPeriodCommand",
   "org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc.VelocityMeasurementWindowCommand",
+  "org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc.AnalogTempVbatFrameRateCommand",
+  "org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc.FeedbackFrameRateCommand",
+  "org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc.GeneralFrameRateCommand",
+  "org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc.PulseWidthFrameRateCommand",
+  "org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc.QuadEncoderFrameRateCommand",
 ]
 
 TALON_CONFIG_LIM = [

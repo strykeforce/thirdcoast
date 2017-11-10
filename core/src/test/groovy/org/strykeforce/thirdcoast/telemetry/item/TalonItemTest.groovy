@@ -9,7 +9,7 @@ class TalonItemTest extends Specification {
     def "MeasurementFor"() {
         given:
         def talon = Stub(CANTalon)
-        talon.get() >> 0.2767
+        talon.getSetpoint() >> 0.2767
         talon.getOutputCurrent() >> 2.767
         talon.getOutputVoltage() >> 27.67
         Item item = new TalonItem(talon)

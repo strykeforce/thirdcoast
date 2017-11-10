@@ -10,9 +10,7 @@ class ItemTest extends Specification {
         def measures = TalonItem.MEASURES
 
         then:
-        measures.size() == 13
         !measures.contains(Measure.ANGLE)
-        !measures.contains(Measure.POSITION)
 
         when:
         measures = ServoItem.MEASURES

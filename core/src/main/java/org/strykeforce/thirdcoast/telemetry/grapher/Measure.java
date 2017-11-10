@@ -19,6 +19,8 @@ public enum Measure {
   REVERSE_SOFT_LIMIT_OK("Reverse Soft Limit OK"),
   ANGLE("Angle"),
   POSITION("Position"),
+  SPEED("Speed"),
+  FEEDBACK("Feedback"),
   VALUE("Value");
 
 //  private final static Map<Item.Type, Set<Measure>> byType = new HashMap<>();

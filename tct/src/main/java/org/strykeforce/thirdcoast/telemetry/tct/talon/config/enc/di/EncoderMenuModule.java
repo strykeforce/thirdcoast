@@ -12,6 +12,11 @@ import org.strykeforce.thirdcoast.telemetry.tct.Menu;
 import org.strykeforce.thirdcoast.telemetry.tct.di.SubConfigScoped;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonModeMenu;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc.AnalogTempVbatFrameRateCommand;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc.FeedbackFrameRateCommand;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc.GeneralFrameRateCommand;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc.PulseWidthFrameRateCommand;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc.QuadEncoderFrameRateCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc.ReverseOutputCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc.ReverseSensorCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc.SelectTypeCommand;
@@ -74,4 +79,34 @@ public abstract class EncoderMenuModule {
   @EncoderMenu
   public abstract Command velocityMeasurementPeriodCommand(
       VelocityMeasurementPeriodCommand command);
+
+  @SubConfigScoped
+  @Binds
+  @IntoSet
+  @EncoderMenu
+  public abstract Command analogTempVbatFrameRateCommand(AnalogTempVbatFrameRateCommand command);
+
+  @SubConfigScoped
+  @Binds
+  @IntoSet
+  @EncoderMenu
+  public abstract Command feedbackFrameRateCommand(FeedbackFrameRateCommand command);
+
+  @SubConfigScoped
+  @Binds
+  @IntoSet
+  @EncoderMenu
+  public abstract Command generalFrameRateCommand(GeneralFrameRateCommand command);
+
+  @SubConfigScoped
+  @Binds
+  @IntoSet
+  @EncoderMenu
+  public abstract Command pulseWidthFrameRateCommand(PulseWidthFrameRateCommand command);
+
+  @SubConfigScoped
+  @Binds
+  @IntoSet
+  @EncoderMenu
+  public abstract Command quadEncoderFrameRateCommand(QuadEncoderFrameRateCommand command);
 }

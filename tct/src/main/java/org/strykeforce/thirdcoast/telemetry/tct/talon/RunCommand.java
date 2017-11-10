@@ -32,7 +32,7 @@ public class RunCommand extends AbstractCommand {
     while (true) {
       String line;
       try {
-        line = reader.readLine(boldYellow("setpoint> ")).trim();
+        line = reader.readLine(boldYellow("setpoint or <return> to exit> ")).trim();
       } catch (EndOfFileException | UserInterruptException e) {
         continue;
       }

@@ -29,7 +29,10 @@ public class TalonItem extends AbstractItem {
       Measure.FORWARD_HARD_LIMIT_CLOSED,
       Measure.REVERSE_HARD_LIMIT_CLOSED,
       Measure.FORWARD_SOFT_LIMIT_OK,
-      Measure.REVERSE_SOFT_LIMIT_OK
+      Measure.REVERSE_SOFT_LIMIT_OK,
+      Measure.POSITION,
+      Measure.SPEED,
+      Measure.FEEDBACK
   ));
   // TODO: getMotionProfileStatus
   private final static String NA = "not available in API";
@@ -62,7 +65,7 @@ public class TalonItem extends AbstractItem {
 
     switch (measure) {
       case SETPOINT:
-        return talon::get;
+        return talon::getSetpoint;
       case OUTPUT_CURRENT:
         return talon::getOutputCurrent;
       case OUTPUT_VOLTAGE:
@@ -88,6 +91,12 @@ public class TalonItem extends AbstractItem {
         return talon::getForwardSoftLimit;
       case REVERSE_SOFT_LIMIT_OK:
         return talon::getReverseSoftLimit;
+      case SPEED:
+        return talon::getSpeed;
+      case FEEDBACK:
+        return talon::get;
+      case POSITION:
+        return talon::getPosition;
       default:
         throw new AssertionError(measure);
     }
