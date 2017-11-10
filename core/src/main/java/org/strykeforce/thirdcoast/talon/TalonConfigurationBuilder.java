@@ -589,6 +589,15 @@ public class TalonConfigurationBuilder {
   }
 
   /**
+   * Set the forward limit switch.
+   *
+   * @param forwardLimitSwitch the forward limit switch.
+   */
+  public void setForwardLimitSwitch(@Nullable LimitSwitch forwardLimitSwitch) {
+    this.forwardLimitSwitch = forwardLimitSwitch;
+  }
+
+  /**
    * Get the reverse limit switch.
    *
    * @return the reverse limit switch.
@@ -599,20 +608,49 @@ public class TalonConfigurationBuilder {
   }
 
   /**
-   * Set the forward limit switch.
-   *
-   * @param forwardLimitSwitch the forward limit switch.
-   */
-  public void setForwardLimitSwitch(@Nullable LimitSwitch forwardLimitSwitch) {
-    this.forwardLimitSwitch = forwardLimitSwitch;
-  }
-
-  /**
    * Set the reverse limit switch.
    *
    * @param reverseLimitSwitch the forward limit switch.
    */
   public void setReverseLimitSwitch(@Nullable LimitSwitch reverseLimitSwitch) {
     this.reverseLimitSwitch = reverseLimitSwitch;
+  }
+
+  /**
+   * Get the forward soft limit.
+   *
+   * @return the forward soft limit
+   */
+  @Nullable
+  public SoftLimit getForwardSoftLimit() {
+    return forwardSoftLimit;
+  }
+
+  /**
+   * Set the forward soft limit.
+   *
+   * @param forwardSoftLimit the forward soft limit.
+   */
+  public void setForwardSoftLimit(@Nullable SoftLimit forwardSoftLimit) {
+    this.forwardSoftLimit = forwardSoftLimit;
+  }
+
+  /**
+   * Get the reverse soft limit.
+   *
+   * @return the reverse soft limit
+   */
+  @Nullable
+  public SoftLimit getReverseSoftLimit() {
+    return reverseSoftLimit;
+  }
+
+  /**
+   * Set the reverse soft limit.
+   *
+   * @param reverseSoftLimit the reverse soft limit.
+   */
+  public void setReverseSoftLimit(@Nullable SoftLimit reverseSoftLimit) {
+    this.reverseSoftLimit = reverseSoftLimit;
   }
 }

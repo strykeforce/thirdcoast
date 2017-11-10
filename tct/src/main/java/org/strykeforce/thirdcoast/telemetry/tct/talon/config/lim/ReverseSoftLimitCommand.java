@@ -3,10 +3,11 @@ package org.strykeforce.thirdcoast.telemetry.tct.talon.config.lim;
 import com.ctre.CANTalon;
 import javax.inject.Inject;
 import org.jline.reader.LineReader;
+import org.strykeforce.thirdcoast.talon.SoftLimit;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractDoubleConfigCommand;
 
-public class ReverseSoftLimitCommand  extends AbstractDoubleConfigCommand {
+public class ReverseSoftLimitCommand extends AbstractDoubleConfigCommand {
 
   public final static String NAME = "Reverse Soft Limit";
 
@@ -16,18 +17,16 @@ public class ReverseSoftLimitCommand  extends AbstractDoubleConfigCommand {
   }
 
   @Override
-  protected void saveConfig(double value) {
-    talonSet.talonConfigurationBuilder().reverseSoftLimit(value);
+  protected void config(CANTalon talon, double value) {
+    talon.setReverseSoftLimit(value);
   }
 
   @Override
-  protected void config(CANTalon talon, double value) {
-    if (value == 0) {
-      talon.enableReverseSoftLimit(false);
-      return;
+  protected void saveConfig(double value) {
+    SoftLimit limit = talonSet.talonConfigurationBuilder().getReverseSoftLimit();
+    if (limit == null) {
+      limit = SoftLimit.DEFAULT;
     }
-    talon.setReverseSoftLimit(value);
-    talon.enableReverseSoftLimit(true);
+    talonSet.talonConfigurationBuilder().setReverseSoftLimit(limit.copyWithPosition(value));
   }
-
 }

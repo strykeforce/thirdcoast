@@ -29,20 +29,8 @@ class ForwardSoftLimitCommandTest extends AbstractTalonConfigCommandTest {
         1 * reader.readLine(_) >>> ["27.67"]
 
         1 * talon.setForwardSoftLimit(27.67) // 27.67
-        1 * talon.enableForwardSoftLimit(true)
         1 * talon.getDescription()
         0 * talon._
     }
 
-    def "handles zero as disable"() {
-        when:
-        command.perform()
-
-        then:
-        1 * reader.readLine(_) >>> ["0"]
-
-        1 * talon.enableForwardSoftLimit(false)
-        1 * talon.getDescription()
-        0 * talon._
-    }
 }

@@ -29,19 +29,6 @@ class ReverseSoftLimitCommandTest extends AbstractTalonConfigCommandTest {
         1 * reader.readLine(_) >>> ["27.67"]
 
         1 * talon.setReverseSoftLimit(27.67) // 27.67
-        1 * talon.enableReverseSoftLimit(true)
-        1 * talon.getDescription()
-        0 * talon._
-    }
-
-    def "handles zero as disable"() {
-        when:
-        command.perform()
-
-        then:
-        1 * reader.readLine(_) >>> ["0"]
-
-        1 * talon.enableReverseSoftLimit(false)
         1 * talon.getDescription()
         0 * talon._
     }

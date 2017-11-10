@@ -8,13 +8,29 @@ import org.jetbrains.annotations.NotNull;
 public final class SoftLimit {
 
   @NotNull
-  public final static SoftLimit DEFAULT = new SoftLimit(null);
+  public final static SoftLimit DEFAULT = new SoftLimit();
   private final boolean enabled;
   private final double position;
 
+  SoftLimit(boolean enabled, double position) {
+    this.enabled = enabled;
+    this.position = position;
+  }
+
   SoftLimit(@Nullable Double position) {
-    this.enabled = position != null;
-    this.position = enabled ? position : 0;
+    this(position != null, position != null ? position : 0);
+  }
+
+  SoftLimit() {
+    this(false, 0);
+  }
+
+  public SoftLimit copyWithEnabled(boolean enabled) {
+    return new SoftLimit(enabled, position);
+  }
+
+  public SoftLimit copyWithPosition(double position) {
+    return new SoftLimit(enabled, position);
   }
 
   public boolean isEnabled() {

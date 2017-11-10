@@ -3,6 +3,7 @@ package org.strykeforce.thirdcoast.telemetry.tct.talon.config.lim;
 import com.ctre.CANTalon;
 import javax.inject.Inject;
 import org.jline.reader.LineReader;
+import org.strykeforce.thirdcoast.talon.SoftLimit;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractDoubleConfigCommand;
 
@@ -15,19 +16,17 @@ public class ForwardSoftLimitCommand extends AbstractDoubleConfigCommand {
     super(NAME, reader, talonSet);
   }
 
+   @Override
+  protected void config(CANTalon talon, double value) {
+    talon.setForwardSoftLimit(value);
+  }
+
   @Override
   protected void saveConfig(double value) {
-    talonSet.talonConfigurationBuilder().forwardSoftLimit(value);
-  }
-
-  @Override
-  protected void config(CANTalon talon, double value) {
-    if (value == 0) {
-      talon.enableForwardSoftLimit(false);
-      return;
+    SoftLimit limit = talonSet.talonConfigurationBuilder().getForwardSoftLimit();
+    if (limit == null) {
+      limit = SoftLimit.DEFAULT;
     }
-    talon.setForwardSoftLimit(value);
-    talon.enableForwardSoftLimit(true);
+    talonSet.talonConfigurationBuilder().setForwardSoftLimit(limit.copyWithPosition(value));
   }
-
 }

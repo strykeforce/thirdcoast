@@ -12,6 +12,8 @@ import org.strykeforce.thirdcoast.telemetry.tct.Menu;
 import org.strykeforce.thirdcoast.telemetry.tct.di.SubConfigScoped;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonModeMenu;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.config.lim.EnableForwardSoftLimitCommand;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.config.lim.EnableReverseSoftLimitCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.lim.ForwardSoftLimitCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.lim.LimitSwitchEnabled;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.lim.ReverseSoftLimitCommand;
@@ -45,6 +47,18 @@ public abstract class LimitMenuModule {
   @IntoSet
   @LimitMenu
   public abstract Command reverseSoftLimitCommand(ReverseSoftLimitCommand command);
+
+  @SubConfigScoped
+  @Binds
+  @IntoSet
+  @LimitMenu
+  public abstract Command enableForwardSoftLimitCommand(EnableForwardSoftLimitCommand command);
+
+  @SubConfigScoped
+  @Binds
+  @IntoSet
+  @LimitMenu
+  public abstract Command enableReverseSoftLimitCommand(EnableReverseSoftLimitCommand command);
 
   @SubConfigScoped
   @Binds
