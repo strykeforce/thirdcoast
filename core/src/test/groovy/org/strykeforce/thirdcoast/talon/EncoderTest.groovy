@@ -25,6 +25,7 @@ class EncoderTest extends Specification {
         1 * talon.setFeedbackDevice(QuadEncoder)
         1 * talon.reverseSensor(false)
         1 * talon.isSensorPresent(QuadEncoder)
+        1 * talon.getDescription()
         0 * talon._
     }
 

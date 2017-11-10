@@ -60,8 +60,12 @@ public final class Encoder {
   public void configure(CANTalon talon) {
     talon.setFeedbackDevice(getDevice());
     talon.reverseSensor(reversed);
+    logger.info("{}: encoder {} {} reversed", talon.getDescription(), getDevice(),
+        reversed ? "" : "not");
     if (unitScalingEnabled) {
       talon.configEncoderCodesPerRev(ticksPerRevolution);
+      logger.info("{}: configured {} encoder codes per revolution", talon.getDescription(),
+          ticksPerRevolution);
     }
     checkEncoder(talon);
   }
@@ -74,10 +78,10 @@ public final class Encoder {
 
     switch (status) {
       case FeedbackStatusPresent:
-        logger.info("{}: encoder is present", talon.getDescription());
+        logger.info("{}: {} is present", talon.getDescription(), getDevice());
         break;
       case FeedbackStatusNotPresent:
-        logger.warn("{}: encoder is MISSING", talon.getDescription());
+        logger.warn("{}: {} is MISSING", talon.getDescription(), getDevice());
         break;
       case FeedbackStatusUnknown:
         logger.info("{}: encoder is unknown, only CTRE Mag or Pulse-Width Encoder supported",

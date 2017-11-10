@@ -107,6 +107,7 @@ class PIDTalonConfigurationTest extends Specification {
         1 * talon.reverseOutput(false)
         1 * talon.setVoltageRampRate(0.0)
         1 * talon.getDeviceID()
+        1 * talon.getDescription()
         1 * talon.setNominalClosedLoopVoltage(0.0)
         1 * talon.reverseSensor(false)
         1 * talon.enableReverseSoftLimit(false)
