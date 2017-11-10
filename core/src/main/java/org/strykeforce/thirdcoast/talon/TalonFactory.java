@@ -121,7 +121,7 @@ public class TalonFactory {
 
     @NotNull
     public Wrapper createWrapper(int id, int controlPeriodMs) {
-      return new Wrapper(id, CONTROL_FRAME_MS);
+      return new Wrapper(id, controlPeriodMs);
     }
   }
 
