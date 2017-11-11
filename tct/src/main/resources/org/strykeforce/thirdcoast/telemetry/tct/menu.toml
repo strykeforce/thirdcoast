@@ -8,13 +8,13 @@ MAIN = [
 ]
 
 TALON = [
+"org.strykeforce.thirdcoast.telemetry.tct.talon.ListCommand",
+"org.strykeforce.thirdcoast.telemetry.tct.talon.SelectCommand",
+"org.strykeforce.thirdcoast.telemetry.tct.talon.ConfigModeCommand",
+"org.strykeforce.thirdcoast.telemetry.tct.talon.InspectCommand",
+"org.strykeforce.thirdcoast.telemetry.tct.talon.RunCommand",
   "org.strykeforce.thirdcoast.telemetry.tct.talon.LoadConfigsCommand",
-  "org.strykeforce.thirdcoast.telemetry.tct.talon.SelectCommand",
-  "org.strykeforce.thirdcoast.telemetry.tct.talon.ListCommand",
-  "org.strykeforce.thirdcoast.telemetry.tct.talon.ConfigModeCommand",
-  "org.strykeforce.thirdcoast.telemetry.tct.talon.InspectCommand",
   "org.strykeforce.thirdcoast.telemetry.tct.talon.SaveConfigCommand",
-  "org.strykeforce.thirdcoast.telemetry.tct.talon.RunCommand",
 ]
 
 TALON_CONFIG = [
@@ -58,8 +58,8 @@ TALON_CONFIG_LIM = [
 
 TALON_CONFIG_OUT = [
   "org.strykeforce.thirdcoast.telemetry.tct.talon.config.out.VoltageRampRateCommand",
-  "org.strykeforce.thirdcoast.telemetry.tct.talon.config.out.PeakOutputVoltageCommand",
   "org.strykeforce.thirdcoast.telemetry.tct.talon.config.out.ClosedLoopRampRateCommand",
+  "org.strykeforce.thirdcoast.telemetry.tct.talon.config.out.PeakOutputVoltageCommand",
   "org.strykeforce.thirdcoast.telemetry.tct.talon.config.out.NominalOutputVoltageCommand",
   "org.strykeforce.thirdcoast.telemetry.tct.talon.config.out.CurrentLimitCommand",
 ]

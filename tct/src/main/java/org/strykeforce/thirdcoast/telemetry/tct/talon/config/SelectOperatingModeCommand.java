@@ -19,8 +19,8 @@ public class SelectOperatingModeCommand extends AbstractTalonConfigCommand {
 
   @Override
   public void perform() {
-    String[] types = {"Current", "Disabled", "Follower", "Motion Magic", "Motion Profile",
-        "Percent Vbus", "Position", "Speed", "Voltage"};
+    String[] types = {"Voltage", "Speed", "Position", "Current", "Percent Vbus", "Motion Magic",
+        "Motion Profile", "Follower", "Disabled"};
     for (int i = 0; i < types.length; i++) {
       terminal.writer().printf("%2d - %s%n", i + 1, types[i]);
     }

@@ -21,7 +21,7 @@ import org.strykeforce.thirdcoast.telemetry.tct.di.ModeScoped;
 @ParametersAreNonnullByDefault
 public class ListCommand extends AbstractCommand {
 
-  public final static String NAME = "List Talons";
+  public final static String NAME = "List Selected Talons with Current Register Values";
   private final static String FORMAT_DESCRIPTION = "%12s";
   private final static String FORMAT_DOUBLE = "%12.3f";
   private final static String FORMAT_INTEGER = "%12d";

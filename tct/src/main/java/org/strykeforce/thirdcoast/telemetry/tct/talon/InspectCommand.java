@@ -22,7 +22,7 @@ import org.strykeforce.thirdcoast.telemetry.tct.di.ModeScoped;
 @ParametersAreNonnullByDefault
 public class InspectCommand extends AbstractCommand {
 
-  public final static String NAME = "Inspect Active Talon Configuration";
+  public final static String NAME = "Inspect Selected Talons Configuration Settings";
   private final static String FORMAT_DESCRIPTION = "%-24s";
   private final static String FORMAT_STRING = "%12s";
   private final static String FORMAT_INTEGER = "%12d";
