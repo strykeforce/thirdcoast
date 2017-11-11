@@ -75,7 +75,7 @@ public class TalonItem extends AbstractItem {
       case ENCODER_VELOCITY:
         return talon::getEncVelocity;
       case ABSOLUTE_ENCODER_POSITION:
-        return talon::getPulseWidthPosition;
+        return () -> talon.getPulseWidthPosition() & 0xFFF;
       case CONTROL_LOOP_ERROR:
         return talon::getClosedLoopError;
       case INTEGRATOR_ACCUMULATOR:
