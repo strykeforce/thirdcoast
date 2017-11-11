@@ -27,7 +27,7 @@ class NominalOutputVoltageCommandTest extends AbstractTalonConfigCommandTest {
         then:
         1 * reader.readLine(_) >> "27.67"
 
-        1 * talon.configNominalOutputVoltage(27.67, 27.67)
+        1 * talon.configNominalOutputVoltage(27.67, -27.67)
         1 * talon.getDescription()
         0 * talon._
     }

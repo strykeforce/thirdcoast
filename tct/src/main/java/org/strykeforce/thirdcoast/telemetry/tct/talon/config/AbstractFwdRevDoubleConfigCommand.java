@@ -10,8 +10,16 @@ import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 
 public abstract class AbstractFwdRevDoubleConfigCommand extends AbstractTalonConfigCommand {
 
-  public AbstractFwdRevDoubleConfigCommand(String name, LineReader reader, TalonSet talonSet) {
+  final private boolean flipReverse;
+
+  public AbstractFwdRevDoubleConfigCommand(String name, LineReader reader, TalonSet talonSet,
+      boolean flipReverse) {
     super(name, reader, talonSet);
+    this.flipReverse = flipReverse;
+  }
+
+  public AbstractFwdRevDoubleConfigCommand(String name, LineReader reader, TalonSet talonSet) {
+    this(name, reader, talonSet, false);
   }
 
   protected abstract void config(CANTalon talon, double foward, double reverse);
@@ -58,7 +66,7 @@ public abstract class AbstractFwdRevDoubleConfigCommand extends AbstractTalonCon
         if (entries.size() > 1) {
           doubles[1] = Double.valueOf(entries.get(1));
         } else {
-          doubles[1] = doubles[0];
+          doubles[1] = doubles[0] * (flipReverse ? -1 : 1);
         }
       } catch (NumberFormatException nfe) {
         help();

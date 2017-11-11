@@ -11,11 +11,11 @@ import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractFwdRevDoubl
  */
 public class PeakOutputVoltageCommand extends AbstractFwdRevDoubleConfigCommand {
 
-  public final static String NAME = "Peak Ouput Voltage";
+  public final static String NAME = "Peak Ouput Voltage: Vfwd, Vrev";
 
   @Inject
   public PeakOutputVoltageCommand(LineReader reader, TalonSet talonSet) {
-    super(NAME, reader, talonSet);
+    super(NAME, reader, talonSet, true);
   }
 
   @Override

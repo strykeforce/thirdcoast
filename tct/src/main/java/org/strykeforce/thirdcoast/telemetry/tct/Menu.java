@@ -49,6 +49,12 @@ public class Menu {
     return new AttributedStringBuilder().style(AttributedStyle.BOLD).append(text).toAnsi();
   }
 
+  protected String boldGreem(String text) {
+    return new AttributedStringBuilder()
+        .style(AttributedStyle.BOLD.foreground(AttributedStyle.GREEN)).append(text).toAnsi();
+  }
+
+
   protected String header() {
     return "";
   }

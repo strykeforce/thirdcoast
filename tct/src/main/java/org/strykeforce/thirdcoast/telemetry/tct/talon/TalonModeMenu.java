@@ -23,6 +23,6 @@ public class TalonModeMenu extends Menu {
     for (CANTalon talon : talonSet.selected()) {
       joiner.add(String.valueOf(talon.getDeviceID()));
     }
-    return bold("Talons: " + joiner.toString() + "\n");
+    return boldGreem("Talons: " + joiner.toString() + "\n");
   }
 }

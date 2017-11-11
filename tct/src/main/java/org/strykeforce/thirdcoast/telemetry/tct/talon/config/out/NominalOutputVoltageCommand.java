@@ -11,11 +11,11 @@ import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractFwdRevDoubl
  */
 public class NominalOutputVoltageCommand extends AbstractFwdRevDoubleConfigCommand {
 
-  public final static String NAME = "Nominal Output Voltage";
+  public final static String NAME = "Nominal Output Voltage: Vfwd, Vrev";
 
   @Inject
   public NominalOutputVoltageCommand(LineReader reader, TalonSet talonSet) {
-    super(NAME, reader, talonSet);
+    super(NAME, reader, talonSet, true);
   }
 
   @Override
