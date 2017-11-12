@@ -49,31 +49,31 @@ public class SelectOperatingModeCommand extends AbstractTalonConfigCommand {
       done = true;
       switch (choice) {
         case 1:
-          mode = TalonControlMode.Current;
+          mode = TalonControlMode.Voltage;
           break;
         case 2:
-          mode = TalonControlMode.Disabled;
-          break;
-        case 3:
-          mode = TalonControlMode.Follower;
-          break;
-        case 4:
-          mode = TalonControlMode.MotionMagic;
-          break;
-        case 5:
-          mode = TalonControlMode.MotionProfile;
-          break;
-        case 6:
-          mode = TalonControlMode.PercentVbus;
-          break;
-        case 7:
-          mode = TalonControlMode.Position;
-          break;
-        case 8:
           mode = TalonControlMode.Speed;
           break;
+        case 3:
+          mode = TalonControlMode.Position;
+          break;
+        case 4:
+          mode = TalonControlMode.Current;
+          break;
+        case 5:
+          mode = TalonControlMode.PercentVbus;
+          break;
+        case 6:
+          mode = TalonControlMode.MotionMagic;
+          break;
+        case 7:
+          mode = TalonControlMode.MotionProfile;
+          break;
+        case 8:
+          mode = TalonControlMode.Follower;
+          break;
         case 9:
-          mode = TalonControlMode.Voltage;
+          mode = TalonControlMode.Disabled;
           break;
         default:
           continue;
