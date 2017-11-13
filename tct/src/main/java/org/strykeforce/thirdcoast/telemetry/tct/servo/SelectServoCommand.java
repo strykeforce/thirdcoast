@@ -57,6 +57,7 @@ public class SelectServoCommand extends AbstractCommand {
       }
       servoSet.setServo(new Servo(id));
       logger.info("selected servo id {}", id);
+      servoSet.restartTelemetryService();
       break;
     }
   }
