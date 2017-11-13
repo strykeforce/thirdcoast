@@ -1,4 +1,4 @@
-package org.strykeforce.thirdcoast.telemetry.tct.servo;
+package org.strykeforce.thirdcoast.telemetry.tct.servo.di;
 
 import dagger.Subcomponent;
 import org.strykeforce.thirdcoast.telemetry.tct.Menu;

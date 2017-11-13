@@ -4,7 +4,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import org.jline.reader.LineReader;
-import org.strykeforce.thirdcoast.telemetry.tct.servo.ServoMenuComponent;
+import org.strykeforce.thirdcoast.telemetry.tct.servo.di.ServoMenuComponent;
 
 /**
  * Command to enter mode for working with Servos.

@@ -63,3 +63,8 @@ TALON_CONFIG_OUT = [
   "org.strykeforce.thirdcoast.telemetry.tct.talon.config.out.NominalOutputVoltageCommand",
   "org.strykeforce.thirdcoast.telemetry.tct.talon.config.out.CurrentLimitCommand",
 ]
+
+SERVO = [
+  "org.strykeforce.thirdcoast.telemetry.tct.servo.SelectServoCommand",
+  "org.strykeforce.thirdcoast.telemetry.tct.servo.RunServoCommand",
+]
