@@ -21,7 +21,7 @@ class ItemTest extends Specification {
         measures.contains(Measure.POSITION)
 
         when:
-        measures = DigitalInputItem.MEASURES
+        measures = DigitalOutputItem.MEASURES
         then:
         measures.size() == 1
         measures.contains(Measure.VALUE)

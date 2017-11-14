@@ -1,7 +1,7 @@
 package org.strykeforce.thirdcoast.telemetry.tct
 
 import org.jline.reader.LineReader
-import org.strykeforce.thirdcoast.telemetry.tct.dio.DioMenuComponent
+import org.strykeforce.thirdcoast.telemetry.tct.dio.di.DioMenuComponent
 import org.strykeforce.thirdcoast.telemetry.tct.servo.di.ServoMenuComponent
 import org.strykeforce.thirdcoast.telemetry.tct.talon.di.TalonMenuComponent
 import spock.lang.Specification

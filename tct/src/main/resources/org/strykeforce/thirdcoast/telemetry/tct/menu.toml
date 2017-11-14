@@ -68,3 +68,12 @@ SERVO = [
   "org.strykeforce.thirdcoast.telemetry.tct.servo.SelectServoCommand",
   "org.strykeforce.thirdcoast.telemetry.tct.servo.RunServoCommand",
 ]
+
+DIO = [
+  "org.strykeforce.thirdcoast.telemetry.tct.dio.SelectDigitalOutputCommand",
+  "org.strykeforce.thirdcoast.telemetry.tct.dio.RunDigitalOutputCommand",
+  "org.strykeforce.thirdcoast.telemetry.tct.dio.PulseDigitalOutputCommand",
+  "org.strykeforce.thirdcoast.telemetry.tct.dio.PwmDigitalOutputCommand",
+  "org.strykeforce.thirdcoast.telemetry.tct.dio.DemoPulseDigitalOutputCommand",
+  "org.strykeforce.thirdcoast.telemetry.tct.dio.DemoPwmDigitalOutputCommand"
+]

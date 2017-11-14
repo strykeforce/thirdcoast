@@ -14,7 +14,7 @@ import org.strykeforce.thirdcoast.telemetry.tct.Menu;
 import org.strykeforce.thirdcoast.telemetry.tct.QuitCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.ServoModeCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.TalonModeCommand;
-import org.strykeforce.thirdcoast.telemetry.tct.dio.DioMenuComponent;
+import org.strykeforce.thirdcoast.telemetry.tct.dio.di.DioMenuComponent;
 import org.strykeforce.thirdcoast.telemetry.tct.servo.di.ServoMenuComponent;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.di.TalonMenuComponent;
 

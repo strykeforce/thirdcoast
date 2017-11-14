@@ -1,4 +1,4 @@
-package org.strykeforce.thirdcoast.telemetry.tct.dio;
+package org.strykeforce.thirdcoast.telemetry.tct.dio.di;
 
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 

@@ -1,6 +1,7 @@
 package org.strykeforce.thirdcoast.telemetry.item;
 
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DigitalOutput;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Set;
@@ -11,27 +12,27 @@ import org.strykeforce.thirdcoast.telemetry.grapher.Measure;
  * Represents a {@link DigitalInput} telemetry-enable Item.
  */
 
-public class DigitalInputItem extends AbstractItem {
+public class DigitalOutputItem extends AbstractItem {
 
-  public final static String TYPE = "digitalInput";
+  public final static String TYPE = "digitalOutput";
   public final static Set<Measure> MEASURES = Collections.unmodifiableSet(EnumSet.of(
       Measure.VALUE
   ));
 
-  private final DigitalInput digitalInput;
+  private final DigitalOutput digitalOutput;
 
-  public DigitalInputItem(DigitalInput digitalInput, String description) {
+  public DigitalOutputItem(DigitalOutput digitalOutput, String description) {
     super(TYPE, description, MEASURES);
-    this.digitalInput = digitalInput;
+    this.digitalOutput = digitalOutput;
   }
 
-  public DigitalInputItem(DigitalInput digitalInput) {
-    this(digitalInput, "Digital Input " + digitalInput.getChannel());
+  public DigitalOutputItem(DigitalOutput digitalOutput) {
+    this(digitalOutput, "Digital Output " + digitalOutput.getChannel());
   }
 
   @Override
   public int id() {
-    return digitalInput.getChannel();
+    return digitalOutput.getChannel();
   }
 
   @Override
@@ -39,13 +40,13 @@ public class DigitalInputItem extends AbstractItem {
     if (!MEASURES.contains(measure)) {
       throw new IllegalArgumentException("invalid measure: " + measure.name());
     }
-    return () -> digitalInput.get() ? 1.0 : 0.0;
+    return () -> digitalOutput.get() ? 1.0 : 0.0;
   }
 
   @Override
   public String toString() {
     return "DigitalInputItem{" +
-        "digitalInput=" + digitalInput +
+        "digitalOutput=" + digitalOutput +
         "} " + super.toString();
   }
 }

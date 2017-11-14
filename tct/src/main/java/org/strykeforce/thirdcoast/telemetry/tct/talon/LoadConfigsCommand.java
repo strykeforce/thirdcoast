@@ -95,7 +95,7 @@ public class LoadConfigsCommand extends AbstractCommand {
       TalonConfiguration configuration = provisioner.configurationFor(selected);
       talonSet.setActiveTalonConfiguration(configuration);
 
-      // have a configuration, clear out everything and load Talons stored with it.
+      // have a configuration, clearSelected out everything and load Talons stored with it.
       talonSet.clearSelected();
 
       for (Integer id : configuration.getTalonIds()) {

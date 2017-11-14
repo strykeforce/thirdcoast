@@ -1,6 +1,5 @@
-package org.strykeforce.thirdcoast.telemetry.tct.servo;
+package org.strykeforce.thirdcoast.telemetry.tct.dio;
 
-import edu.wpi.first.wpilibj.Servo;
 import javax.inject.Inject;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
@@ -11,28 +10,28 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.telemetry.tct.AbstractCommand;
 
-public class SelectServoCommand extends AbstractCommand {
+public class SelectDigitalOutputCommand extends AbstractCommand {
 
-  public final static String NAME = "Select Servo";
-  private final static Logger logger = LoggerFactory.getLogger(SelectServoCommand.class);
-  private final ServoSet servoSet;
+  public final static String NAME = "Select Digital Output";
+  private final static Logger logger = LoggerFactory.getLogger(SelectDigitalOutputCommand.class);
+  private final DigitalOutputSet dioSet;
 
   @Inject
-  public SelectServoCommand(LineReader reader, ServoSet servoSet) {
+  public SelectDigitalOutputCommand(LineReader reader, DigitalOutputSet dioSet) {
     super(NAME, reader);
-    this.servoSet = servoSet;
+    this.dioSet = dioSet;
   }
 
   protected static String prompt() {
     return new AttributedStringBuilder()
         .style(AttributedStyle.BOLD.foreground(AttributedStyle.YELLOW))
-        .append("servo channel or <enter> to return> ").toAnsi();
+        .append("digital output channel or <enter> to return> ").toAnsi();
   }
 
 
   @Override
   public void perform() {
-    terminal.writer().println(bold("enter servo channel"));
+    terminal.writer().println(bold("enter digital output channel"));
 
     String line;
     while (true) {
@@ -43,7 +42,7 @@ public class SelectServoCommand extends AbstractCommand {
       }
 
       if (line.isEmpty()) {
-        String msg = "servo selection unchanged";
+        String msg = "digital output channel selection unchanged";
         logger.info(msg);
         terminal.writer().println(bold(msg));
         return;
@@ -55,11 +54,10 @@ public class SelectServoCommand extends AbstractCommand {
         terminal.writer().print(bold(String.format("%s is not a number, ignoring%n", line)));
         continue;
       }
-      servoSet.setServo(new Servo(id));
-      logger.info("selected servo channel {}", id);
-      servoSet.restartTelemetryService();
+      dioSet.selectDigitalOutput(0);
+      logger.info("selected digital output channel {}", id);
+      dioSet.restartTelemetryService();
       break;
     }
   }
 }
-

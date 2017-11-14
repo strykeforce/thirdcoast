@@ -29,7 +29,7 @@ import java.util.TreeMap;
 import java.util.function.DoubleSupplier;
 import org.strykeforce.thirdcoast.telemetry.AbstractInventory;
 import org.strykeforce.thirdcoast.telemetry.grapher.Measure;
-import org.strykeforce.thirdcoast.telemetry.item.DigitalInputItem;
+import org.strykeforce.thirdcoast.telemetry.item.DigitalOutputItem;
 import org.strykeforce.thirdcoast.telemetry.item.Item;
 import org.strykeforce.thirdcoast.telemetry.item.ServoItem;
 import org.strykeforce.thirdcoast.telemetry.item.TalonItem;
@@ -50,7 +50,7 @@ public class SimulatedInventory extends AbstractInventory {
       fakes.add(new SimulatedItem(i, TalonItem.TYPE));
     }
     fakes.add(new SimulatedItem(0, ServoItem.TYPE));
-    fakes.add(new SimulatedItem(0, DigitalInputItem.TYPE));
+    fakes.add(new SimulatedItem(0, DigitalOutputItem.TYPE));
     for (int i = 0; i < fakes.size(); i++) {
       System.out.printf("%2d: %s%n", i, fakes.get(i).description());
     }
@@ -162,8 +162,8 @@ public class SimulatedInventory extends AbstractInventory {
     @Override
     public Set<Measure> measures() {
       switch (type) {
-        case DigitalInputItem.TYPE:
-          return DigitalInputItem.MEASURES;
+        case DigitalOutputItem.TYPE:
+          return DigitalOutputItem.MEASURES;
         case ServoItem.TYPE:
           return ServoItem.MEASURES;
         case TalonItem.TYPE:
