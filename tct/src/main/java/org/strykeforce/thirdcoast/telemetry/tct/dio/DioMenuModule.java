@@ -10,12 +10,6 @@ import org.jline.reader.LineReader;
 import org.strykeforce.thirdcoast.telemetry.tct.Command;
 import org.strykeforce.thirdcoast.telemetry.tct.CommandAdapter;
 import org.strykeforce.thirdcoast.telemetry.tct.Menu;
-import org.strykeforce.thirdcoast.telemetry.tct.dio.DemoPulseDigitalOutputCommand;
-import org.strykeforce.thirdcoast.telemetry.tct.dio.DemoPwmDigitalOutputCommand;
-import org.strykeforce.thirdcoast.telemetry.tct.dio.PulseDigitalOutputCommand;
-import org.strykeforce.thirdcoast.telemetry.tct.dio.PwmDigitalOutputCommand;
-import org.strykeforce.thirdcoast.telemetry.tct.dio.RunDigitalOutputCommand;
-import org.strykeforce.thirdcoast.telemetry.tct.dio.SelectDigitalOutputCommand;
 
 @Module
 public abstract class DioMenuModule {
@@ -28,8 +22,9 @@ public abstract class DioMenuModule {
 
   @Provides
   @Named("DIO")
-  static Menu talonMenu(@Named("DIO") CommandAdapter commandAdapter, LineReader reader) {
-    return new Menu(commandAdapter, reader);
+  static Menu talonMenu(@Named("DIO") CommandAdapter commandAdapter, LineReader reader,
+      DigitalOutputSet digitalOutputSet) {
+    return new DioMenu(commandAdapter, reader, digitalOutputSet);
   }
 
   @Binds

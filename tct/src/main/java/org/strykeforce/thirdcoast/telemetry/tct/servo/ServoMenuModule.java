@@ -10,8 +10,6 @@ import org.jline.reader.LineReader;
 import org.strykeforce.thirdcoast.telemetry.tct.Command;
 import org.strykeforce.thirdcoast.telemetry.tct.CommandAdapter;
 import org.strykeforce.thirdcoast.telemetry.tct.Menu;
-import org.strykeforce.thirdcoast.telemetry.tct.servo.RunServoCommand;
-import org.strykeforce.thirdcoast.telemetry.tct.servo.SelectServoCommand;
 
 @Module
 public abstract class ServoMenuModule {
@@ -24,8 +22,9 @@ public abstract class ServoMenuModule {
 
   @Provides
   @Named("SERVO")
-  static Menu servoMenu(@Named("SERVO") CommandAdapter commandAdapter, LineReader reader) {
-    return new Menu(commandAdapter, reader);
+  static Menu servoMenu(@Named("SERVO") CommandAdapter commandAdapter, LineReader reader,
+      ServoSet servoSet) {
+    return new ServoMenu(commandAdapter, reader, servoSet);
   }
 
   @Binds
