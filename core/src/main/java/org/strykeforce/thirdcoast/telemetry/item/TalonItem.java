@@ -222,4 +222,31 @@ public class TalonItem extends AbstractItem {
     writer.endObject();
   }
 
+  /**
+   * Indicates if some other {@code TalonItem} has the same underlying Talon as this one.
+   *
+   * @param obj the reference object with which to compare.
+   * @return true if this CANTalon has the same device ID, false otherwise.
+   */
+  @Override
+  public boolean equals(Object obj) {
+    if (obj == this) {
+      return true;
+    }
+    if (!(obj instanceof TalonItem)) {
+      return false;
+    }
+    TalonItem item = (TalonItem) obj;
+    return item.talon.getDeviceID() == talon.getDeviceID();
+  }
+
+  /**
+   * Returns a hashcode value for this TalonItem.
+   *
+   * @return a hashcode value for this TalonItem.
+   */
+  @Override
+  public int hashCode() {
+    return talon.getDeviceID();
+  }
 }

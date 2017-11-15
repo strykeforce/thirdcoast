@@ -25,7 +25,7 @@ class TelemetryServiceTest extends Specification {
         telemetry.register(talon)  // 4
 
         then:
-        4 * talon.setStatusFrameRateMs(CANTalon.StatusFrameRate.General, 10)
+        2 * talon.setStatusFrameRateMs(CANTalon.StatusFrameRate.General, 10)
         1 * target.setStatusFrameRateMs(CANTalon.StatusFrameRate.General, 10)
 
         when:

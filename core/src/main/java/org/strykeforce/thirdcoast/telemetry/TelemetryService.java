@@ -1,10 +1,10 @@
 package org.strykeforce.thirdcoast.telemetry;
 
 import com.ctre.CANTalon;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.LinkedHashSet;
 import java.util.Optional;
+import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import org.slf4j.Logger;
@@ -22,7 +22,12 @@ import org.strykeforce.thirdcoast.telemetry.item.TalonItem;
 public class TelemetryService {
 
   final static Logger logger = LoggerFactory.getLogger(TelemetryService.class);
-  final List<Item> items = new ArrayList<>(16);
+
+  // current implementation passes this list to the inventory as a collection via component binding
+  // when start is called. The inventory copies this collection into a List, using its index in
+  // this list as the inventory id.
+
+  final Set<Item> items = new LinkedHashSet<>();
   TelemetryController telemetryController;
   boolean running = false;
 
@@ -64,25 +69,30 @@ public class TelemetryService {
   }
 
   /**
-   * Un-register all Talons.
+   * Un-register all Items.
    */
   public void clear() {
     checkNotStarted();
     items.clear();
-    logger.info("talon set was cleared");
+    logger.info("item set was cleared");
   }
 
   /**
-   * Register a Talon for telemetry sending and set its CAN bus frame rates to default values.
+   * Register a Talon for telemetry sending and set its CAN bus frame rates to default values. If
+   * this Talon is already registered the frame rates are not updated.
    *
    * @param talon the CANTalon to register for data collection
    * @see org.strykeforce.thirdcoast.talon.StatusFrameRate
    */
   public void register(CANTalon talon) {
     checkNotStarted();
-    items.add(new TalonItem(talon));
-    StatusFrameRate.DEFAULT.configure(talon);
-    logger.info("registered talon {} with {}", talon.getDeviceID(), StatusFrameRate.DEFAULT);
+    if (items.add(new TalonItem(talon))) {
+      StatusFrameRate.DEFAULT.configure(talon);
+      logger.info("registered talon {} with {}", talon.getDeviceID(), StatusFrameRate.DEFAULT);
+      return;
+    }
+    logger.info("talon {} was already registered, did not reconfigure status frame rate",
+        talon.getDeviceID());
   }
 
   /**
@@ -92,8 +102,12 @@ public class TelemetryService {
    */
   public void register(Item item) {
     checkNotStarted();
-    items.add(item);
-    logger.info("registered item {}", item.description());
+    if (items.add(item)) {
+      logger.info("registered item {}", item.description());
+      return;
+    }
+    logger.info("item {} was already registered", item.description());
+
   }
 
   /**
@@ -124,7 +138,7 @@ public class TelemetryService {
         .findFirst();
 
     if (!item.isPresent()) {
-      throw new IllegalArgumentException("Talon with id " + talonId + " not found");
+      throw new IllegalArgumentException("talon with id " + talonId + " not found");
     }
 
     TalonItem talonItem = (TalonItem) item.get();

@@ -43,6 +43,36 @@ public class DigitalOutputItem extends AbstractItem {
     return () -> digitalOutput.get() ? 1.0 : 0.0;
   }
 
+  /**
+   * Indicates if some other {@code DigitalOutputItem} has the same underlying {@code DigitalOutput}
+   * as this one.
+   *
+   * @param obj the reference object with which to compare.
+   * @return true if this DigitalOutput has the same channel ID, false otherwise.
+   */
+  @Override
+  public boolean equals(Object obj) {
+    if (obj == this) {
+      return true;
+    }
+    if (!(obj instanceof DigitalOutputItem)) {
+      return false;
+    }
+    DigitalOutputItem item = (DigitalOutputItem) obj;
+    return item.digitalOutput.getChannel() == digitalOutput.getChannel();
+  }
+
+  /**
+   * Returns a hashcode value for this DigitalOutputItem.
+   *
+   * @return a hashcode value for this DigitalOutputItem.
+   */
+  @Override
+  public int hashCode() {
+    return digitalOutput.getChannel();
+  }
+
+
   @Override
   public String toString() {
     return "DigitalInputItem{" +

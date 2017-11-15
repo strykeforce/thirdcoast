@@ -27,6 +27,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.function.DoubleSupplier;
+import org.jetbrains.annotations.NotNull;
 import org.strykeforce.thirdcoast.telemetry.AbstractInventory;
 import org.strykeforce.thirdcoast.telemetry.grapher.Measure;
 import org.strykeforce.thirdcoast.telemetry.item.DigitalOutputItem;
@@ -138,6 +139,11 @@ public class SimulatedInventory extends AbstractInventory {
     @Override
     public String type() {
       return type;
+    }
+
+    @Override
+    public int compareTo(@NotNull Item o) {
+      return Integer.compare(id(), o.id());
     }
 
     @Override
