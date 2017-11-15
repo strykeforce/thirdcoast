@@ -25,7 +25,7 @@ public abstract class TalonMenuModule {
   @Named("TALON")
   public static Menu talonMenu(@Named("TALON") CommandAdapter commandAdapter, LineReader reader,
       TalonSet talonSet) {
-    return new TalonModeMenu(commandAdapter, reader, talonSet);
+    return new TalonMenu(commandAdapter, reader, talonSet);
   }
 
   @Binds

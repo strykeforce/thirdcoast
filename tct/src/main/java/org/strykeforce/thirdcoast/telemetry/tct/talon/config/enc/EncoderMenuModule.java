@@ -10,19 +10,8 @@ import org.jline.reader.LineReader;
 import org.strykeforce.thirdcoast.telemetry.tct.Command;
 import org.strykeforce.thirdcoast.telemetry.tct.CommandAdapter;
 import org.strykeforce.thirdcoast.telemetry.tct.Menu;
-import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonModeMenu;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonMenu;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
-import org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc.AnalogTempVbatFrameRateCommand;
-import org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc.FeedbackFrameRateCommand;
-import org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc.GeneralFrameRateCommand;
-import org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc.PulseWidthFrameRateCommand;
-import org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc.QuadEncoderFrameRateCommand;
-import org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc.ReverseOutputCommand;
-import org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc.ReverseSensorCommand;
-import org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc.SelectTypeCommand;
-import org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc.SetPositionCommand;
-import org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc.VelocityMeasurementPeriodCommand;
-import org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc.VelocityMeasurementWindowCommand;
 
 @Module
 public abstract class EncoderMenuModule {
@@ -38,7 +27,7 @@ public abstract class EncoderMenuModule {
   @Named("TALON_CONFIG_ENC")
   public static Menu configMenu(@Named("TALON_CONFIG_ENC") CommandAdapter commandAdapter,
       LineReader reader, TalonSet talonSet) {
-    return new TalonModeMenu(commandAdapter, reader, talonSet);
+    return new TalonMenu(commandAdapter, reader, talonSet);
   }
 
   @Binds

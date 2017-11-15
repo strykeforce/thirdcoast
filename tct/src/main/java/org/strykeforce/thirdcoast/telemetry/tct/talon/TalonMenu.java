@@ -7,12 +7,12 @@ import org.jline.reader.LineReader;
 import org.strykeforce.thirdcoast.telemetry.tct.CommandAdapter;
 import org.strykeforce.thirdcoast.telemetry.tct.Menu;
 
-public class TalonModeMenu extends Menu {
+public class TalonMenu extends Menu {
 
   private final TalonSet talonSet;
 
   @Inject
-  public TalonModeMenu(CommandAdapter commandsAdapter, LineReader reader, TalonSet talonSet) {
+  public TalonMenu(CommandAdapter commandsAdapter, LineReader reader, TalonSet talonSet) {
     super(commandsAdapter, reader);
     this.talonSet = talonSet;
   }

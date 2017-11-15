@@ -10,13 +10,8 @@ import org.jline.reader.LineReader;
 import org.strykeforce.thirdcoast.telemetry.tct.Command;
 import org.strykeforce.thirdcoast.telemetry.tct.CommandAdapter;
 import org.strykeforce.thirdcoast.telemetry.tct.Menu;
-import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonModeMenu;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonMenu;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
-import org.strykeforce.thirdcoast.telemetry.tct.talon.config.out.ClosedLoopRampRateCommand;
-import org.strykeforce.thirdcoast.telemetry.tct.talon.config.out.CurrentLimitCommand;
-import org.strykeforce.thirdcoast.telemetry.tct.talon.config.out.NominalOutputVoltageCommand;
-import org.strykeforce.thirdcoast.telemetry.tct.talon.config.out.PeakOutputVoltageCommand;
-import org.strykeforce.thirdcoast.telemetry.tct.talon.config.out.VoltageRampRateCommand;
 
 @Module
 public abstract class OutputMenuModule {
@@ -32,7 +27,7 @@ public abstract class OutputMenuModule {
   @Named("TALON_CONFIG_OUT")
   public static Menu configMenu(@Named("TALON_CONFIG_OUT") CommandAdapter commandAdapter,
       LineReader reader, TalonSet talonSet) {
-    return new TalonModeMenu(commandAdapter, reader, talonSet);
+    return new TalonMenu(commandAdapter, reader, talonSet);
   }
 
   @Binds

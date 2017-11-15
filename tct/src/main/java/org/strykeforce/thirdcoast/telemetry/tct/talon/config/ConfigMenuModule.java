@@ -10,7 +10,7 @@ import org.jline.reader.LineReader;
 import org.strykeforce.thirdcoast.telemetry.tct.Command;
 import org.strykeforce.thirdcoast.telemetry.tct.CommandAdapter;
 import org.strykeforce.thirdcoast.telemetry.tct.Menu;
-import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonModeMenu;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonMenu;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.cl.ClosedLoopMenuModule;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc.EncoderMenuModule;
@@ -36,7 +36,7 @@ public abstract class ConfigMenuModule {
   public static Menu configMenu(@Named("TALON_CONFIG") CommandAdapter commandAdapter,
       LineReader reader,
       TalonSet talonSet) {
-    return new TalonModeMenu(commandAdapter, reader, talonSet);
+    return new TalonMenu(commandAdapter, reader, talonSet);
   }
 
   @Binds
