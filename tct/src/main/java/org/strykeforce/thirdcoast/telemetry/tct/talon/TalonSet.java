@@ -10,6 +10,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import javax.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.strykeforce.thirdcoast.talon.StatusFrameRate;
 import org.strykeforce.thirdcoast.talon.TalonConfiguration;
 import org.strykeforce.thirdcoast.talon.TalonConfigurationBuilder;
 import org.strykeforce.thirdcoast.telemetry.TelemetryService;
@@ -46,6 +47,7 @@ public class TalonSet {
   }
 
   void clearSelected() {
+    selected.forEach(StatusFrameRate.DEFAULT::configure);
     selected.clear();
   }
 
@@ -66,6 +68,7 @@ public class TalonSet {
     telemetryService.stop();
     telemetryService.clear();
     selected.forEach(telemetryService::register);
+    selected.forEach(StatusFrameRate.GRAPHER::configure);
     telemetryService.start();
   }
 

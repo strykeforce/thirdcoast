@@ -23,6 +23,16 @@ public final class StatusFrameRate {
 
   @NotNull
   public final static StatusFrameRate DEFAULT = StatusFrameRate.builder().build();
+  public final static StatusFrameRate GRAPHER;
+
+  static {
+    GRAPHER = StatusFrameRate.builder()
+        .analogTempVbat(5)
+        .feedback(5)
+        .general(5)
+        .pulseWidth(5)
+        .quadEncoder(5).build();
+  }
 
   public final int analogTempVbat;
   public final int feedback;
