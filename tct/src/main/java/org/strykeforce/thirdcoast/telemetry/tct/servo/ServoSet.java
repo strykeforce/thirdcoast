@@ -23,7 +23,6 @@ public class ServoSet {
   void restartTelemetryService() {
     logger.info("restarting TelemetryService");
     telemetryService.stop();
-    telemetryService.clear();
     telemetryService.register(new ServoItem(servo));
     telemetryService.start();
   }

@@ -66,7 +66,6 @@ public class TalonSet {
   void restartTelemetryService() {
     logger.info("restarting TelemetryService");
     telemetryService.stop();
-    telemetryService.clear();
     selected.forEach(telemetryService::register);
     selected.forEach(StatusFrameRate.GRAPHER::configure);
     telemetryService.start();
