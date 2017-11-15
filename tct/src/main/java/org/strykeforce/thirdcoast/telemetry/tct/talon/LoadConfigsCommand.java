@@ -20,12 +20,10 @@ import org.strykeforce.thirdcoast.talon.TalonProvisioner;
 import org.strykeforce.thirdcoast.telemetry.tct.AbstractCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.Command;
 import org.strykeforce.thirdcoast.telemetry.tct.ConfigurationsManager;
-import org.strykeforce.thirdcoast.telemetry.tct.di.ModeScoped;
 
 /**
  * Loads Talons from TOML configuration file named {@code tct.toml}.
  */
-@ModeScoped
 @ParametersAreNonnullByDefault
 public class LoadConfigsCommand extends AbstractCommand {
 

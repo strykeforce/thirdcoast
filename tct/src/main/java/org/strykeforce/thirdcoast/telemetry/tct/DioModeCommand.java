@@ -2,9 +2,8 @@ package org.strykeforce.thirdcoast.telemetry.tct;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.inject.Inject;
-import javax.inject.Provider;
+import javax.inject.Named;
 import org.jline.reader.LineReader;
-import org.strykeforce.thirdcoast.telemetry.tct.dio.di.DioMenuComponent;
 
 /**
  * Command to enter mode for working with Dios.
@@ -13,19 +12,16 @@ import org.strykeforce.thirdcoast.telemetry.tct.dio.di.DioMenuComponent;
 public class DioModeCommand extends AbstractCommand {
 
   public final static String NAME = "Work with Digital Outputs";
-  private final Provider<DioMenuComponent.Builder> dioMenuComponentProvider;
+  private final Menu dioMenu;
 
   @Inject
-  DioModeCommand(Provider<DioMenuComponent.Builder> dioMenuComponentProvider,
-      LineReader reader) {
+  DioModeCommand(@Named("DIO") Menu dioMenu, LineReader reader) {
     super(NAME, reader);
-    this.dioMenuComponentProvider = dioMenuComponentProvider;
+    this.dioMenu = dioMenu;
   }
 
   @Override
   public void perform() {
-    DioMenuComponent component = dioMenuComponentProvider.get().build();
-    Menu menu = component.menu();
-    menu.display();
+    dioMenu.display();
   }
 }

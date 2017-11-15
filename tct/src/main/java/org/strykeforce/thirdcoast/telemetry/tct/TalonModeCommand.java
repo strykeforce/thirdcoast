@@ -2,9 +2,8 @@ package org.strykeforce.thirdcoast.telemetry.tct;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.inject.Inject;
-import javax.inject.Provider;
+import javax.inject.Named;
 import org.jline.reader.LineReader;
-import org.strykeforce.thirdcoast.telemetry.tct.talon.di.TalonMenuComponent;
 
 /**
  * Command to enter mode for working with Talons.
@@ -13,19 +12,16 @@ import org.strykeforce.thirdcoast.telemetry.tct.talon.di.TalonMenuComponent;
 public class TalonModeCommand extends AbstractCommand {
 
   public final static String NAME = "Work with Talons";
-  private final Provider<TalonMenuComponent.Builder> talonMenuComponentProvider;
+  private final Menu talonMenu;
 
   @Inject
-  TalonModeCommand(Provider<TalonMenuComponent.Builder> talonMenuComponentProvider,
-      LineReader reader) {
+  TalonModeCommand(@Named("TALON") Menu talonMenu, LineReader reader) {
     super(NAME, reader);
-    this.talonMenuComponentProvider = talonMenuComponentProvider;
+    this.talonMenu = talonMenu;
   }
 
   @Override
   public void perform() {
-    TalonMenuComponent component = talonMenuComponentProvider.get().build();
-    Menu menu = component.menu();
-    menu.display();
+    talonMenu.display();
   }
 }

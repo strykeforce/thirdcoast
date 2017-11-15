@@ -1,30 +1,27 @@
 package org.strykeforce.thirdcoast.telemetry.tct.talon.config;
 
 import javax.inject.Inject;
-import javax.inject.Provider;
+import javax.inject.Named;
 import org.jline.reader.LineReader;
 import org.strykeforce.thirdcoast.telemetry.tct.AbstractCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.Menu;
-import org.strykeforce.thirdcoast.telemetry.tct.di.ConfigScoped;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
-import org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc.di.EncoderMenuComponent;
 
 /**
  * Configure selected Talons.
  */
-@ConfigScoped
 public class EncoderConfigCommand extends AbstractCommand {
 
   public final static String NAME = "Encoders, Velocity Measurement and Frame Rates";
-  private final Provider<EncoderMenuComponent.Builder> voltageMenuComponentProvider;
+  private final Menu encoderMenu;
   private final TalonSet talonSet;
 
   @Inject
-  public EncoderConfigCommand(TalonSet talonSet,
-      Provider<EncoderMenuComponent.Builder> voltageMenuComponentProvider, LineReader reader) {
+  public EncoderConfigCommand(TalonSet talonSet, @Named("TALON_CONFIG_ENC") Menu encoderMenu,
+      LineReader reader) {
     super(NAME, reader);
-    this.voltageMenuComponentProvider = voltageMenuComponentProvider;
     this.talonSet = talonSet;
+    this.encoderMenu = encoderMenu;
   }
 
   @Override
@@ -33,9 +30,6 @@ public class EncoderConfigCommand extends AbstractCommand {
       terminal.writer().println(bold("no talons selected"));
       return;
     }
-
-    EncoderMenuComponent component = voltageMenuComponentProvider.get().build();
-    Menu menu = component.menu();
-    menu.display();
+    encoderMenu.display();
   }
 }

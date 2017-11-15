@@ -2,13 +2,13 @@ package org.strykeforce.thirdcoast.telemetry.tct.dio;
 
 import edu.wpi.first.wpilibj.DigitalOutput;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.telemetry.TelemetryService;
 import org.strykeforce.thirdcoast.telemetry.item.DigitalOutputItem;
-import org.strykeforce.thirdcoast.telemetry.tct.di.ModeScoped;
 
-@ModeScoped
+@Singleton
 public class DigitalOutputSet {
 
   private final static Logger logger = LoggerFactory.getLogger(DigitalOutputSet.class);

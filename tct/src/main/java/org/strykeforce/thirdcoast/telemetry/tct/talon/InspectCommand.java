@@ -16,9 +16,7 @@ import org.strykeforce.thirdcoast.talon.PIDTalonConfiguration;
 import org.strykeforce.thirdcoast.talon.SoftLimit;
 import org.strykeforce.thirdcoast.talon.TalonConfiguration;
 import org.strykeforce.thirdcoast.telemetry.tct.AbstractCommand;
-import org.strykeforce.thirdcoast.telemetry.tct.di.ModeScoped;
 
-@ModeScoped
 @ParametersAreNonnullByDefault
 public class InspectCommand extends AbstractCommand {
 

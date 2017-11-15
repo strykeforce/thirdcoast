@@ -1,15 +1,15 @@
-package org.strykeforce.thirdcoast.telemetry.tct.talon.config.out.di;
+package org.strykeforce.thirdcoast.telemetry.tct.talon.config.out;
 
 import dagger.Binds;
 import dagger.Module;
 import dagger.Provides;
 import dagger.multibindings.IntoSet;
 import java.util.Set;
+import javax.inject.Named;
 import org.jline.reader.LineReader;
 import org.strykeforce.thirdcoast.telemetry.tct.Command;
 import org.strykeforce.thirdcoast.telemetry.tct.CommandAdapter;
 import org.strykeforce.thirdcoast.telemetry.tct.Menu;
-import org.strykeforce.thirdcoast.telemetry.tct.di.SubConfigScoped;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonModeMenu;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.out.ClosedLoopRampRateCommand;
@@ -21,49 +21,43 @@ import org.strykeforce.thirdcoast.telemetry.tct.talon.config.out.VoltageRampRate
 @Module
 public abstract class OutputMenuModule {
 
-  @SubConfigScoped
   @Provides
-  @OutputMenu
-  public static CommandAdapter configCommandsAdapter(@OutputMenu Set<Command> commands) {
+  @Named("TALON_CONFIG_OUT")
+  public static CommandAdapter configCommandsAdapter(
+      @Named("TALON_CONFIG_OUT") Set<Command> commands) {
     return new CommandAdapter("TALON_CONFIG_OUT", commands);
   }
 
-  @SubConfigScoped
   @Provides
-  @OutputMenu
-  public static Menu configMenu(@OutputMenu CommandAdapter commandAdapter, LineReader reader,
-      TalonSet talonSet) {
+  @Named("TALON_CONFIG_OUT")
+  public static Menu configMenu(@Named("TALON_CONFIG_OUT") CommandAdapter commandAdapter,
+      LineReader reader, TalonSet talonSet) {
     return new TalonModeMenu(commandAdapter, reader, talonSet);
   }
 
-  @SubConfigScoped
   @Binds
   @IntoSet
-  @OutputMenu
+  @Named("TALON_CONFIG_OUT")
   public abstract Command voltageRampRateCommand(VoltageRampRateCommand command);
 
-  @SubConfigScoped
   @Binds
   @IntoSet
-  @OutputMenu
+  @Named("TALON_CONFIG_OUT")
   public abstract Command peakOutputVoltageCommand(PeakOutputVoltageCommand command);
 
-  @SubConfigScoped
   @Binds
   @IntoSet
-  @OutputMenu
+  @Named("TALON_CONFIG_OUT")
   public abstract Command closedLoopRampRateCommand(ClosedLoopRampRateCommand command);
 
-  @SubConfigScoped
   @Binds
   @IntoSet
-  @OutputMenu
+  @Named("TALON_CONFIG_OUT")
   public abstract Command nominalOutputVoltageCommand(NominalOutputVoltageCommand command);
 
-  @SubConfigScoped
   @Binds
   @IntoSet
-  @OutputMenu
+  @Named("TALON_CONFIG_OUT")
   public abstract Command currentLimitCommand(CurrentLimitCommand command);
 
 }

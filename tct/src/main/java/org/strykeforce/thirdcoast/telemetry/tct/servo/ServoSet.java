@@ -2,13 +2,13 @@ package org.strykeforce.thirdcoast.telemetry.tct.servo;
 
 import edu.wpi.first.wpilibj.Servo;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.telemetry.TelemetryService;
 import org.strykeforce.thirdcoast.telemetry.item.ServoItem;
-import org.strykeforce.thirdcoast.telemetry.tct.di.ModeScoped;
 
-@ModeScoped
+@Singleton
 public class ServoSet {
 
   private final static Logger logger = LoggerFactory.getLogger(ServoSet.class);

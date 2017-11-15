@@ -1,31 +1,27 @@
 package org.strykeforce.thirdcoast.telemetry.tct.talon.config;
 
 import javax.inject.Inject;
-import javax.inject.Provider;
+import javax.inject.Named;
 import org.jline.reader.LineReader;
 import org.strykeforce.thirdcoast.telemetry.tct.AbstractCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.Menu;
-import org.strykeforce.thirdcoast.telemetry.tct.di.ConfigScoped;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
-import org.strykeforce.thirdcoast.telemetry.tct.talon.config.cl.di.ClosedLoopMenuComponent;
 
 /**
  * Configure selected Talons.
  */
-@ConfigScoped
 public class ClosedLoopConfigCommand extends AbstractCommand {
 
   public final static String NAME = "Closed-Loop Tuning";
-  private final Provider<ClosedLoopMenuComponent.Builder> closedLoopMenuComponentProvider;
+  private final Menu closedLoopMenu;
   private final TalonSet talonSet;
 
   @Inject
-  public ClosedLoopConfigCommand(TalonSet talonSet,
-      Provider<ClosedLoopMenuComponent.Builder> closedLoopMenuComponentProvider,
+  public ClosedLoopConfigCommand(TalonSet talonSet, @Named("TALON_CONFIG_CL") Menu closedLoopMenu,
       LineReader reader) {
     super(NAME, reader);
-    this.closedLoopMenuComponentProvider = closedLoopMenuComponentProvider;
     this.talonSet = talonSet;
+    this.closedLoopMenu = closedLoopMenu;
   }
 
   @Override
@@ -35,8 +31,6 @@ public class ClosedLoopConfigCommand extends AbstractCommand {
       return;
     }
 
-    ClosedLoopMenuComponent component = closedLoopMenuComponentProvider.get().build();
-    Menu menu = component.menu();
-    menu.display();
+    closedLoopMenu.display();
   }
 }

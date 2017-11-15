@@ -12,12 +12,10 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import javax.inject.Inject;
 import org.jline.reader.LineReader;
 import org.strykeforce.thirdcoast.telemetry.tct.AbstractCommand;
-import org.strykeforce.thirdcoast.telemetry.tct.di.ModeScoped;
 
 /**
  * Display a list of all Talons.
  */
-@ModeScoped
 @ParametersAreNonnullByDefault
 public class ListCommand extends AbstractCommand {
 

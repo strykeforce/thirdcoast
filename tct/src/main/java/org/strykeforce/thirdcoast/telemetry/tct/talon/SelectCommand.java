@@ -19,12 +19,10 @@ import org.strykeforce.thirdcoast.talon.TalonConfigurationBuilder;
 import org.strykeforce.thirdcoast.talon.TalonFactory;
 import org.strykeforce.thirdcoast.telemetry.tct.AbstractCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.Command;
-import org.strykeforce.thirdcoast.telemetry.tct.di.ModeScoped;
 
 /**
  * Select Talons to work with.
  */
-@ModeScoped
 @ParametersAreNonnullByDefault
 public class SelectCommand extends AbstractCommand {
 

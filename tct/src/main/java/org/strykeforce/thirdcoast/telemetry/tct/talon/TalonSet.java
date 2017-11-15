@@ -8,18 +8,18 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.talon.StatusFrameRate;
 import org.strykeforce.thirdcoast.talon.TalonConfiguration;
 import org.strykeforce.thirdcoast.talon.TalonConfigurationBuilder;
 import org.strykeforce.thirdcoast.telemetry.TelemetryService;
-import org.strykeforce.thirdcoast.telemetry.tct.di.ModeScoped;
 
 /**
  * Holds Talons being worked on. Talons that have been instantiated are cached.
  */
-@ModeScoped
+@Singleton
 @ParametersAreNonnullByDefault
 public class TalonSet {
 

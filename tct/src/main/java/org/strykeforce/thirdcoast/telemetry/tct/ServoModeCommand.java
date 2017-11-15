@@ -2,9 +2,9 @@ package org.strykeforce.thirdcoast.telemetry.tct;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Provider;
 import org.jline.reader.LineReader;
-import org.strykeforce.thirdcoast.telemetry.tct.servo.di.ServoMenuComponent;
 
 /**
  * Command to enter mode for working with Servos.
@@ -13,19 +13,16 @@ import org.strykeforce.thirdcoast.telemetry.tct.servo.di.ServoMenuComponent;
 public class ServoModeCommand extends AbstractCommand {
 
   public final static String NAME = "Work with Servos";
-  private final Provider<ServoMenuComponent.Builder> servoMenuComponentProvider;
+  private final Menu servoMenu;
 
   @Inject
-  ServoModeCommand(Provider<ServoMenuComponent.Builder> servoMenuComponentProvider,
-      LineReader reader) {
+  ServoModeCommand(@Named("SERVO") Menu servoMenu, LineReader reader) {
     super(NAME, reader);
-    this.servoMenuComponentProvider = servoMenuComponentProvider;
+    this.servoMenu = servoMenu;
   }
 
   @Override
   public void perform() {
-    ServoMenuComponent component = servoMenuComponentProvider.get().build();
-    Menu menu = component.menu();
-    menu.display();
+    servoMenu.display();
   }
 }

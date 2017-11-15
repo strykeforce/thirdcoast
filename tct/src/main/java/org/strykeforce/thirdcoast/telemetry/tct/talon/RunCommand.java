@@ -7,9 +7,7 @@ import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
 import org.jline.reader.UserInterruptException;
 import org.strykeforce.thirdcoast.telemetry.tct.AbstractCommand;
-import org.strykeforce.thirdcoast.telemetry.tct.di.ModeScoped;
 
-@ModeScoped
 @ParametersAreNonnullByDefault
 public class RunCommand extends AbstractCommand {
 

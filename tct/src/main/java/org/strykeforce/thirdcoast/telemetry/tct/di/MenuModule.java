@@ -5,6 +5,7 @@ import dagger.Module;
 import dagger.Provides;
 import dagger.multibindings.IntoSet;
 import java.util.Set;
+import javax.inject.Named;
 import javax.inject.Singleton;
 import org.jline.reader.LineReader;
 import org.strykeforce.thirdcoast.telemetry.tct.Command;
@@ -14,28 +15,21 @@ import org.strykeforce.thirdcoast.telemetry.tct.Menu;
 import org.strykeforce.thirdcoast.telemetry.tct.QuitCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.ServoModeCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.TalonModeCommand;
-import org.strykeforce.thirdcoast.telemetry.tct.dio.di.DioMenuComponent;
-import org.strykeforce.thirdcoast.telemetry.tct.servo.di.ServoMenuComponent;
-import org.strykeforce.thirdcoast.telemetry.tct.talon.di.TalonMenuComponent;
 
-@Module(subcomponents = {
-    TalonMenuComponent.class,
-    ServoMenuComponent.class,
-    DioMenuComponent.class
-})
+@Module
 public abstract class MenuModule {
 
   @Provides
   @Singleton
-  @MainMenu
-  static CommandAdapter topCommandsAdapter(@MainMenu Set<Command> commands) {
+  @Named("MAIN")
+  static CommandAdapter commandsAdapter(@Named("MAIN") Set<Command> commands) {
     return new CommandAdapter("MAIN", commands);
   }
 
   @Provides
   @Singleton
-  @MainMenu
-  public static Menu menu(@MainMenu CommandAdapter commandsAdapter, LineReader reader) {
+  @Named("MAIN")
+  public static Menu menu(@Named("MAIN") CommandAdapter commandsAdapter, LineReader reader) {
     Menu menu = new Menu(commandsAdapter, reader);
     menu.setMainMenu(true);
     return menu;
@@ -44,25 +38,25 @@ public abstract class MenuModule {
   @Binds
   @Singleton
   @IntoSet
-  @MainMenu
+  @Named("MAIN")
   public abstract Command servoModeCommand(ServoModeCommand command);
 
   @Binds
   @Singleton
   @IntoSet
-  @MainMenu
+  @Named("MAIN")
   public abstract Command dioModeCommand(DioModeCommand command);
 
   @Binds
   @Singleton
   @IntoSet
-  @MainMenu
+  @Named("MAIN")
   public abstract Command talonModeCommand(TalonModeCommand command);
 
   @Binds
   @Singleton
   @IntoSet
-  @MainMenu
+  @Named("MAIN")
   public abstract Command quitCommand(QuitCommand command);
 
 }

@@ -1,29 +1,26 @@
 package org.strykeforce.thirdcoast.telemetry.tct.talon.config;
 
 import javax.inject.Inject;
-import javax.inject.Provider;
+import javax.inject.Named;
 import org.jline.reader.LineReader;
 import org.strykeforce.thirdcoast.telemetry.tct.AbstractCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.Menu;
-import org.strykeforce.thirdcoast.telemetry.tct.di.ConfigScoped;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
-import org.strykeforce.thirdcoast.telemetry.tct.talon.config.lim.di.LimitMenuComponent;
 
 /**
  * Configure selected Talons.
  */
-@ConfigScoped
 public class LimitConfigCommand extends AbstractCommand {
 
   public final static String NAME = "Limit Switches";
-  private final Provider<LimitMenuComponent.Builder> voltageMenuComponentProvider;
+  private final Menu limitMenu;
   private final TalonSet talonSet;
 
   @Inject
-  public LimitConfigCommand(TalonSet talonSet,
-      Provider<LimitMenuComponent.Builder> voltageMenuComponentProvider, LineReader reader) {
+  public LimitConfigCommand(TalonSet talonSet, @Named("TALON_CONFIG_LIM") Menu limitMenu,
+      LineReader reader) {
     super(NAME, reader);
-    this.voltageMenuComponentProvider = voltageMenuComponentProvider;
+    this.limitMenu = limitMenu;
     this.talonSet = talonSet;
   }
 
@@ -33,9 +30,6 @@ public class LimitConfigCommand extends AbstractCommand {
       terminal.writer().println(bold("no talons selected"));
       return;
     }
-
-    LimitMenuComponent component = voltageMenuComponentProvider.get().build();
-    Menu menu = component.menu();
-    menu.display();
+    limitMenu.display();
   }
 }
