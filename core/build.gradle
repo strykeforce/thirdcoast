@@ -31,26 +31,7 @@ dependencies {
     testRuntime libs.objenesis
 }
 
-javadoc {
-    title = "Third Coast FRC Library"
-    options.overview = "src/main/java/overview.html"
-    options.links = [
-            "https://docs.oracle.com/javase/8/docs/api/",
-            "http://first.wpi.edu/FRC/roborio/release/docs/java/",
-            "http://www.ctr-electronics.com/downloads/api/java/html/",
-            "http://www.kauailabs.com/public_files/navx-mxp/apidocs/java/"
-    ]
-    options.addBooleanOption("-allow-script-in-comments", true)
-    options.footer = "<script async src=\"https://www.googletagmanager.com/gtag/js?id=UA-108186367-1\"></script>\n" +
-            "<script>\n" +
-            "  window.dataLayer = window.dataLayer || [];\n" +
-            "  function gtag(){dataLayer.push(arguments);}\n" +
-            "  gtag('js', new Date());\n" +
-            "\n" +
-            "  gtag('config', 'UA-108186367-1');\n" +
-            "</script>\n"
-
-}
+apply from: 'javadoc.gradle'
 
 task sourcesJar(type: Jar, dependsOn: classes) {
     classifier = 'sources'
