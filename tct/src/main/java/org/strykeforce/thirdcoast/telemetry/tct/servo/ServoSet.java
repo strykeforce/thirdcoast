@@ -12,8 +12,8 @@ import org.strykeforce.thirdcoast.telemetry.item.ServoItem;
 public class ServoSet {
 
   private final static Logger logger = LoggerFactory.getLogger(ServoSet.class);
-  private Servo servo;
   private final TelemetryService telemetryService;
+  private Servo servo;
 
   @Inject
   public ServoSet(TelemetryService telemetryService) {
@@ -34,6 +34,16 @@ public class ServoSet {
   }
 
   public void setServo(Servo servo) {
+    clearSelected();
     this.servo = servo;
   }
+
+  public void clearSelected() {
+    if (servo == null) {
+      return;
+    }
+    servo.free();
+    servo = null;
+  }
+
 }

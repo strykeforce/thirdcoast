@@ -12,8 +12,8 @@ import org.strykeforce.thirdcoast.telemetry.item.DigitalOutputItem;
 public class DigitalOutputSet {
 
   private final static Logger logger = LoggerFactory.getLogger(DigitalOutputSet.class);
-  private DigitalOutput dio;
   private final TelemetryService telemetryService;
+  private DigitalOutput digitalOutput;
 
   @Inject
   public DigitalOutputSet(TelemetryService telemetryService) {
@@ -24,23 +24,25 @@ public class DigitalOutputSet {
     logger.info("restarting TelemetryService");
     telemetryService.stop();
     telemetryService.clear();
-    telemetryService.register(new DigitalOutputItem(dio));
+    telemetryService.register(new DigitalOutputItem(digitalOutput));
     telemetryService.start();
   }
 
 
   public DigitalOutput getDigitalOutput() {
-    return dio;
+    return digitalOutput;
   }
 
   public void selectDigitalOutput(int channel) {
     clearSelected();
-    this.dio = new DigitalOutput(channel);
+    this.digitalOutput = new DigitalOutput(channel);
   }
 
   public void clearSelected() {
-    if (this.dio != null) {
-      this.dio.free();
+    if (digitalOutput == null) {
+      return;
     }
+    digitalOutput.free();
+    digitalOutput = null;
   }
 }
