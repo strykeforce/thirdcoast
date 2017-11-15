@@ -21,7 +21,8 @@ public enum Measure {
   POSITION("Position"),
   SPEED("Speed"),
   FEEDBACK("Feedback"),
-  VALUE("Value");
+  VALUE("Value"),
+  ANALOG_RAW("Analog Raw");
 
 //  private final static Map<Item.Type, Set<Measure>> byType = new HashMap<>();
 //

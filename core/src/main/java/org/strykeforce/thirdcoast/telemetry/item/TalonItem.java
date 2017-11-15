@@ -23,6 +23,7 @@ public class TalonItem extends AbstractItem {
       Measure.ENCODER_POSITION,
       Measure.ENCODER_VELOCITY,
       Measure.ABSOLUTE_ENCODER_POSITION,
+      Measure.ANALOG_RAW,
       Measure.CONTROL_LOOP_ERROR,
       Measure.INTEGRATOR_ACCUMULATOR,
       Measure.BUS_VOLTAGE,
@@ -97,6 +98,8 @@ public class TalonItem extends AbstractItem {
         return talon::get;
       case POSITION:
         return talon::getPosition;
+      case ANALOG_RAW:
+        return talon::getAnalogInRaw;
       default:
         throw new AssertionError(measure);
     }
