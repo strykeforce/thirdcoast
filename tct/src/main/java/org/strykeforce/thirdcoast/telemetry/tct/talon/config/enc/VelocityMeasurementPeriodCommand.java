@@ -75,6 +75,7 @@ public class VelocityMeasurementPeriodCommand extends AbstractTalonConfigCommand
         default:
           continue;
       }
+      talonSet.talonConfigurationBuilder().velocityMeasurementPeriod(setpoint);
       for (CANTalon talon : talonSet.selected()) {
         talon.SetVelocityMeasurementPeriod(setpoint);
         logger.info("set {} for {} to {}", name(), talon.getDescription(), setpoint);

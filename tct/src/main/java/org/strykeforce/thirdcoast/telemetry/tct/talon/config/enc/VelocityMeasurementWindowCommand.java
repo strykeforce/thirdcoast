@@ -54,7 +54,7 @@ public class VelocityMeasurementWindowCommand extends AbstractTalonConfigCommand
 
       int setpoint = 1 << (choice - 1);
       done = true;
-
+      talonSet.talonConfigurationBuilder().velocityMeasurementWindow(setpoint);
       for (CANTalon talon : talonSet.selected()) {
         talon.SetVelocityMeasurementWindow(setpoint);
         logger.info("set {} for {} to {}", name(), talon.getDescription(), setpoint);
