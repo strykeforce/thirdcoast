@@ -3,6 +3,7 @@ package org.strykeforce.thirdcoast.swerve;
 import dagger.Module;
 import dagger.Provides;
 import javax.inject.Singleton;
+import org.strykeforce.thirdcoast.talon.TalonFactory;
 import org.strykeforce.thirdcoast.talon.TalonProvisioner;
 
 /**
@@ -14,12 +15,12 @@ public abstract class WheelModule {
 
   @Provides
   @Singleton
-  public static Wheel[] provideWheels(TalonProvisioner talonProvisioner) {
+  public static Wheel[] provideWheels(TalonFactory talonFactory) {
     return new Wheel[]{
-        new Wheel(talonProvisioner, 0), // front left
-        new Wheel(talonProvisioner, 1), // front right
-        new Wheel(talonProvisioner, 2), // rear left
-        new Wheel(talonProvisioner, 3)  // rear right
+        new Wheel(talonFactory, 0), // front left
+        new Wheel(talonFactory, 1), // front right
+        new Wheel(talonFactory, 2), // rear left
+        new Wheel(talonFactory, 3)  // rear right
     };
   }
 }

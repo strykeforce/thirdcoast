@@ -109,6 +109,10 @@ public class TalonFactory {
     return talon;
   }
 
+  public TalonProvisioner getProvisioner() {
+    return provisioner;
+  }
+
   /**
    * Factory class for {@link Wrapper}, facilitates testing.
    */
@@ -208,6 +212,13 @@ public class TalonFactory {
       }
       Wrapper wt = (Wrapper) obj;
       return wt.getDeviceID() == getDeviceID();
+    }
+
+    @Override
+    public String toString() {
+      return "TalonFactory$Wrapper{" +
+          "id=" + super.getDeviceID() +
+          "}";
     }
   }
 

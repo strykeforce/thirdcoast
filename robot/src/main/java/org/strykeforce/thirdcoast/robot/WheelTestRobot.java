@@ -2,6 +2,7 @@ package org.strykeforce.thirdcoast.robot;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
 import org.strykeforce.thirdcoast.swerve.Wheel;
+import org.strykeforce.thirdcoast.talon.TalonFactory;
 import org.strykeforce.thirdcoast.talon.TalonProvisioner;
 
 /**
@@ -47,8 +48,8 @@ public class WheelTestRobot extends IterativeRobot {
   public void robotInit() {
     RobotComponent component = DaggerRobotComponent.builder().config(Robot.CONFIG_FILE).build();
     controls = component.controls();
-    TalonProvisioner provisioner = component.talonProvisioner();
-    wheel = new Wheel(provisioner, 0);
+    TalonFactory talonFactory = component.talonFactory();
+    wheel = new Wheel(talonFactory, 0);
     wheel.setAzimuthZero(2281);
   }
 

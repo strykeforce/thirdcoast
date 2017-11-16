@@ -53,11 +53,12 @@ public class Wheel {
   /**
    * Convenience constructor for a wheel by specifying the swerve driveTalon wheel number (0-3).
    *
-   * @param talonProvisioner the TalonProvisioner used to provision Talons
+   * @param talonFactory the TalonFactory used to create Talons
    * @param index the wheel number
    */
-  public Wheel(TalonProvisioner talonProvisioner, int index) {
-    this(talonProvisioner, new CANTalon(index), new CANTalon(index + 10));
+  public Wheel(TalonFactory talonFactory, int index) {
+    this(talonFactory.getProvisioner(), talonFactory.getTalon(index),
+        talonFactory.getTalon(index + 10));
   }
 
   /**
