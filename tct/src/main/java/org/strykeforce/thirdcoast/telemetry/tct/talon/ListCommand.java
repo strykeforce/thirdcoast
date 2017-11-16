@@ -92,11 +92,11 @@ public class ListCommand extends AbstractCommand {
 
     intLine("Analog:", talons.stream().map(CANTalon::getAnalogInRaw).collect(Collectors.toList()));
 
-    intLine("VM Window:",
-        talons.stream().map(CANTalon::GetVelocityMeasurementWindow).collect(Collectors.toList()));
     intLine("VM Period:",
         talons.stream().map(CANTalon::GetVelocityMeasurementPeriod).map(ListCommand::intValue)
             .collect(Collectors.toList()));
+    intLine("VM Window:",
+        talons.stream().map(CANTalon::GetVelocityMeasurementWindow).collect(Collectors.toList()));
     terminal.writer().println();
   }
 
