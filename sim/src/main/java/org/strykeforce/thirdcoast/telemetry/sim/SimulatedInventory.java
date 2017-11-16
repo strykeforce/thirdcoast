@@ -132,7 +132,7 @@ public class SimulatedInventory extends AbstractInventory {
     }
 
     @Override
-    public int id() {
+    public int deviceId() {
       return id;
     }
 
@@ -143,7 +143,7 @@ public class SimulatedInventory extends AbstractInventory {
 
     @Override
     public int compareTo(@NotNull Item o) {
-      return Integer.compare(id(), o.id());
+      return Integer.compare(deviceId(), o.deviceId());
     }
 
     @Override

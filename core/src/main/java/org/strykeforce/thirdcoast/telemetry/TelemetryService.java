@@ -134,7 +134,7 @@ public class TelemetryService {
       logger.warn("setting status frame rates while telemetry service is running");
     }
 
-    Optional<Item> item = items.stream().filter(it -> it instanceof TalonItem && it.id() == talonId)
+    Optional<Item> item = items.stream().filter(it -> it instanceof TalonItem && it.deviceId() == talonId)
         .findFirst();
 
     if (!item.isPresent()) {

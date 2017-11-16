@@ -1,11 +1,7 @@
 package org.strykeforce.thirdcoast.telemetry
 
 import com.ctre.CANTalon
-import edu.wpi.first.wpilibj.DigitalOutput
-import edu.wpi.first.wpilibj.Servo
 import org.strykeforce.thirdcoast.talon.StatusFrameRate
-import org.strykeforce.thirdcoast.telemetry.item.DigitalOutputItem
-import org.strykeforce.thirdcoast.telemetry.item.ServoItem
 import org.strykeforce.thirdcoast.telemetry.item.TalonItem
 import spock.lang.Specification
 
@@ -64,12 +60,12 @@ class TelemetryServiceTest extends Specification {
 
         then:
         inv.itemForId(0) instanceof TalonItem
-        inv.itemForId(0).id() == 2
-        inv.itemForId(1).id() == 1
-        inv.itemForId(2).id() == 3
+        inv.itemForId(0).deviceId() == 2
+        inv.itemForId(1).deviceId() == 1
+        inv.itemForId(2).deviceId() == 3
 
         when:
-        inv.itemForId(3).id() == 2
+        inv.itemForId(3).deviceId() == 2
 
         then:
         thrown(IndexOutOfBoundsException)

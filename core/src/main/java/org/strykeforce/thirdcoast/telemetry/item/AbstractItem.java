@@ -8,7 +8,7 @@ import org.strykeforce.thirdcoast.telemetry.grapher.Measure;
 
 /**
  * Abstract base class for Items. This implements {@code Comparable} by comparing the results
- * returned by {@code Item#id()}.
+ * returned by {@code Item#deviceId()}.
  */
 public abstract class AbstractItem implements Item {
 
@@ -39,7 +39,7 @@ public abstract class AbstractItem implements Item {
 
   @Override
   public int compareTo(@NotNull Item other) {
-    return Integer.compare(id(), other.id());
+    return Integer.compare(deviceId(), other.deviceId());
   }
 
   @Override

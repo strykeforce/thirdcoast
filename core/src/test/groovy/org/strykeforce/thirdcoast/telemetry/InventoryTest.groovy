@@ -31,9 +31,9 @@ class InventoryTest extends Specification {
 
         then:
         inventory.itemForId(0).description() == "talon0"
-        inventory.itemForId(0).id() == 51
+        inventory.itemForId(0).deviceId() == 51
         inventory.itemForId(1).description() == "talon1"
-        inventory.itemForId(1).id() == 61
+        inventory.itemForId(1).deviceId() == 61
     }
 
     def "Creates JSON representation"() {

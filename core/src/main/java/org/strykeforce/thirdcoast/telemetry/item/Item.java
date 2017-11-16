@@ -11,7 +11,7 @@ import org.strykeforce.thirdcoast.telemetry.grapher.Measure;
  * should implement an identity-based version of equals and hashCode.
  *
  * The abstract base class implementing {@code Item} implements {@code Comparable} by comparing the
- * results returned by {@code Item#id()}.
+ * results returned by {@code Item#deviceId()}.
  */
 public interface Item extends Comparable<Item> {
 
@@ -20,7 +20,7 @@ public interface Item extends Comparable<Item> {
    *
    * @return the device id.
    */
-  int id();
+  int deviceId();
 
   /**
    * A {@code String}  representing the underlying device type.

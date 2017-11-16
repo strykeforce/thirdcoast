@@ -31,7 +31,7 @@ public class DigitalOutputItem extends AbstractItem {
   }
 
   @Override
-  public int id() {
+  public int deviceId() {
     return digitalOutput.getChannel();
   }
 
