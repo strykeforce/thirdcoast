@@ -21,8 +21,12 @@ dependencies {
 }
 
 def robotManifest = {
-    attributes 'Main-Class': 'edu.wpi.first.wpilibj.RobotBase'
-    attributes 'Robot-Class': 'org.strykeforce.thirdcoast.telemetry.tct.Robot'
+    attributes 'Main-Class': 'edu.wpi.first.wpilibj.RobotBase',
+            'Robot-Class': 'org.strykeforce.thirdcoast.telemetry.tct.Robot',
+            'Specification-Title': specificationTitle,
+            'Specification-Version': specificationVersion,
+            'Implementation-Title': 'Third Coast Telemetry Utility (tct)',
+            'Implementation-Version': specificationVersion
 }
 
 jar {

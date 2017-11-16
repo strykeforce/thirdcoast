@@ -18,12 +18,15 @@ public class Main implements Runnable {
 
   @Override
   public void run() {
+    Terminal terminal = component.terminal();
+    terminal.writer().println(Main.class.getPackage().getImplementationTitle() + " " +
+        Main.class.getPackage().getImplementationVersion());
+    terminal.writer().println();
     try {
       Menu menu = component.menu();
       menu.display();
     } catch (Throwable t) {
       logger.error("fatal error", t);
-      Terminal terminal = component.terminal();
       terminal.writer().println("fatal error: " + t.getMessage());
       terminal.flush();
       System.exit(-1);

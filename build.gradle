@@ -25,7 +25,8 @@ ext {
             spock               : 'org.spockframework:spock-core:1.1-groovy-2.4',
             toml4j              : 'com.moandjiezana.toml:toml4j:0.7.2',
     ]
-    fullVersion = '17.0.15'
+    specificationTitle = 'Third Coast Library'
+    specificationVersion = '17.1.0'
 }
 
 subprojects {
