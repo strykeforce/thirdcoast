@@ -177,7 +177,6 @@ public class TalonConfigurationBuilder {
   public String getToml() {
     TalonConfiguration talonConfiguration = build();
     TomlWriter writer = new TomlWriter();
-    System.out.println("writer.write(talonConfiguration) = " + writer.write(talonConfiguration));
     return writer.write(talonConfiguration);
   }
 

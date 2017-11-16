@@ -2,8 +2,11 @@ package org.strykeforce.thirdcoast.swerve;
 
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.Preferences;
+import java.util.Arrays;
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.talon.TalonConfiguration;
 import org.strykeforce.thirdcoast.telemetry.TelemetryService;
 
@@ -25,8 +28,8 @@ import org.strykeforce.thirdcoast.telemetry.TelemetryService;
 @Singleton
 public class SwerveDrive {
 
+  final static Logger logger = LoggerFactory.getLogger(SwerveDrive.class);
   private final static int WHEEL_COUNT = 4;
-
   private final Wheel[] wheels;
   private final AHRS gyro;
 
@@ -37,6 +40,7 @@ public class SwerveDrive {
     }
     this.gyro = gyro;
     this.wheels = wheels;
+    logger.info("initialized with gyro = {}, wheels = {}", gyro, Arrays.toString(wheels));
   }
 
   static String getPreferenceKeyForWheel(int i) {
@@ -119,6 +123,7 @@ public class SwerveDrive {
     for (Wheel wheel : wheels) {
       wheel.stop();
     }
+    logger.info("stopped all wheels");
   }
 
   /**
@@ -134,7 +139,9 @@ public class SwerveDrive {
   public void saveAzimuthPositions() {
     Preferences prefs = Preferences.getInstance();
     for (int i = 0; i < WHEEL_COUNT; i++) {
-      prefs.putInt(getPreferenceKeyForWheel(i), wheels[i].getAzimuthAbsolutePosition());
+      int position = wheels[i].getAzimuthAbsolutePosition();
+      prefs.putInt(getPreferenceKeyForWheel(i), position);
+      logger.info("azimuth {}: saved zero = {}", i, position);
     }
   }
 
@@ -148,7 +155,9 @@ public class SwerveDrive {
   public void zeroAzimuthEncoders() {
     Preferences prefs = Preferences.getInstance();
     for (int i = 0; i < WHEEL_COUNT; i++) {
-      wheels[i].setAzimuthZero(prefs.getInt(getPreferenceKeyForWheel(i), 0));
+      int position = prefs.getInt(getPreferenceKeyForWheel(i), 0);
+      wheels[i].setAzimuthZero(position);
+      logger.info("azimuth {}: loaded zero = {}", i, position);
     }
   }
 

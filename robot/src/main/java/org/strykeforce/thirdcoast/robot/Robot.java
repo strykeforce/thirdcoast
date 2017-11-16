@@ -17,6 +17,7 @@ public class Robot extends IterativeRobot {
   final static Logger logger = LoggerFactory.getLogger(Robot.class);
   final static File CONFIG_FILE = new File("/home/lvuser/thirdcoast.toml");
 
+  private RobotComponent component;
   private TelemetryService telemetryService;
   private SwerveDrive swerve;
   private Controls controls;
@@ -99,9 +100,10 @@ public class Robot extends IterativeRobot {
   }
 
   private RobotComponent getComponent() {
-    RobotComponent component;
-    logger.info("loading robot configuration from {}", CONFIG_FILE);
-    component = DaggerRobotComponent.builder().config(CONFIG_FILE).build();
+    if (component == null) {
+      logger.info("loading robot configuration from {}", CONFIG_FILE);
+      component = DaggerRobotComponent.builder().config(CONFIG_FILE).build();
+    }
     return component;
   }
 

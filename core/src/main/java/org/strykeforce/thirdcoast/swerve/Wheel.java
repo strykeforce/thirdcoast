@@ -1,7 +1,10 @@
 package org.strykeforce.thirdcoast.swerve;
 
 import com.ctre.CANTalon;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.talon.TalonConfiguration;
+import org.strykeforce.thirdcoast.talon.TalonFactory;
 import org.strykeforce.thirdcoast.talon.TalonProvisioner;
 
 /**
@@ -21,6 +24,8 @@ import org.strykeforce.thirdcoast.talon.TalonProvisioner;
  * drive Talon IDs in the range 10-13.
  */
 public class Wheel {
+
+  final static Logger logger = LoggerFactory.getLogger(Wheel.class);
 
   private final TalonProvisioner talonProvisioner;
   private final CANTalon azimuthTalon;
@@ -48,6 +53,7 @@ public class Wheel {
     driveTalon = drive;
     setAzimuthParameters(AZIMUTH_PARAMETERS);
     setDriveParameters(DRIVE_PARAMETERS);
+    logger.info("initialized azimuth = {}, drive = {}", azimuthTalon, driveTalon);
   }
 
   /**
@@ -106,14 +112,24 @@ public class Wheel {
 
 
   void setAzimuthParameters(String name) {
-    TalonConfiguration talonConfiguration = talonProvisioner.configurationFor(name);
-    talonConfiguration.configure(azimuthTalon);
+    try {
+      TalonConfiguration talonConfiguration = talonProvisioner.configurationFor(name);
+      talonConfiguration.configure(azimuthTalon);
+    } catch (IllegalArgumentException e) {
+      logger.error("azimuth parameters missing", e);
+      throw e;
+    }
   }
 
   void setDriveParameters(String name) {
-    TalonConfiguration talonConfiguration = talonProvisioner.configurationFor(name);
-    talonConfiguration.configure(driveTalon);
-    driveSetpointMax = talonConfiguration.getSetpointMax();
+    try {
+      TalonConfiguration talonConfiguration = talonProvisioner.configurationFor(name);
+      talonConfiguration.configure(driveTalon);
+      driveSetpointMax = talonConfiguration.getSetpointMax();
+    } catch (IllegalArgumentException e) {
+      logger.error("drive parameters missing", e);
+      throw e;
+    }
   }
 
   /**
@@ -182,5 +198,14 @@ public class Wheel {
    */
   public CANTalon getDriveTalon() {
     return driveTalon;
+  }
+
+  @Override
+  public String toString() {
+    return "Wheel{" +
+        "azimuthTalon=" + azimuthTalon +
+        ", driveTalon=" + driveTalon +
+        ", driveSetpointMax=" + driveSetpointMax +
+        '}';
   }
 }
