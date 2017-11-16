@@ -5,8 +5,6 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import org.jetbrains.annotations.NotNull;
 import org.jline.reader.LineReader;
 import org.jline.terminal.Terminal;
-import org.jline.utils.AttributedStringBuilder;
-import org.jline.utils.AttributedStyle;
 
 /**
  * Abstract implementation of a menu command.

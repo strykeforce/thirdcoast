@@ -3,7 +3,6 @@ package org.strykeforce.thirdcoast.telemetry.tct;
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.inject.Provider;
 import org.jline.reader.LineReader;
 
 /**

@@ -1,7 +1,6 @@
 package org.strykeforce.thirdcoast.robot;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
-import javax.inject.Inject;
 import org.strykeforce.thirdcoast.swerve.Wheel;
 import org.strykeforce.thirdcoast.talon.TalonProvisioner;
 
@@ -11,20 +10,6 @@ import org.strykeforce.thirdcoast.talon.TalonProvisioner;
 
 public class WheelTestRobot extends IterativeRobot {
 
-  private Wheel wheel;
-  private Controls controls;
-  private final Trigger upButton = new Trigger() {
-    @Override
-    public boolean get() {
-      return controls.getGamepadYButton();
-    }
-  };
-  private final Trigger downButton = new Trigger() {
-    @Override
-    public boolean get() {
-      return controls.getGamepadAButton();
-    }
-  };
   private final double[][] testCases = new double[][]{
       {0, 0},
       {0, 2},
@@ -40,6 +25,20 @@ public class WheelTestRobot extends IterativeRobot {
       {0.5, 2},
       {-0.4, 2},
       {-0.2, 2}
+  };
+  private Wheel wheel;
+  private Controls controls;
+  private final Trigger upButton = new Trigger() {
+    @Override
+    public boolean get() {
+      return controls.getGamepadYButton();
+    }
+  };
+  private final Trigger downButton = new Trigger() {
+    @Override
+    public boolean get() {
+      return controls.getGamepadAButton();
+    }
   };
   private int testCaseIndex = 0;
   private boolean isTestCaseChanged = true;

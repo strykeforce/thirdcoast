@@ -6,8 +6,6 @@ import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
 import org.jline.reader.UserInterruptException;
 import org.jline.terminal.Terminal;
-import org.jline.utils.AttributedStringBuilder;
-import org.jline.utils.AttributedStyle;
 
 /**
  * Displays a menu of {@link Command} choices and performs action for selected choice.

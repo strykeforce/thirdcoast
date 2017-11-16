@@ -4,7 +4,6 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.PatternLayout;
-import ch.qos.logback.classic.layout.TTLLLayout;
 import ch.qos.logback.classic.spi.Configurator;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.ConsoleAppender;
@@ -14,7 +13,6 @@ import ch.qos.logback.core.spi.ContextAwareBase;
 /**
  * LoggingConfigurator configures logback-classic by attaching a {@link ConsoleAppender} to the root
  * logger.
- *
  */
 public class LoggingConfigurator extends ContextAwareBase implements Configurator {
 
@@ -28,8 +26,8 @@ public class LoggingConfigurator extends ContextAwareBase implements Configurato
     LayoutWrappingEncoder<ILoggingEvent> encoder = new LayoutWrappingEncoder<>();
     encoder.setContext(lc);
 
-     PatternLayout layout = new PatternLayout();
-     layout.setPattern("%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n");
+    PatternLayout layout = new PatternLayout();
+    layout.setPattern("%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n");
 
     layout.setContext(lc);
     layout.start();

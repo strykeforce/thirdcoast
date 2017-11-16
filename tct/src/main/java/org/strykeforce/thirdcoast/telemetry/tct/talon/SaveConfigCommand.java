@@ -6,8 +6,6 @@ import javax.inject.Inject;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
 import org.jline.reader.UserInterruptException;
-import org.jline.utils.AttributedStringBuilder;
-import org.jline.utils.AttributedStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.talon.TalonConfiguration;
@@ -37,7 +35,7 @@ public class SaveConfigCommand extends AbstractCommand {
     terminal.writer().println(Messages.bold("Saved Configurations:"));
     Collection<TalonConfiguration> configs = configurationsManager.getTalonProvisioner()
         .getConfigurations();
-    for (TalonConfiguration config: configs) {
+    for (TalonConfiguration config : configs) {
       terminal.writer().println("  - " + config.getName());
     }
     terminal.writer().println();

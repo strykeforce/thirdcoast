@@ -1,7 +1,6 @@
 package org.strykeforce.thirdcoast.telemetry.item;
 
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.DigitalInput;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Set;
