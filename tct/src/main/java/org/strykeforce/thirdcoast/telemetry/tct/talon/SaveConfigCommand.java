@@ -1,5 +1,6 @@
 package org.strykeforce.thirdcoast.telemetry.tct.talon;
 
+import java.util.Collection;
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.inject.Inject;
 import org.jline.reader.EndOfFileException;
@@ -31,19 +32,20 @@ public class SaveConfigCommand extends AbstractCommand {
     this.talonSet = talonSet;
   }
 
-  protected static String prompt() {
-    return new AttributedStringBuilder()
-        .style(AttributedStyle.BOLD.foreground(AttributedStyle.YELLOW))
-        .append("configuration name> ").toAnsi();
-  }
-
   @Override
   public void perform() {
+    terminal.writer().println(Messages.bold("Saved Configurations:"));
+    Collection<TalonConfiguration> configs = configurationsManager.getTalonProvisioner()
+        .getConfigurations();
+    for (TalonConfiguration config: configs) {
+      terminal.writer().println("  - " + config.getName());
+    }
+    terminal.writer().println();
     terminal.writer().println(Messages.bold("enter name to save configuration with" +
         " or <enter> to return without saving"));
     String name;
     try {
-      name = reader.readLine(prompt()).trim();
+      name = reader.readLine(Messages.prompt("configuration name> ")).trim();
     } catch (EndOfFileException | UserInterruptException e) {
       return;
     }
