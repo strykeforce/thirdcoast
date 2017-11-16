@@ -11,7 +11,7 @@ import org.jline.reader.LineReader;
 @ParametersAreNonnullByDefault
 public class DioModeCommand extends AbstractCommand {
 
-  public final static String NAME = "Work with Digital Outputs";
+  public final static String NAME = "Work with Digital Inputs and Outputs";
   private final Menu dioMenu;
 
   @Inject

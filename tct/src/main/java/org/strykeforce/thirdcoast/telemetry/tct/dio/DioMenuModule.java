@@ -57,4 +57,9 @@ public abstract class DioMenuModule {
   @Named("DIO")
   public abstract Command demoPwmDigitalOutputCommand(DemoPwmDigitalOutputCommand command);
 
+  @Binds
+  @IntoSet
+  @Named("DIO")
+  public abstract Command inspectDigitalInputsCommand(InspectDigitalInputsCommand command);
+
 }

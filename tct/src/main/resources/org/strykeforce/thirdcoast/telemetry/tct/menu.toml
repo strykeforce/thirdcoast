@@ -70,6 +70,7 @@ SERVO = [
 ]
 
 DIO = [
+  "org.strykeforce.thirdcoast.telemetry.tct.dio.InspectDigitalInputsCommand",
   "org.strykeforce.thirdcoast.telemetry.tct.dio.SelectDigitalOutputCommand",
   "org.strykeforce.thirdcoast.telemetry.tct.dio.RunDigitalOutputCommand",
   "org.strykeforce.thirdcoast.telemetry.tct.dio.PulseDigitalOutputCommand",
