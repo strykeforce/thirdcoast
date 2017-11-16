@@ -10,6 +10,7 @@ import org.jline.utils.AttributedStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.telemetry.tct.AbstractCommand;
+import org.strykeforce.thirdcoast.telemetry.tct.Messages;
 
 public class SelectServoCommand extends AbstractCommand {
 
@@ -32,7 +33,7 @@ public class SelectServoCommand extends AbstractCommand {
 
   @Override
   public void perform() {
-    terminal.writer().println(bold("enter servo channel"));
+    terminal.writer().println(Messages.bold("enter servo channel"));
 
     String line;
     while (true) {
@@ -45,14 +46,14 @@ public class SelectServoCommand extends AbstractCommand {
       if (line.isEmpty()) {
         String msg = "servo selection unchanged";
         logger.info(msg);
-        terminal.writer().println(bold(msg));
+        terminal.writer().println(Messages.bold(msg));
         return;
       }
       int id;
       try {
         id = Integer.valueOf(line);
       } catch (NumberFormatException e) {
-        terminal.writer().print(bold(String.format("%s is not a number, ignoring%n", line)));
+        terminal.writer().print(Messages.boldRed(String.format("%s is not a number, ignoring%n", line)));
         continue;
       }
       servoSet.setServo(new Servo(id));

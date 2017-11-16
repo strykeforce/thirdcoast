@@ -4,8 +4,7 @@ import com.ctre.CANTalon;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
 import org.jline.reader.UserInterruptException;
-import org.jline.utils.AttributedStringBuilder;
-import org.jline.utils.AttributedStyle;
+import org.strykeforce.thirdcoast.telemetry.tct.Messages;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 
 public abstract class AbstractBooleanConfigCommand extends AbstractTalonConfigCommand {
@@ -38,7 +37,7 @@ public abstract class AbstractBooleanConfigCommand extends AbstractTalonConfigCo
     while (value == null) {
       String line;
       try {
-        line = reader.readLine(prompt()).trim();
+        line = reader.readLine(Messages.prompt("configure " + name() + " (Y/N)> ")).trim();
       } catch (EndOfFileException | UserInterruptException e) {
         break;
       }
@@ -53,20 +52,12 @@ public abstract class AbstractBooleanConfigCommand extends AbstractTalonConfigCo
       } else if (line.equalsIgnoreCase("N")) {
         setpoint = false;
       } else {
-        terminal.writer().println(bold("enter <Y>, <N> or <enter> to go back"));
+        terminal.writer().println(Messages.boldRed("enter <Y>, <N> or <enter> to go back"));
         continue;
       }
       value = setpoint;
     }
     return value;
-  }
-
-  @Override
-  protected String prompt() {
-    return new AttributedStringBuilder()
-        .style(AttributedStyle.BOLD.foreground(AttributedStyle.YELLOW))
-        .append("configure ").append(name()).append(" (Y/N)> ")
-        .toAnsi();
   }
 }
 

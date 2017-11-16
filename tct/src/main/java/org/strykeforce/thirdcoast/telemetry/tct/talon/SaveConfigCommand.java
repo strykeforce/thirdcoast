@@ -13,6 +13,7 @@ import org.strykeforce.thirdcoast.talon.TalonConfiguration;
 import org.strykeforce.thirdcoast.talon.TalonConfigurationBuilder;
 import org.strykeforce.thirdcoast.telemetry.tct.AbstractCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.ConfigurationsManager;
+import org.strykeforce.thirdcoast.telemetry.tct.Messages;
 
 @ParametersAreNonnullByDefault
 public class SaveConfigCommand extends AbstractCommand {
@@ -38,7 +39,7 @@ public class SaveConfigCommand extends AbstractCommand {
 
   @Override
   public void perform() {
-    terminal.writer().println(bold("enter name to save configuration with" +
+    terminal.writer().println(Messages.bold("enter name to save configuration with" +
         " or <enter> to return without saving"));
     String name;
     try {
@@ -50,7 +51,7 @@ public class SaveConfigCommand extends AbstractCommand {
     if (name.isEmpty()) {
       String msg = "configuration was not saved";
       logger.info(msg);
-      terminal.writer().println(bold(msg));
+      terminal.writer().println(Messages.bold(msg));
       return;
     }
 
@@ -60,6 +61,6 @@ public class SaveConfigCommand extends AbstractCommand {
     talonSet.setActiveTalonConfiguration(config);
     configurationsManager.getTalonProvisioner().addConfiguration(config);
     configurationsManager.save();
-    terminal.writer().println(bold("saved configuration: " + name));
+    terminal.writer().println(Messages.bold("saved configuration: " + name));
   }
 }

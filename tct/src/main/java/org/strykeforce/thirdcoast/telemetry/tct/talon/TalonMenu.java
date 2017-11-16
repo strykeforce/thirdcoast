@@ -6,6 +6,7 @@ import javax.inject.Inject;
 import org.jline.reader.LineReader;
 import org.strykeforce.thirdcoast.telemetry.tct.CommandAdapter;
 import org.strykeforce.thirdcoast.telemetry.tct.Menu;
+import org.strykeforce.thirdcoast.telemetry.tct.Messages;
 
 public class TalonMenu extends Menu {
 
@@ -23,6 +24,6 @@ public class TalonMenu extends Menu {
     for (CANTalon talon : talonSet.selected()) {
       joiner.add(String.valueOf(talon.getDeviceID()));
     }
-    return boldGreem("Talons: " + joiner.toString() + "\n");
+    return Messages.boldGreen("Talons: " + joiner.toString() + "\n");
   }
 }

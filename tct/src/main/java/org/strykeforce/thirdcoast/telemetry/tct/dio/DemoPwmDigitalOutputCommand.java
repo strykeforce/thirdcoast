@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.Timer;
 import javax.inject.Inject;
 import org.jline.reader.LineReader;
 import org.strykeforce.thirdcoast.telemetry.tct.AbstractCommand;
+import org.strykeforce.thirdcoast.telemetry.tct.Messages;
 
 public class DemoPwmDigitalOutputCommand extends AbstractCommand {
 
@@ -20,11 +21,11 @@ public class DemoPwmDigitalOutputCommand extends AbstractCommand {
 
   @Override
   public void perform() {
-    terminal.writer().println(bold(NAME));
+    terminal.writer().println(Messages.bold(NAME));
     terminal.writer().println();
     DigitalOutput digitalOutput = digitalOutputSet.getDigitalOutput();
     if (digitalOutput == null) {
-      terminal.writer().println(bold("no digital output selected selected"));
+      terminal.writer().println(Messages.boldRed("no digital output selected"));
       return;
     }
     digitalOutput.disablePWM();

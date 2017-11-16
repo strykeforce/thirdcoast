@@ -5,6 +5,7 @@ import javax.inject.Inject;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
 import org.jline.reader.UserInterruptException;
+import org.strykeforce.thirdcoast.telemetry.tct.Messages;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractTalonConfigCommand;
 
@@ -47,7 +48,7 @@ public class VelocityMeasurementWindowCommand extends AbstractTalonConfigCommand
 
       if (choice < 1 || choice > windows.length) {
         terminal.writer()
-            .printf(bold(String.format("please enter a number between 1-%d%n", windows.length)));
+            .printf(Messages.menuHelp(windows.length));
         continue;
       }
 

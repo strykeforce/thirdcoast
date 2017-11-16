@@ -6,6 +6,7 @@ import java.util.List;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
 import org.jline.reader.UserInterruptException;
+import org.strykeforce.thirdcoast.telemetry.tct.Messages;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 
 public abstract class AbstractFwdRevBooleanConfigCommand extends AbstractTalonConfigCommand {
@@ -32,7 +33,8 @@ public abstract class AbstractFwdRevBooleanConfigCommand extends AbstractTalonCo
   }
 
   private boolean[] getFwdRevBooleans() {
-    terminal.writer().println(bold("enter <Y>/<N> for forward,reverse or a single value for both"));
+    terminal.writer()
+        .println(Messages.bold("enter <Y>/<N> for forward,reverse or a single value for both"));
     boolean[] values = null;
     while (values == null) {
       String line;
@@ -83,6 +85,7 @@ public abstract class AbstractFwdRevBooleanConfigCommand extends AbstractTalonCo
   }
 
   protected void help() {
-    terminal.writer().println(bold("please enter <Y>, <N> or two values separated by a commma"));
+    terminal.writer()
+        .println(Messages.boldRed("please enter <Y>, <N> or two values separated by a commma"));
   }
 }

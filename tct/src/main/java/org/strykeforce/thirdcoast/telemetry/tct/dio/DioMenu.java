@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.DigitalOutput;
 import org.jline.reader.LineReader;
 import org.strykeforce.thirdcoast.telemetry.tct.CommandAdapter;
 import org.strykeforce.thirdcoast.telemetry.tct.Menu;
+import org.strykeforce.thirdcoast.telemetry.tct.Messages;
 
 public class DioMenu extends Menu {
 
@@ -19,6 +20,6 @@ public class DioMenu extends Menu {
   protected String header() {
     DigitalOutput digitalOutput = digitalOutputSet.getDigitalOutput();
     String id = digitalOutput != null ? String.valueOf(digitalOutput.getChannel()) : "";
-    return boldGreem("Digital Output: " + id + "\n");
+    return Messages.boldGreen("Digital Output: " + id + "\n");
   }
 }

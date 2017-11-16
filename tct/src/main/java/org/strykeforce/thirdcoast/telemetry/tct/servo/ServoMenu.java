@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.Servo;
 import org.jline.reader.LineReader;
 import org.strykeforce.thirdcoast.telemetry.tct.CommandAdapter;
 import org.strykeforce.thirdcoast.telemetry.tct.Menu;
+import org.strykeforce.thirdcoast.telemetry.tct.Messages;
 
 public class ServoMenu extends Menu {
 
@@ -18,7 +19,7 @@ public class ServoMenu extends Menu {
   protected String header() {
     Servo servo = servoSet.getServo();
     String id = servo != null ? String.valueOf(servo.getChannel()) : "";
-    return boldGreem("Servo: " + id + "\n");
+    return Messages.boldGreen("Servo: " + id + "\n");
   }
 
 }

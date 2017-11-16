@@ -14,12 +14,8 @@ import org.jline.utils.AttributedStyle;
  */
 public class Menu {
 
-  private final static String ENABLED = new AttributedStringBuilder()
-      .style(AttributedStyle.BOLD.foreground(AttributedStyle.GREEN)).append("[enabled]")
-      .toAnsi();
-  private final static String DISABLED = new AttributedStringBuilder()
-      .style(AttributedStyle.BOLD.foreground(AttributedStyle.RED)).append("[disabled]")
-      .toAnsi();
+  private final static String ENABLED = Messages.boldGreen("[enabled]");
+  private final static String DISABLED = Messages.boldRed("[disabled]");
 
   private final Terminal terminal;
   private final LineReader reader;
@@ -33,25 +29,8 @@ public class Menu {
     this.terminal = reader.getTerminal();
   }
 
-  private static String prompt() {
-    return new AttributedStringBuilder()
-        .style(AttributedStyle.BOLD.foreground(AttributedStyle.YELLOW))
-        .append("select> ")
-        .toAnsi();
-  }
-
   private static String rightPrompt() {
-    boolean enabled = DriverStation.getInstance().isEnabled();
-    return enabled ? ENABLED : DISABLED;
-  }
-
-  protected String bold(String text) {
-    return new AttributedStringBuilder().style(AttributedStyle.BOLD).append(text).toAnsi();
-  }
-
-  protected String boldGreem(String text) {
-    return new AttributedStringBuilder()
-        .style(AttributedStyle.BOLD.foreground(AttributedStyle.GREEN)).append(text).toAnsi();
+    return DriverStation.getInstance().isEnabled() ? ENABLED : DISABLED;
   }
 
 
@@ -65,7 +44,7 @@ public class Menu {
     while (true) {
       terminal.writer().print(header());
       for (int i = 0; i < menuCount; i++) {
-        terminal.writer().printf(bold("%2d"), i + 1);
+        terminal.writer().printf(Messages.bold("%2d"), i + 1);
         terminal.writer().printf(" - %s%n", commandsAdapter.getMenuText(i));
       }
       if (help) {
@@ -74,7 +53,7 @@ public class Menu {
       }
       String line = null;
       try {
-        line = reader.readLine(prompt(), rightPrompt(), (Character) null, null)
+        line = reader.readLine(Messages.prompt("select> "), rightPrompt(), (Character) null, null)
             .trim();
       } catch (EndOfFileException | UserInterruptException e) {
         if (!mainMenu) {
@@ -86,7 +65,7 @@ public class Menu {
         continue;
       }
 
-      if (!mainMenu && line.equalsIgnoreCase("B")) {
+      if (!mainMenu && line.equalsIgnoreCase("B")) { // go up a menu level
         break;
       }
 
@@ -111,6 +90,6 @@ public class Menu {
   private void help() {
     String msg = String.format("please enter a number between 1-%d%s%n", commandsAdapter.getCount(),
         mainMenu ? "" : " or <b> for back");
-    terminal.writer().print(bold(msg));
+    terminal.writer().print(Messages.boldRed(msg));
   }
 }

@@ -6,6 +6,7 @@ import java.util.List;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
 import org.jline.reader.UserInterruptException;
+import org.strykeforce.thirdcoast.telemetry.tct.Messages;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 
 public abstract class AbstractFwdRevDoubleConfigCommand extends AbstractTalonConfigCommand {
@@ -39,7 +40,7 @@ public abstract class AbstractFwdRevDoubleConfigCommand extends AbstractTalonCon
   }
 
   protected double[] getFwdRevDoubles() {
-    terminal.writer().println(bold("enter <forward>,<reverse> or a single number for both"));
+    terminal.writer().println(Messages.bold("enter <forward>,<reverse> or a single number for both"));
     double[] values = null;
     while (values == null) {
       String line;
@@ -78,6 +79,6 @@ public abstract class AbstractFwdRevDoubleConfigCommand extends AbstractTalonCon
   }
 
   protected void help() {
-    terminal.writer().println(bold("please enter a number or two numbers separated by a commma"));
+    terminal.writer().println(Messages.boldRed("please enter a number or two numbers separated by a commma"));
   }
 }

@@ -12,6 +12,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import javax.inject.Inject;
 import org.jline.reader.LineReader;
 import org.strykeforce.thirdcoast.telemetry.tct.AbstractCommand;
+import org.strykeforce.thirdcoast.telemetry.tct.Messages;
 
 /**
  * Display a list of all Talons.
@@ -103,7 +104,7 @@ public class ListCommand extends AbstractCommand {
       List<String> values) {
     StringBuilder sb = new StringBuilder();
     Formatter formatter = new Formatter(sb);
-    sb.append(bold(String.format(FORMAT_DESCRIPTION, description)));
+    sb.append(Messages.bold(String.format(FORMAT_DESCRIPTION, description)));
     for (String val : values) {
       formatter.format(FORMAT_STRING, val);
     }
@@ -113,7 +114,7 @@ public class ListCommand extends AbstractCommand {
   private void booleanLine(String description, List<Boolean> values) {
     StringBuilder sb = new StringBuilder();
     Formatter formatter = new Formatter(sb);
-    sb.append(bold(String.format(FORMAT_DESCRIPTION, description)));
+    sb.append(Messages.bold(String.format(FORMAT_DESCRIPTION, description)));
     for (Boolean val : values) {
       formatter.format(FORMAT_STRING, val ? "YES" : "NO");
     }
@@ -123,7 +124,7 @@ public class ListCommand extends AbstractCommand {
   private void intLine(String description, List<Integer> values) {
     StringBuilder sb = new StringBuilder();
     Formatter formatter = new Formatter(sb);
-    sb.append(bold(String.format(FORMAT_DESCRIPTION, description)));
+    sb.append(Messages.bold(String.format(FORMAT_DESCRIPTION, description)));
     for (Integer val : values) {
       formatter.format(FORMAT_INTEGER, val);
     }
@@ -133,7 +134,7 @@ public class ListCommand extends AbstractCommand {
   private void doubleLine(String description, List<Double> values) {
     StringBuilder sb = new StringBuilder();
     Formatter formatter = new Formatter(sb);
-    sb.append(bold(String.format(FORMAT_DESCRIPTION, description)));
+    sb.append(Messages.bold(String.format(FORMAT_DESCRIPTION, description)));
     for (Double val : values) {
       formatter.format(FORMAT_DOUBLE, val);
     }
@@ -149,6 +150,6 @@ public class ListCommand extends AbstractCommand {
       formatter.format(FORMAT_INTEGER, talon.getDeviceID());
     }
     sb.append("\n");
-    return bold(sb.toString());
+    return Messages.bold(sb.toString());
   }
 }

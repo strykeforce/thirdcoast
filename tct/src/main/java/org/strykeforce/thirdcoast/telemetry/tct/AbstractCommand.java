@@ -30,15 +30,6 @@ public abstract class AbstractCommand implements Command {
     this.terminal = reader.getTerminal();
   }
 
-  protected static String bold(String text) {
-    return new AttributedStringBuilder().style(AttributedStyle.BOLD).append(text).toAnsi();
-  }
-
-  protected static String boldYellow(String text) {
-    return new AttributedStringBuilder()
-        .style(AttributedStyle.BOLD.foreground(AttributedStyle.YELLOW)).append(text).toAnsi();
-  }
-
   /**
    * Get the command menu name.
    *

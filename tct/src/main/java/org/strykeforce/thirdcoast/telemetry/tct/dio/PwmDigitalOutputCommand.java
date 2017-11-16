@@ -6,6 +6,7 @@ import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
 import org.jline.reader.UserInterruptException;
 import org.strykeforce.thirdcoast.telemetry.tct.AbstractCommand;
+import org.strykeforce.thirdcoast.telemetry.tct.Messages;
 
 public class PwmDigitalOutputCommand extends AbstractCommand {
 
@@ -21,14 +22,14 @@ public class PwmDigitalOutputCommand extends AbstractCommand {
   @Override
   public void perform() {
     if (digitalOutputSet.getDigitalOutput() == null) {
-      terminal.writer().println(bold("no digital output selected selected"));
+      terminal.writer().println(Messages.boldRed("no digital output selected selected"));
       return;
     }
-    terminal.writer().println(bold("Enter duty cycle, press <enter> to go back"));
+    terminal.writer().println(Messages.bold("Enter duty cycle, press <enter> to go back"));
     while (true) {
       String line;
       try {
-        line = reader.readLine(boldYellow("number or <return> to exit> ")).trim();
+        line = reader.readLine(Messages.prompt("number or <return> to exit> ")).trim();
       } catch (EndOfFileException | UserInterruptException e) {
         continue;
       }
@@ -43,7 +44,7 @@ public class PwmDigitalOutputCommand extends AbstractCommand {
         help();
         continue;
       }
-      terminal.writer().print(bold(String.format("pulsing for %.2f%n", setpoint)));
+      terminal.writer().print(Messages.bold(String.format("pulsing for %.2f%n", setpoint)));
       DigitalOutput digitalOutput = digitalOutputSet.getDigitalOutput();
       digitalOutput.disablePWM();
       digitalOutput.enablePWM(setpoint);
@@ -52,6 +53,6 @@ public class PwmDigitalOutputCommand extends AbstractCommand {
   }
 
   private void help() {
-    terminal.writer().println(bold("please enter a number"));
+    terminal.writer().println(Messages.boldRed("please enter a number"));
   }
 }

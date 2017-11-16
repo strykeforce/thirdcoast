@@ -19,6 +19,7 @@ import org.strykeforce.thirdcoast.talon.TalonConfigurationBuilder;
 import org.strykeforce.thirdcoast.talon.TalonFactory;
 import org.strykeforce.thirdcoast.telemetry.tct.AbstractCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.Command;
+import org.strykeforce.thirdcoast.telemetry.tct.Messages;
 
 /**
  * Select Talons to work with.
@@ -49,7 +50,7 @@ public class SelectCommand extends AbstractCommand {
 
   @Override
   public void perform() {
-    terminal.writer().println(bold("enter comma-separated list of Talon IDs"));
+    terminal.writer().println(Messages.bold("enter comma-separated list of Talon IDs"));
 
     String line;
     try {
@@ -61,7 +62,7 @@ public class SelectCommand extends AbstractCommand {
     if (line.isEmpty()) {
       String msg = "Talon selection unchanged";
       logger.info(msg);
-      terminal.writer().println(bold(msg));
+      terminal.writer().println(Messages.bold(msg));
       return;
     }
     TalonConfigurationBuilder builder = talonSet.talonConfigurationBuilder();
@@ -74,7 +75,7 @@ public class SelectCommand extends AbstractCommand {
       try {
         id = Integer.valueOf(s);
       } catch (NumberFormatException e) {
-        terminal.writer().print(bold(String.format("%s is not a number, ignoring%n", s)));
+        terminal.writer().print(Messages.boldRed(String.format("%s is not a number, ignoring%n", s)));
         continue;
       }
       CANTalon talon = talonFactory.getTalon(id);

@@ -20,6 +20,7 @@ import org.strykeforce.thirdcoast.talon.TalonProvisioner;
 import org.strykeforce.thirdcoast.telemetry.tct.AbstractCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.Command;
 import org.strykeforce.thirdcoast.telemetry.tct.ConfigurationsManager;
+import org.strykeforce.thirdcoast.telemetry.tct.Messages;
 
 /**
  * Loads Talons from TOML configuration file named {@code tct.toml}.
@@ -64,7 +65,7 @@ public class LoadConfigsCommand extends AbstractCommand {
     while (selected == null) {
       String line;
       try {
-        line = reader.readLine(prompt()).trim();
+        line = reader.readLine(Messages.prompt("config to load or <enter> to return> ")).trim();
       } catch (EndOfFileException | UserInterruptException e) {
         break;
       }
@@ -117,8 +118,7 @@ public class LoadConfigsCommand extends AbstractCommand {
   }
 
   private void help(int size) {
-    String msg = String.format("please enter a number between 1-%d or <enter> to return%n", size);
-    terminal.writer().print(bold(msg));
+    terminal.writer().print(Messages.menuHelp(size));
   }
 
 }

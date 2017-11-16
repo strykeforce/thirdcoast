@@ -6,6 +6,7 @@ import javax.inject.Inject;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
 import org.jline.reader.UserInterruptException;
+import org.strykeforce.thirdcoast.telemetry.tct.Messages;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 
 public class SelectOperatingModeCommand extends AbstractTalonConfigCommand {
@@ -88,8 +89,7 @@ public class SelectOperatingModeCommand extends AbstractTalonConfigCommand {
   }
 
   private void help(int size) {
-    String msg = String.format("please enter a number between 1-%d%n", size);
-    terminal.writer().print(bold(msg));
+    terminal.writer().print(Messages.menuHelp(size));
   }
 
 }

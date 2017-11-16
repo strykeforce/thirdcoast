@@ -16,6 +16,7 @@ import org.strykeforce.thirdcoast.talon.PIDTalonConfiguration;
 import org.strykeforce.thirdcoast.talon.SoftLimit;
 import org.strykeforce.thirdcoast.talon.TalonConfiguration;
 import org.strykeforce.thirdcoast.telemetry.tct.AbstractCommand;
+import org.strykeforce.thirdcoast.telemetry.tct.Messages;
 
 @ParametersAreNonnullByDefault
 public class InspectCommand extends AbstractCommand {
@@ -126,7 +127,7 @@ public class InspectCommand extends AbstractCommand {
   private void stringLine(String description, String value) {
     StringBuilder sb = new StringBuilder();
     Formatter formatter = new Formatter(sb);
-    sb.append(bold(String.format(FORMAT_DESCRIPTION, description)));
+    sb.append(Messages.bold(String.format(FORMAT_DESCRIPTION, description)));
     formatter.format(FORMAT_STRING, value);
     terminal.writer().println(sb.toString());
   }
@@ -134,7 +135,7 @@ public class InspectCommand extends AbstractCommand {
   private void booleanLine(String description, @Nullable Boolean value) {
     StringBuilder sb = new StringBuilder();
     Formatter formatter = new Formatter(sb);
-    sb.append(bold(String.format(FORMAT_DESCRIPTION, description)));
+    sb.append(Messages.bold(String.format(FORMAT_DESCRIPTION, description)));
     formatter.format(FORMAT_STRING, value == null ? "DEFAULT" : (value ? "YES" : "NO"));
     terminal.writer().println(sb.toString());
   }
@@ -142,7 +143,7 @@ public class InspectCommand extends AbstractCommand {
   private void intLine(String description, @Nullable Integer value) {
     StringBuilder sb = new StringBuilder();
     Formatter formatter = new Formatter(sb);
-    sb.append(bold(String.format(FORMAT_DESCRIPTION, description)));
+    sb.append(Messages.bold(String.format(FORMAT_DESCRIPTION, description)));
     if (value != null) {
       formatter.format(FORMAT_INTEGER, value);
     } else {
@@ -154,7 +155,7 @@ public class InspectCommand extends AbstractCommand {
   private void doubleLine(String description, @Nullable Double value) {
     StringBuilder sb = new StringBuilder();
     Formatter formatter = new Formatter(sb);
-    sb.append(bold(String.format(FORMAT_DESCRIPTION, description)));
+    sb.append(Messages.bold(String.format(FORMAT_DESCRIPTION, description)));
     if (value != null) {
       formatter.format(FORMAT_DOUBLE, value);
     } else {

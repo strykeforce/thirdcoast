@@ -6,6 +6,7 @@ import javax.inject.Named;
 import org.jline.reader.LineReader;
 import org.strykeforce.thirdcoast.telemetry.tct.AbstractCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.Menu;
+import org.strykeforce.thirdcoast.telemetry.tct.Messages;
 
 /**
  * Configure selected Talons.
@@ -28,7 +29,7 @@ public class ConfigModeCommand extends AbstractCommand {
   @Override
   public void perform() {
     if (talonSet.selected().isEmpty()) {
-      terminal.writer().println(bold("no talons selected"));
+      terminal.writer().println(Messages.NO_TALONS);
       return;
     }
     talonConfigMenu.display();

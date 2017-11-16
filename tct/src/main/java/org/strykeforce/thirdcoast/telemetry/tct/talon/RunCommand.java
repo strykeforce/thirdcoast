@@ -7,6 +7,7 @@ import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
 import org.jline.reader.UserInterruptException;
 import org.strykeforce.thirdcoast.telemetry.tct.AbstractCommand;
+import org.strykeforce.thirdcoast.telemetry.tct.Messages;
 
 @ParametersAreNonnullByDefault
 public class RunCommand extends AbstractCommand {
@@ -23,14 +24,14 @@ public class RunCommand extends AbstractCommand {
   @Override
   public void perform() {
     if (talonSet.selected().isEmpty()) {
-      terminal.writer().println(bold("no talons selected"));
+      terminal.writer().println(Messages.NO_TALONS);
       return;
     }
-    terminal.writer().println(bold("Enter motor setpoint, press <enter> to go back"));
+    terminal.writer().println(Messages.bold("Enter motor setpoint, press <enter> to go back"));
     while (true) {
       String line;
       try {
-        line = reader.readLine(boldYellow("setpoint or <return> to exit> ")).trim();
+        line = reader.readLine(Messages.prompt("setpoint or <return> to exit> ")).trim();
       } catch (EndOfFileException | UserInterruptException e) {
         continue;
       }
@@ -42,10 +43,10 @@ public class RunCommand extends AbstractCommand {
       try {
         setpoint = Double.valueOf(line);
       } catch (NumberFormatException nfe) {
-        terminal.writer().println(bold("please enter a number"));
+        terminal.writer().println(Messages.boldRed("please enter a number"));
         continue;
       }
-      terminal.writer().print(bold(String.format("setting talons to %.2f%n", setpoint)));
+      terminal.writer().print(Messages.bold(String.format("setting talons to %.2f%n", setpoint)));
       for (CANTalon talon : talonSet.selected()) {
         talon.set(setpoint);
       }

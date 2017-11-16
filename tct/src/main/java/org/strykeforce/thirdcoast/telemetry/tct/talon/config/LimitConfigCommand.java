@@ -5,6 +5,7 @@ import javax.inject.Named;
 import org.jline.reader.LineReader;
 import org.strykeforce.thirdcoast.telemetry.tct.AbstractCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.Menu;
+import org.strykeforce.thirdcoast.telemetry.tct.Messages;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 
 /**
@@ -27,7 +28,7 @@ public class LimitConfigCommand extends AbstractCommand {
   @Override
   public void perform() {
     if (talonSet.selected().isEmpty()) {
-      terminal.writer().println(bold("no talons selected"));
+      terminal.writer().println(Messages.bold("no talons selected"));
       return;
     }
     limitMenu.display();

@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.DigitalOutput;
 import javax.inject.Inject;
 import org.jline.reader.LineReader;
 import org.strykeforce.thirdcoast.telemetry.tct.AbstractCommand;
+import org.strykeforce.thirdcoast.telemetry.tct.Messages;
 
 public class DemoPulseDigitalOutputCommand extends AbstractCommand {
 
@@ -18,7 +19,7 @@ public class DemoPulseDigitalOutputCommand extends AbstractCommand {
 
   @Override
   public void perform() {
-    terminal.writer().println(bold(NAME));
+    terminal.writer().println(Messages.bold(NAME));
     terminal.writer().println("pulseLength = 0.25, pulse width = 144 µsec");
     terminal.writer().println("pulseLength = 0.50, pulse width =  32 µsec");
     terminal.writer().println("pulseLength = 1.00, pulse width =  64 µsec");
@@ -28,7 +29,7 @@ public class DemoPulseDigitalOutputCommand extends AbstractCommand {
     terminal.writer().println();
     DigitalOutput digitalOutput = digitalOutputSet.getDigitalOutput();
     if (digitalOutput == null) {
-      terminal.writer().println(bold("no digital output selected selected"));
+      terminal.writer().println(Messages.boldRed("no digital output selected selected"));
       return;
     }
     pulse(digitalOutput,0.25);

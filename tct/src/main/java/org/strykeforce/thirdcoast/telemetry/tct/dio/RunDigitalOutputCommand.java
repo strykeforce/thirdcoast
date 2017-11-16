@@ -5,6 +5,7 @@ import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
 import org.jline.reader.UserInterruptException;
 import org.strykeforce.thirdcoast.telemetry.tct.AbstractCommand;
+import org.strykeforce.thirdcoast.telemetry.tct.Messages;
 
 public class RunDigitalOutputCommand extends AbstractCommand {
 
@@ -20,14 +21,14 @@ public class RunDigitalOutputCommand extends AbstractCommand {
   @Override
   public void perform() {
     if (dioSet.getDigitalOutput() == null) {
-      terminal.writer().println(bold("no digital output selected selected"));
+      terminal.writer().println(Messages.boldRed("no digital output selected selected"));
       return;
     }
-    terminal.writer().println(bold("Enter 0 for off or 1 for on, press <enter> to go back"));
+    terminal.writer().println(Messages.bold("Enter 0 for off or 1 for on, press <enter> to go back"));
     while (true) {
       String line;
       try {
-        line = reader.readLine(boldYellow("0/1 or <return> to exit> ")).trim();
+        line = reader.readLine(Messages.prompt("0/1 or <return> to exit> ")).trim();
       } catch (EndOfFileException | UserInterruptException e) {
         continue;
       }
@@ -46,13 +47,13 @@ public class RunDigitalOutputCommand extends AbstractCommand {
         help();
         continue;
       }
-      terminal.writer().print(bold(String.format("setting dio to %d%n", setpoint)));
+      terminal.writer().print(Messages.bold(String.format("setting dio to %d%n", setpoint)));
       dioSet.getDigitalOutput().set(setpoint == 1);
     }
   }
 
   private void help() {
-    terminal.writer().println(bold("please enter 0 or 1"));
+    terminal.writer().println(Messages.boldRed("please enter 0 or 1"));
   }
 }
 

@@ -5,6 +5,7 @@ import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
 import org.jline.reader.UserInterruptException;
 import org.strykeforce.thirdcoast.telemetry.tct.AbstractCommand;
+import org.strykeforce.thirdcoast.telemetry.tct.Messages;
 
 public class RunServoCommand extends AbstractCommand {
 
@@ -20,14 +21,14 @@ public class RunServoCommand extends AbstractCommand {
   @Override
   public void perform() {
     if (servoSet.getServo() == null) {
-      terminal.writer().println(bold("no servo selected"));
+      terminal.writer().println(Messages.boldRed("no servo selected"));
       return;
     }
-    terminal.writer().println(bold("Enter servo setpoint, press <enter> to go back"));
+    terminal.writer().println(Messages.bold("Enter servo setpoint, press <enter> to go back"));
     while (true) {
       String line;
       try {
-        line = reader.readLine(boldYellow("setpoint or <return> to exit> ")).trim();
+        line = reader.readLine(Messages.prompt("setpoint or <return> to exit> ")).trim();
       } catch (EndOfFileException | UserInterruptException e) {
         continue;
       }
@@ -39,10 +40,10 @@ public class RunServoCommand extends AbstractCommand {
       try {
         setpoint = Double.valueOf(line);
       } catch (NumberFormatException nfe) {
-        terminal.writer().println(bold("please enter a number"));
+        terminal.writer().println(Messages.boldRed("please enter a number"));
         continue;
       }
-      terminal.writer().print(bold(String.format("setting servo to %.2f%n", setpoint)));
+      terminal.writer().print(Messages.bold(String.format("setting servo to %.2f%n", setpoint)));
       servoSet.getServo().set(setpoint);
     }
 
