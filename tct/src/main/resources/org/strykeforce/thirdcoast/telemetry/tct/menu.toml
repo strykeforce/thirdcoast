@@ -32,6 +32,8 @@ TALON_CONFIG_CL = [
   "org.strykeforce.thirdcoast.telemetry.tct.talon.config.cl.FCommand",
   "org.strykeforce.thirdcoast.telemetry.tct.talon.config.cl.IZoneCommand",
   "org.strykeforce.thirdcoast.telemetry.tct.talon.config.cl.AllowableClosedLoopErrorCommand",
+  "org.strykeforce.thirdcoast.telemetry.tct.talon.config.cl.MotionMagicCruiseVelocityCommand",
+  "org.strykeforce.thirdcoast.telemetry.tct.talon.config.cl.MotionMagicAccelerationCommand",
 ]
 
 TALON_CONFIG_ENC = [

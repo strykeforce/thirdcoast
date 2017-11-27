@@ -82,6 +82,12 @@ public class TalonConfigurationBuilder {
   @Nullable
   private Integer iZone;
 
+  // MotionMagicTalonConfiguration
+  @Nullable
+  private Double motionMagicAcceleration;
+  @Nullable
+  private Double motionMagicCruiseVelocity;
+
   /**
    * Create a builder with defaults.
    */
@@ -111,6 +117,11 @@ public class TalonConfigurationBuilder {
       mode = TalonControlMode.Speed;
     } else if (config instanceof PositionTalonConfiguration) {
       mode = TalonControlMode.Position;
+    } else if (config instanceof MotionMagicTalonConfiguration) {
+      mode = TalonControlMode.MotionMagic;
+      MotionMagicTalonConfiguration mm = (MotionMagicTalonConfiguration) config;
+      motionMagicAcceleration = mm.getMotionMagicAcceleration();
+      motionMagicCruiseVelocity = mm.getMotionMagicCruiseVelocity();
     } else {
       throw new AssertionError(config.getClass().getCanonicalName());
     }
@@ -150,11 +161,13 @@ public class TalonConfigurationBuilder {
       case Speed:
         talonConfiguration = config.to(SpeedTalonConfiguration.class);
         break;
+      case MotionMagic:
+        talonConfiguration = config.to(MotionMagicTalonConfiguration.class);
+        break;
       case PercentVbus:
       case Current:
       case Follower:
       case MotionProfile:
-      case MotionMagic:
       case Disabled:
         throw new UnsupportedOperationException(mode.name());
     }
@@ -214,10 +227,19 @@ public class TalonConfigurationBuilder {
             reverseOutputVoltagePeak, forwardOutputVoltageNominal, reverseOutputVoltageNominal,
             allowableClosedLoopError, nominalClosedLoopVoltage, pGain, iGain, dGain, fGain, iZone);
         break;
-      case Follower:
       case MotionMagic:
-      case Current:
+        tc = new MotionMagicTalonConfiguration(name, setpointMax, encoder, brakeInNeutral,
+            outputReversed, velocityMeasurementPeriod, velocityMeasurementWindow,
+            forwardLimitSwitch, reverseLimitSwitch, forwardSoftLimit, reverseSoftLimit,
+            currentLimit, voltageRampRate, outputVoltageMax, closedLoopRampRate,
+            forwardOutputVoltagePeak,
+            reverseOutputVoltagePeak, forwardOutputVoltageNominal, reverseOutputVoltageNominal,
+            allowableClosedLoopError, nominalClosedLoopVoltage, pGain, iGain, dGain, fGain, iZone,
+            motionMagicAcceleration, motionMagicCruiseVelocity);
+        break;
+      case Follower:
       case MotionProfile:
+      case Current:
       case Disabled:
       case PercentVbus:
         throw new UnsupportedOperationException(mode.name());
@@ -575,6 +597,30 @@ public class TalonConfigurationBuilder {
   @NotNull
   public TalonConfigurationBuilder iZone(int iZone) {
     this.iZone = iZone;
+    return this;
+  }
+
+  /**
+   * Set the motion-magic acceleration.
+   *
+   * @param accel value for acceleration.
+   * @return this builder.
+   */
+  @NotNull
+  public TalonConfigurationBuilder motionMagicAcceleration(double accel) {
+    this.motionMagicAcceleration = accel;
+    return this;
+  }
+
+  /**
+   * Set the motion-magic cruise velocity.
+   *
+   * @param vel value for cruise velocity.
+   * @return this builder.
+   */
+  @NotNull
+  public TalonConfigurationBuilder motionMagicCruiseVelocity(double vel) {
+    this.motionMagicCruiseVelocity = vel;
     return this;
   }
 

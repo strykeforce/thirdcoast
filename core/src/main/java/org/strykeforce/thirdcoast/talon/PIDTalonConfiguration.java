@@ -87,14 +87,14 @@ public class PIDTalonConfiguration extends TalonConfiguration {
     super.configure(talon);
   }
 
-  private double valueOrElse(@Nullable Double value, double def) {
+  protected double valueOrElse(@Nullable Double value, double def) {
     if (value != null) {
       return value;
     }
     return def;
   }
 
-  private int valueOrElse(@Nullable Integer value, int def) {
+  protected int valueOrElse(@Nullable Integer value, int def) {
     if (value != null) {
       return value;
     }

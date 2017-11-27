@@ -3,7 +3,8 @@ package org.strykeforce.thirdcoast.talon
 import com.moandjiezana.toml.Toml
 import spock.lang.Specification
 
-import static com.ctre.CANTalon.FeedbackDevice.*
+import static com.ctre.CANTalon.FeedbackDevice.EncRising
+import static com.ctre.CANTalon.FeedbackDevice.QuadEncoder
 import static com.ctre.CANTalon.TalonControlMode.*
 import static com.ctre.CANTalon.VelocityMeasurementPeriod.Period_25Ms
 import static com.ctre.CANTalon.VelocityMeasurementPeriod.Period_5Ms
@@ -328,6 +329,22 @@ pGain = 1.2
         tc.IZone == 2767
     }
 
+    def "configure motionMagicAcceleration"() {
+        when:
+        MotionMagicTalonConfiguration tc = tcb.mode(MotionMagic).motionMagicAcceleration(27.67).build()
+
+        then:
+        tc.motionMagicAcceleration == 27.67
+    }
+
+    def "configure motionMagicCruiseVelocity"() {
+        when:
+        MotionMagicTalonConfiguration tc = tcb.mode(MotionMagic).motionMagicCruiseVelocity(27.67).build()
+
+        then:
+        tc.motionMagicCruiseVelocity == 27.67
+    }
+
     def "checks config for proper operating mode"() {
         given:
         def toml = new Toml().read("mode = \"Disabled\"\nsetpointMax = 0.0")
@@ -369,6 +386,25 @@ voltageRampRate = 4.0
         vtc.name == 'foo'
         vtc.setpointMax == 12.0
         vtc.voltageRampRate == 4.0
+    }
+
+    def "reads motion magic params from MotionMagicTalonConfiguration"() {
+        def input = '''
+name = "foo"
+mode = "MotionMagic"
+setpointMax = 0.0
+motionMagicAcceleration = 2.7
+motionMagicCruiseVelocity = 6.7
+'''
+        when:
+        def mmtc = (MotionMagicTalonConfiguration) new TalonConfigurationBuilder(TalonConfigurationBuilder.create(new Toml().read(input))).build()
+
+        then:
+        mmtc instanceof MotionMagicTalonConfiguration
+        mmtc.name == 'foo'
+        mmtc.setpointMax == 0.0
+        mmtc.motionMagicAcceleration == 2.7
+        mmtc.motionMagicCruiseVelocity == 6.7
     }
 
 }

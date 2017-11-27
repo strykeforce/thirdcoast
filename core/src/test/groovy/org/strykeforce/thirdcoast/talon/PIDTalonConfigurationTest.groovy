@@ -38,6 +38,11 @@ class PIDTalonConfigurationTest extends Specification {
     mode = "Speed"
     setpointMax = 1.0
 
+    [[TALON]]
+    name = "motion_magic"
+    mode = "MotionMagic"
+    motionMagicAcceleration = 2.7
+    motionMagicCruiseVelocity = 6.7
 '''
 
     def talon = Mock(CANTalon)
@@ -150,6 +155,20 @@ class PIDTalonConfigurationTest extends Specification {
         then:
         t.name == "speed"
         t.class == SpeedTalonConfiguration
+    }
+
+    def "configures motion magic mode talon"() {
+        when:
+        def t = provisioner.configurationFor("motion_magic")
+        t.configure(talon)
+
+        then:
+        t.name == "motion_magic"
+        t.class == MotionMagicTalonConfiguration
+
+        and:
+        1 * talon.setMotionMagicAcceleration(2.7)
+        1 * talon.setMotionMagicCruiseVelocity(6.7)
     }
 
 }

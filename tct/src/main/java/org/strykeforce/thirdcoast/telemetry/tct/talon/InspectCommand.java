@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.talon.Encoder;
 import org.strykeforce.thirdcoast.talon.LimitSwitch;
+import org.strykeforce.thirdcoast.talon.MotionMagicTalonConfiguration;
 import org.strykeforce.thirdcoast.talon.PIDTalonConfiguration;
 import org.strykeforce.thirdcoast.talon.SoftLimit;
 import org.strykeforce.thirdcoast.talon.TalonConfiguration;
@@ -112,6 +113,12 @@ public class InspectCommand extends AbstractCommand {
     doubleLine("D:", pid.getDGain());
     doubleLine("F:", pid.getFGain());
     intLine("I-zone:", pid.getIZone());
+    if (config.getMode() == TalonControlMode.MotionMagic) {
+      writer.println();
+      MotionMagicTalonConfiguration mmtc = (MotionMagicTalonConfiguration) pid;
+      doubleLine("MM Cruise Velocity:", mmtc.getMotionMagicCruiseVelocity());
+      doubleLine("MM Acceleration:", mmtc.getMotionMagicAcceleration());
+    }
     writer.println();
     intLine("Allowable CL Error:", pid.getAllowableClosedLoopError());
     doubleLine("Nominal CL Voltage:", pid.getNominalClosedLoopVoltage());
