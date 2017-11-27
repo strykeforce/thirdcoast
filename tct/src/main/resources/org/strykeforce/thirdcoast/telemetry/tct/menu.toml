@@ -62,6 +62,7 @@ TALON_CONFIG_OUT = [
   "org.strykeforce.thirdcoast.telemetry.tct.talon.config.out.PeakOutputVoltageCommand",
   "org.strykeforce.thirdcoast.telemetry.tct.talon.config.out.NominalOutputVoltageCommand",
   "org.strykeforce.thirdcoast.telemetry.tct.talon.config.out.CurrentLimitCommand",
+  "org.strykeforce.thirdcoast.telemetry.tct.talon.config.out.BrakeInNeutralCommand",
 ]
 
 SERVO = [
