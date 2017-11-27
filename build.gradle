@@ -26,7 +26,7 @@ ext {
             toml4j              : 'com.moandjiezana.toml:toml4j:0.7.2',
     ]
     specificationTitle = 'Third Coast Library'
-    specificationVersion = '17.1.0'
+    specificationVersion = '17.1.1'
 }
 
 subprojects {

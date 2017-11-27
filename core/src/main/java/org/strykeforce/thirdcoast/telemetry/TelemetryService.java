@@ -2,6 +2,7 @@ package org.strykeforce.thirdcoast.telemetry;
 
 import com.ctre.CANTalon;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -70,6 +71,8 @@ public class TelemetryService {
 
   /**
    * Un-register all Items.
+   *
+   * @throws IllegalStateException if TelemetryService is running.
    */
   public void clear() {
     checkNotStarted();
@@ -82,6 +85,7 @@ public class TelemetryService {
    * this Talon is already registered the frame rates are not updated.
    *
    * @param talon the CANTalon to register for data collection
+   * @throws IllegalStateException if TelemetryService is running.
    * @see org.strykeforce.thirdcoast.talon.StatusFrameRate
    */
   public void register(CANTalon talon) {
@@ -99,6 +103,7 @@ public class TelemetryService {
    * Registers an Item for telemetry sending.
    *
    * @param item the Item to register for data collection
+   * @throws IllegalStateException if TelemetryService is running.
    */
   public void register(Item item) {
     checkNotStarted();
@@ -114,6 +119,7 @@ public class TelemetryService {
    * Register a collection for telemetry sending.
    *
    * @param collection the collection of Items to register for data collection
+   * @throws IllegalStateException if TelemetryService is running.
    */
   public void registerAll(Collection<Item> collection) {
     checkNotStarted();
@@ -134,7 +140,8 @@ public class TelemetryService {
       logger.warn("setting status frame rates while telemetry service is running");
     }
 
-    Optional<Item> item = items.stream().filter(it -> it instanceof TalonItem && it.deviceId() == talonId)
+    Optional<Item> item = items.stream()
+        .filter(it -> it instanceof TalonItem && it.deviceId() == talonId)
         .findFirst();
 
     if (!item.isPresent()) {
@@ -145,6 +152,30 @@ public class TelemetryService {
     logger.info("setting talon {} ({}) to {}", talonItem.description(),
         talonItem.getTalon().getDeviceID(), rates);
     rates.configure(talonItem.getTalon());
+  }
+
+  /**
+   * Get an unmodifiable view of the registered items.
+   *
+   * @return an unmodifiable Set of Items.
+   */
+  public Set<Item> getItems() {
+    return Collections.unmodifiableSet(items);
+  }
+
+  /**
+   * Unregister an {@code Item} from a stopped {@code TelemetryService}.
+   *
+   * @param item the Item to remove.
+   * @throws AssertionError if TelemetryService is running.
+   */
+  public void remove(Item item) {
+    checkNotStarted();
+    if (items.remove(item)) {
+      logger.info("removed {}", item);
+      return;
+    }
+    throw new AssertionError(item.toString());
   }
 
   private void checkNotStarted() {

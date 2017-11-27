@@ -11,17 +11,17 @@ import org.strykeforce.thirdcoast.telemetry.tct.Messages;
 public class PwmDigitalOutputCommand extends AbstractCommand {
 
   public static String NAME = "PWM Digital Output";
-  private final DigitalOutputSet digitalOutputSet;
+  private final DioSet dioSet;
 
   @Inject
-  public PwmDigitalOutputCommand(LineReader reader, DigitalOutputSet digitalOutputSet) {
+  public PwmDigitalOutputCommand(LineReader reader, DioSet dioSet) {
     super(NAME, reader);
-    this.digitalOutputSet = digitalOutputSet;
+    this.dioSet = dioSet;
   }
 
   @Override
   public void perform() {
-    if (digitalOutputSet.getDigitalOutput() == null) {
+    if (dioSet.getDigitalOutput() == null) {
       terminal.writer().println(Messages.boldRed("no digital output selected selected"));
       return;
     }
@@ -45,7 +45,7 @@ public class PwmDigitalOutputCommand extends AbstractCommand {
         continue;
       }
       terminal.writer().print(Messages.bold(String.format("pulsing for %.2f%n", setpoint)));
-      DigitalOutput digitalOutput = digitalOutputSet.getDigitalOutput();
+      DigitalOutput digitalOutput = dioSet.getDigitalOutput();
       digitalOutput.disablePWM();
       digitalOutput.enablePWM(setpoint);
     }

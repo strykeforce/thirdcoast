@@ -8,17 +8,17 @@ import org.strykeforce.thirdcoast.telemetry.tct.Messages;
 
 public class DioMenu extends Menu {
 
-  private final DigitalOutputSet digitalOutputSet;
+  private final DioSet dioSet;
 
   public DioMenu(CommandAdapter commandsAdapter, LineReader reader,
-      DigitalOutputSet digitalOutputSet) {
+      DioSet dioSet) {
     super(commandsAdapter, reader);
-    this.digitalOutputSet = digitalOutputSet;
+    this.dioSet = dioSet;
   }
 
   @Override
   protected String header() {
-    DigitalOutput digitalOutput = digitalOutputSet.getDigitalOutput();
+    DigitalOutput digitalOutput = dioSet.getDigitalOutput();
     String id = digitalOutput != null ? String.valueOf(digitalOutput.getChannel()) : "";
     return Messages.boldGreen("Digital Output: " + id + "\n");
   }

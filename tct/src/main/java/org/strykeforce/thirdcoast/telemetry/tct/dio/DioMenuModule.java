@@ -23,8 +23,8 @@ public abstract class DioMenuModule {
   @Provides
   @Named("DIO")
   static Menu talonMenu(@Named("DIO") CommandAdapter commandAdapter, LineReader reader,
-      DigitalOutputSet digitalOutputSet) {
-    return new DioMenu(commandAdapter, reader, digitalOutputSet);
+      DioSet dioSet) {
+    return new DioMenu(commandAdapter, reader, dioSet);
   }
 
   @Binds

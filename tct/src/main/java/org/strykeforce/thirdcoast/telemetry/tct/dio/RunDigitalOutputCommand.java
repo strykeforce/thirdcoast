@@ -10,10 +10,10 @@ import org.strykeforce.thirdcoast.telemetry.tct.Messages;
 public class RunDigitalOutputCommand extends AbstractCommand {
 
   public final static String NAME = "Set Selected Digital Output";
-  private final DigitalOutputSet dioSet;
+  private final DioSet dioSet;
 
   @Inject
-  public RunDigitalOutputCommand(LineReader reader, DigitalOutputSet dioSet) {
+  public RunDigitalOutputCommand(LineReader reader, DioSet dioSet) {
     super(NAME, reader);
     this.dioSet = dioSet;
   }

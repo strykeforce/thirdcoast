@@ -11,19 +11,19 @@ public class DemoPwmDigitalOutputCommand extends AbstractCommand {
 
   public final static String NAME = "Demo PWM Sweep";
   private final static double SLEEP_SEC = 1e-3;
-  private final DigitalOutputSet digitalOutputSet;
+  private final DioSet dioSet;
 
   @Inject
-  public DemoPwmDigitalOutputCommand(LineReader reader, DigitalOutputSet digitalOutputSet) {
+  public DemoPwmDigitalOutputCommand(LineReader reader, DioSet dioSet) {
     super(NAME, reader);
-    this.digitalOutputSet = digitalOutputSet;
+    this.dioSet = dioSet;
   }
 
   @Override
   public void perform() {
     terminal.writer().println(Messages.bold(NAME));
     terminal.writer().println();
-    DigitalOutput digitalOutput = digitalOutputSet.getDigitalOutput();
+    DigitalOutput digitalOutput = dioSet.getDigitalOutput();
     if (digitalOutput == null) {
       terminal.writer().println(Messages.boldRed("no digital output selected"));
       return;

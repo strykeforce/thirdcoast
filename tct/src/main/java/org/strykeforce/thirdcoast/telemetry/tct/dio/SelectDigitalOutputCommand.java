@@ -15,10 +15,10 @@ public class SelectDigitalOutputCommand extends AbstractCommand {
 
   public final static String NAME = "Select Digital Output";
   private final static Logger logger = LoggerFactory.getLogger(SelectDigitalOutputCommand.class);
-  private final DigitalOutputSet dioSet;
+  private final DioSet dioSet;
 
   @Inject
-  public SelectDigitalOutputCommand(LineReader reader, DigitalOutputSet dioSet) {
+  public SelectDigitalOutputCommand(LineReader reader, DioSet dioSet) {
     super(NAME, reader);
     this.dioSet = dioSet;
   }
@@ -55,9 +55,8 @@ public class SelectDigitalOutputCommand extends AbstractCommand {
         terminal.writer().print(Messages.boldRed(String.format("%s is not a number, ignoring%n", line)));
         continue;
       }
-      dioSet.selectDigitalOutput(0);
+      dioSet.selectDigitalOutput(id);
       logger.info("selected digital output channel {}", id);
-      dioSet.restartTelemetryService();
       break;
     }
   }

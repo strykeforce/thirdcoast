@@ -9,12 +9,12 @@ import org.strykeforce.thirdcoast.telemetry.tct.Messages;
 public class DemoPulseDigitalOutputCommand extends AbstractCommand {
 
   public final static String NAME = "Demo Pulse Chain";
-  private final DigitalOutputSet digitalOutputSet;
+  private final DioSet dioSet;
 
   @Inject
-  public DemoPulseDigitalOutputCommand(LineReader reader, DigitalOutputSet digitalOutputSet) {
+  public DemoPulseDigitalOutputCommand(LineReader reader, DioSet dioSet) {
     super(NAME, reader);
-    this.digitalOutputSet = digitalOutputSet;
+    this.dioSet = dioSet;
   }
 
   @Override
@@ -27,7 +27,7 @@ public class DemoPulseDigitalOutputCommand extends AbstractCommand {
     terminal.writer().println("pulseLength = 4.00, pulse width = 256 µsec");
     terminal.writer().println("pulseLength = 8.00, pulse width = 256 µsec");
     terminal.writer().println();
-    DigitalOutput digitalOutput = digitalOutputSet.getDigitalOutput();
+    DigitalOutput digitalOutput = dioSet.getDigitalOutput();
     if (digitalOutput == null) {
       terminal.writer().println(Messages.boldRed("no digital output selected selected"));
       return;

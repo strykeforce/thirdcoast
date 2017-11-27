@@ -10,17 +10,17 @@ import org.strykeforce.thirdcoast.telemetry.tct.Messages;
 public class PulseDigitalOutputCommand extends AbstractCommand {
 
   public final static String NAME = "Pulse Selected Digital Output";
-  private final DigitalOutputSet digitalOutputSet;
+  private final DioSet dioSet;
 
   @Inject
-  public PulseDigitalOutputCommand(LineReader reader, DigitalOutputSet digitalOutputSet) {
+  public PulseDigitalOutputCommand(LineReader reader, DioSet dioSet) {
     super(NAME, reader);
-    this.digitalOutputSet = digitalOutputSet;
+    this.dioSet = dioSet;
   }
 
   @Override
   public void perform() {
-    if (digitalOutputSet.getDigitalOutput() == null) {
+    if (dioSet.getDigitalOutput() == null) {
       terminal.writer().println(Messages.boldRed("no digital output selected selected"));
       return;
     }
@@ -44,7 +44,7 @@ public class PulseDigitalOutputCommand extends AbstractCommand {
         continue;
       }
       terminal.writer().print(Messages.bold(String.format("pulsing for %.2f%n", setpoint)));
-      digitalOutputSet.getDigitalOutput().pulse(setpoint);
+      dioSet.getDigitalOutput().pulse(setpoint);
     }
   }
 
