@@ -102,6 +102,7 @@ public class TalonConfigurationBuilder {
     forwardSoftLimit = config.getForwardSoftLimit();
     reverseSoftLimit = config.getReverseSoftLimit();
     currentLimit = config.getCurrentLimit();
+    voltageRampRate = config.getVoltageRampRate();
 
     if (config instanceof VoltageTalonConfiguration) {
       mode = TalonControlMode.Voltage;

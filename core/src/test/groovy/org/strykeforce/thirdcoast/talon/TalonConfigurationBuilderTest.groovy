@@ -352,5 +352,24 @@ pGain = 1.2
         ''                                    | 'mode missing from configuration'
         "mode = \"Bogus\"\nsetpointMax = 0.0" | 'No enum constant com.ctre.CANTalon.TalonControlMode.Bogus'
     }
+
+    // https://github.com/strykeforce/thirdcoast/issues/19
+    def "reads voltageRampRate from VoltageTalonConfiguration"() {
+        def input = '''
+name = "foo"
+mode = "Voltage"
+setpointMax = 12.0
+voltageRampRate = 4.0
+'''
+        when:
+        def vtc = new TalonConfigurationBuilder(TalonConfigurationBuilder.create(new Toml().read(input))).build()
+
+        then:
+        vtc instanceof VoltageTalonConfiguration
+        vtc.name == 'foo'
+        vtc.setpointMax == 12.0
+        vtc.voltageRampRate == 4.0
+    }
+
 }
 
