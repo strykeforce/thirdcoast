@@ -33,6 +33,7 @@ public abstract class AbstractFwdRevDoubleConfigCommand extends AbstractTalonCon
     if (values == null) {
       return;
     }
+    saveConfig(values[0], values[1]);
     for (CANTalon talon : talonSet.selected()) {
       config(talon, values[0], values[1]);
       logger.info("set {} for {} to {}/{}", name(), talon.getDescription(), values[0], values[1]);
