@@ -14,23 +14,23 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ### Fixed
 
-- `tct` utility was not saving configuration for settings that had forward and reverse double values, for example **peak voltage**. #22
+- `tct` utility was not saving configuration for settings that had forward and reverse double values, for example **peak voltage**.
 
 ## [17.1.1] - 2017-11-27
 
 ### Added
 
-- `tct` utility added **brake in neutral** configuration. #17
-- Added `MotionMagicTalonConfiguration` to Talon provisioning and ability to control its **acceleration** and **cruise velocity** in `tct` utility. #20
+- `tct` utility added **brake in neutral** configuration.
+- Added `MotionMagicTalonConfiguration` to Talon provisioning and ability to control its **acceleration** and **cruise velocity** in `tct` utility.
 
 ### Changed
 
-- `tct` utility allows digital inputs to be reconfigured as outputs. #13
-- `tct` utility logging level increased to warn. #18
+- `tct` utility allows digital inputs to be reconfigured as outputs.
+- `tct` utility logging level increased to warn.
 
 ### Fixed
 
-- **voltage ramp rate** was not configuring a new `TalonConfigurationBuilder` from an existing `TalonConfiguration`. #19
+- **voltage ramp rate** was not configuring a new `TalonConfigurationBuilder` from an existing `TalonConfiguration`.
 
 ## [17.1.0] - 2017-11-16
 
