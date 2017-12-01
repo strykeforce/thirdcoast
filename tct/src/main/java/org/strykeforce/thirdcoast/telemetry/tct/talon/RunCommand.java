@@ -36,6 +36,9 @@ public class RunCommand extends AbstractCommand {
       String line;
       try {
         line = reader.readLine(Messages.prompt("setpoint or <return> to exit> ")).trim();
+        if (line.equalsIgnoreCase("b")) {
+          return;
+        }
       } catch (EndOfFileException | UserInterruptException e) {
         continue;
       }
