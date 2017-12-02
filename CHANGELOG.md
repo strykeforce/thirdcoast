@@ -4,11 +4,17 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Calendar Versioning](http://calver.org/).
 
-## [Unreleased]
+## [17.1.3] - 2017-12-02
 
 ### Added
 
 - Added this changelog.
+- You can now use the `B` key to go back while running Talons, Servos or Digital Outputs.
+
+### Changed
+
+- Linefeeds added to menus to improve readability.
+
 
 ## [17.1.2] - 2017-11-27
 
@@ -41,4 +47,5 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 [17.1.0]: https://github.com/strykeforce/thirdcoast/compare/v17.0.23...v17.1.0
 [17.1.1]: https://github.com/strykeforce/thirdcoast/compare/v17.1.0...v17.1.1
 [17.1.2]: https://github.com/strykeforce/thirdcoast/compare/v17.1.1...v17.1.2
+[17.1.3]: https://github.com/strykeforce/thirdcoast/compare/v17.1.2...v17.1.3
 [unreleased]: https://github.com/strykeforce/thirdcoast/compare/v17.1.2...develop
