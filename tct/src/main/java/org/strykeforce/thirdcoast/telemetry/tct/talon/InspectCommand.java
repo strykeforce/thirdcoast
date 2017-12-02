@@ -40,6 +40,7 @@ public class InspectCommand extends AbstractCommand {
   public void perform() {
     PrintWriter writer = terminal.writer();
     TalonConfiguration config = talonSet.getActiveTalonConfiguration();
+    writer.println();
 
     stringLine("Mode:", config.getMode().name());
     doubleLine("Max Setpoint:", config.getSetpointMax());

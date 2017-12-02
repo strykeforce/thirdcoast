@@ -41,7 +41,7 @@ public abstract class AbstractFwdRevDoubleConfigCommand extends AbstractTalonCon
   }
 
   protected double[] getFwdRevDoubles() {
-    terminal.writer().println(Messages.bold("enter <forward>,<reverse> or a single number for both"));
+    terminal.writer().println(Messages.bold("\nenter <forward>,<reverse> or a single number for both"));
     double[] values = null;
     while (values == null) {
       String line;

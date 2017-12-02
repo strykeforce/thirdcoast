@@ -63,6 +63,7 @@ public class ListCommand extends AbstractCommand {
   @Override
   public void perform() {
     Set<CANTalon> talons = talonSet.selected();
+    terminal.writer().println();
     if (talons.size() == 0){
       terminal.writer().println(Messages.NO_TALONS);
       return;

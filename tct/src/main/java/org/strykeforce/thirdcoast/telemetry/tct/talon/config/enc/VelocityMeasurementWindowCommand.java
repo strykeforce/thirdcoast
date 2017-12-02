@@ -21,6 +21,7 @@ public class VelocityMeasurementWindowCommand extends AbstractTalonConfigCommand
   @Override
   public void perform() {
     int[] windows = {1, 2, 4, 8, 16, 32, 64};
+    terminal.writer().println();
     for (int i = 0; i < windows.length; i++) {
       terminal.writer().printf("%2d - %3d ms%n", i + 1, windows[i]);
     }

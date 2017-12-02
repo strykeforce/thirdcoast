@@ -10,6 +10,8 @@ import org.jline.reader.LineReader;
 import org.strykeforce.thirdcoast.telemetry.tct.Command;
 import org.strykeforce.thirdcoast.telemetry.tct.CommandAdapter;
 import org.strykeforce.thirdcoast.telemetry.tct.Menu;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonMenu;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.cl.AllowableClosedLoopErrorCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.cl.DCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.cl.FCommand;
@@ -28,8 +30,9 @@ public abstract class ClosedLoopMenuModule {
 
   @Provides
   @Named("TALON_CONFIG_CL")
-  public static Menu configMenu(@Named("TALON_CONFIG_CL") CommandAdapter commandAdapter, LineReader reader) {
-    return new Menu(commandAdapter, reader);
+  public static Menu configMenu(@Named("TALON_CONFIG_CL") CommandAdapter commandAdapter, LineReader reader,
+                                TalonSet talonSet) {
+    return new TalonMenu(commandAdapter, reader, talonSet);
   }
 
   @Binds

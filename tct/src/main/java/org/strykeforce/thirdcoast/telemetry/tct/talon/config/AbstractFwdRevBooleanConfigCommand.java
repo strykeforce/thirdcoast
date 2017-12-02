@@ -34,7 +34,7 @@ public abstract class AbstractFwdRevBooleanConfigCommand extends AbstractTalonCo
 
   private boolean[] getFwdRevBooleans() {
     terminal.writer()
-        .println(Messages.bold("enter <Y>/<N> for forward,reverse or a single value for both"));
+        .println(Messages.bold("\nenter <Y>/<N> for forward,reverse or a single value for both"));
     boolean[] values = null;
     while (values == null) {
       String line;

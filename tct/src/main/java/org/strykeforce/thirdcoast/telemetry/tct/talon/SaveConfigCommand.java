@@ -32,7 +32,7 @@ public class SaveConfigCommand extends AbstractCommand {
 
   @Override
   public void perform() {
-    terminal.writer().println(Messages.bold("Saved Configurations:"));
+    terminal.writer().println(Messages.bold("\nSaved Configurations:"));
     Collection<TalonConfiguration> configs = configurationsManager.getTalonProvisioner()
         .getConfigurations();
     for (TalonConfiguration config : configs) {
