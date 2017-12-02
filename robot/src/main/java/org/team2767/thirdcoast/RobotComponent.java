@@ -1,4 +1,4 @@
-package org.strykeforce.thirdcoast.robot;
+package org.team2767.thirdcoast;
 
 import dagger.BindsInstance;
 import dagger.Component;

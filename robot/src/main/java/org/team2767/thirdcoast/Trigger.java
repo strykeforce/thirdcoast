@@ -1,4 +1,4 @@
-package org.strykeforce.thirdcoast.robot;
+package org.team2767.thirdcoast;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

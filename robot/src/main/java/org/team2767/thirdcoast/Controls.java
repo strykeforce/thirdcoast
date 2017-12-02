@@ -1,4 +1,4 @@
-package org.strykeforce.thirdcoast.robot;
+package org.team2767.thirdcoast;
 
 import edu.wpi.first.wpilibj.Joystick;
 import javax.inject.Inject;

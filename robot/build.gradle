@@ -1,5 +1,5 @@
 def TEAM = 2767
-def ROBOT_CLASS = "org.strykeforce.thirdcoast.robot.Robot"
+def ROBOT_CLASS = "org.team2767.thirdcoast.Robot"
 
 deploy {
     targets {

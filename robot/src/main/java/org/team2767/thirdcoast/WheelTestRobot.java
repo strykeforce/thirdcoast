@@ -1,9 +1,8 @@
-package org.strykeforce.thirdcoast.robot;
+package org.team2767.thirdcoast;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
 import org.strykeforce.thirdcoast.swerve.Wheel;
 import org.strykeforce.thirdcoast.talon.TalonFactory;
-import org.strykeforce.thirdcoast.talon.TalonProvisioner;
 
 /**
  * Third Coast test robot.
