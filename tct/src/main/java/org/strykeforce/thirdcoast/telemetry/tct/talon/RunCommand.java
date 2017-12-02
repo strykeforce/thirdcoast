@@ -35,12 +35,12 @@ public class RunCommand extends AbstractCommand {
     while (true) {
       String line;
       try {
-        line = reader.readLine(Messages.prompt("setpoint or <return> to exit> ")).trim();
+        line = reader.readLine(Messages.prompt("setpoint or <return> or b/B to exit> ")).trim();
       } catch (EndOfFileException | UserInterruptException e) {
         continue;
       }
 
-      if (line.isEmpty()) {
+      if (line.isEmpty() || line.equalsIgnoreCase("b")) {
         return;
       }
       double setpoint;
