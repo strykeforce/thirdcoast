@@ -19,6 +19,7 @@ public class DemoPulseDigitalOutputCommand extends AbstractCommand {
 
   @Override
   public void perform() {
+    terminal.writer().println();
     terminal.writer().println(Messages.bold(NAME));
     terminal.writer().println("pulseLength = 0.25, pulse width = 144 µsec");
     terminal.writer().println("pulseLength = 0.50, pulse width =  32 µsec");

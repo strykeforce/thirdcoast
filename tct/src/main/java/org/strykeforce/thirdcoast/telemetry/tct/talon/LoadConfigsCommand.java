@@ -58,6 +58,7 @@ public class LoadConfigsCommand extends AbstractCommand {
     TalonProvisioner provisioner = configurationsManager.getTalonProvisioner();
     List<String> configNames = provisioner.getConfigurationNames().stream()
         .sorted().collect(Collectors.toList());
+    terminal.writer().println();
     for (int i = 0; i < configNames.size(); i++) {
       terminal.writer().printf("%2d - %s%n", i + 1, configNames.get(i));
     }

@@ -30,7 +30,7 @@ public class RunCommand extends AbstractCommand {
       terminal.writer().println(Messages.NO_TALONS);
       return;
     }
-    terminal.writer().println(Messages.bold("enter motor setpoint, press <enter> to go back"));
+    terminal.writer().println(Messages.bold("\nenter motor setpoint, press <enter> to go back"));
     terminal.writer().println(Messages.bold("optionally, enter setpoint, duration to pulse"));
     while (true) {
       String line;

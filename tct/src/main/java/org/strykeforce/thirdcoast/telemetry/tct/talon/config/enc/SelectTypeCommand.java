@@ -22,6 +22,7 @@ public class SelectTypeCommand extends AbstractTalonConfigCommand {
   public void perform() {
     String[] types = {"Analog", "Analog Potentiometer", "CTRE Magnetic Absolute",
         "CTRE Magnetic Relative", "Falling Edge", "Rising Edge", "Pulse Width", "Quadrature"};
+    terminal.writer().println();
     for (int i = 0; i < types.length; i++) {
       terminal.writer().printf("%2d - %s ms%n", i + 1, types[i]);
     }

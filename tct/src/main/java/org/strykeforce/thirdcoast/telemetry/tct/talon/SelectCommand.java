@@ -50,7 +50,7 @@ public class SelectCommand extends AbstractCommand {
 
   @Override
   public void perform() {
-    terminal.writer().println(Messages.bold("enter comma-separated list of Talon IDs"));
+    terminal.writer().println(Messages.bold("\nenter comma-separated list of Talon IDs"));
 
     String line;
     try {

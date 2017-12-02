@@ -33,7 +33,7 @@ public class SelectServoCommand extends AbstractCommand {
 
   @Override
   public void perform() {
-    terminal.writer().println(Messages.bold("enter servo channel"));
+    terminal.writer().println(Messages.bold("\nenter servo channel"));
 
     String line;
     while (true) {

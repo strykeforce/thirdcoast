@@ -21,6 +21,7 @@ public class DemoPwmDigitalOutputCommand extends AbstractCommand {
 
   @Override
   public void perform() {
+    terminal.writer().println();
     terminal.writer().println(Messages.bold(NAME));
     terminal.writer().println();
     DigitalOutput digitalOutput = dioSet.getDigitalOutput();

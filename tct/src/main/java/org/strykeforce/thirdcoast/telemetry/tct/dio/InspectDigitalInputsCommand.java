@@ -25,7 +25,7 @@ public class InspectDigitalInputsCommand extends AbstractCommand {
   @Override
   public void perform() {
     PrintWriter writer = terminal.writer();
-    writer.println(Messages.bold("Digital Input States"));
+    writer.println(Messages.bold("\nDigital Input States"));
     for (int i = 0; i < 10; i++) {
       writer.print(Messages.bold(String.format("%2d  ", i)));
       DigitalInput input = dioSet.getDigitalInputs().get(i);

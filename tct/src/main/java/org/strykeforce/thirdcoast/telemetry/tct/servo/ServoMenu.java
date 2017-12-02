@@ -19,7 +19,7 @@ public class ServoMenu extends Menu {
   protected String header() {
     Servo servo = servoSet.getServo();
     String id = servo != null ? String.valueOf(servo.getChannel()) : "";
-    return Messages.boldGreen("Servo: " + id + "\n");
+    return Messages.boldGreen("\nServo: " + id + "\n");
   }
 
 }

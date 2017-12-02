@@ -22,6 +22,7 @@ public class SelectOperatingModeCommand extends AbstractTalonConfigCommand {
   public void perform() {
     String[] types = {"Voltage", "Speed", "Position", "Current", "Percent Vbus", "Motion Magic",
         "Motion Profile", "Follower", "Disabled"};
+    terminal.writer().println();
     for (int i = 0; i < types.length; i++) {
       terminal.writer().printf("%2d - %s%n", i + 1, types[i]);
     }
