@@ -28,12 +28,12 @@ public class RunDigitalOutputCommand extends AbstractCommand {
     while (true) {
       String line;
       try {
-        line = reader.readLine(Messages.prompt("0/1 or <return> to exit> ")).trim();
+        line = reader.readLine(Messages.prompt("0/1 or <return> or b/B to exit> ")).trim();
       } catch (EndOfFileException | UserInterruptException e) {
         continue;
       }
 
-      if (line.isEmpty()) {
+      if (line.isEmpty() || line.equalsIgnoreCase("b")) {
         return;
       }
       int setpoint;
