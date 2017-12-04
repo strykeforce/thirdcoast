@@ -33,7 +33,11 @@ public class TalonItem extends AbstractItem {
       Measure.REVERSE_SOFT_LIMIT_OK,
       Measure.POSITION,
       Measure.SPEED,
-      Measure.FEEDBACK
+      Measure.FEEDBACK,
+      Measure.MOMAGIC_ACCL,
+      Measure.MOMAGIC_A_TRAJ_POS,
+      Measure.MOMAGIC_A_TRAJ_VEL,
+      Measure.MOMAGIC_CRUISE_VEL
   ));
   // TODO: getMotionProfileStatus
   private final static String NA = "not available in API";
@@ -100,6 +104,14 @@ public class TalonItem extends AbstractItem {
         return talon::getPosition;
       case ANALOG_RAW:
         return talon::getAnalogInRaw;
+      case MOMAGIC_ACCL:
+        return talon::getMotionMagicAcceleration;
+      case MOMAGIC_A_TRAJ_POS:
+        return talon::getMotionMagicActTrajPosition;
+      case MOMAGIC_A_TRAJ_VEL:
+        return talon::getMotionMagicActTrajVelocity;
+      case MOMAGIC_CRUISE_VEL:
+        return talon::getMotionMagicCruiseVelocity;
       default:
         throw new AssertionError(measure);
     }

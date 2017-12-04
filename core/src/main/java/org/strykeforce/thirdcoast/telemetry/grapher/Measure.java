@@ -22,7 +22,11 @@ public enum Measure {
   SPEED("Speed"),
   FEEDBACK("Feedback"),
   VALUE("Value"),
-  ANALOG_RAW("Analog Raw");
+  ANALOG_RAW("Analog Raw"),
+  MOMAGIC_ACCL("Motion Magic Acceleration"),
+  MOMAGIC_A_TRAJ_POS("Motion Magic Trajectory Point Target Position"),
+  MOMAGIC_A_TRAJ_VEL("Motion Magic Trajectory Point Target Velocity"),
+  MOMAGIC_CRUISE_VEL("Motion Magic Cruise Velocity");
 
 //  private final static Map<Item.Type, Set<Measure>> byType = new HashMap<>();
 //
