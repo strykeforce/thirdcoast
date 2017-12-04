@@ -4,7 +4,15 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Calendar Versioning](http://calver.org/).
 
-## [Unreleased]
+## [17.1.4] - 2017-12-04
+
+### Added
+
+- Added Motion Magic data to grapher:
+  - Motion Magic Acceleration
+  - Motion Magic Trajectory Point Target Position
+  - Motion Magic Trajectory Point Target Velocity
+  - Motion Magic Cruise Velocity
 
 ### Changed
 
@@ -54,4 +62,5 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 [17.1.1]: https://github.com/strykeforce/thirdcoast/compare/v17.1.0...v17.1.1
 [17.1.2]: https://github.com/strykeforce/thirdcoast/compare/v17.1.1...v17.1.2
 [17.1.3]: https://github.com/strykeforce/thirdcoast/compare/v17.1.2...v17.1.3
-[unreleased]: https://github.com/strykeforce/thirdcoast/compare/v17.1.3...develop
+[17.1.4]: https://github.com/strykeforce/thirdcoast/compare/v17.1.3...v17.1.4
+[unreleased]: https://github.com/strykeforce/thirdcoast/compare/v17.1.4...develop
