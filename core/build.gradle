@@ -1,15 +1,15 @@
 plugins {
     id 'groovy'
+//    id 'maven-publish'
     id 'maven'
+    id "com.jfrog.bintray" version "1.8.0"
 }
 
-install {
-    repositories.mavenInstaller {
-        pom.groupId = 'org.strykeforce'
-        pom.artifactId = 'thirdcoast'
-        pom.version = '2017.1.0'
-    }
-}
+apply from: 'javadoc.gradle'
+apply from: 'publish.gradle'
+
+project.version = specificationVersion
+group = 'org.strykeforce.thirdcoast'
 
 dependencies {
     compile wpilib()
@@ -30,8 +30,6 @@ dependencies {
     testRuntime libs.bytebuddy
     testRuntime libs.objenesis
 }
-
-apply from: 'javadoc.gradle'
 
 task sourcesJar(type: Jar, dependsOn: classes) {
     classifier = 'sources'
