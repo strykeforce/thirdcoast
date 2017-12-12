@@ -2,7 +2,7 @@ plugins {
     id "java"
     id "idea"
     id "net.ltgt.apt-idea" version "0.13"
-    id "jaci.openrio.gradle.GradleRIO" version "2017.10.30" apply false
+    id "jaci.openrio.gradle.GradleRIO" version "2017.11.27" apply false
     id "net.ltgt.errorprone" version "0.0.13"
 }
 
