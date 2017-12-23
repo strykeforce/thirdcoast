@@ -4,6 +4,7 @@ plugins {
     id "net.ltgt.apt-idea" version "0.13"
     id "jaci.openrio.gradle.GradleRIO" version "2017.11.27" apply false
     id "net.ltgt.errorprone" version "0.0.13"
+    id "com.diffplug.gradle.spotless" version "3.7.0"
 }
 
 description = 'Third Coast Framework'
@@ -34,6 +35,7 @@ subprojects {
     apply plugin: 'jaci.openrio.gradle.GradleRIO'
     apply plugin: 'net.ltgt.apt-idea'
     apply plugin: 'net.ltgt.errorprone'
+    apply plugin: 'com.diffplug.gradle.spotless'
 
     wpi {
         navxVersion = '3.0.331' // FIXME: remove for 2018 build
@@ -43,6 +45,13 @@ subprojects {
         jcenter()
         maven { url 'https://oss.sonatype.org/content/repositories/snapshots' } // nanohttpd
     }
+}
+
+spotless {
+  java {
+    googleJavaFormat()
+    target '**/*.java'
+  }
 }
 
 idea {
