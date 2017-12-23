@@ -9,7 +9,7 @@ import org.strykeforce.thirdcoast.telemetry.tct.di.MainComponent;
 
 public class Main implements Runnable {
 
-  private final static Logger logger = LoggerFactory.getLogger(Main.class);
+  private static final Logger logger = LoggerFactory.getLogger(Main.class);
   private final MainComponent component;
 
   Main() {
@@ -19,8 +19,12 @@ public class Main implements Runnable {
   @Override
   public void run() {
     Terminal terminal = component.terminal();
-    terminal.writer().println(Main.class.getPackage().getImplementationTitle() + " " +
-        Main.class.getPackage().getImplementationVersion());
+    terminal
+        .writer()
+        .println(
+            Main.class.getPackage().getImplementationTitle()
+                + " "
+                + Main.class.getPackage().getImplementationVersion());
     terminal.writer().println();
     try {
       Menu menu = component.menu();

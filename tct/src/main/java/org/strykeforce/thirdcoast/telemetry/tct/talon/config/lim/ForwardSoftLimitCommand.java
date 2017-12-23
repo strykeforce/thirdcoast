@@ -9,14 +9,14 @@ import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractDoubleConfi
 
 public class ForwardSoftLimitCommand extends AbstractDoubleConfigCommand {
 
-  public final static String NAME = "Forward Soft Limit";
+  public static final String NAME = "Forward Soft Limit";
 
   @Inject
   public ForwardSoftLimitCommand(LineReader reader, TalonSet talonSet) {
     super(NAME, reader, talonSet);
   }
 
-   @Override
+  @Override
   protected void config(CANTalon talon, double value) {
     talon.setForwardSoftLimit(value);
   }

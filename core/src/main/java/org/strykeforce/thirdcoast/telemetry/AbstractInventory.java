@@ -14,8 +14,7 @@ import org.strykeforce.thirdcoast.telemetry.grapher.Measure;
 import org.strykeforce.thirdcoast.telemetry.item.Item;
 
 /**
- * An abstract base class intended to be subclassed by concrete implmentations of {@link
- * Inventory}.
+ * An abstract base class intended to be subclassed by concrete implmentations of {@link Inventory}.
  */
 public abstract class AbstractInventory implements Inventory {
 
@@ -77,9 +76,7 @@ public abstract class AbstractInventory implements Inventory {
     writer.endObject();
   }
 
-
-  void writeMeasure(JsonWriter writer, Measure measure)
-      throws IOException {
+  void writeMeasure(JsonWriter writer, Measure measure) throws IOException {
     writer.beginObject();
     writer.name("id").value(measure.name());
     writer.name("description").value(measure.getDescription());
@@ -99,8 +96,6 @@ public abstract class AbstractInventory implements Inventory {
 
   @Override
   public String toString() {
-    return "AbstractInventory{" +
-        "items=" + items +
-        '}';
+    return "AbstractInventory{" + "items=" + items + '}';
   }
 }

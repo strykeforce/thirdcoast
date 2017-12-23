@@ -31,19 +31,15 @@ import org.slf4j.LoggerFactory;
 @ParametersAreNonnullByDefault
 public class TalonProvisioner {
 
-  @NotNull
-  public final static String TALON_TABLE = "TALON";
-  @NotNull
-  private final static String DEFAULT_CONFIG = "/org/strykeforce/thirdcoast/defaults.toml";
+  @NotNull public static final String TALON_TABLE = "TALON";
+  @NotNull private static final String DEFAULT_CONFIG = "/org/strykeforce/thirdcoast/defaults.toml";
 
-  final static Logger logger = LoggerFactory.getLogger(TalonProvisioner.class);
+  static final Logger logger = LoggerFactory.getLogger(TalonProvisioner.class);
 
-  @NotNull
-  private final Map<String, TalonConfiguration> settings = new HashMap<>();
+  @NotNull private final Map<String, TalonConfiguration> settings = new HashMap<>();
 
   /**
-   * Construct the TalonProvisioner with base talon configurations that include swerve drive
-   * motors.
+   * Construct the TalonProvisioner with base talon configurations that include swerve drive motors.
    *
    * @param file base configuration that should include swerve azimuth and drive configs
    * @throws IllegalStateException if file contains invalid TOML
@@ -142,8 +138,6 @@ public class TalonProvisioner {
   @Override
   @NotNull
   public String toString() {
-    return "TalonProvisioner{" +
-        "settings=" + settings +
-        '}';
+    return "TalonProvisioner{" + "settings=" + settings + '}';
   }
 }

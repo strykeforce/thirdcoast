@@ -15,8 +15,8 @@ public class InspectDigitalInputsCommand extends AbstractCommand {
   private final DioSet dioSet;
 
   @Inject
-  public InspectDigitalInputsCommand(LineReader reader, TelemetryService telemetryService,
-      DioSet dioSet) {
+  public InspectDigitalInputsCommand(
+      LineReader reader, TelemetryService telemetryService, DioSet dioSet) {
     super(NAME, reader);
     this.telemetryService = telemetryService;
     this.dioSet = dioSet;
@@ -35,7 +35,5 @@ public class InspectDigitalInputsCommand extends AbstractCommand {
         writer.println("OUTPUT");
       }
     }
-
-
   }
 }

@@ -9,7 +9,7 @@ import org.strykeforce.thirdcoast.telemetry.item.Item;
 /**
  * This interface configures dependency injection for the TelemetryService.
  *
- * Component interfaces are set up for particular uses of different modules, for example this
+ * <p>Component interfaces are set up for particular uses of different modules, for example this
  * component has a sibling SimulationComponent used for simulating an Inventory during Telemetry
  * client development. The
  *
@@ -17,10 +17,12 @@ import org.strykeforce.thirdcoast.telemetry.item.Item;
  * @see NetworkModule
  */
 @Singleton
-@Component(modules = {
+@Component(
+  modules = {
     InventoryModule.class,
     NetworkModule.class,
-})
+  }
+)
 interface TelemetryComponent {
 
   Inventory inventory();
@@ -35,5 +37,4 @@ interface TelemetryComponent {
 
     TelemetryComponent build();
   }
-
 }

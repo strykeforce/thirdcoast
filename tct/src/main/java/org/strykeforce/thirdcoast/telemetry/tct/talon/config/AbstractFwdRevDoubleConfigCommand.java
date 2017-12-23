@@ -11,10 +11,10 @@ import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 
 public abstract class AbstractFwdRevDoubleConfigCommand extends AbstractTalonConfigCommand {
 
-  final private boolean flipReverse;
+  private final boolean flipReverse;
 
-  public AbstractFwdRevDoubleConfigCommand(String name, LineReader reader, TalonSet talonSet,
-      boolean flipReverse) {
+  public AbstractFwdRevDoubleConfigCommand(
+      String name, LineReader reader, TalonSet talonSet, boolean flipReverse) {
     super(name, reader, talonSet);
     this.flipReverse = flipReverse;
   }
@@ -41,7 +41,9 @@ public abstract class AbstractFwdRevDoubleConfigCommand extends AbstractTalonCon
   }
 
   protected double[] getFwdRevDoubles() {
-    terminal.writer().println(Messages.bold("\nenter <forward>,<reverse> or a single number for both"));
+    terminal
+        .writer()
+        .println(Messages.bold("\nenter <forward>,<reverse> or a single number for both"));
     double[] values = null;
     while (values == null) {
       String line;
@@ -80,6 +82,8 @@ public abstract class AbstractFwdRevDoubleConfigCommand extends AbstractTalonCon
   }
 
   protected void help() {
-    terminal.writer().println(Messages.boldRed("please enter a number or two numbers separated by a commma"));
+    terminal
+        .writer()
+        .println(Messages.boldRed("please enter a number or two numbers separated by a commma"));
   }
 }

@@ -6,12 +6,10 @@ import org.jline.reader.LineReader;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractDoubleConfigCommand;
 
-/**
- * Configure P.
- */
+/** Configure P. */
 public class ClosedLoopRampRateCommand extends AbstractDoubleConfigCommand {
 
-  public final static String NAME = "Closed Loop Ramp Rate";
+  public static final String NAME = "Closed Loop Ramp Rate";
 
   @Inject
   public ClosedLoopRampRateCommand(LineReader reader, TalonSet talonSet) {

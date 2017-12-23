@@ -11,7 +11,7 @@ import org.strykeforce.thirdcoast.telemetry.item.ServoItem;
 @Singleton
 public class ServoSet {
 
-  private final static Logger logger = LoggerFactory.getLogger(ServoSet.class);
+  private static final Logger logger = LoggerFactory.getLogger(ServoSet.class);
   private final TelemetryService telemetryService;
   private Servo servo;
 
@@ -26,7 +26,6 @@ public class ServoSet {
     telemetryService.register(new ServoItem(servo));
     telemetryService.start();
   }
-
 
   public Servo getServo() {
     return servo;
@@ -44,5 +43,4 @@ public class ServoSet {
     servo.free();
     servo = null;
   }
-
 }

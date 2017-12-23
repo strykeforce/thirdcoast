@@ -8,7 +8,7 @@ import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractBooleanConf
 
 public class BrakeInNeutralCommand extends AbstractBooleanConfigCommand {
 
-  public final static String NAME = "Enable Brake in Neutral";
+  public static final String NAME = "Enable Brake in Neutral";
 
   @Inject
   public BrakeInNeutralCommand(LineReader reader, TalonSet talonSet) {

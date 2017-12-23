@@ -10,8 +10,7 @@ public class DioMenu extends Menu {
 
   private final DioSet dioSet;
 
-  public DioMenu(CommandAdapter commandsAdapter, LineReader reader,
-      DioSet dioSet) {
+  public DioMenu(CommandAdapter commandsAdapter, LineReader reader, DioSet dioSet) {
     super(commandsAdapter, reader);
     this.dioSet = dioSet;
   }

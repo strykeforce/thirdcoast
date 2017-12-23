@@ -13,13 +13,11 @@ import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.talon.TalonConfiguration;
 import org.strykeforce.thirdcoast.talon.TalonProvisioner;
 
-/**
- * Configuration file operations.
- */
+/** Configuration file operations. */
 @Singleton
 public class ConfigurationsManager {
 
-  private final static Logger logger = LoggerFactory.getLogger(ConfigurationsManager.class);
+  private static final Logger logger = LoggerFactory.getLogger(ConfigurationsManager.class);
   private final TalonProvisioner talonProvisioner;
   private final File file;
 

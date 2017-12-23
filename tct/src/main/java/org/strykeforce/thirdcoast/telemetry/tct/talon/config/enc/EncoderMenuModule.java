@@ -25,8 +25,10 @@ public abstract class EncoderMenuModule {
 
   @Provides
   @Named("TALON_CONFIG_ENC")
-  public static Menu configMenu(@Named("TALON_CONFIG_ENC") CommandAdapter commandAdapter,
-      LineReader reader, TalonSet talonSet) {
+  public static Menu configMenu(
+      @Named("TALON_CONFIG_ENC") CommandAdapter commandAdapter,
+      LineReader reader,
+      TalonSet talonSet) {
     return new TalonMenu(commandAdapter, reader, talonSet);
   }
 

@@ -8,7 +8,7 @@ import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractBooleanConf
 
 public class ReverseSensorCommand extends AbstractBooleanConfigCommand {
 
-  public final static String NAME = "Sensor Reversed";
+  public static final String NAME = "Sensor Reversed";
 
   @Inject
   public ReverseSensorCommand(LineReader reader, TalonSet talonSet) {

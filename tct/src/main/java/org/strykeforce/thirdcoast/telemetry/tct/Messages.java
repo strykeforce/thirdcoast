@@ -5,7 +5,7 @@ import org.jline.utils.AttributedStyle;
 
 public class Messages {
 
-  public final static String NO_TALONS = boldRed("\n*** no talons selected yet ***\n");
+  public static final String NO_TALONS = boldRed("\n*** no talons selected yet ***\n");
 
   public static String menuHelp(int size) {
     String msg = String.format("please enter a number between 1-%d or <enter> to return", size);
@@ -17,9 +17,7 @@ public class Messages {
   }
 
   public static String bold(String message) {
-    return new AttributedStringBuilder().style(AttributedStyle.BOLD)
-        .append(message)
-        .toAnsi();
+    return new AttributedStringBuilder().style(AttributedStyle.BOLD).append(message).toAnsi();
   }
 
   public static String boldRed(String message) {
@@ -40,6 +38,4 @@ public class Messages {
         .append(message)
         .toAnsi();
   }
-
-
 }

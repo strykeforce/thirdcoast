@@ -10,7 +10,7 @@ import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 
 public abstract class AbstractTalonConfigCommand extends AbstractCommand {
 
-  protected final static Logger logger = LoggerFactory.getLogger(AbstractTalonConfigCommand.class);
+  protected static final Logger logger = LoggerFactory.getLogger(AbstractTalonConfigCommand.class);
   protected final TalonSet talonSet;
 
   protected AbstractTalonConfigCommand(String name, LineReader reader, TalonSet talonSet) {
@@ -21,6 +21,9 @@ public abstract class AbstractTalonConfigCommand extends AbstractCommand {
   protected String prompt() {
     return new AttributedStringBuilder()
         .style(AttributedStyle.BOLD.foreground(AttributedStyle.YELLOW))
-        .append("configure ").append(name()).append("> ").toAnsi();
+        .append("configure ")
+        .append(name())
+        .append("> ")
+        .toAnsi();
   }
 }

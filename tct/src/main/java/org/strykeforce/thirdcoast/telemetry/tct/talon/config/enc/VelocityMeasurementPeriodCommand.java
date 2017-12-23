@@ -11,7 +11,7 @@ import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractTalonConfig
 
 public class VelocityMeasurementPeriodCommand extends AbstractTalonConfigCommand {
 
-  public final static String NAME = "Velocity Measurement Period";
+  public static final String NAME = "Velocity Measurement Period";
 
   @Inject
   public VelocityMeasurementPeriodCommand(LineReader reader, TalonSet talonSet) {

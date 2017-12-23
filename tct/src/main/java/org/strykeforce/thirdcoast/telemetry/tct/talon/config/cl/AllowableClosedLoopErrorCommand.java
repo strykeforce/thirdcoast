@@ -6,12 +6,10 @@ import org.jline.reader.LineReader;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractIntConfigCommand;
 
-/**
- * Configure allowable closed-loop error.
- */
+/** Configure allowable closed-loop error. */
 public class AllowableClosedLoopErrorCommand extends AbstractIntConfigCommand {
 
-  public final static String NAME = "Allowable Closed Loop Error";
+  public static final String NAME = "Allowable Closed Loop Error";
 
   @Inject
   public AllowableClosedLoopErrorCommand(LineReader reader, TalonSet talonSet) {

@@ -18,18 +18,18 @@ import org.strykeforce.thirdcoast.telemetry.TelemetryService;
  * azimuth and drive Talons are configured using {@link TalonConfiguration} named "azimuth" and
  * "drive", respectively.
  *
- * The gyro is injected by a Dagger provider in {@link GyroModule}.
+ * <p>The gyro is injected by a Dagger provider in {@link GyroModule}.
  *
- * <p>Derivation of inverse kinematic equations are from Ether's <a href="https://www.chiefdelphi.com/media/papers/2426">Swerve
- * Kinematics and Programming</a>.
+ * <p>Derivation of inverse kinematic equations are from Ether's <a
+ * href="https://www.chiefdelphi.com/media/papers/2426">Swerve Kinematics and Programming</a>.
  *
  * @see Wheel
  */
 @Singleton
 public class SwerveDrive {
 
-  final static Logger logger = LoggerFactory.getLogger(SwerveDrive.class);
-  private final static int WHEEL_COUNT = 4;
+  static final Logger logger = LoggerFactory.getLogger(SwerveDrive.class);
+  private static final int WHEEL_COUNT = 4;
   private final Wheel[] wheels;
   private final AHRS gyro;
 
@@ -51,7 +51,7 @@ public class SwerveDrive {
    * Set all four wheels to specified values.
    *
    * @param azimuth -0.5 to 0.5 rotations, measured clockwise with zero being the robot
-   * straight-ahead position
+   *     straight-ahead position
    * @param drive 0 to 1 in the direction of the wheel azimuth
    */
   public void set(double azimuth, double drive) {
@@ -192,5 +192,4 @@ public class SwerveDrive {
   public AHRS getGyro() {
     return gyro;
   }
-
 }

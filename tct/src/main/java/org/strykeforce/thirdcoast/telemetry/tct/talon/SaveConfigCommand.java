@@ -17,14 +17,14 @@ import org.strykeforce.thirdcoast.telemetry.tct.Messages;
 @ParametersAreNonnullByDefault
 public class SaveConfigCommand extends AbstractCommand {
 
-  public final static String NAME = "Save Active Configuration";
-  private final static Logger logger = LoggerFactory.getLogger(SaveConfigCommand.class);
+  public static final String NAME = "Save Active Configuration";
+  private static final Logger logger = LoggerFactory.getLogger(SaveConfigCommand.class);
   private final ConfigurationsManager configurationsManager;
   private final TalonSet talonSet;
 
   @Inject
-  SaveConfigCommand(LineReader reader, TalonSet talonSet,
-      ConfigurationsManager configurationsManager) {
+  SaveConfigCommand(
+      LineReader reader, TalonSet talonSet, ConfigurationsManager configurationsManager) {
     super(NAME, reader);
     this.configurationsManager = configurationsManager;
     this.talonSet = talonSet;
@@ -33,14 +33,17 @@ public class SaveConfigCommand extends AbstractCommand {
   @Override
   public void perform() {
     terminal.writer().println(Messages.bold("\nSaved Configurations:"));
-    Collection<TalonConfiguration> configs = configurationsManager.getTalonProvisioner()
-        .getConfigurations();
+    Collection<TalonConfiguration> configs =
+        configurationsManager.getTalonProvisioner().getConfigurations();
     for (TalonConfiguration config : configs) {
       terminal.writer().println("  - " + config.getName());
     }
     terminal.writer().println();
-    terminal.writer().println(Messages.bold("enter name to save configuration with" +
-        " or <enter> to return without saving"));
+    terminal
+        .writer()
+        .println(
+            Messages.bold(
+                "enter name to save configuration with" + " or <enter> to return without saving"));
     String name;
     try {
       name = reader.readLine(Messages.prompt("configuration name> ")).trim();

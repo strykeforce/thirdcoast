@@ -6,12 +6,10 @@ import org.jline.reader.LineReader;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractDoubleConfigCommand;
 
-/**
- * Configure Motion Magic Acceleration.
- */
+/** Configure Motion Magic Acceleration. */
 public class MotionMagicAccelerationCommand extends AbstractDoubleConfigCommand {
 
-  public final static String NAME = "Motion Magic Acceleration";
+  public static final String NAME = "Motion Magic Acceleration";
 
   @Inject
   public MotionMagicAccelerationCommand(LineReader reader, TalonSet talonSet) {

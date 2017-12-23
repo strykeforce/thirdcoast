@@ -10,7 +10,8 @@ public class MotionMagicTalonConfiguration extends PIDTalonConfiguration {
   private final Double motionMagicAcceleration;
   private final Double motionMagicCruiseVelocity;
 
-  MotionMagicTalonConfiguration(@NotNull String name,
+  MotionMagicTalonConfiguration(
+      @NotNull String name,
       double setpointMax,
       Encoder encoder,
       Boolean isBrakeInNeutral,
@@ -31,14 +32,41 @@ public class MotionMagicTalonConfiguration extends PIDTalonConfiguration {
       Double reverseOutputVoltageNominal,
       Integer allowableClosedLoopError,
       Double nominalClosedLoopVoltage,
-      Double pGain, Double iGain, Double dGain, Double fGain, Integer iZone,
-      Double motionMagicAcceleration, Double motionMagicCruiseVelocity) {
-    super(name, TalonControlMode.MotionMagic, setpointMax, encoder, isBrakeInNeutral, isOutputReversed,
-        velocityMeasurementPeriod, velocityMeasurementWindow, forwardLimitSwitch,
-        reverseLimitSwitch, forwardSoftLimit, reverseSoftLimit, currentLimit, voltageRampRate,
-        outputVoltageMax, closedLoopRampRate, forwardOutputVoltagePeak, reverseOutputVoltagePeak,
-        forwardOutputVoltageNominal, reverseOutputVoltageNominal, allowableClosedLoopError,
-        nominalClosedLoopVoltage, pGain, iGain, dGain, fGain, iZone);
+      Double pGain,
+      Double iGain,
+      Double dGain,
+      Double fGain,
+      Integer iZone,
+      Double motionMagicAcceleration,
+      Double motionMagicCruiseVelocity) {
+    super(
+        name,
+        TalonControlMode.MotionMagic,
+        setpointMax,
+        encoder,
+        isBrakeInNeutral,
+        isOutputReversed,
+        velocityMeasurementPeriod,
+        velocityMeasurementWindow,
+        forwardLimitSwitch,
+        reverseLimitSwitch,
+        forwardSoftLimit,
+        reverseSoftLimit,
+        currentLimit,
+        voltageRampRate,
+        outputVoltageMax,
+        closedLoopRampRate,
+        forwardOutputVoltagePeak,
+        reverseOutputVoltagePeak,
+        forwardOutputVoltageNominal,
+        reverseOutputVoltageNominal,
+        allowableClosedLoopError,
+        nominalClosedLoopVoltage,
+        pGain,
+        iGain,
+        dGain,
+        fGain,
+        iZone);
     this.motionMagicAcceleration = motionMagicAcceleration;
     this.motionMagicCruiseVelocity = motionMagicCruiseVelocity;
   }
@@ -61,9 +89,12 @@ public class MotionMagicTalonConfiguration extends PIDTalonConfiguration {
 
   @Override
   public String toString() {
-    return "MotionMagicTalonConfiguration{" +
-        "motionMagicAcceleration=" + motionMagicAcceleration +
-        ", motionMagicCruiseVelocity=" + motionMagicCruiseVelocity +
-        "} " + super.toString();
+    return "MotionMagicTalonConfiguration{"
+        + "motionMagicAcceleration="
+        + motionMagicAcceleration
+        + ", motionMagicCruiseVelocity="
+        + motionMagicCruiseVelocity
+        + "} "
+        + super.toString();
   }
 }

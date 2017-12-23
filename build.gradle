@@ -35,7 +35,6 @@ subprojects {
     apply plugin: 'jaci.openrio.gradle.GradleRIO'
     apply plugin: 'net.ltgt.apt-idea'
     apply plugin: 'net.ltgt.errorprone'
-    apply plugin: 'com.diffplug.gradle.spotless'
 
     wpi {
         navxVersion = '3.0.331' // FIXME: remove for 2018 build

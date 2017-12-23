@@ -25,8 +25,10 @@ public abstract class OutputMenuModule {
 
   @Provides
   @Named("TALON_CONFIG_OUT")
-  public static Menu configMenu(@Named("TALON_CONFIG_OUT") CommandAdapter commandAdapter,
-      LineReader reader, TalonSet talonSet) {
+  public static Menu configMenu(
+      @Named("TALON_CONFIG_OUT") CommandAdapter commandAdapter,
+      LineReader reader,
+      TalonSet talonSet) {
     return new TalonMenu(commandAdapter, reader, talonSet);
   }
 

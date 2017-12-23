@@ -7,7 +7,7 @@ import org.strykeforce.thirdcoast.telemetry.TelemetryController;
 
 public class Main {
 
-  final static Logger logger = LoggerFactory.getLogger(Main.class);
+  static final Logger logger = LoggerFactory.getLogger(Main.class);
 
   public static void main(String[] args) {
     logger.debug("Starting");
@@ -29,5 +29,4 @@ public class Main {
     telemetryController.shutdown();
     System.exit(0);
   }
-
 }

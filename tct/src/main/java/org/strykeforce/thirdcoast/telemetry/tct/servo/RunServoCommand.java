@@ -9,7 +9,7 @@ import org.strykeforce.thirdcoast.telemetry.tct.Messages;
 
 public class RunServoCommand extends AbstractCommand {
 
-  public final static String NAME = "Run Selected Servo";
+  public static final String NAME = "Run Selected Servo";
   private final ServoSet servoSet;
 
   @Inject
@@ -33,7 +33,7 @@ public class RunServoCommand extends AbstractCommand {
         continue;
       }
 
-      if (line.isEmpty()  || line.equalsIgnoreCase("b")) {
+      if (line.isEmpty() || line.equalsIgnoreCase("b")) {
         return;
       }
       double setpoint;
@@ -46,6 +46,5 @@ public class RunServoCommand extends AbstractCommand {
       terminal.writer().print(Messages.bold(String.format("setting servo to %.2f%n", setpoint)));
       servoSet.getServo().set(setpoint);
     }
-
   }
 }

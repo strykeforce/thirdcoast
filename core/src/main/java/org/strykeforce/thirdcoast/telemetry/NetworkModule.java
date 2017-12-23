@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 @Module
 public abstract class NetworkModule {
 
-  final static Logger logger = LoggerFactory.getLogger(NetworkModule.class);
+  static final Logger logger = LoggerFactory.getLogger(NetworkModule.class);
 
   @Provides
   @Named("server")
@@ -40,5 +40,4 @@ public abstract class NetworkModule {
     }
     throw new RuntimeException();
   }
-
 }

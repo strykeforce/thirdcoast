@@ -6,9 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jline.reader.LineReader;
 import org.jline.terminal.Terminal;
 
-/**
- * Abstract implementation of a menu command.
- */
+/** Abstract implementation of a menu command. */
 @ParametersAreNonnullByDefault
 public abstract class AbstractCommand implements Command {
 
@@ -39,9 +37,7 @@ public abstract class AbstractCommand implements Command {
     return name;
   }
 
-  /**
-   * Default action is to print out command information.
-   */
+  /** Default action is to print out command information. */
   @Override
   public void perform() {
     terminal.writer().printf("performing %s with %s%n", name(), this.toString());
@@ -58,6 +54,4 @@ public abstract class AbstractCommand implements Command {
   public Optional<Command> post() {
     return Optional.empty();
   }
-
-
 }

@@ -8,18 +8,16 @@ import org.strykeforce.thirdcoast.telemetry.tct.Menu;
 import org.strykeforce.thirdcoast.telemetry.tct.Messages;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 
-/**
- * Configure selected Talons.
- */
+/** Configure selected Talons. */
 public class LimitConfigCommand extends AbstractCommand {
 
-  public final static String NAME = "Limit Switches";
+  public static final String NAME = "Limit Switches";
   private final Menu limitMenu;
   private final TalonSet talonSet;
 
   @Inject
-  public LimitConfigCommand(TalonSet talonSet, @Named("TALON_CONFIG_LIM") Menu limitMenu,
-      LineReader reader) {
+  public LimitConfigCommand(
+      TalonSet talonSet, @Named("TALON_CONFIG_LIM") Menu limitMenu, LineReader reader) {
     super(NAME, reader);
     this.limitMenu = limitMenu;
     this.talonSet = talonSet;

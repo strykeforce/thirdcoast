@@ -16,12 +16,13 @@ public class CommandAdapter {
   private final List<Command> commands;
   private List<String> menuOrder;
 
-
   public CommandAdapter(String name, Set<Command> commands) {
     loadMenuOrder(name);
-    this.commands = commands.stream()
-        .sorted(comparing(this::getWeight).thenComparing(Command::name))
-        .collect(Collectors.toList());
+    this.commands =
+        commands
+            .stream()
+            .sorted(comparing(this::getWeight).thenComparing(Command::name))
+            .collect(Collectors.toList());
   }
 
   public CommandAdapter(Set<Command> commands) {

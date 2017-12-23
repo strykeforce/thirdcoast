@@ -6,12 +6,10 @@ import org.jline.reader.LineReader;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractIntConfigCommand;
 
-/**
- * Configure F.
- */
+/** Configure F. */
 public class IZoneCommand extends AbstractIntConfigCommand {
 
-  public final static String NAME = "I Zone";
+  public static final String NAME = "I Zone";
 
   @Inject
   public IZoneCommand(LineReader reader, TalonSet talonSet) {

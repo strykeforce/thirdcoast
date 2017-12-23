@@ -3,12 +3,10 @@ package org.team2767.thirdcoast;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Detects triggering events for polled inputs. For example, detecting a button "down" event.
- */
+/** Detects triggering events for polled inputs. For example, detecting a button "down" event. */
 public abstract class Trigger {
 
-  final static Logger logger = LoggerFactory.getLogger(Trigger.class);
+  static final Logger logger = LoggerFactory.getLogger(Trigger.class);
   private boolean isActiveLast = false;
 
   /**
@@ -37,5 +35,4 @@ public abstract class Trigger {
     }
     return false;
   }
-
 }

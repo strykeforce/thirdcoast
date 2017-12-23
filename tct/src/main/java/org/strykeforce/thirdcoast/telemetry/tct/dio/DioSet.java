@@ -21,7 +21,7 @@ import org.strykeforce.thirdcoast.telemetry.item.Item;
 @Singleton
 public class DioSet {
 
-  private final static Logger logger = LoggerFactory.getLogger(DioSet.class);
+  private static final Logger logger = LoggerFactory.getLogger(DioSet.class);
   private final TelemetryService telemetryService;
   private final List<DigitalInput> inputs = new ArrayList<>(10);
   private final Set<Integer> outputs = new HashSet<>();
@@ -53,7 +53,6 @@ public class DioSet {
     telemetryService.register(new DigitalOutputItem(digitalOutput));
     telemetryService.start();
     logger.info("initialized output {} and restarted TelemetryService", channel);
-
   }
 
   void clearSelectedOutput() {

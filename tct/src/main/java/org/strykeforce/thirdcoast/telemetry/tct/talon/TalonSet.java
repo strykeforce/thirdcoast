@@ -16,14 +16,12 @@ import org.strykeforce.thirdcoast.talon.TalonConfiguration;
 import org.strykeforce.thirdcoast.talon.TalonConfigurationBuilder;
 import org.strykeforce.thirdcoast.telemetry.TelemetryService;
 
-/**
- * Holds Talons being worked on. Talons that have been instantiated are cached.
- */
+/** Holds Talons being worked on. Talons that have been instantiated are cached. */
 @Singleton
 @ParametersAreNonnullByDefault
 public class TalonSet {
 
-  private final static Logger logger = LoggerFactory.getLogger(TalonSet.class);
+  private static final Logger logger = LoggerFactory.getLogger(TalonSet.class);
   private final Set<CANTalon> selected = new HashSet<>();
   private final TelemetryService telemetryService;
   private TalonConfigurationBuilder talonConfigurationBuilder;

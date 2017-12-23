@@ -12,9 +12,7 @@ import okio.BufferedSink;
 import org.strykeforce.thirdcoast.telemetry.Inventory;
 import org.strykeforce.thirdcoast.telemetry.item.Item;
 
-/**
- * Represents a subscription request for streaming data.
- */
+/** Represents a subscription request for streaming data. */
 public class Subscription {
 
   private final String client;
@@ -38,7 +36,6 @@ public class Subscription {
     }
   }
 
-
   public String client() {
     return client;
   }
@@ -55,7 +52,6 @@ public class Subscription {
     }
     writer.endArray();
     writer.endObject();
-
   }
 
   public void toJson(BufferedSink sink) throws IOException {
@@ -75,7 +71,7 @@ public class Subscription {
 
   static class RequestJson {
 
-    public final static RequestJson EMPTY;
+    public static final RequestJson EMPTY;
 
     static {
       EMPTY = new RequestJson();
@@ -95,10 +91,7 @@ public class Subscription {
 
     @Override
     public String toString() {
-      return "RequestJson{" +
-          "type='" + type + '\'' +
-          ", subscription=" + subscription +
-          '}';
+      return "RequestJson{" + "type='" + type + '\'' + ", subscription=" + subscription + '}';
     }
 
     static class Item {
@@ -108,10 +101,7 @@ public class Subscription {
 
       @Override
       public String toString() {
-        return "Item{" +
-            "itemId=" + itemId +
-            ", measurementId=" + measurementId +
-            '}';
+        return "Item{" + "itemId=" + itemId + ", measurementId=" + measurementId + '}';
       }
     }
   }

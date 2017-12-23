@@ -2,9 +2,7 @@ package org.strykeforce.thirdcoast.telemetry.tct;
 
 import java.util.Optional;
 
-/**
- * Represents a menu command and associated action.
- */
+/** Represents a menu command and associated action. */
 public interface Command {
 
   /**
@@ -14,14 +12,9 @@ public interface Command {
    */
   String name();
 
-  /**
-   * Perform action associated with this command.
-   */
+  /** Perform action associated with this command. */
   void perform();
 
-  /**
-   * Perform an optional command after this command.
-   */
+  /** Perform an optional command after this command. */
   Optional<Command> post();
-
 }

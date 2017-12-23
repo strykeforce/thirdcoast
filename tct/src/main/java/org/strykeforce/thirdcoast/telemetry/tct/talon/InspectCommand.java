@@ -22,12 +22,12 @@ import org.strykeforce.thirdcoast.telemetry.tct.Messages;
 @ParametersAreNonnullByDefault
 public class InspectCommand extends AbstractCommand {
 
-  public final static String NAME = "Inspect Selected Talons Configuration Settings";
-  private final static String FORMAT_DESCRIPTION = "%-24s";
-  private final static String FORMAT_STRING = "%12s";
-  private final static String FORMAT_INTEGER = "%12d";
-  private final static String FORMAT_DOUBLE = "%12.3f";
-  private final static Logger logger = LoggerFactory.getLogger(InspectCommand.class);
+  public static final String NAME = "Inspect Selected Talons Configuration Settings";
+  private static final String FORMAT_DESCRIPTION = "%-24s";
+  private static final String FORMAT_STRING = "%12s";
+  private static final String FORMAT_INTEGER = "%12d";
+  private static final String FORMAT_DOUBLE = "%12.3f";
+  private static final Logger logger = LoggerFactory.getLogger(InspectCommand.class);
   private final TalonSet talonSet;
 
   @Inject
@@ -171,6 +171,4 @@ public class InspectCommand extends AbstractCommand {
     }
     terminal.writer().println(sb.toString());
   }
-
-
 }

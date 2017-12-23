@@ -33,7 +33,8 @@ public abstract class AbstractFwdRevBooleanConfigCommand extends AbstractTalonCo
   }
 
   private boolean[] getFwdRevBooleans() {
-    terminal.writer()
+    terminal
+        .writer()
         .println(Messages.bold("\nenter <Y>/<N> for forward,reverse or a single value for both"));
     boolean[] values = null;
     while (values == null) {
@@ -85,7 +86,8 @@ public abstract class AbstractFwdRevBooleanConfigCommand extends AbstractTalonCo
   }
 
   protected void help() {
-    terminal.writer()
+    terminal
+        .writer()
         .println(Messages.boldRed("please enter <Y>, <N> or two values separated by a commma"));
   }
 }

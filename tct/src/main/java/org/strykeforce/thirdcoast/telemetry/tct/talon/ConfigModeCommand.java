@@ -8,19 +8,17 @@ import org.strykeforce.thirdcoast.telemetry.tct.AbstractCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.Menu;
 import org.strykeforce.thirdcoast.telemetry.tct.Messages;
 
-/**
- * Configure selected Talons.
- */
+/** Configure selected Talons. */
 @ParametersAreNonnullByDefault
 public class ConfigModeCommand extends AbstractCommand {
 
-  public final static String NAME = "Configure Selected Talons";
+  public static final String NAME = "Configure Selected Talons";
   private final Menu talonConfigMenu;
   private final TalonSet talonSet;
 
   @Inject
-  ConfigModeCommand(TalonSet talonSet, @Named("TALON_CONFIG") Menu talonConfigMenu,
-      LineReader reader) {
+  ConfigModeCommand(
+      TalonSet talonSet, @Named("TALON_CONFIG") Menu talonConfigMenu, LineReader reader) {
     super(NAME, reader);
     this.talonSet = talonSet;
     this.talonConfigMenu = talonConfigMenu;

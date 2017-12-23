@@ -14,17 +14,15 @@ import org.jline.reader.LineReader;
 import org.strykeforce.thirdcoast.telemetry.tct.AbstractCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.Messages;
 
-/**
- * Display a list of all Talons.
- */
+/** Display a list of all Talons. */
 @ParametersAreNonnullByDefault
 public class ListCommand extends AbstractCommand {
 
-  public final static String NAME = "List Selected Talons with Current Register Values";
-  private final static String FORMAT_DESCRIPTION = "%12s";
-  private final static String FORMAT_DOUBLE = "%12.3f";
-  private final static String FORMAT_INTEGER = "%12d";
-  private final static String FORMAT_STRING = "%12s";
+  public static final String NAME = "List Selected Talons with Current Register Values";
+  private static final String FORMAT_DESCRIPTION = "%12s";
+  private static final String FORMAT_DOUBLE = "%12.3f";
+  private static final String FORMAT_INTEGER = "%12d";
+  private static final String FORMAT_STRING = "%12s";
 
   private final TalonSet talonSet;
 
@@ -64,49 +62,67 @@ public class ListCommand extends AbstractCommand {
   public void perform() {
     Set<CANTalon> talons = talonSet.selected();
     terminal.writer().println();
-    if (talons.size() == 0){
+    if (talons.size() == 0) {
       terminal.writer().println(Messages.NO_TALONS);
       return;
     }
     terminal.writer().print(header());
-    stringLine("Mode:", talons.stream().map(CANTalon::getControlMode).map(TalonControlMode::name)
-        .collect(Collectors.toList()));
-    doubleLine("Setpoint:",
-        talons.stream().map(CANTalon::getSetpoint).collect(Collectors.toList()));
+    stringLine(
+        "Mode:",
+        talons
+            .stream()
+            .map(CANTalon::getControlMode)
+            .map(TalonControlMode::name)
+            .collect(Collectors.toList()));
+    doubleLine(
+        "Setpoint:", talons.stream().map(CANTalon::getSetpoint).collect(Collectors.toList()));
     doubleLine("P:", talons.stream().map(CANTalon::getP).collect(Collectors.toList()));
     doubleLine("I:", talons.stream().map(CANTalon::getI).collect(Collectors.toList()));
     doubleLine("D:", talons.stream().map(CANTalon::getD).collect(Collectors.toList()));
     doubleLine("F:", talons.stream().map(CANTalon::getF).collect(Collectors.toList()));
     doubleLine("I-zone:", talons.stream().map(CANTalon::getIZone).collect(Collectors.toList()));
 
-    doubleLine("Position:",
-        talons.stream().map(CANTalon::getPosition).collect(Collectors.toList()));
-    intLine("Abs Enc:",
-        talons.stream().map(CANTalon::getPulseWidthPosition).map(pos -> pos & 0xFFF)
+    doubleLine(
+        "Position:", talons.stream().map(CANTalon::getPosition).collect(Collectors.toList()));
+    intLine(
+        "Abs Enc:",
+        talons
+            .stream()
+            .map(CANTalon::getPulseWidthPosition)
+            .map(pos -> pos & 0xFFF)
             .collect(Collectors.toList()));
 
-    intLine("Fwd Soft:",
+    intLine(
+        "Fwd Soft:",
         talons.stream().map(CANTalon::getForwardSoftLimit).collect(Collectors.toList()));
-    intLine("Rev Soft:",
+    intLine(
+        "Rev Soft:",
         talons.stream().map(CANTalon::getReverseSoftLimit).collect(Collectors.toList()));
 
-    booleanLine("Fwd LS Clsd:",
+    booleanLine(
+        "Fwd LS Clsd:",
         talons.stream().map(CANTalon::isFwdLimitSwitchClosed).collect(Collectors.toList()));
-    booleanLine("Rev LS Clsd:",
+    booleanLine(
+        "Rev LS Clsd:",
         talons.stream().map(CANTalon::isRevLimitSwitchClosed).collect(Collectors.toList()));
 
     intLine("Analog:", talons.stream().map(CANTalon::getAnalogInRaw).collect(Collectors.toList()));
 
-    intLine("VM Period:",
-        talons.stream().map(CANTalon::GetVelocityMeasurementPeriod).map(ListCommand::intValue)
+    intLine(
+        "VM Period:",
+        talons
+            .stream()
+            .map(CANTalon::GetVelocityMeasurementPeriod)
+            .map(ListCommand::intValue)
             .collect(Collectors.toList()));
-    intLine("VM Window:",
+    intLine(
+        "VM Window:",
         talons.stream().map(CANTalon::GetVelocityMeasurementWindow).collect(Collectors.toList()));
     terminal.writer().println();
   }
 
-  private void stringLine(@SuppressWarnings("SameParameterValue") String description,
-      List<String> values) {
+  private void stringLine(
+      @SuppressWarnings("SameParameterValue") String description, List<String> values) {
     StringBuilder sb = new StringBuilder();
     Formatter formatter = new Formatter(sb);
     sb.append(Messages.bold(String.format(FORMAT_DESCRIPTION, description)));

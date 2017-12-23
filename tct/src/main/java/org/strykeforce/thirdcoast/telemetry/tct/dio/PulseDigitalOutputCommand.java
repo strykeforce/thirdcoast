@@ -9,7 +9,7 @@ import org.strykeforce.thirdcoast.telemetry.tct.Messages;
 
 public class PulseDigitalOutputCommand extends AbstractCommand {
 
-  public final static String NAME = "Pulse Selected Digital Output";
+  public static final String NAME = "Pulse Selected Digital Output";
   private final DioSet dioSet;
 
   @Inject
@@ -51,5 +51,4 @@ public class PulseDigitalOutputCommand extends AbstractCommand {
   private void help() {
     terminal.writer().println(Messages.boldRed("please enter a number"));
   }
-
 }

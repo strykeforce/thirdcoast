@@ -23,8 +23,8 @@ public abstract class TalonMenuModule {
 
   @Provides
   @Named("TALON")
-  public static Menu talonMenu(@Named("TALON") CommandAdapter commandAdapter, LineReader reader,
-      TalonSet talonSet) {
+  public static Menu talonMenu(
+      @Named("TALON") CommandAdapter commandAdapter, LineReader reader, TalonSet talonSet) {
     return new TalonMenu(commandAdapter, reader, talonSet);
   }
 
@@ -62,6 +62,4 @@ public abstract class TalonMenuModule {
   @IntoSet
   @Named("TALON")
   public abstract Command saveConfigCommand(SaveConfigCommand command);
-
-
 }

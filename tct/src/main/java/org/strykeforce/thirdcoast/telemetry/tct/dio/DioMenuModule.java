@@ -22,8 +22,8 @@ public abstract class DioMenuModule {
 
   @Provides
   @Named("DIO")
-  static Menu talonMenu(@Named("DIO") CommandAdapter commandAdapter, LineReader reader,
-      DioSet dioSet) {
+  static Menu talonMenu(
+      @Named("DIO") CommandAdapter commandAdapter, LineReader reader, DioSet dioSet) {
     return new DioMenu(commandAdapter, reader, dioSet);
   }
 
@@ -61,5 +61,4 @@ public abstract class DioMenuModule {
   @IntoSet
   @Named("DIO")
   public abstract Command inspectDigitalInputsCommand(InspectDigitalInputsCommand command);
-
 }

@@ -11,14 +11,14 @@ import org.strykeforce.thirdcoast.talon.TalonFactory;
 import org.strykeforce.thirdcoast.talon.TalonProvisioner;
 import org.strykeforce.thirdcoast.telemetry.TelemetryService;
 
-/**
- * This interface configures dependency injection for the Robot.
- */
+/** This interface configures dependency injection for the Robot. */
 @Singleton
-@Component(modules = {
+@Component(
+  modules = {
     GyroModule.class,
     WheelModule.class,
-})
+  }
+)
 interface RobotComponent {
 
   Controls controls();
@@ -39,5 +39,4 @@ interface RobotComponent {
 
     RobotComponent build();
   }
-
 }

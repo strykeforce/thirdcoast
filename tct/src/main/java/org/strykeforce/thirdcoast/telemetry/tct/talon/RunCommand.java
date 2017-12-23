@@ -15,7 +15,7 @@ import org.strykeforce.thirdcoast.telemetry.tct.Messages;
 @ParametersAreNonnullByDefault
 public class RunCommand extends AbstractCommand {
 
-  public final static String NAME = "Run Selected Talons";
+  public static final String NAME = "Run Selected Talons";
   private final TalonSet talonSet;
 
   @Inject
@@ -60,8 +60,11 @@ public class RunCommand extends AbstractCommand {
       }
 
       if (duration > 0) {
-        terminal.writer().print(Messages
-            .bold(String.format("setting talons to %.2f for %.2f sec%n", setpoint, duration)));
+        terminal
+            .writer()
+            .print(
+                Messages.bold(
+                    String.format("setting talons to %.2f for %.2f sec%n", setpoint, duration)));
         terminal.flush();
         double old = talonSet.selected().stream().findFirst().map(CANTalon::get).orElse(0.0);
         setTalons(setpoint);
@@ -82,8 +85,8 @@ public class RunCommand extends AbstractCommand {
   }
 
   protected void help() {
-    terminal.writer()
+    terminal
+        .writer()
         .println(Messages.boldRed("please enter a number or two numbers separated by a commma"));
   }
-
 }

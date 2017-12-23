@@ -11,7 +11,7 @@ import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractTalonConfig
 
 public class SelectTypeCommand extends AbstractTalonConfigCommand {
 
-  public final static String NAME = "Encoder Type";
+  public static final String NAME = "Encoder Type";
 
   @Inject
   public SelectTypeCommand(LineReader reader, TalonSet talonSet) {
@@ -20,8 +20,16 @@ public class SelectTypeCommand extends AbstractTalonConfigCommand {
 
   @Override
   public void perform() {
-    String[] types = {"Analog", "Analog Potentiometer", "CTRE Magnetic Absolute",
-        "CTRE Magnetic Relative", "Falling Edge", "Rising Edge", "Pulse Width", "Quadrature"};
+    String[] types = {
+      "Analog",
+      "Analog Potentiometer",
+      "CTRE Magnetic Absolute",
+      "CTRE Magnetic Relative",
+      "Falling Edge",
+      "Rising Edge",
+      "Pulse Width",
+      "Quadrature"
+    };
     terminal.writer().println();
     for (int i = 0; i < types.length; i++) {
       terminal.writer().printf("%2d - %s ms%n", i + 1, types[i]);

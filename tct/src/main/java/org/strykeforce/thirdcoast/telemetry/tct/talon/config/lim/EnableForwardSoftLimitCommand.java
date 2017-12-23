@@ -9,7 +9,7 @@ import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractBooleanConf
 
 public class EnableForwardSoftLimitCommand extends AbstractBooleanConfigCommand {
 
-  public final static String NAME = "Enable Forward Soft Limit";
+  public static final String NAME = "Enable Forward Soft Limit";
 
   @Inject
   public EnableForwardSoftLimitCommand(LineReader reader, TalonSet talonSet) {

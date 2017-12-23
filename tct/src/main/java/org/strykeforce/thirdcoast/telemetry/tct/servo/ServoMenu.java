@@ -21,5 +21,4 @@ public class ServoMenu extends Menu {
     String id = servo != null ? String.valueOf(servo.getChannel()) : "";
     return Messages.boldGreen("\nServo: " + id + "\n");
   }
-
 }

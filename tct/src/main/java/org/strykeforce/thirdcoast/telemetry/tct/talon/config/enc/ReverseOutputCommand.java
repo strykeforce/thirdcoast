@@ -8,8 +8,7 @@ import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractBooleanConf
 
 public class ReverseOutputCommand extends AbstractBooleanConfigCommand {
 
-
-  public final static String NAME = "Output Reversed";
+  public static final String NAME = "Output Reversed";
 
   @Inject
   public ReverseOutputCommand(LineReader reader, TalonSet talonSet) {
@@ -25,5 +24,4 @@ public class ReverseOutputCommand extends AbstractBooleanConfigCommand {
   protected void config(CANTalon talon, boolean value) {
     talon.reverseOutput(value);
   }
-
 }

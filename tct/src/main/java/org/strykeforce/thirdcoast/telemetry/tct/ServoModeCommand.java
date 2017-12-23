@@ -5,13 +5,11 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import org.jline.reader.LineReader;
 
-/**
- * Command to enter mode for working with Servos.
- */
+/** Command to enter mode for working with Servos. */
 @ParametersAreNonnullByDefault
 public class ServoModeCommand extends AbstractCommand {
 
-  public final static String NAME = "Work with Servos";
+  public static final String NAME = "Work with Servos";
   private final Menu servoMenu;
 
   @Inject

@@ -7,16 +7,12 @@ import java.util.Set;
 import java.util.function.DoubleSupplier;
 import org.strykeforce.thirdcoast.telemetry.grapher.Measure;
 
-/**
- * Represents a {@link Servo} telemetry-enable Item.
- */
+/** Represents a {@link Servo} telemetry-enable Item. */
 public class ServoItem extends AbstractItem {
 
-  public final static String TYPE = "servo";
-  public final static Set<Measure> MEASURES = Collections.unmodifiableSet(EnumSet.of(
-      Measure.POSITION,
-      Measure.ANGLE
-  ));
+  public static final String TYPE = "servo";
+  public static final Set<Measure> MEASURES =
+      Collections.unmodifiableSet(EnumSet.of(Measure.POSITION, Measure.ANGLE));
 
   private final Servo servo;
 
@@ -77,11 +73,8 @@ public class ServoItem extends AbstractItem {
     return servo.getChannel();
   }
 
-
   @Override
   public String toString() {
-    return "ServoItem{" +
-        "servo=" + servo +
-        "} " + super.toString();
+    return "ServoItem{" + "servo=" + servo + "} " + super.toString();
   }
 }

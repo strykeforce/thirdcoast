@@ -4,9 +4,7 @@ import java.io.IOException;
 import okio.BufferedSink;
 import org.strykeforce.thirdcoast.telemetry.item.Item;
 
-/**
- * Represents the inventory of robot hardware and subsystems that can have telemetry streaming.
- */
+/** Represents the inventory of robot hardware and subsystems that can have telemetry streaming. */
 public interface Inventory {
 
   /**
@@ -35,5 +33,4 @@ public interface Inventory {
    * @throws IOException if an IO error occurs during writing.
    */
   void toJson(BufferedSink sink) throws IOException;
-
 }

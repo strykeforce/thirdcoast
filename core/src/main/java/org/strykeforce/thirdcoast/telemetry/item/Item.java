@@ -10,8 +10,8 @@ import org.strykeforce.thirdcoast.telemetry.grapher.Measure;
  * An item that can be graphed. These are used as {@code Set} elements and implementing classes
  * should implement an identity-based version of equals and hashCode.
  *
- * The abstract base class implementing {@code Item} implements {@code Comparable} by comparing the
- * results returned by {@code Item#deviceId()}.
+ * <p>The abstract base class implementing {@code Item} implements {@code Comparable} by comparing
+ * the results returned by {@code Item#deviceId()}.
  */
 public interface Item extends Comparable<Item> {
 
@@ -23,7 +23,7 @@ public interface Item extends Comparable<Item> {
   int deviceId();
 
   /**
-   * A {@code String}  representing the underlying device type.
+   * A {@code String} representing the underlying device type.
    *
    * @return the type.
    */
