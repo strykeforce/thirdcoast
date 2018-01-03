@@ -77,6 +77,16 @@ public abstract class EncoderMenuModule {
   @Binds
   @IntoSet
   @Named("TALON_CONFIG_ENC")
+  public abstract Command defaultFrameRatesCommand(DefaultFrameRatesCommand command);
+
+  @Binds
+  @IntoSet
+  @Named("TALON_CONFIG_ENC")
+  public abstract Command grapherFrameRatesCommand(GrapherFrameRatesCommand command);
+
+  @Binds
+  @IntoSet
+  @Named("TALON_CONFIG_ENC")
   public abstract Command generalFrameRateCommand(GeneralFrameRateCommand command);
 
   @Binds

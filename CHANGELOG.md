@@ -4,6 +4,19 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Calendar Versioning](http://calver.org/).
 
+## [Unreleased]
+
+### Added
+
+- New "Default Status Frame Rates" and "Grapher (high speed) Status Frame Rates" commands for `tct` to set common configurations for Talons.
+- Launch script `tct.sh` is in `tct/script`, copy to the same directory on the roboRIO you installed `tct.jar` to.
+- Third Coast Java core library now published to [Bintray jcenter](https://bintray.com/strykeforce/maven/thirdcoast).
+
+### Changed
+
+- Talons are now set to the default set of frame rate when initialized by the Talon provisioner. See `StatusFrameRate` [javadoc](https://strykeforce.github.io/thirdcoast/javadoc/org/strykeforce/thirdcoast/talon/StatusFrameRate.html) for defaults.
+- For better visibility and to better manage CAN bus utilization, we not longer adjust the Talon frame rates automatically when registering for Telemetry or when using `tct`.
+
 ## [17.1.4] - 2017-12-04
 
 ### Added

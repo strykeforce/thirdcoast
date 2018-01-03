@@ -45,7 +45,6 @@ public class TalonSet {
   }
 
   void clearSelected() {
-    selected.forEach(StatusFrameRate.DEFAULT::configure);
     selected.clear();
   }
 
@@ -65,7 +64,6 @@ public class TalonSet {
     logger.info("restarting TelemetryService");
     telemetryService.stop();
     selected.forEach(telemetryService::register);
-    selected.forEach(StatusFrameRate.GRAPHER::configure);
     telemetryService.start();
   }
 
