@@ -47,6 +47,7 @@ public class TalonFactory {
   @NotNull
   private CANTalon createTalon(int id) {
     CANTalon talon = wrapperFactory.createWrapper(id, CONTROL_FRAME_MS);
+    StatusFrameRate.DEFAULT.configure(talon);
     talon.changeControlMode(TalonControlMode.Voltage);
     talon.clearIAccum();
     talon.ClearIaccum();
@@ -104,6 +105,7 @@ public class TalonFactory {
     return talon;
   }
 
+  @NotNull
   public TalonProvisioner getProvisioner() {
     return provisioner;
   }

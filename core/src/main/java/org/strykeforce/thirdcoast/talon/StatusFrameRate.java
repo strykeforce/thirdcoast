@@ -21,7 +21,13 @@ import org.jetbrains.annotations.NotNull;
 @ParametersAreNonnullByDefault
 public final class StatusFrameRate {
 
-  @NotNull public static final StatusFrameRate DEFAULT = StatusFrameRate.builder().build();
+  /**
+   * Sets Talon to default frame rates.
+   */
+  public static final StatusFrameRate DEFAULT = StatusFrameRate.builder().build();
+  /**
+   * Sets Talon to 5 ms rate for all frames.
+   */
   public static final StatusFrameRate GRAPHER;
 
   static {
@@ -35,11 +41,11 @@ public final class StatusFrameRate {
             .build();
   }
 
-  public final int analogTempVbat;
-  public final int feedback;
-  public final int general;
-  public final int pulseWidth;
-  public final int quadEncoder;
+  private final int analogTempVbat;
+  private final int feedback;
+  private final int general;
+  private final int pulseWidth;
+  private final int quadEncoder;
 
   StatusFrameRate(int analogTempVbat, int feedback, int general, int pulseWidth, int quadEncoder) {
     this.analogTempVbat = analogTempVbat;

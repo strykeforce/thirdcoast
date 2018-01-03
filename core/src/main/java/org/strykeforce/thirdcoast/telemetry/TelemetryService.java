@@ -85,8 +85,7 @@ public class TelemetryService {
   public void register(CANTalon talon) {
     checkNotStarted();
     if (items.add(new TalonItem(talon))) {
-      StatusFrameRate.DEFAULT.configure(talon);
-      logger.info("registered talon {} with {}", talon.getDeviceID(), StatusFrameRate.DEFAULT);
+      logger.info("registered talon {}", talon.getDeviceID());
       return;
     }
     logger.info(
