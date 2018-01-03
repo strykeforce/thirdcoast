@@ -26,8 +26,8 @@ class TelemetryServiceTest extends Specification {
         telemetry.register(talon)  // 4
 
         then:
-        2 * talon.setStatusFrameRateMs(CANTalon.StatusFrameRate.General, 10)
-        1 * target.setStatusFrameRateMs(CANTalon.StatusFrameRate.General, 10)
+        0 * talon.setStatusFrameRateMs(_)
+        0 * target.setStatusFrameRateMs(_)
 
         when:
         talon.getDeviceID() >>> [1, 3, 5, 4] // configureStatusFrameRates causes calls

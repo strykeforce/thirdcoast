@@ -18,7 +18,12 @@ class TalonFactoryTest extends Specification {
 
         then:
         1 * wrapperFactory.createWrapper(27, TalonFactory.CONTROL_FRAME_MS) >> wrapper
+        1 * wrapper.setStatusFrameRateMs(CANTalon.StatusFrameRate.AnalogTempVbat, 100)
         1 * wrapper.changeControlMode(CANTalon.TalonControlMode.Voltage)
+        1 * wrapper.setStatusFrameRateMs(CANTalon.StatusFrameRate.Feedback, 20)
+        1 * wrapper.setStatusFrameRateMs(CANTalon.StatusFrameRate.General, 10)
+        1 * wrapper.setStatusFrameRateMs(CANTalon.StatusFrameRate.PulseWidth, 100)
+        1 * wrapper.setStatusFrameRateMs(CANTalon.StatusFrameRate.QuadEncoder, 100)
         1 * wrapper.clearIAccum()
         1 * wrapper.ClearIaccum()
         1 * wrapper.clearMotionProfileHasUnderrun()

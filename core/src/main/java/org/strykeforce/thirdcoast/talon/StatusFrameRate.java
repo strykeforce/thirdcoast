@@ -21,13 +21,9 @@ import org.jetbrains.annotations.NotNull;
 @ParametersAreNonnullByDefault
 public final class StatusFrameRate {
 
-  /**
-   * Sets Talon to default frame rates.
-   */
+  /** Sets Talon to default frame rates. */
   public static final StatusFrameRate DEFAULT = StatusFrameRate.builder().build();
-  /**
-   * Sets Talon to 5 ms rate for all frames.
-   */
+  /** Sets Talon to 5 ms rate for all frames. */
   public static final StatusFrameRate GRAPHER;
 
   static {
