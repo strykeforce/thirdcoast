@@ -4,7 +4,7 @@ plugins {
     id "net.ltgt.apt-idea" version "0.13"
     id "jaci.openrio.gradle.GradleRIO" version "2017.11.27" apply false
     id "net.ltgt.errorprone" version "0.0.13"
-    id "com.diffplug.gradle.spotless" version "3.7.0"
+    id "com.diffplug.gradle.spotless" version "3.8.0"
 }
 
 description = 'Third Coast Framework'
@@ -14,10 +14,10 @@ ext {
             jetbrainsAnnotations: 'org.jetbrains:annotations:15.0',
             jsr305              : 'com.google.code.findbugs:jsr305:3.0.2',
             bytebuddy           : 'net.bytebuddy:byte-buddy:1.7.9',
-            dagger              : 'com.google.dagger:dagger:2.13',
-            daggerCompiler      : 'com.google.dagger:dagger-compiler:2.13',
-            jlineTerminal       : 'org.jline:jline-terminal:3.5.1',
-            jlineReader         : 'org.jline:jline-reader:3.5.1',
+            dagger              : 'com.google.dagger:dagger:2.14.1',
+            daggerCompiler      : 'com.google.dagger:dagger-compiler:2.14.1',
+            jlineTerminal       : 'org.jline:jline-terminal:3.5.2',
+            jlineReader         : 'org.jline:jline-reader:3.5.2',
             logback             : 'ch.qos.logback:logback-classic:1.2.3',
             moshi               : 'com.squareup.moshi:moshi:1.5.0',
             nanohttpd           : 'org.nanohttpd:nanohttpd:2.3.2-SNAPSHOT',
@@ -27,14 +27,14 @@ ext {
             toml4j              : 'com.moandjiezana.toml:toml4j:0.7.2',
     ]
     specificationTitle = 'Third Coast Library'
-    specificationVersion = '17.1.4'
+    specificationVersion = '17.1.5'
 }
 
 subprojects {
     apply plugin: 'java'
     apply plugin: 'jaci.openrio.gradle.GradleRIO'
     apply plugin: 'net.ltgt.apt-idea'
-    apply plugin: 'net.ltgt.errorprone'
+//    apply plugin: 'net.ltgt.errorprone' // FIXME: https://github.com/google/dagger/issues/1004
 
     wpi {
         navxVersion = '3.0.331' // FIXME: remove for 2018 build
