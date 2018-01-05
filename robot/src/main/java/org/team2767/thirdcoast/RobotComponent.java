@@ -4,6 +4,7 @@ import dagger.BindsInstance;
 import dagger.Component;
 import java.io.File;
 import javax.inject.Singleton;
+import org.strykeforce.thirdcoast.swerve.GraphableSwerveDriveModule;
 import org.strykeforce.thirdcoast.swerve.GyroModule;
 import org.strykeforce.thirdcoast.swerve.SwerveDrive;
 import org.strykeforce.thirdcoast.swerve.WheelModule;
@@ -17,6 +18,7 @@ import org.strykeforce.thirdcoast.telemetry.TelemetryService;
   modules = {
     GyroModule.class,
     WheelModule.class,
+    GraphableSwerveDriveModule.class,
   }
 )
 interface RobotComponent {

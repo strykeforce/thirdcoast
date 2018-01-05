@@ -31,7 +31,7 @@ public class SwerveDrive {
   static final Logger logger = LoggerFactory.getLogger(SwerveDrive.class);
   private static final int WHEEL_COUNT = 4;
   private final Wheel[] wheels;
-  private final AHRS gyro;
+  final AHRS gyro;
 
   @Inject
   SwerveDrive(AHRS gyro, Wheel[] wheels) {

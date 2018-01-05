@@ -24,7 +24,8 @@ public enum Measure {
   MOMAGIC_ACCL("Motion Magic Acceleration"),
   MOMAGIC_A_TRAJ_POS("Motion Magic Trajectory Point Target Position"),
   MOMAGIC_A_TRAJ_VEL("Motion Magic Trajectory Point Target Velocity"),
-  MOMAGIC_CRUISE_VEL("Motion Magic Cruise Velocity");
+  MOMAGIC_CRUISE_VEL("Motion Magic Cruise Velocity"),
+  GYRO_YAW("Gyro Yaw");
 
   //  private final static Map<Item.Type, Set<Measure>> byType = new HashMap<>();
   //
