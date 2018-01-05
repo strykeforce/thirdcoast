@@ -4,13 +4,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Calendar Versioning](http://calver.org/).
 
-## [Unreleased]
+## [17.2.0] - 2018-01-05
 
 ### Added
 
 - New "Default Status Frame Rates" and "Grapher (high speed) Status Frame Rates" commands for `tct` to set common configurations for Talons.
 - Launch script `tct.sh` is in `tct/script`, copy to the same directory on the roboRIO you installed `tct.jar` to.
 - Third Coast Java core library now published to [Bintray jcenter](https://bintray.com/strykeforce/maven/thirdcoast).
+- Made swerve drive implementation support graphing and added gyro example measurements.
 
 ### Changed
 
@@ -22,6 +23,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 ### Added
 
 - Added Motion Magic data to grapher:
+
   - Motion Magic Acceleration
   - Motion Magic Trajectory Point Target Position
   - Motion Magic Trajectory Point Target Velocity
@@ -41,7 +43,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 ### Changed
 
 - Linefeeds added to `tct` utility menus to improve readability.
-
 
 ## [17.1.2] - 2017-11-27
 
@@ -76,4 +77,5 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 [17.1.2]: https://github.com/strykeforce/thirdcoast/compare/v17.1.1...v17.1.2
 [17.1.3]: https://github.com/strykeforce/thirdcoast/compare/v17.1.2...v17.1.3
 [17.1.4]: https://github.com/strykeforce/thirdcoast/compare/v17.1.3...v17.1.4
-[unreleased]: https://github.com/strykeforce/thirdcoast/compare/v17.1.4...develop
+[17.2.0]: https://github.com/strykeforce/thirdcoast/compare/v17.1.4...v17.2.0
+[unreleased]: https://github.com/strykeforce/thirdcoast/compare/v17.2.0...develop
