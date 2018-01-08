@@ -1,11 +1,14 @@
 package org.strykeforce.thirdcoast.talon;
 
-import com.ctre.CANTalon;
+import static org.strykeforce.thirdcoast.talon.TalonConfiguration.TIMEOUT_MS;
+
+import com.ctre.phoenix.motorcontrol.StatusFrame;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import javax.annotation.ParametersAreNonnullByDefault;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Represents a set of frame update rates for a {@link com.ctre.CANTalon}.
+ * Represents a set of frame update rates for a {@link com.ctre.phoenix.motorcontrol.can.TalonSRX}.
  *
  * <p>If not modified, default status frame update rates are:
  *
@@ -56,12 +59,12 @@ public final class StatusFrameRate {
    *
    * @param talon the Talon to registerWith
    */
-  public void configure(CANTalon talon) {
-    talon.setStatusFrameRateMs(CANTalon.StatusFrameRate.AnalogTempVbat, analogTempVbat);
-    talon.setStatusFrameRateMs(CANTalon.StatusFrameRate.Feedback, feedback);
-    talon.setStatusFrameRateMs(CANTalon.StatusFrameRate.General, general);
-    talon.setStatusFrameRateMs(CANTalon.StatusFrameRate.PulseWidth, pulseWidth);
-    talon.setStatusFrameRateMs(CANTalon.StatusFrameRate.QuadEncoder, quadEncoder);
+  public void configure(TalonSRX talon) {
+    talon.setStatusFramePeriod(StatusFrame.Status_4_AinTempVbat, analogTempVbat, TIMEOUT_MS);
+    talon.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, feedback, TIMEOUT_MS);
+    talon.setStatusFramePeriod(StatusFrame.Status_1_General, general, TIMEOUT_MS);
+    //    talon.setStatusFramePeriod(StatusFrame, pulseWidth);
+    //    talon.setStatusFramePeriod(TalonSRX.StatusFrameRate.QuadEncoder, quadEncoder);
   }
 
   @Override

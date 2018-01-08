@@ -1,7 +1,6 @@
 package org.strykeforce.thirdcoast.telemetry.tct.talon;
 
-import com.ctre.CANTalon.TalonControlMode;
-import com.ctre.CANTalon.VelocityMeasurementPeriod;
+import com.ctre.TalonControlMode;
 import java.io.PrintWriter;
 import java.util.Formatter;
 import javax.annotation.Nullable;
@@ -102,7 +101,7 @@ public class InspectCommand extends AbstractCommand {
     }
 
     intLine("Current Limit:", config.getCurrentLimit());
-    doubleLine("Voltage Ramp Rate:", config.getVoltageRampRate());
+    doubleLine("Voltage Ramp Rate:", config.getOpenLoopRampTime());
 
     if (config.getMode() == TalonControlMode.Voltage) {
       return;
@@ -123,7 +122,7 @@ public class InspectCommand extends AbstractCommand {
     writer.println();
     intLine("Allowable CL Error:", pid.getAllowableClosedLoopError());
     doubleLine("Nominal CL Voltage:", pid.getNominalClosedLoopVoltage());
-    doubleLine("Output Voltage Max:", pid.getOutputVoltageMax());
+    doubleLine("Output Voltage Max:", pid.getVoltageCompSaturation());
     doubleLine("Fwd Peak Output Voltage:", pid.getForwardOutputVoltagePeak());
     doubleLine("Rev Peak Output Voltage:", pid.getReverseOutputVoltagePeak());
     doubleLine("Fwd Nom. Output Voltage:", pid.getForwardOutputVoltageNominal());

@@ -1,22 +1,22 @@
 package org.strykeforce.thirdcoast.talon;
 
-import com.ctre.CANTalon;
-import com.ctre.CANTalon.TalonControlMode;
-import com.ctre.CANTalon.VelocityMeasurementPeriod;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import org.jetbrains.annotations.NotNull;
 
 public class MotionMagicTalonConfiguration extends PIDTalonConfiguration {
 
-  private final Double motionMagicAcceleration;
-  private final Double motionMagicCruiseVelocity;
+  private final Integer motionMagicAcceleration;
+  private final Integer motionMagicCruiseVelocity;
 
   MotionMagicTalonConfiguration(
       @NotNull String name,
       double setpointMax,
       Encoder encoder,
-      Boolean isBrakeInNeutral,
+      NeutralMode neutralMode,
       Boolean isOutputReversed,
-      VelocityMeasurementPeriod velocityMeasurementPeriod,
+      VelocityMeasPeriod velocityMeasurementPeriod,
       Integer velocityMeasurementWindow,
       LimitSwitch forwardLimitSwitch,
       LimitSwitch reverseLimitSwitch,
@@ -37,14 +37,14 @@ public class MotionMagicTalonConfiguration extends PIDTalonConfiguration {
       Double dGain,
       Double fGain,
       Integer iZone,
-      Double motionMagicAcceleration,
-      Double motionMagicCruiseVelocity) {
+      Integer motionMagicAcceleration,
+      Integer motionMagicCruiseVelocity) {
     super(
         name,
         TalonControlMode.MotionMagic,
         setpointMax,
         encoder,
-        isBrakeInNeutral,
+        neutralMode,
         isOutputReversed,
         velocityMeasurementPeriod,
         velocityMeasurementWindow,
@@ -72,18 +72,18 @@ public class MotionMagicTalonConfiguration extends PIDTalonConfiguration {
   }
 
   @Override
-  public void configure(@NotNull CANTalon talon) {
+  public void configure(@NotNull TalonSRX talon) {
     super.configure(talon);
-    talon.changeControlMode(TalonControlMode.MotionMagic);
-    talon.setMotionMagicAcceleration(valueOrElse(motionMagicAcceleration, 0));
-    talon.setMotionMagicCruiseVelocity(valueOrElse(motionMagicCruiseVelocity, 0));
+    //    talon.changeControlMode(TalonControlMode.MotionMagic); // FIXME
+    talon.configMotionAcceleration(valueOrElseZero(motionMagicAcceleration), TIMEOUT_MS);
+    talon.configMotionCruiseVelocity(valueOrElseZero(motionMagicCruiseVelocity), TIMEOUT_MS);
   }
 
-  public Double getMotionMagicAcceleration() {
+  public Integer getMotionMagicAcceleration() {
     return motionMagicAcceleration;
   }
 
-  public Double getMotionMagicCruiseVelocity() {
+  public Integer getMotionMagicCruiseVelocity() {
     return motionMagicCruiseVelocity;
   }
 

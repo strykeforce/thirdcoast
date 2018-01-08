@@ -1,20 +1,22 @@
 package org.strykeforce.thirdcoast.telemetry
 
-import com.ctre.CANTalon
+import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import groovy.json.JsonSlurper
 import okio.Buffer
 import org.strykeforce.thirdcoast.telemetry.grapher.Measure
 import org.strykeforce.thirdcoast.telemetry.item.Item
 import org.strykeforce.thirdcoast.telemetry.item.TalonItem
+import spock.lang.Ignore
 import spock.lang.Specification
 
 import static org.strykeforce.thirdcoast.telemetry.grapher.Measure.ABSOLUTE_ENCODER_POSITION
 import static org.strykeforce.thirdcoast.telemetry.grapher.Measure.SETPOINT
 
+@Ignore("2018")
 class InventoryTest extends Specification {
 
-    CANTalon talonStub(int id, String description) {
-        def stub = Stub(CANTalon)
+    TalonSRX talonStub(int id, String description) {
+        def stub = Stub(TalonSRX)
         stub.getDeviceID() >> id
         stub.getDescription() >> description
         return stub

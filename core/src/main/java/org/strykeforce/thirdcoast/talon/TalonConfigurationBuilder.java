@@ -1,8 +1,8 @@
 package org.strykeforce.thirdcoast.talon;
 
-import com.ctre.CANTalon;
-import com.ctre.CANTalon.TalonControlMode;
-import com.ctre.CANTalon.VelocityMeasurementPeriod;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
 import com.moandjiezana.toml.Toml;
 import com.moandjiezana.toml.TomlWriter;
 import javax.annotation.Nullable;
@@ -18,23 +18,24 @@ public class TalonConfigurationBuilder {
 
   // TalonConfiguration
   @NotNull public static final String NAME = "name";
-  @NotNull public static final String MODE = "mode";
+  @NotNull private static final String MODE = "mode";
 
   // TalonConfiguration
   @NotNull private String name = DEFAULT_NAME;
-  @NotNull private CANTalon.TalonControlMode mode = TalonControlMode.Voltage;
+  @NotNull private TalonControlMode mode = TalonControlMode.Voltage;
   private double setpointMax = 12;
   @Nullable private Encoder encoder;
-  @Nullable private Boolean brakeInNeutral;
+  @Nullable private NeutralMode neutralMode;
   @Nullable private Boolean outputReversed;
-  @Nullable private VelocityMeasurementPeriod velocityMeasurementPeriod;
+  @Nullable private VelocityMeasPeriod velocityMeasurementPeriod;
   @Nullable private Integer velocityMeasurementWindow;
   @Nullable private LimitSwitch forwardLimitSwitch;
   @Nullable private LimitSwitch reverseLimitSwitch;
   @Nullable private SoftLimit forwardSoftLimit;
   @Nullable private SoftLimit reverseSoftLimit;
   @Nullable private Integer currentLimit;
-  @Nullable private Double voltageRampRate;
+  @Nullable private Double openLoopRampTime;
+  @Nullable private Double voltageCompSaturation;
 
   // PIDTalonConfiguration
   @Nullable private Double outputVoltageMax;
@@ -52,8 +53,8 @@ public class TalonConfigurationBuilder {
   @Nullable private Integer iZone;
 
   // MotionMagicTalonConfiguration
-  @Nullable private Double motionMagicAcceleration;
-  @Nullable private Double motionMagicCruiseVelocity;
+  @Nullable private Integer motionMagicAcceleration;
+  @Nullable private Integer motionMagicCruiseVelocity;
 
   /** Create a builder with defaults. */
   @Inject
@@ -63,7 +64,7 @@ public class TalonConfigurationBuilder {
     name = config.getName();
     setpointMax = config.getSetpointMax();
     encoder = config.getEncoder();
-    brakeInNeutral = config.isBrakeInNeutral();
+    neutralMode = config.isBrakeInNeutral();
     outputReversed = config.isOutputReversed();
     velocityMeasurementPeriod = config.getVelocityMeasurementPeriod();
     velocityMeasurementWindow = config.getVelocityMeasurementWindow();
@@ -72,7 +73,8 @@ public class TalonConfigurationBuilder {
     forwardSoftLimit = config.getForwardSoftLimit();
     reverseSoftLimit = config.getReverseSoftLimit();
     currentLimit = config.getCurrentLimit();
-    voltageRampRate = config.getVoltageRampRate();
+    openLoopRampTime = config.getOpenLoopRampTime();
+    voltageCompSaturation = config.getVoltageCompSaturation();
 
     if (config instanceof VoltageTalonConfiguration) {
       mode = TalonControlMode.Voltage;
@@ -90,7 +92,7 @@ public class TalonConfigurationBuilder {
       throw new AssertionError(config.getClass().getCanonicalName());
     }
     PIDTalonConfiguration pid = (PIDTalonConfiguration) config;
-    outputVoltageMax = pid.getOutputVoltageMax();
+    outputVoltageMax = pid.getVoltageCompSaturation();
     forwardOutputVoltagePeak = pid.getForwardOutputVoltagePeak();
     reverseOutputVoltagePeak = pid.getReverseOutputVoltagePeak();
     forwardOutputVoltageNominal = pid.getForwardOutputVoltageNominal();
@@ -114,7 +116,7 @@ public class TalonConfigurationBuilder {
   @NotNull
   public static TalonConfiguration create(Toml config) {
     TalonConfiguration talonConfiguration = null;
-    CANTalon.TalonControlMode mode = getMode(config);
+    TalonControlMode mode = getMode(config);
     switch (mode) {
       case Voltage:
         talonConfiguration = config.to(VoltageTalonConfiguration.class);
@@ -138,12 +140,12 @@ public class TalonConfigurationBuilder {
     return talonConfiguration;
   }
 
-  static CANTalon.TalonControlMode getMode(Toml config) {
+  static TalonControlMode getMode(Toml config) {
     String mode = config.getString(MODE);
     if (mode == null) {
       throw new IllegalArgumentException("mode missing from configuration");
     }
-    return CANTalon.TalonControlMode.valueOf(mode);
+    return TalonControlMode.valueOf(mode);
   }
 
   /**
@@ -173,7 +175,7 @@ public class TalonConfigurationBuilder {
                 name,
                 setpointMax,
                 encoder,
-                brakeInNeutral,
+                neutralMode,
                 outputReversed,
                 velocityMeasurementPeriod,
                 velocityMeasurementWindow,
@@ -182,7 +184,8 @@ public class TalonConfigurationBuilder {
                 forwardSoftLimit,
                 reverseSoftLimit,
                 currentLimit,
-                voltageRampRate);
+                openLoopRampTime,
+                voltageCompSaturation);
         break;
       case Position:
         tc =
@@ -190,7 +193,7 @@ public class TalonConfigurationBuilder {
                 name,
                 setpointMax,
                 encoder,
-                brakeInNeutral,
+                neutralMode,
                 outputReversed,
                 velocityMeasurementPeriod,
                 velocityMeasurementWindow,
@@ -199,7 +202,7 @@ public class TalonConfigurationBuilder {
                 forwardSoftLimit,
                 reverseSoftLimit,
                 currentLimit,
-                voltageRampRate,
+                openLoopRampTime,
                 outputVoltageMax,
                 closedLoopRampRate,
                 forwardOutputVoltagePeak,
@@ -220,7 +223,7 @@ public class TalonConfigurationBuilder {
                 name,
                 setpointMax,
                 encoder,
-                brakeInNeutral,
+                neutralMode,
                 outputReversed,
                 velocityMeasurementPeriod,
                 velocityMeasurementWindow,
@@ -229,7 +232,7 @@ public class TalonConfigurationBuilder {
                 forwardSoftLimit,
                 reverseSoftLimit,
                 currentLimit,
-                voltageRampRate,
+                openLoopRampTime,
                 outputVoltageMax,
                 closedLoopRampRate,
                 forwardOutputVoltagePeak,
@@ -250,7 +253,7 @@ public class TalonConfigurationBuilder {
                 name,
                 setpointMax,
                 encoder,
-                brakeInNeutral,
+                neutralMode,
                 outputReversed,
                 velocityMeasurementPeriod,
                 velocityMeasurementWindow,
@@ -259,7 +262,7 @@ public class TalonConfigurationBuilder {
                 forwardSoftLimit,
                 reverseSoftLimit,
                 currentLimit,
-                voltageRampRate,
+                openLoopRampTime,
                 outputVoltageMax,
                 closedLoopRampRate,
                 forwardOutputVoltagePeak,
@@ -307,7 +310,7 @@ public class TalonConfigurationBuilder {
    * @throws IllegalArgumentException if mode is null
    */
   @NotNull
-  public TalonConfigurationBuilder mode(CANTalon.TalonControlMode mode) {
+  public TalonConfigurationBuilder mode(TalonControlMode mode) {
     this.mode = mode;
     return this;
   }
@@ -329,16 +332,12 @@ public class TalonConfigurationBuilder {
    *
    * @param feedbackDevice the encoder type, must not be null.
    * @param isReversed encoder phase is reversed with respect to motor output.
-   * @param ticksPerRevolution encoder ticks per motor revolution, null to disable.
    * @return this builder.
    * @throws IllegalArgumentException if feedbackDevice is null
    */
   @NotNull
-  public TalonConfigurationBuilder encoder(
-      CANTalon.FeedbackDevice feedbackDevice,
-      boolean isReversed,
-      @Nullable Integer ticksPerRevolution) {
-    this.encoder = new Encoder(feedbackDevice, isReversed, ticksPerRevolution);
+  public TalonConfigurationBuilder encoder(FeedbackDevice feedbackDevice, boolean isReversed) {
+    this.encoder = new Encoder(feedbackDevice, isReversed);
     return this;
   }
 
@@ -349,7 +348,7 @@ public class TalonConfigurationBuilder {
    * @return this builder.
    */
   @NotNull
-  public TalonConfigurationBuilder encoder(CANTalon.FeedbackDevice feedbackDevice) {
+  public TalonConfigurationBuilder encoder(FeedbackDevice feedbackDevice) {
     if (encoder == null) {
       encoder = new Encoder(feedbackDevice);
     } else {
@@ -382,7 +381,7 @@ public class TalonConfigurationBuilder {
    */
   @NotNull
   public TalonConfigurationBuilder brakeInNeutral(boolean brakeInNeutral) {
-    this.brakeInNeutral = brakeInNeutral;
+    this.neutralMode = brakeInNeutral ? NeutralMode.Brake : NeutralMode.Coast;
     return this;
   }
 
@@ -406,7 +405,7 @@ public class TalonConfigurationBuilder {
    */
   @NotNull
   public TalonConfigurationBuilder velocityMeasurementPeriod(
-      VelocityMeasurementPeriod velocityMeasurementPeriod) {
+      VelocityMeasPeriod velocityMeasurementPeriod) {
     this.velocityMeasurementPeriod = velocityMeasurementPeriod;
     return this;
   }
@@ -500,7 +499,7 @@ public class TalonConfigurationBuilder {
    */
   @NotNull
   public TalonConfigurationBuilder voltageRampRate(double voltageRampRate) {
-    this.voltageRampRate = voltageRampRate;
+    this.openLoopRampTime = voltageRampRate;
     return this;
   }
 
@@ -648,7 +647,7 @@ public class TalonConfigurationBuilder {
    * @return this builder.
    */
   @NotNull
-  public TalonConfigurationBuilder motionMagicAcceleration(double accel) {
+  public TalonConfigurationBuilder motionMagicAcceleration(int accel) {
     this.motionMagicAcceleration = accel;
     return this;
   }
@@ -660,7 +659,7 @@ public class TalonConfigurationBuilder {
    * @return this builder.
    */
   @NotNull
-  public TalonConfigurationBuilder motionMagicCruiseVelocity(double vel) {
+  public TalonConfigurationBuilder motionMagicCruiseVelocity(int vel) {
     this.motionMagicCruiseVelocity = vel;
     return this;
   }

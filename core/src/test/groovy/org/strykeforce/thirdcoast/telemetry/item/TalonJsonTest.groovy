@@ -1,23 +1,25 @@
 package org.strykeforce.thirdcoast.telemetry.item
 
-import com.ctre.CANTalon
+import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import com.squareup.moshi.JsonWriter
 import groovy.json.JsonSlurper
 import okio.Buffer
-
+import org.strykeforce.thirdcoast.talon.TalonControlMode
+import spock.lang.Ignore
 import spock.lang.Specification
 
+@Ignore("2018")
 class TalonJsonTest extends Specification {
 
     def random = new Random()
 
-    CANTalon talon
+    TalonSRX talon
 
     void setup() {
-        talon = Stub(CANTalon)
+        talon = Stub(TalonSRX)
         talon.getDeviceID() >> random.nextInt()
         talon.getDescription() >> "test talon"
-        talon.getControlMode() >> CANTalon.TalonControlMode.Speed
+        talon.getControlMode() >> TalonControlMode.Speed
         talon.getAnalogInPosition() >> random.nextInt()
         talon.getAnalogInRaw() >> random.nextInt()
         talon.getAnalogInVelocity() >> random.nextInt()

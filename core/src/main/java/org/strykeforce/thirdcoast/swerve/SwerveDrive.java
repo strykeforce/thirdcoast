@@ -162,9 +162,9 @@ public class SwerveDrive {
   }
 
   /**
-   * Register the swerve wheel azimuth and drive {@link com.ctre.CANTalon} with the Telemetry
-   * service for data collection. The Telemetry service will set the Talon status frame update rates
-   * to default values during registration.
+   * Register the swerve wheel azimuth and drive {@link com.ctre.phoenix.motorcontrol.can.TalonSRX}
+   * with the Telemetry service for data collection. The Telemetry service will set the Talon status
+   * frame update rates to default values during registration.
    *
    * @param telemetryService the active Telemetry service instance created by the robot
    */

@@ -1,6 +1,6 @@
 package org.strykeforce.thirdcoast.telemetry.tct.talon.config.cl;
 
-import com.ctre.CANTalon;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import javax.inject.Inject;
 import org.jline.reader.LineReader;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
@@ -22,7 +22,7 @@ public class MotionMagicCruiseVelocityCommand extends AbstractDoubleConfigComman
   }
 
   @Override
-  protected void config(CANTalon talon, double value) {
+  protected void config(TalonSRX talon, double value) {
     talon.setMotionMagicCruiseVelocity(value);
   }
 }

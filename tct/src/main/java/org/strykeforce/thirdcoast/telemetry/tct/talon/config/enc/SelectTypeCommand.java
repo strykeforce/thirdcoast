@@ -1,7 +1,7 @@
 package org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc;
 
-import com.ctre.CANTalon;
-import com.ctre.CANTalon.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX.FeedbackDevice;
 import javax.inject.Inject;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
@@ -55,7 +55,7 @@ public class SelectTypeCommand extends AbstractTalonConfigCommand {
         terminal.writer().println("please enter an integer");
         continue;
       }
-      CANTalon.FeedbackDevice device;
+      TalonSRX.FeedbackDevice device;
       done = true;
       switch (choice) {
         case 1:
@@ -86,7 +86,7 @@ public class SelectTypeCommand extends AbstractTalonConfigCommand {
           continue;
       }
       talonSet.talonConfigurationBuilder().encoder(device);
-      for (CANTalon talon : talonSet.selected()) {
+      for (TalonSRX talon : talonSet.selected()) {
         talon.setFeedbackDevice(device);
         logger.info("set {} for {} to {}", name(), talon.getDescription(), device);
       }

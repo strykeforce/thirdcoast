@@ -20,13 +20,15 @@ public final class LimitSwitch {
     this(false, false);
   }
 
+  @NotNull
   public LimitSwitch copyWithEnabled(boolean enabled) {
     return new LimitSwitch(enabled, normallyOpen);
   }
 
-  public LimitSwitch copyWithNormallyOpen(boolean normallyOpen) {
-    return new LimitSwitch(enabled, normallyOpen);
-  }
+  //  @NotNull
+  //  public LimitSwitch copyWithNormallyOpen(boolean normallyOpen) { FIXME
+  //    return new LimitSwitch(enabled, normallyOpen);
+  //  }
 
   public boolean isEnabled() {
     return enabled;
@@ -36,6 +38,7 @@ public final class LimitSwitch {
     return normallyOpen;
   }
 
+  @NotNull
   @Override
   public String toString() {
     return "LimitSwitch{" + "enabled=" + enabled + ", normallyOpen=" + normallyOpen + '}';

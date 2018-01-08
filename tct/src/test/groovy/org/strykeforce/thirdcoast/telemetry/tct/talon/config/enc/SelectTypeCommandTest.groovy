@@ -1,6 +1,6 @@
 package org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc
 
-import com.ctre.CANTalon
+import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import org.strykeforce.thirdcoast.telemetry.tct.Command
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractTalonConfigCommandTest
 
@@ -28,7 +28,7 @@ class SelectTypeCommandTest extends AbstractTalonConfigCommandTest {
 
         then:
         1 * reader.readLine(_) >> "1"
-        1 * talon.setFeedbackDevice(CANTalon.FeedbackDevice.AnalogEncoder)
+        1 * talon.setFeedbackDevice(TalonSRX.FeedbackDevice.AnalogEncoder)
         1 * talon.getDescription()
         0 * talon._
     }
@@ -39,7 +39,7 @@ class SelectTypeCommandTest extends AbstractTalonConfigCommandTest {
 
         then:
         1 * reader.readLine(_) >> "2"
-        1 * talon.setFeedbackDevice(CANTalon.FeedbackDevice.AnalogPot)
+        1 * talon.setFeedbackDevice(TalonSRX.FeedbackDevice.AnalogPot)
         1 * talon.getDescription()
         0 * talon._
     }
@@ -50,7 +50,7 @@ class SelectTypeCommandTest extends AbstractTalonConfigCommandTest {
 
         then:
         1 * reader.readLine(_) >> "3"
-        1 * talon.setFeedbackDevice(CANTalon.FeedbackDevice.CtreMagEncoder_Absolute)
+        1 * talon.setFeedbackDevice(TalonSRX.FeedbackDevice.CtreMagEncoder_Absolute)
         1 * talon.getDescription()
         0 * talon._
     }
@@ -61,7 +61,7 @@ class SelectTypeCommandTest extends AbstractTalonConfigCommandTest {
 
         then:
         1 * reader.readLine(_) >> "4"
-        1 * talon.setFeedbackDevice(CANTalon.FeedbackDevice.CtreMagEncoder_Relative)
+        1 * talon.setFeedbackDevice(TalonSRX.FeedbackDevice.CtreMagEncoder_Relative)
         1 * talon.getDescription()
         0 * talon._
     }
@@ -72,7 +72,7 @@ class SelectTypeCommandTest extends AbstractTalonConfigCommandTest {
 
         then:
         1 * reader.readLine(_) >> "5"
-        1 * talon.setFeedbackDevice(CANTalon.FeedbackDevice.EncFalling)
+        1 * talon.setFeedbackDevice(TalonSRX.FeedbackDevice.EncFalling)
         1 * talon.getDescription()
         0 * talon._
     }
@@ -83,7 +83,7 @@ class SelectTypeCommandTest extends AbstractTalonConfigCommandTest {
 
         then:
         1 * reader.readLine(_) >> "6"
-        1 * talon.setFeedbackDevice(CANTalon.FeedbackDevice.EncRising)
+        1 * talon.setFeedbackDevice(TalonSRX.FeedbackDevice.EncRising)
         1 * talon.getDescription()
         0 * talon._
     }
@@ -94,7 +94,7 @@ class SelectTypeCommandTest extends AbstractTalonConfigCommandTest {
 
         then:
         1 * reader.readLine(_) >> "7"
-        1 * talon.setFeedbackDevice(CANTalon.FeedbackDevice.PulseWidth)
+        1 * talon.setFeedbackDevice(TalonSRX.FeedbackDevice.PulseWidth)
         1 * talon.getDescription()
         0 * talon._
     }
@@ -105,7 +105,7 @@ class SelectTypeCommandTest extends AbstractTalonConfigCommandTest {
 
         then:
         1 * reader.readLine(_) >> "8"
-        1 * talon.setFeedbackDevice(CANTalon.FeedbackDevice.QuadEncoder)
+        1 * talon.setFeedbackDevice(TalonSRX.FeedbackDevice.QuadEncoder)
         1 * talon.getDescription()
         0 * talon._
     }

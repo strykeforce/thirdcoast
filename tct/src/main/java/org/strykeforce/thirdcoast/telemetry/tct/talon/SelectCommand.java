@@ -1,6 +1,6 @@
 package org.strykeforce.thirdcoast.telemetry.tct.talon;
 
-import com.ctre.CANTalon;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -79,7 +79,7 @@ public class SelectCommand extends AbstractCommand {
             .print(Messages.boldRed(String.format("%s is not a number, ignoring%n", s)));
         continue;
       }
-      CANTalon talon = talonFactory.getTalon(id);
+      TalonSRX talon = talonFactory.getTalon(id);
       config.configure(talon);
       talonSet.selectTalon(talon);
       logger.info("selected talon id {} with config {}", id, config.getName());

@@ -1,19 +1,17 @@
 package org.strykeforce.thirdcoast.talon
 
-import com.ctre.CANTalon
-import com.moandjiezana.toml.Toml
-import spock.lang.Shared
+import com.ctre.phoenix.motorcontrol.can.TalonSRX
+import spock.lang.Ignore
 import spock.lang.Specification
 
-import static com.ctre.CANTalon.FeedbackDevice.QuadEncoder
-import static com.ctre.CANTalon.TalonControlMode.Voltage
-import static com.ctre.CANTalon.VelocityMeasurementPeriod.Period_100Ms
-import static com.ctre.CANTalon.VelocityMeasurementPeriod.Period_1Ms
-import static com.ctre.CANTalon.VelocityMeasurementPeriod.Period_5Ms
+import static com.ctre.phoenix.motorcontrol.FeedbackDevice.QuadEncoder
+import static com.ctre.phoenix.motorcontrol.VelocityMeasPeriod.Period_100Ms
+import static com.ctre.phoenix.motorcontrol.VelocityMeasPeriod.Period_5Ms
 
+@Ignore("2018")
 class TalonConfigurationTest extends Specification {
 
-    def talon = Mock(CANTalon)
+    def talon = Mock(TalonSRX)
     def tcb = new TalonConfigurationBuilder()
 
 
@@ -118,7 +116,7 @@ class TalonConfigurationTest extends Specification {
         tc.configure(talon)
 
         then:
-        tc.voltageRampRate == 27.67
+        tc.openLoopRampTime == 27.67
         1 * talon.setVoltageRampRate(27.67)
     }
 

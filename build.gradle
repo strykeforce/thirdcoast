@@ -2,7 +2,7 @@ plugins {
     id "java"
     id "idea"
     id "net.ltgt.apt-idea" version "0.13"
-    id "jaci.openrio.gradle.GradleRIO" version "2017.11.27" apply false
+    id "jaci.openrio.gradle.GradleRIO" version "2018.01.07" apply false
     id "net.ltgt.errorprone" version "0.0.13"
     id "com.diffplug.gradle.spotless" version "3.8.0"
 }
@@ -27,7 +27,7 @@ ext {
             toml4j              : 'com.moandjiezana.toml:toml4j:0.7.2',
     ]
     specificationTitle = 'Third Coast Library'
-    specificationVersion = '17.2.0'
+    specificationVersion = '18.0.0'
 }
 
 subprojects {
@@ -35,10 +35,6 @@ subprojects {
     apply plugin: 'jaci.openrio.gradle.GradleRIO'
     apply plugin: 'net.ltgt.apt-idea'
 //    apply plugin: 'net.ltgt.errorprone' // FIXME: https://github.com/google/dagger/issues/1004
-
-    wpi {
-        navxVersion = '3.0.331' // FIXME: remove for 2018 build
-    }
 
     repositories {
         jcenter()

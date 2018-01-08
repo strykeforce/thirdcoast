@@ -1,9 +1,14 @@
 package org.strykeforce.thirdcoast.talon
 
-import com.ctre.CANTalon
+import com.ctre.phoenix.motorcontrol.FeedbackDevice
+import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX
 import com.moandjiezana.toml.Toml
 import spock.lang.Shared
 import spock.lang.Specification
+
+import static com.ctre.phoenix.motorcontrol.FeedbackDevice.CTRE_MagEncoder_Relative
+import static org.strykeforce.thirdcoast.talon.TalonConfiguration.TIMEOUT_MS
 
 class PIDTalonConfigurationTest extends Specification {
 
@@ -12,12 +17,12 @@ class PIDTalonConfigurationTest extends Specification {
     name = "pid"
     mode = "Position"
     setpointMax = 1.0
-    outputVoltageMax = 12.0
+    voltageCompSaturation = 11.0
     closedLoopRampRate = 27.67
-    forwardOutputVoltagePeak = 5.0
-    reverseOutputVoltagePeak = -3.0
-    forwardOutputVoltageNominal = 0.5
-    reverseOutputVoltageNominal = -0.3
+    forwardOutputVoltagePeak = 0.5
+    reverseOutputVoltagePeak = -0.3
+    forwardOutputVoltageNominal = 0.1
+    reverseOutputVoltageNominal = -0.2
     allowableClosedLoopError = 10
     nominalClosedLoopVoltage = 12.0
     pGain = 0.1
@@ -26,7 +31,7 @@ class PIDTalonConfigurationTest extends Specification {
     fGain = 0.4
     iZone = 50
     [TALON.encoder]
-    device = "CtreMagEncoder_Relative"
+    device = "CTRE_MagEncoder_Relative"
 
     [[TALON]]
     name = "speed"
@@ -41,11 +46,11 @@ class PIDTalonConfigurationTest extends Specification {
     [[TALON]]
     name = "motion_magic"
     mode = "MotionMagic"
-    motionMagicAcceleration = 2.7
-    motionMagicCruiseVelocity = 6.7
+    motionMagicAcceleration = 27
+    motionMagicCruiseVelocity = 67
 '''
 
-    def talon = Mock(CANTalon)
+    def talon = Mock(WPI_TalonSRX)
     @Shared
     TalonProvisioner provisioner
 
@@ -65,9 +70,9 @@ class PIDTalonConfigurationTest extends Specification {
         then:
         t.name == "pid"
         t.class == PositionTalonConfiguration
-        t.encoder.device == CANTalon.FeedbackDevice.CtreMagEncoder_Relative
+        t.encoder.device == CTRE_MagEncoder_Relative
         // FIXME: implement outputVoltage parms
-        t.outputVoltageMax == 12.0
+        t.voltageCompSaturation == 12.0
         t.closedLoopRampRate == 27.67
         t.forwardOutputVoltagePeak == 5.0
         t.reverseOutputVoltagePeak == -3.0
@@ -87,7 +92,7 @@ class PIDTalonConfigurationTest extends Specification {
         t.configure(talon)
 
         then:
-        t.outputVoltageMax == null
+        t.voltageCompSaturation == null
         t.closedLoopRampRate == null
         t.forwardOutputVoltagePeak == null
         t.reverseOutputVoltagePeak == null
@@ -97,7 +102,7 @@ class PIDTalonConfigurationTest extends Specification {
         t.nominalClosedLoopVoltage == null
 
         and:
-        1 * talon.setFeedbackDevice(CANTalon.FeedbackDevice.QuadEncoder)
+        1 * talon.setFeedbackDevice(FeedbackDevice.QuadEncoder)
         1 * talon.configMaxOutputVoltage(12.0)
         1 * talon.setCloseLoopRampRate(0)
         1 * talon.configPeakOutputVoltage(12.0, -12.0)
@@ -120,10 +125,10 @@ class PIDTalonConfigurationTest extends Specification {
         1 * talon.SetVelocityMeasurementWindow(64)
         1 * talon.enableForwardSoftLimit(false)
         1 * talon.setProfile(0)
-        1 * talon.SetVelocityMeasurementPeriod(CANTalon.VelocityMeasurementPeriod.Period_100Ms)
-        1 * talon.isSensorPresent(CANTalon.FeedbackDevice.QuadEncoder)
+        1 * talon.SetVelocityMeasurementPeriod(VelocityMeasPeriod.Period_100Ms)
+        1 * talon.isSensorPresent(FeedbackDevice.QuadEncoder)
         1 * talon.enableLimitSwitch(false, false)
-        1 * talon.changeControlMode(CANTalon.TalonControlMode.Speed)
+        1 * talon.changeControlMode(TalonControlMode.Speed)
         1 * talon.setExpiration(0.1)
         0 * talon._
 
@@ -136,16 +141,19 @@ class PIDTalonConfigurationTest extends Specification {
         t.configure(talon)
 
         then:
-        1 * talon.changeControlMode(CANTalon.TalonControlMode.Position)
-        1 * talon.setFeedbackDevice(CANTalon.FeedbackDevice.CtreMagEncoder_Relative)
-        1 * talon.configMaxOutputVoltage(12.0)
-        1 * talon.setCloseLoopRampRate(27.67)
-        1 * talon.configPeakOutputVoltage(5.0, -3.0)
-        1 * talon.configNominalOutputVoltage(0.5, -0.3)
-        1 * talon.setAllowableClosedLoopErr(10)
-        1 * talon.setPID(0.1, 0.2, 0.3)
-        1 * talon.setF(0.4)
-        1 * talon.setIZone(50)
+        1 * talon.configSelectedFeedbackSensor(CTRE_MagEncoder_Relative, 0, TIMEOUT_MS)
+        1 * talon.configVoltageCompSaturation(11.0d, TIMEOUT_MS)
+//        1 * talon.configCloseLoopRampRate(27.67)
+        1 * talon.configPeakOutputForward(0.5d, TIMEOUT_MS)
+        1 * talon.configPeakOutputReverse(-0.3d, TIMEOUT_MS)
+        1 * talon.configNominalOutputForward(0.1d, TIMEOUT_MS)
+        1 * talon.configNominalOutputReverse(-0.2d, TIMEOUT_MS)
+        1 * talon.configAllowableClosedloopError(0, 10, TIMEOUT_MS)
+        1 * talon.config_kP(0, 0.1d, TIMEOUT_MS)
+        1 * talon.config_kI(0, 0.2d, TIMEOUT_MS)
+        1 * talon.config_kD(0, 0.3d, TIMEOUT_MS)
+        1 * talon.config_kF(0, 0.4d, TIMEOUT_MS)
+        1 * talon.config_IntegralZone(0, 50, TIMEOUT_MS)
     }
 
     def "configures speed mode talon"() {
@@ -167,8 +175,8 @@ class PIDTalonConfigurationTest extends Specification {
         t.class == MotionMagicTalonConfiguration
 
         and:
-        1 * talon.setMotionMagicAcceleration(2.7)
-        1 * talon.setMotionMagicCruiseVelocity(6.7)
+        1 * talon.configMotionAcceleration(27, TIMEOUT_MS)
+        1 * talon.configMotionCruiseVelocity(67, TIMEOUT_MS)
     }
 
 }

@@ -1,6 +1,6 @@
 package org.strykeforce.thirdcoast.telemetry.tct.talon;
 
-import com.ctre.CANTalon;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -101,7 +101,7 @@ public class LoadConfigsCommand extends AbstractCommand {
       talonSet.clearSelected();
 
       for (Integer id : configuration.getTalonIds()) {
-        CANTalon talon = talonFactory.getTalonWithConfiguration(id, selected);
+        TalonSRX talon = talonFactory.getTalonWithConfiguration(id, selected);
         talonSet.selectTalon(talon);
         logger.info("adding talon with id {} and configuration {}", id, selected);
       }

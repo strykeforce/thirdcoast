@@ -1,6 +1,6 @@
 package org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc;
 
-import com.ctre.CANTalon;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import javax.inject.Inject;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
@@ -55,7 +55,7 @@ public class VelocityMeasurementWindowCommand extends AbstractTalonConfigCommand
       int setpoint = 1 << (choice - 1);
       done = true;
       talonSet.talonConfigurationBuilder().velocityMeasurementWindow(setpoint);
-      for (CANTalon talon : talonSet.selected()) {
+      for (TalonSRX talon : talonSet.selected()) {
         talon.SetVelocityMeasurementWindow(setpoint);
         logger.info("set {} for {} to {}", name(), talon.getDescription(), setpoint);
       }

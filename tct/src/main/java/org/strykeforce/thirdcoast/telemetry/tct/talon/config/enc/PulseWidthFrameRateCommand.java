@@ -1,7 +1,7 @@
 package org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc;
 
-import com.ctre.CANTalon;
-import com.ctre.CANTalon.StatusFrameRate;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX.StatusFrameRate;
 import javax.inject.Inject;
 import org.jline.reader.LineReader;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
@@ -17,7 +17,7 @@ public class PulseWidthFrameRateCommand extends AbstractIntConfigCommand {
   }
 
   @Override
-  protected void config(CANTalon talon, int value) {
+  protected void config(TalonSRX talon, int value) {
     talon.setStatusFrameRateMs(StatusFrameRate.PulseWidth, value);
   }
 

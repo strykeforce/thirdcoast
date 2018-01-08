@@ -1,17 +1,19 @@
 package org.strykeforce.thirdcoast.swerve
 
-import com.ctre.CANTalon
+import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import com.moandjiezana.toml.Toml
 import org.strykeforce.thirdcoast.talon.TalonProvisioner
+import spock.lang.Ignore
 import spock.lang.Shared
 import spock.lang.Specification
 
+@Ignore("2018")
 class WheelTest extends Specification {
 
     static final EPSILON = 1e-15
 
-    def azimuth = Mock(CANTalon)
-    def drive = Mock(CANTalon)
+    def azimuth = Mock(TalonSRX)
+    def drive = Mock(TalonSRX)
     @Shared
     TalonProvisioner provisioner
 
@@ -28,7 +30,7 @@ class WheelTest extends Specification {
     name = "azimuth"
     mode = "Position"
     setpointMax     = 4095.0
-    brakeInNeutral = false
+    neutralMode = false
     pGain =   1.0
     iGain =   2.0
     dGain =   3.0
@@ -59,13 +61,13 @@ class WheelTest extends Specification {
         def wheel = new Wheel(provisioner, azimuth, drive)
 
         then:
-        1 * drive.SetVelocityMeasurementPeriod(CANTalon.VelocityMeasurementPeriod.Period_100Ms)
+        1 * drive.SetVelocityMeasurementPeriod(TalonSRX.VelocityMeasurementPeriod.Period_100Ms)
         1 * drive.reverseOutput(false)
-        1 * drive.changeControlMode(CANTalon.TalonControlMode.Voltage)
-        1 * drive.setFeedbackDevice(CANTalon.FeedbackDevice.QuadEncoder)
+        1 * drive.changeControlMode(TalonControlMode.Voltage)
+        1 * drive.setFeedbackDevice(TalonSRX.FeedbackDevice.QuadEncoder)
         1 * drive.enableLimitSwitch(false, false)
         1 * drive.setSafetyEnabled(false)
-        1 * drive.isSensorPresent(CANTalon.FeedbackDevice.QuadEncoder)
+        1 * drive.isSensorPresent(TalonSRX.FeedbackDevice.QuadEncoder)
         1 * drive.reverseSensor(false)
         1 * drive.enableBrakeMode(true)
         1 * drive.SetVelocityMeasurementWindow(64)
@@ -80,21 +82,21 @@ class WheelTest extends Specification {
         1 * azimuth.setNominalClosedLoopVoltage(0.0)
         1 * azimuth.reverseSensor(false)
         1 * azimuth.enableBrakeMode(false)
-        1 * azimuth.isSensorPresent(CANTalon.FeedbackDevice.CtreMagEncoder_Relative)
+        1 * azimuth.isSensorPresent(TalonSRX.FeedbackDevice.CtreMagEncoder_Relative)
         1 * azimuth.reverseOutput(false)
-        1 * azimuth.changeControlMode(CANTalon.TalonControlMode.Position)
+        1 * azimuth.changeControlMode(TalonControlMode.Position)
         1 * azimuth.setIZone(0)
         1 * azimuth.configNominalOutputVoltage(0.0, 0.0)
         1 * azimuth.enableLimitSwitch(false, false)
-        1 * azimuth.setFeedbackDevice(CANTalon.FeedbackDevice.CtreMagEncoder_Relative)
-        1 * azimuth.SetVelocityMeasurementPeriod(CANTalon.VelocityMeasurementPeriod.Period_100Ms)
+        1 * azimuth.setFeedbackDevice(TalonSRX.FeedbackDevice.CtreMagEncoder_Relative)
+        1 * azimuth.SetVelocityMeasurementPeriod(TalonSRX.VelocityMeasurementPeriod.Period_100Ms)
         1 * azimuth.getDeviceID() >> 2
 
         when:
         wheel.azimuthParameters = "speed"
 
         then:
-        1 * azimuth.changeControlMode(CANTalon.TalonControlMode.Speed)
+        1 * azimuth.changeControlMode(TalonControlMode.Speed)
         0 * azimuth.changeControlMode(_)
         0 * drive.changeControlMode(_)
     }

@@ -1,6 +1,6 @@
 package org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc;
 
-import com.ctre.CANTalon;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import javax.inject.Inject;
 import org.jline.reader.LineReader;
 import org.strykeforce.thirdcoast.talon.StatusFrameRate;
@@ -20,7 +20,7 @@ public class GrapherFrameRatesCommand extends AbstractBooleanConfigCommand {
   protected void saveConfig(boolean value) {}
 
   @Override
-  protected void config(CANTalon talon, boolean value) {
+  protected void config(TalonSRX talon, boolean value) {
     if (value) {
       StatusFrameRate.GRAPHER.configure(talon);
       terminal.writer().println(StatusFrameRate.GRAPHER);

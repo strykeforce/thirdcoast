@@ -1,6 +1,6 @@
 package org.strykeforce.thirdcoast.telemetry.tct.talon.config.lim;
 
-import com.ctre.CANTalon;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import javax.inject.Inject;
 import org.jline.reader.LineReader;
 import org.strykeforce.thirdcoast.talon.LimitSwitch;
@@ -18,7 +18,7 @@ public class LimitSwitchEnabled extends AbstractFwdRevBooleanConfigCommand {
   }
 
   @Override
-  protected void config(CANTalon talon, boolean forward, boolean reverse) {
+  protected void config(TalonSRX talon, boolean forward, boolean reverse) {
     talon.enableLimitSwitch(forward, reverse);
   }
 

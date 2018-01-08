@@ -1,8 +1,8 @@
 package org.strykeforce.thirdcoast.talon;
 
-import com.ctre.CANTalon;
-import com.ctre.CANTalon.TalonControlMode;
-import com.ctre.CANTalon.VelocityMeasurementPeriod;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import org.jetbrains.annotations.NotNull;
 
 class VoltageTalonConfiguration extends TalonConfiguration {
@@ -11,22 +11,23 @@ class VoltageTalonConfiguration extends TalonConfiguration {
       @NotNull String name,
       double setpointMax,
       Encoder encoder,
-      Boolean isBrakeInNeutral,
+      NeutralMode neutralMode,
       Boolean isOutputReversed,
-      VelocityMeasurementPeriod velocityMeasurementPeriod,
+      VelocityMeasPeriod velocityMeasurementPeriod,
       Integer velocityMeasurementWindow,
       LimitSwitch forwardLimitSwitch,
       LimitSwitch reverseLimitSwitch,
       SoftLimit forwardSoftLimit,
       SoftLimit reverseSoftLimit,
       Integer currentLimit,
-      Double voltageRampRate) {
+      Double voltageRampRate,
+      Double voltageCompSaturation) {
     super(
         name,
         TalonControlMode.Voltage,
         setpointMax,
         encoder,
-        isBrakeInNeutral,
+        neutralMode,
         isOutputReversed,
         velocityMeasurementPeriod,
         velocityMeasurementWindow,
@@ -35,17 +36,17 @@ class VoltageTalonConfiguration extends TalonConfiguration {
         forwardSoftLimit,
         reverseSoftLimit,
         currentLimit,
-        voltageRampRate);
+        voltageRampRate,
+        voltageCompSaturation);
   }
 
   @Override
-  public void configure(@NotNull CANTalon talon) {
+  public void configure(@NotNull TalonSRX talon) {
     super.configure(talon);
-    talon.changeControlMode(TalonControlMode.Voltage);
+    //    talon.changeControlMode(TalonControlMode.Voltage); // FIXME
   }
 
   @Override
-  @NotNull
   public String toString() {
     return "VoltageTalonParameters{} " + super.toString();
   }

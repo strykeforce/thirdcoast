@@ -11,7 +11,7 @@ public final class SoftLimit {
   private final boolean enabled;
   private final double position;
 
-  SoftLimit(boolean enabled, double position) {
+  private SoftLimit(boolean enabled, double position) {
     this.enabled = enabled;
     this.position = position;
   }
@@ -20,7 +20,7 @@ public final class SoftLimit {
     this(position != null, position != null ? position : 0);
   }
 
-  SoftLimit() {
+  private SoftLimit() {
     this(false, 0);
   }
 

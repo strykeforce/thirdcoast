@@ -1,6 +1,6 @@
 package org.strykeforce.thirdcoast.telemetry.tct.talon.config.out;
 
-import com.ctre.CANTalon;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import javax.inject.Inject;
 import org.jline.reader.LineReader;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
@@ -22,7 +22,7 @@ public class PeakOutputVoltageCommand extends AbstractFwdRevDoubleConfigCommand 
   }
 
   @Override
-  protected void config(CANTalon talon, double foward, double reverse) {
+  protected void config(TalonSRX talon, double foward, double reverse) {
     talon.configPeakOutputVoltage(foward, reverse);
   }
 }

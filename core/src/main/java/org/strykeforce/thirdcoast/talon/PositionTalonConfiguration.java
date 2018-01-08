@@ -1,8 +1,8 @@
 package org.strykeforce.thirdcoast.talon;
 
-import com.ctre.CANTalon;
-import com.ctre.CANTalon.TalonControlMode;
-import com.ctre.CANTalon.VelocityMeasurementPeriod;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import org.jetbrains.annotations.NotNull;
 
 class PositionTalonConfiguration extends PIDTalonConfiguration {
@@ -11,9 +11,9 @@ class PositionTalonConfiguration extends PIDTalonConfiguration {
       @NotNull String name,
       double setpointMax,
       Encoder encoder,
-      Boolean isBrakeInNeutral,
+      NeutralMode neutralMode,
       Boolean isOutputReversed,
-      VelocityMeasurementPeriod velocityMeasurementPeriod,
+      VelocityMeasPeriod velocityMeasurementPeriod,
       Integer velocityMeasurementWindow,
       LimitSwitch forwardLimitSwitch,
       LimitSwitch reverseLimitSwitch,
@@ -39,7 +39,7 @@ class PositionTalonConfiguration extends PIDTalonConfiguration {
         TalonControlMode.Position,
         setpointMax,
         encoder,
-        isBrakeInNeutral,
+        neutralMode,
         isOutputReversed,
         velocityMeasurementPeriod,
         velocityMeasurementWindow,
@@ -65,8 +65,8 @@ class PositionTalonConfiguration extends PIDTalonConfiguration {
   }
 
   @Override
-  public void configure(@NotNull CANTalon talon) {
-    talon.changeControlMode(TalonControlMode.Position);
+  public void configure(@NotNull TalonSRX talon) {
+    //    talon.changeControlMode(TalonControlMode.Position); // FIXME
     super.configure(talon);
   }
 

@@ -1,6 +1,6 @@
 package org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc;
 
-import com.ctre.CANTalon;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import javax.inject.Inject;
 import org.jline.reader.LineReader;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
@@ -21,7 +21,7 @@ public class ReverseSensorCommand extends AbstractBooleanConfigCommand {
   }
 
   @Override
-  protected void config(CANTalon talon, boolean value) {
+  protected void config(TalonSRX talon, boolean value) {
     talon.reverseSensor(value);
   }
 }

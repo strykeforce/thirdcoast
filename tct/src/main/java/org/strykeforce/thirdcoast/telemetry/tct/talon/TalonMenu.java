@@ -1,6 +1,6 @@
 package org.strykeforce.thirdcoast.telemetry.tct.talon;
 
-import com.ctre.CANTalon;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import java.util.StringJoiner;
 import javax.inject.Inject;
 import org.jline.reader.LineReader;
@@ -21,7 +21,7 @@ public class TalonMenu extends Menu {
   @Override
   protected String header() {
     StringJoiner joiner = new StringJoiner(", ");
-    for (CANTalon talon : talonSet.selected()) {
+    for (TalonSRX talon : talonSet.selected()) {
       joiner.add(String.valueOf(talon.getDeviceID()));
     }
     return Messages.boldGreen("\nTalons: " + joiner.toString() + "\n");

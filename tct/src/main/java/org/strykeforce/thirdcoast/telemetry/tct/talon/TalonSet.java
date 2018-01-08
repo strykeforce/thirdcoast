@@ -1,6 +1,6 @@
 package org.strykeforce.thirdcoast.telemetry.tct.talon;
 
-import com.ctre.CANTalon;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
@@ -21,7 +21,7 @@ import org.strykeforce.thirdcoast.telemetry.TelemetryService;
 public class TalonSet {
 
   private static final Logger logger = LoggerFactory.getLogger(TalonSet.class);
-  private final Set<CANTalon> selected = new HashSet<>();
+  private final Set<TalonSRX> selected = new HashSet<>();
   private final TelemetryService telemetryService;
   private TalonConfigurationBuilder talonConfigurationBuilder;
 
@@ -39,7 +39,7 @@ public class TalonSet {
     talonConfigurationBuilder = new TalonConfigurationBuilder(activeTalonConfiguration);
   }
 
-  public void selectTalon(CANTalon talon) {
+  public void selectTalon(TalonSRX talon) {
     selected.add(talon);
   }
 
@@ -47,15 +47,15 @@ public class TalonSet {
     selected.clear();
   }
 
-  public Set<CANTalon> selected() {
+  public Set<TalonSRX> selected() {
     return Collections.unmodifiableSet(selected);
   }
 
   Set<Integer> getSelectedTalonIds() {
-    return selected.stream().map(CANTalon::getDeviceID).collect(Collectors.toSet());
+    return selected.stream().map(TalonSRX::getDeviceID).collect(Collectors.toSet());
   }
 
-  public Optional<CANTalon> get(int id) {
+  public Optional<TalonSRX> get(int id) {
     return selected.stream().filter(it -> it.getDeviceID() == id).findFirst();
   }
 

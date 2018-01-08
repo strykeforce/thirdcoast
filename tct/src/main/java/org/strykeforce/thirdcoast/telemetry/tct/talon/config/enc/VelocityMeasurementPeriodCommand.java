@@ -1,7 +1,6 @@
 package org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc;
 
-import com.ctre.CANTalon;
-import com.ctre.CANTalon.VelocityMeasurementPeriod;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import javax.inject.Inject;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
@@ -46,7 +45,7 @@ public class VelocityMeasurementPeriodCommand extends AbstractTalonConfigCommand
         terminal.writer().println("please enter an integer");
         continue;
       }
-      CANTalon.VelocityMeasurementPeriod setpoint;
+      TalonSRX.VelocityMeasurementPeriod setpoint;
       done = true;
       switch (choice) {
         case 1:
@@ -77,7 +76,7 @@ public class VelocityMeasurementPeriodCommand extends AbstractTalonConfigCommand
           continue;
       }
       talonSet.talonConfigurationBuilder().velocityMeasurementPeriod(setpoint);
-      for (CANTalon talon : talonSet.selected()) {
+      for (TalonSRX talon : talonSet.selected()) {
         talon.SetVelocityMeasurementPeriod(setpoint);
         logger.info("set {} for {} to {}", name(), talon.getDescription(), setpoint);
       }

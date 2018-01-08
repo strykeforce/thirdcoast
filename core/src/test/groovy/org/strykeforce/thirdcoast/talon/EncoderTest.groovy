@@ -1,52 +1,45 @@
 package org.strykeforce.thirdcoast.talon
 
-import com.ctre.CANTalon
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX
 import com.moandjiezana.toml.Toml
 import com.moandjiezana.toml.TomlWriter
 import spock.lang.Specification
 
-import static com.ctre.CANTalon.FeedbackDevice.AnalogEncoder
-import static com.ctre.CANTalon.FeedbackDevice.CtreMagEncoder_Absolute
-import static com.ctre.CANTalon.FeedbackDevice.CtreMagEncoder_Relative
-import static com.ctre.CANTalon.FeedbackDevice.EncRising
-import static com.ctre.CANTalon.FeedbackDevice.PulseWidth
-import static com.ctre.CANTalon.FeedbackDevice.QuadEncoder
+import static com.ctre.phoenix.motorcontrol.FeedbackDevice.*
+import static org.strykeforce.thirdcoast.talon.TalonConfiguration.TIMEOUT_MS
 
 class EncoderTest extends Specification {
 
     def "has a default configuration"() {
         given:
-        def talon = Mock(CANTalon)
+        def talon = Mock(WPI_TalonSRX)
 
         when:
         Encoder.DEFAULT.configure(talon)
 
         then:
-        1 * talon.setFeedbackDevice(QuadEncoder)
-        1 * talon.reverseSensor(false)
-        1 * talon.isSensorPresent(QuadEncoder)
+        1 * talon.configSelectedFeedbackSensor(QuadEncoder, 0, TIMEOUT_MS)
+        1 * talon.setSensorPhase(false)
         1 * talon.getDescription()
         0 * talon._
     }
 
     def "given a non-default configuration"() {
         given:
-        def encoder = new Encoder(CtreMagEncoder_Absolute, true, 2767)
-        def talon = Mock(CANTalon)
+        def encoder = new Encoder(CTRE_MagEncoder_Absolute, true)
+        def talon = Mock(WPI_TalonSRX)
 
         when:
         encoder.configure(talon)
 
         then:
-        1 * talon.setFeedbackDevice(CtreMagEncoder_Absolute)
-        1 * talon.reverseSensor(true)
-        1 * talon.configEncoderCodesPerRev(2767)
-        1 * talon.isSensorPresent(CtreMagEncoder_Absolute)
+        1 * talon.configSelectedFeedbackSensor(CTRE_MagEncoder_Absolute, 0, TIMEOUT_MS)
+        1 * talon.setSensorPhase(true)
     }
 
     def "creates instance from full TOML"() {
         def input = '''
-device = "AnalogEncoder"
+device = "Analog"
 reversed = false
 unitScalingEnabled = false
 ticksPerRevolution = 0
@@ -58,16 +51,14 @@ ticksPerRevolution = 0
 
         then:
         with(encoder) {
-            device == AnalogEncoder
+            device == Analog
             !reversed
-            !unitScalingEnabled
-            ticksPerRevolution == 0
         }
     }
 
     def "creates instance from partial TOML"() {
         def input = '''
-device = "EncRising"
+device = "PulseWidthEncodedPosition"
 '''
         given:
         def toml = new Toml().read(input)
@@ -76,10 +67,8 @@ device = "EncRising"
 
         then:
         with(encoder) {
-            device == EncRising
+            device == PulseWidthEncodedPosition
             !reversed
-            !unitScalingEnabled
-            ticksPerRevolution == 0
         }
     }
 
@@ -93,43 +82,37 @@ device = "EncRising"
         with(encoder) {
             device == QuadEncoder
             !reversed
-            !unitScalingEnabled
-            ticksPerRevolution == 0
         }
     }
 
     def "serializes into TOML"() {
         given:
-        def encoder = new Encoder(PulseWidth,true,null)
+        def encoder = new Encoder(PulseWidthEncodedPosition, true)
         def writer = new TomlWriter()
 
         when:
         def output = writer.write(encoder)
 
         then:
-        output == '''device = "PulseWidth"
+        output == '''device = "PulseWidthEncodedPosition"
 reversed = true
-unitScalingEnabled = false
-ticksPerRevolution = 0
 '''
     }
 
     def "creates a copy with reversed set"() {
         given:
-        def encoder = new Encoder(CtreMagEncoder_Absolute)
+        def encoder = new Encoder(CTRE_MagEncoder_Absolute)
 
         expect:
         !encoder.reversed
-        encoder.device == CtreMagEncoder_Absolute
-        !encoder.unitScalingEnabled
+        encoder.device == CTRE_MagEncoder_Absolute
 
         when:
         encoder = encoder.copyWithReversed(true)
 
         then:
         encoder.reversed
-        encoder.device == CtreMagEncoder_Absolute
-        !encoder.unitScalingEnabled
+        encoder.device == CTRE_MagEncoder_Absolute
     }
 
     def "creates a copy with new device set"() {
@@ -139,15 +122,13 @@ ticksPerRevolution = 0
         expect:
         !encoder.reversed
         encoder.device == QuadEncoder
-        !encoder.unitScalingEnabled
 
         when:
-        encoder = encoder.copyWithEncoder(CtreMagEncoder_Relative)
+        encoder = encoder.copyWithEncoder(CTRE_MagEncoder_Relative)
 
         then:
         !encoder.reversed
-        encoder.device == CtreMagEncoder_Relative
-        !encoder.unitScalingEnabled
+        encoder.device == CTRE_MagEncoder_Relative
     }
 
     def "creates a default with reverse set"() {
@@ -157,6 +138,5 @@ ticksPerRevolution = 0
         then:
         encoder.reversed
         encoder.device == QuadEncoder
-        !encoder.unitScalingEnabled
     }
 }

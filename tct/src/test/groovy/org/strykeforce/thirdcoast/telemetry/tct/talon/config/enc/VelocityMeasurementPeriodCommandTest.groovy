@@ -1,6 +1,6 @@
 package org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc
 
-import com.ctre.CANTalon
+import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import org.strykeforce.thirdcoast.telemetry.tct.Command
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractTalonConfigCommandTest
 
@@ -29,7 +29,7 @@ class VelocityMeasurementPeriodCommandTest extends AbstractTalonConfigCommandTes
 
         then:
         1 * reader.readLine(_) >> "1"
-        1 * talon.SetVelocityMeasurementPeriod(CANTalon.VelocityMeasurementPeriod.Period_1Ms)
+        1 * talon.SetVelocityMeasurementPeriod(TalonSRX.VelocityMeasurementPeriod.Period_1Ms)
         1 * talon.getDescription()
         0 * talon._
     }
@@ -40,7 +40,7 @@ class VelocityMeasurementPeriodCommandTest extends AbstractTalonConfigCommandTes
 
         then:
         1 * reader.readLine(_) >> "2"
-        1 * talon.SetVelocityMeasurementPeriod(CANTalon.VelocityMeasurementPeriod.Period_2Ms)
+        1 * talon.SetVelocityMeasurementPeriod(TalonSRX.VelocityMeasurementPeriod.Period_2Ms)
         1 * talon.getDescription()
         0 * talon._
     }
@@ -51,7 +51,7 @@ class VelocityMeasurementPeriodCommandTest extends AbstractTalonConfigCommandTes
 
         then:
         1 * reader.readLine(_) >> "3"
-        1 * talon.SetVelocityMeasurementPeriod(CANTalon.VelocityMeasurementPeriod.Period_5Ms)
+        1 * talon.SetVelocityMeasurementPeriod(TalonSRX.VelocityMeasurementPeriod.Period_5Ms)
         1 * talon.getDescription()
         0 * talon._
     }
@@ -62,7 +62,7 @@ class VelocityMeasurementPeriodCommandTest extends AbstractTalonConfigCommandTes
 
         then:
         1 * reader.readLine(_) >> "4"
-        1 * talon.SetVelocityMeasurementPeriod(CANTalon.VelocityMeasurementPeriod.Period_10Ms)
+        1 * talon.SetVelocityMeasurementPeriod(TalonSRX.VelocityMeasurementPeriod.Period_10Ms)
         1 * talon.getDescription()
         0 * talon._
     }
@@ -73,7 +73,7 @@ class VelocityMeasurementPeriodCommandTest extends AbstractTalonConfigCommandTes
 
         then:
         1 * reader.readLine(_) >> "5"
-        1 * talon.SetVelocityMeasurementPeriod(CANTalon.VelocityMeasurementPeriod.Period_20Ms)
+        1 * talon.SetVelocityMeasurementPeriod(TalonSRX.VelocityMeasurementPeriod.Period_20Ms)
         1 * talon.getDescription()
         0 * talon._
     }
@@ -84,7 +84,7 @@ class VelocityMeasurementPeriodCommandTest extends AbstractTalonConfigCommandTes
 
         then:
         1 * reader.readLine(_) >> "6"
-        1 * talon.SetVelocityMeasurementPeriod(CANTalon.VelocityMeasurementPeriod.Period_25Ms)
+        1 * talon.SetVelocityMeasurementPeriod(TalonSRX.VelocityMeasurementPeriod.Period_25Ms)
         1 * talon.getDescription()
         0 * talon._
     }
@@ -95,7 +95,7 @@ class VelocityMeasurementPeriodCommandTest extends AbstractTalonConfigCommandTes
 
         then:
         1 * reader.readLine(_) >> "7"
-        1 * talon.SetVelocityMeasurementPeriod(CANTalon.VelocityMeasurementPeriod.Period_50Ms)
+        1 * talon.SetVelocityMeasurementPeriod(TalonSRX.VelocityMeasurementPeriod.Period_50Ms)
         1 * talon.getDescription()
         0 * talon._
     }
@@ -106,7 +106,7 @@ class VelocityMeasurementPeriodCommandTest extends AbstractTalonConfigCommandTes
 
         then:
         1 * reader.readLine(_) >> "8"
-        1 * talon.SetVelocityMeasurementPeriod(CANTalon.VelocityMeasurementPeriod.Period_100Ms)
+        1 * talon.SetVelocityMeasurementPeriod(TalonSRX.VelocityMeasurementPeriod.Period_100Ms)
         1 * talon.getDescription()
         0 * talon._
     }

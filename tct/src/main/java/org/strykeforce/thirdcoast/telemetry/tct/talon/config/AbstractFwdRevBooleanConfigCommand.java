@@ -1,6 +1,6 @@
 package org.strykeforce.thirdcoast.telemetry.tct.talon.config;
 
-import com.ctre.CANTalon;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import java.util.Arrays;
 import java.util.List;
 import org.jline.reader.EndOfFileException;
@@ -15,7 +15,7 @@ public abstract class AbstractFwdRevBooleanConfigCommand extends AbstractTalonCo
     super(name, reader, talonSet);
   }
 
-  protected abstract void config(CANTalon talon, boolean foward, boolean reverse);
+  protected abstract void config(TalonSRX talon, boolean foward, boolean reverse);
 
   protected abstract void saveConfig(boolean forward, boolean reverse);
 
@@ -26,7 +26,7 @@ public abstract class AbstractFwdRevBooleanConfigCommand extends AbstractTalonCo
       return;
     }
     saveConfig(values[0], values[1]);
-    for (CANTalon talon : talonSet.selected()) {
+    for (TalonSRX talon : talonSet.selected()) {
       config(talon, values[0], values[1]);
       logger.info("set {} for {} to {}/{}", name(), talon.getDescription(), values[0], values[1]);
     }

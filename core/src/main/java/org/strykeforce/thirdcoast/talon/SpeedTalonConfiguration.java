@@ -1,8 +1,8 @@
 package org.strykeforce.thirdcoast.talon;
 
-import com.ctre.CANTalon;
-import com.ctre.CANTalon.TalonControlMode;
-import com.ctre.CANTalon.VelocityMeasurementPeriod;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import org.jetbrains.annotations.NotNull;
 
 class SpeedTalonConfiguration extends PIDTalonConfiguration {
@@ -11,9 +11,9 @@ class SpeedTalonConfiguration extends PIDTalonConfiguration {
       @NotNull String name,
       double setpointMax,
       Encoder encoder,
-      Boolean isBrakeInNeutral,
+      NeutralMode neutralMode,
       Boolean isOutputReversed,
-      VelocityMeasurementPeriod velocityMeasurementPeriod,
+      VelocityMeasPeriod velocityMeasurementPeriod,
       Integer velocityMeasurementWindow,
       LimitSwitch forwardLimitSwitch,
       LimitSwitch reverseLimitSwitch,
@@ -39,7 +39,7 @@ class SpeedTalonConfiguration extends PIDTalonConfiguration {
         TalonControlMode.Position,
         setpointMax,
         encoder,
-        isBrakeInNeutral,
+        neutralMode,
         isOutputReversed,
         velocityMeasurementPeriod,
         velocityMeasurementWindow,
@@ -65,13 +65,12 @@ class SpeedTalonConfiguration extends PIDTalonConfiguration {
   }
 
   @Override
-  public void configure(@NotNull CANTalon talon) {
+  public void configure(@NotNull TalonSRX talon) {
     super.configure(talon);
-    talon.changeControlMode(TalonControlMode.Speed);
+    //    talon.changeControlMode(TalonControlMode.Speed); // FIXME
   }
 
   @Override
-  @NotNull
   public String toString() {
     return "SpeedTalonConfiguration{} " + super.toString();
   }

@@ -1,15 +1,14 @@
 package org.strykeforce.thirdcoast.talon;
 
-import com.ctre.CANTalon;
-import com.ctre.CANTalon.VelocityMeasurementPeriod;
-import javax.annotation.Nullable;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import org.jetbrains.annotations.NotNull;
 
 public class PIDTalonConfiguration extends TalonConfiguration {
 
-  private final Double outputVoltageMax;
   private final Double closedLoopRampRate;
-  private final Double forwardOutputVoltagePeak;
+  private final Double forwardOutputVoltagePeak; // FIXME: these are no longer voltage
   private final Double reverseOutputVoltagePeak;
   private final Double forwardOutputVoltageNominal;
   private final Double reverseOutputVoltageNominal;
@@ -23,20 +22,20 @@ public class PIDTalonConfiguration extends TalonConfiguration {
 
   PIDTalonConfiguration(
       @NotNull String name,
-      @NotNull CANTalon.TalonControlMode mode,
+      @NotNull TalonControlMode mode,
       double setpointMax,
       Encoder encoder,
-      Boolean isBrakeInNeutral,
+      NeutralMode neutralMode,
       Boolean isOutputReversed,
-      VelocityMeasurementPeriod velocityMeasurementPeriod,
+      VelocityMeasPeriod velocityMeasurementPeriod,
       Integer velocityMeasurementWindow,
       LimitSwitch forwardLimitSwitch,
       LimitSwitch reverseLimitSwitch,
       SoftLimit forwardSoftLimit,
       SoftLimit reverseSoftLimit,
       Integer currentLimit,
-      Double voltageRampRate,
-      Double outputVoltageMax,
+      Double openLoopRampRate,
+      Double voltageCompSaturation,
       Double closedLoopRampRate,
       Double forwardOutputVoltagePeak,
       Double reverseOutputVoltagePeak,
@@ -54,7 +53,7 @@ public class PIDTalonConfiguration extends TalonConfiguration {
         mode,
         setpointMax,
         encoder,
-        isBrakeInNeutral,
+        neutralMode,
         isOutputReversed,
         velocityMeasurementPeriod,
         velocityMeasurementWindow,
@@ -63,8 +62,8 @@ public class PIDTalonConfiguration extends TalonConfiguration {
         forwardSoftLimit,
         reverseSoftLimit,
         currentLimit,
-        voltageRampRate);
-    this.outputVoltageMax = outputVoltageMax;
+        openLoopRampRate,
+        voltageCompSaturation);
     this.closedLoopRampRate = closedLoopRampRate;
     this.forwardOutputVoltagePeak = forwardOutputVoltagePeak;
     this.reverseOutputVoltagePeak = reverseOutputVoltagePeak;
@@ -80,44 +79,25 @@ public class PIDTalonConfiguration extends TalonConfiguration {
   }
 
   @Override
-  public void configure(@NotNull CANTalon talon) {
-    talon.configMaxOutputVoltage(valueOrElse(outputVoltageMax, 12));
+  public void configure(@NotNull TalonSRX talon) {
+    talon.configClosedloopRamp(closedLoopRampRate != null ? closedLoopRampRate : 0, TIMEOUT_MS);
 
-    talon.setCloseLoopRampRate(closedLoopRampRate != null ? closedLoopRampRate : 0);
+    // TODO: remove voltage from names
+    talon.configPeakOutputForward(valueOrElseZero(forwardOutputVoltagePeak, 12), TIMEOUT_MS);
+    talon.configPeakOutputReverse(valueOrElseZero(reverseOutputVoltagePeak, -12), TIMEOUT_MS);
 
-    talon.configPeakOutputVoltage(
-        valueOrElse(forwardOutputVoltagePeak, 12), valueOrElse(reverseOutputVoltagePeak, -12));
+    talon.configNominalOutputForward(valueOrElseZero(forwardOutputVoltageNominal, 0), TIMEOUT_MS);
+    talon.configNominalOutputReverse(valueOrElseZero(reverseOutputVoltageNominal, 0), TIMEOUT_MS);
 
-    talon.configNominalOutputVoltage(
-        valueOrElse(forwardOutputVoltageNominal, 0), valueOrElse(reverseOutputVoltageNominal, 0));
+    talon.configAllowableClosedloopError(0, valueOrElseZero(allowableClosedLoopError), TIMEOUT_MS);
 
-    talon.setAllowableClosedLoopErr(valueOrElse(allowableClosedLoopError, 0));
+    talon.config_kP(0, valueOrElseZero(pGain, 0), TIMEOUT_MS);
+    talon.config_kI(0, valueOrElseZero(iGain, 0), TIMEOUT_MS);
+    talon.config_kD(0, valueOrElseZero(dGain, 0), TIMEOUT_MS);
+    talon.config_kF(0, valueOrElseZero(fGain, 0), TIMEOUT_MS);
 
-    talon.setNominalClosedLoopVoltage(valueOrElse(nominalClosedLoopVoltage, 0));
-
-    talon.setPID(valueOrElse(pGain, 0), valueOrElse(iGain, 0), valueOrElse(dGain, 0));
-    talon.setF(valueOrElse(fGain, 0));
-
-    talon.setIZone(valueOrElse(iZone, 0));
+    talon.config_IntegralZone(0, valueOrElseZero(iZone), TIMEOUT_MS);
     super.configure(talon);
-  }
-
-  protected double valueOrElse(@Nullable Double value, double def) {
-    if (value != null) {
-      return value;
-    }
-    return def;
-  }
-
-  protected int valueOrElse(@Nullable Integer value, int def) {
-    if (value != null) {
-      return value;
-    }
-    return def;
-  }
-
-  public Double getOutputVoltageMax() {
-    return outputVoltageMax;
   }
 
   public Double getClosedLoopRampRate() {
@@ -168,35 +148,5 @@ public class PIDTalonConfiguration extends TalonConfiguration {
     return iZone;
   }
 
-  @Override
-  @NotNull
-  public String toString() {
-    return "PIDTalonParameters{"
-        + "outputVoltageMax="
-        + outputVoltageMax
-        + ", forwardOutputVoltagePeak="
-        + forwardOutputVoltagePeak
-        + ", reverseOutputVoltagePeak="
-        + reverseOutputVoltagePeak
-        + ", forwardOutputVoltageNominal="
-        + forwardOutputVoltageNominal
-        + ", reverseOutputVoltageNominal="
-        + reverseOutputVoltageNominal
-        + ", allowableClosedLoopError="
-        + allowableClosedLoopError
-        + ", nominalClosedLoopVoltage="
-        + nominalClosedLoopVoltage
-        + ", pGain="
-        + pGain
-        + ", iGain="
-        + iGain
-        + ", dGain="
-        + dGain
-        + ", fGain="
-        + fGain
-        + ", iZone="
-        + iZone
-        + "} "
-        + super.toString();
-  }
+  // TODO: generate toString
 }

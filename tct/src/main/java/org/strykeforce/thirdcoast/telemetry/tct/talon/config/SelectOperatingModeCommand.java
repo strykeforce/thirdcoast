@@ -1,7 +1,7 @@
 package org.strykeforce.thirdcoast.telemetry.tct.talon.config;
 
-import com.ctre.CANTalon;
-import com.ctre.CANTalon.TalonControlMode;
+import com.ctre.TalonControlMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import javax.inject.Inject;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
@@ -56,7 +56,7 @@ public class SelectOperatingModeCommand extends AbstractTalonConfigCommand {
         help(types.length);
         continue;
       }
-      CANTalon.TalonControlMode mode;
+      TalonControlMode mode;
       done = true;
       switch (choice) {
         case 1:
@@ -89,7 +89,7 @@ public class SelectOperatingModeCommand extends AbstractTalonConfigCommand {
         default:
           continue;
       }
-      for (CANTalon talon : talonSet.selected()) {
+      for (TalonSRX talon : talonSet.selected()) {
         talon.changeControlMode(mode);
         logger.info("set {} for {} to {}", name(), talon.getDescription(), mode);
       }

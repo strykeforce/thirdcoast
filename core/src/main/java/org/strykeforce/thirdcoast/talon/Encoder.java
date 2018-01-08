@@ -1,8 +1,10 @@
 package org.strykeforce.thirdcoast.talon;
 
-import com.ctre.CANTalon;
-import com.ctre.CANTalon.FeedbackDevice;
-import com.ctre.CANTalon.FeedbackDeviceStatus;
+import static org.strykeforce.thirdcoast.talon.TalonConfiguration.TIMEOUT_MS;
+
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import org.jetbrains.annotations.NotNull;
@@ -14,84 +16,70 @@ public final class Encoder {
 
   @NotNull static final Encoder DEFAULT = new Encoder();
 
-  static final Logger logger = LoggerFactory.getLogger(Encoder.class);
-  @Nullable private final CANTalon.FeedbackDevice device;
+  private static final Logger logger = LoggerFactory.getLogger(Encoder.class);
+  @Nullable private final FeedbackDevice device;
   private final boolean reversed;
-  private final boolean unitScalingEnabled;
-  private final int ticksPerRevolution;
 
-  Encoder(
-      @Nullable CANTalon.FeedbackDevice device,
-      @Nullable Boolean reversed,
-      @Nullable Integer ticksPerRevolution) {
+  Encoder(@Nullable FeedbackDevice device, @Nullable Boolean reversed) {
     this.device = device;
     this.reversed = reversed != null ? reversed : false;
-    unitScalingEnabled = ticksPerRevolution != null;
-    this.ticksPerRevolution = unitScalingEnabled ? ticksPerRevolution : 0;
   }
 
-  Encoder(CANTalon.FeedbackDevice device) {
-    this(device, null, null);
+  Encoder(FeedbackDevice device) {
+    this(device, null);
   }
 
   private Encoder() {
-    this(null, null, null);
+    this(null, null);
   }
 
   Encoder(boolean reversed) {
-    this(null, reversed, null);
+    this(null, reversed);
   }
 
   @NotNull
   Encoder copyWithReversed(boolean reversed) {
-    return new Encoder(device, reversed, unitScalingEnabled ? ticksPerRevolution : null);
+    return new Encoder(device, reversed);
   }
 
   @NotNull
-  Encoder copyWithEncoder(CANTalon.FeedbackDevice feedbackDevice) {
-    return new Encoder(feedbackDevice, reversed, unitScalingEnabled ? ticksPerRevolution : null);
+  Encoder copyWithEncoder(FeedbackDevice feedbackDevice) {
+    return new Encoder(feedbackDevice, reversed);
   }
 
-  @NotNull
-  Encoder copyWithTicksPerRevolution(Integer ticksPerRevolution) {
-    return new Encoder(device, reversed, ticksPerRevolution);
-  }
-
-  public void configure(CANTalon talon) {
-    talon.setFeedbackDevice(getDevice());
-    talon.reverseSensor(reversed);
+  public void configure(TalonSRX talon) {
+    talon.configSelectedFeedbackSensor(getDevice(), 0, TIMEOUT_MS);
+    talon.setSensorPhase(reversed);
     logger.info(
-        "{}: encoder {} {} reversed", talon.getDescription(), getDevice(), reversed ? "" : "not");
-    if (unitScalingEnabled) {
-      talon.configEncoderCodesPerRev(ticksPerRevolution);
-      logger.info(
-          "{}: configured {} encoder codes per revolution",
-          talon.getDescription(),
-          ticksPerRevolution);
-    }
-    checkEncoder(talon);
+        "{}: encoder {} {} reversed",
+        ((WPI_TalonSRX) talon).getDescription(),
+        getDevice(),
+        reversed ? "" : "not");
+    //    checkEncoder(talon);
   }
 
-  private void checkEncoder(CANTalon talon) {
-    FeedbackDeviceStatus status = talon.isSensorPresent(getDevice());
-    if (status == null) {
-      return; // unit testing
-    }
+  /*
+    private void checkEncoder(TalonSRX talon) {
+      FeedbackDeviceStatus status = talon.isSensorPresent(getDevice());
+      if (status == null) {
+        return; // unit testing
+      }
 
-    switch (status) {
-      case FeedbackStatusPresent:
-        logger.info("{}: {} is present", talon.getDescription(), getDevice());
-        break;
-      case FeedbackStatusNotPresent:
-        logger.warn("{}: {} is MISSING", talon.getDescription(), getDevice());
-        break;
-      case FeedbackStatusUnknown:
-        logger.info(
-            "{}: encoder is unknown, only CTRE Mag or Pulse-Width Encoder supported",
-            talon.getDescription());
-        break;
+      switch (status) {
+        case FeedbackStatusPresent:
+          logger.info("{}: {} is present", talon.getDescription(), getDevice());
+          break;
+        case FeedbackStatusNotPresent:
+          logger.warn("{}: {} is MISSING", talon.getDescription(), getDevice());
+          break;
+        case FeedbackStatusUnknown:
+          logger.info(
+              "{}: encoder is unknown, only CTRE Mag or Pulse-Width Encoder supported",
+              talon.getDescription());
+          break;
+      }
     }
-  }
+  */
 
   @NotNull
   public FeedbackDevice getDevice() {
@@ -102,25 +90,8 @@ public final class Encoder {
     return reversed;
   }
 
-  public boolean isUnitScalingEnabled() {
-    return unitScalingEnabled;
-  }
-
-  public int getTicksPerRevolution() {
-    return ticksPerRevolution;
-  }
-
   @Override
   public String toString() {
-    return "Encoder{"
-        + "device="
-        + device
-        + ", reversed="
-        + reversed
-        + ", unitScalingEnabled="
-        + unitScalingEnabled
-        + ", ticksPerRevolution="
-        + ticksPerRevolution
-        + '}';
+    return "Encoder{" + "device=" + device + ", reversed=" + reversed + '}';
   }
 }
