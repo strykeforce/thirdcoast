@@ -3,7 +3,6 @@ package org.strykeforce.thirdcoast.talon;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.MotorSafety;
 import java.util.Collection;
 import java.util.Collections;
@@ -80,14 +79,21 @@ public abstract class TalonConfiguration {
    * @param talon the Talon to registerWith
    */
   public void configure(@NotNull TalonSRX talon) {
-    ((WPI_TalonSRX) talon).setSafetyEnabled(false);
-    ((WPI_TalonSRX) talon).setExpiration(MotorSafety.DEFAULT_SAFETY_EXPIRATION);
+    if (talon instanceof ThirdCoastTalon) {
+      ((ThirdCoastTalon) talon).setSafetyEnabled(false);
+      ((ThirdCoastTalon) talon).setExpiration(MotorSafety.DEFAULT_SAFETY_EXPIRATION);
+    }
 
     talon.selectProfileSlot(0, 0);
+
+    talon.enableVoltageCompensation(true);
+    talon.configOpenloopRamp(openLoopRampTime != null ? openLoopRampTime : 0, TIMEOUT_MS);
+    talon.configVoltageCompSaturation(valueOrElseZero(voltageCompSaturation, 12), TIMEOUT_MS);
+
     Encoder enc = encoder != null ? encoder : Encoder.DEFAULT;
     enc.configure(talon);
 
-    talon.setNeutralMode(neutralMode);
+    talon.setNeutralMode(neutralMode != null ? neutralMode : NeutralMode.Brake);
     talon.setInverted(outputReversed != null ? outputReversed : false);
 
     if (velocityMeasurementPeriod != null) {
@@ -129,10 +135,9 @@ public abstract class TalonConfiguration {
       talon.configContinuousCurrentLimit(currentLimit, TIMEOUT_MS);
       talon.enableCurrentLimit(true);
     } else {
+      talon.configContinuousCurrentLimit(0, TIMEOUT_MS);
       talon.enableCurrentLimit(false);
     }
-    talon.configOpenloopRamp(openLoopRampTime != null ? openLoopRampTime : 0, TIMEOUT_MS);
-    talon.configVoltageCompSaturation(valueOrElseZero(voltageCompSaturation, 12), TIMEOUT_MS);
     addTalonId(talon.getDeviceID());
   }
 

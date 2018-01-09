@@ -1,14 +1,17 @@
 package org.strykeforce.thirdcoast.talon
 
-import com.ctre.phoenix.motorcontrol.can.TalonSRX
+import com.ctre.phoenix.motorcontrol.SensorCollection
 import spock.lang.Ignore
 import spock.lang.Specification
 
-@Ignore("2018")
+import static com.ctre.phoenix.motorcontrol.StatusFrame.*
+import static org.strykeforce.thirdcoast.talon.TalonConfiguration.TIMEOUT_MS
+
 class TalonFactoryTest extends Specification {
 
-    def wrapperFactory = Mock(TalonFactory.WrapperFactory)
-    def wrapper = Mock(TalonFactory.Wrapper)
+    def wrapperFactory = Mock(ThirdCoastTalonFactory)
+    def wrapper = Mock(ThirdCoastTalon)
+    def sensorCollection = Mock(SensorCollection)
 
 
     def "creation of wrapped talon with defaults"() {
@@ -19,27 +22,20 @@ class TalonFactoryTest extends Specification {
         factory.getTalon(27)
 
         then:
-        1 * wrapperFactory.createWrapper(27, TalonFactory.CONTROL_FRAME_MS) >> wrapper
-        1 * wrapper.setStatusFrameRateMs(TalonSRX.StatusFrameRate.AnalogTempVbat, 100)
+        1 * wrapperFactory.create(27) >> wrapper
         1 * wrapper.changeControlMode(TalonControlMode.Voltage)
-        1 * wrapper.setStatusFrameRateMs(TalonSRX.StatusFrameRate.Feedback, 20)
-        1 * wrapper.setStatusFrameRateMs(TalonSRX.StatusFrameRate.General, 10)
-        1 * wrapper.setStatusFrameRateMs(TalonSRX.StatusFrameRate.PulseWidth, 100)
-        1 * wrapper.setStatusFrameRateMs(TalonSRX.StatusFrameRate.QuadEncoder, 100)
-        1 * wrapper.clearIAccum()
-        1 * wrapper.ClearIaccum()
-        1 * wrapper.clearMotionProfileHasUnderrun()
+        1 * wrapper.selectProfileSlot(0, 0)
+        1 * wrapper.setInverted(false)
+        1 * wrapper.setStatusFramePeriod(Status_4_AinTempVbat, 100, TIMEOUT_MS)
+        1 * wrapper.setStatusFramePeriod(Status_2_Feedback0, 20, TIMEOUT_MS)
+        1 * wrapper.setStatusFramePeriod(Status_1_General, 10, TIMEOUT_MS)
+        1 * wrapper.enableVoltageCompensation(true)
+        1 * wrapper.setIntegralAccumulator(0.0d, 0, 10)
+        1 * wrapper.setIntegralAccumulator(0.0d, 1, 10)
+        1 * wrapper.clearMotionProfileHasUnderrun(TalonFactory.TIMEOUT_MS)
+        1 * wrapper.clearStickyFaults(TalonFactory.TIMEOUT_MS)
         1 * wrapper.clearMotionProfileTrajectories()
-        1 * wrapper.clearStickyFaults()
-        1 * wrapper.enableZeroSensorPositionOnForwardLimit(false)
-        1 * wrapper.enableZeroSensorPositionOnIndex(false, false)
-        1 * wrapper.enableZeroSensorPositionOnReverseLimit(false)
-        1 * wrapper.reverseOutput(false)
-        1 * wrapper.reverseSensor(false)
-        1 * wrapper.setAnalogPosition(0)
-        1 * wrapper.setPosition(0)
-        1 * wrapper.setProfile(0)
-        1 * wrapper.setPulseWidthPosition(0)
+        1 * wrapper.getSensorCollection() >> sensorCollection
         0 * wrapper._
     }
 
@@ -55,7 +51,8 @@ class TalonFactoryTest extends Specification {
         factory.getTalonWithConfiguration(67, "test-config")
 
         then:
-        1 * wrapperFactory.createWrapper(67, TalonFactory.CONTROL_FRAME_MS) >> wrapper
+        1 * wrapperFactory.create(67) >> wrapper
+        1 * wrapper.getSensorCollection() >> sensorCollection
         1 * provisioner.configurationFor("test-config") >> config
         1 * config.configure(wrapper)
     }
@@ -69,7 +66,8 @@ class TalonFactoryTest extends Specification {
         def talon = factory.getTalon(27)
 
         then:
-        1 * wrapperFactory.createWrapper(27, TalonFactory.CONTROL_FRAME_MS) >> wrapper
+        1 * wrapperFactory.create(27) >> wrapper
+        1 * wrapper.getSensorCollection() >> sensorCollection
 
         and:
         factory.hasSeen(27)

@@ -1,13 +1,15 @@
 package org.strykeforce.thirdcoast.talon
 
-import com.ctre.phoenix.motorcontrol.FeedbackDevice
+import com.ctre.phoenix.ErrorCode
+import com.ctre.phoenix.motorcontrol.NeutralMode
 import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX
 import com.moandjiezana.toml.Toml
+import edu.wpi.first.wpilibj.MotorSafety
 import spock.lang.Shared
 import spock.lang.Specification
 
 import static com.ctre.phoenix.motorcontrol.FeedbackDevice.CTRE_MagEncoder_Relative
+import static com.ctre.phoenix.motorcontrol.FeedbackDevice.QuadEncoder
 import static org.strykeforce.thirdcoast.talon.TalonConfiguration.TIMEOUT_MS
 
 class PIDTalonConfigurationTest extends Specification {
@@ -50,7 +52,7 @@ class PIDTalonConfigurationTest extends Specification {
     motionMagicCruiseVelocity = 67
 '''
 
-    def talon = Mock(WPI_TalonSRX)
+    def talon = Mock(ThirdCoastTalon)
     @Shared
     TalonProvisioner provisioner
 
@@ -72,12 +74,12 @@ class PIDTalonConfigurationTest extends Specification {
         t.class == PositionTalonConfiguration
         t.encoder.device == CTRE_MagEncoder_Relative
         // FIXME: implement outputVoltage parms
-        t.voltageCompSaturation == 12.0
+        t.voltageCompSaturation == 11.0
         t.closedLoopRampRate == 27.67
-        t.forwardOutputVoltagePeak == 5.0
-        t.reverseOutputVoltagePeak == -3.0
-        t.forwardOutputVoltageNominal == 0.5
-        t.reverseOutputVoltageNominal == -0.3
+        t.forwardOutputVoltagePeak == 0.5
+        t.reverseOutputVoltagePeak == -0.3
+        t.forwardOutputVoltageNominal == 0.1
+        t.reverseOutputVoltageNominal == -0.2
         t.allowableClosedLoopError == 10
         t.PGain == 0.1
         t.IGain == 0.2
@@ -102,34 +104,38 @@ class PIDTalonConfigurationTest extends Specification {
         t.nominalClosedLoopVoltage == null
 
         and:
-        1 * talon.setFeedbackDevice(FeedbackDevice.QuadEncoder)
-        1 * talon.configMaxOutputVoltage(12.0)
-        1 * talon.setCloseLoopRampRate(0)
-        1 * talon.configPeakOutputVoltage(12.0, -12.0)
-        1 * talon.configNominalOutputVoltage(0, 0)
-        1 * talon.setAllowableClosedLoopErr(0)
-        1 * talon.setPID(0, 0, 0)
-        1 * talon.setF(0)
-        1 * talon.setIZone(0)
+        1 * talon.enableVoltageCompensation(true)
+        1 * talon.configSelectedFeedbackSensor(QuadEncoder, 0, TIMEOUT_MS) >> ErrorCode.OK
+        1 * talon.configVoltageCompSaturation(12.0d, TIMEOUT_MS)
+        1 * talon.configAllowableClosedloopError(0, 0, TIMEOUT_MS)
+        1 * talon.config_kP(0, 0d, TIMEOUT_MS)
+        1 * talon.config_kI(0, 0d, TIMEOUT_MS)
+        1 * talon.config_kD(0, 0d, TIMEOUT_MS)
+        1 * talon.config_kF(0, 0d, TIMEOUT_MS)
+        1 * talon.config_IntegralZone(0, 0, TIMEOUT_MS)
+        1 * talon.configClosedloopRamp(0, TIMEOUT_MS)
+        1 * talon.configPeakOutputForward(1d, TIMEOUT_MS)
+        1 * talon.configPeakOutputReverse(-1d, TIMEOUT_MS)
+        1 * talon.configNominalOutputForward(0d, TIMEOUT_MS)
+        1 * talon.configNominalOutputReverse(0d, TIMEOUT_MS)
 
-        1 * talon.enableBrakeMode(true)
+        1 * talon.setNeutralMode(NeutralMode.Brake)
         1 * talon.setSafetyEnabled(false)
-        1 * talon.reverseOutput(false)
-        1 * talon.setVoltageRampRate(0.0)
+        1 * talon.setInverted(false)
+        1 * talon.configOpenloopRamp(0d, TIMEOUT_MS)
         1 * talon.getDeviceID()
         1 * talon.getDescription()
-        1 * talon.setNominalClosedLoopVoltage(0.0)
-        1 * talon.reverseSensor(false)
-        1 * talon.enableReverseSoftLimit(false)
-        1 * talon.EnableCurrentLimit(false)
-        1 * talon.SetVelocityMeasurementWindow(64)
-        1 * talon.enableForwardSoftLimit(false)
-        1 * talon.setProfile(0)
-        1 * talon.SetVelocityMeasurementPeriod(VelocityMeasPeriod.Period_100Ms)
-        1 * talon.isSensorPresent(FeedbackDevice.QuadEncoder)
-        1 * talon.enableLimitSwitch(false, false)
+        1 * talon.setSensorPhase(false)
+        1 * talon.configVelocityMeasurementWindow(64, TIMEOUT_MS)
+        1 * talon.configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_100Ms, TIMEOUT_MS)
+//        1 * talon.enableForwardSoftLimit(false)
+//        1 * talon.enableReverseSoftLimit(false)
+        1 * talon.configContinuousCurrentLimit(0, TIMEOUT_MS)
+        1 * talon.enableCurrentLimit(false)
+        1 * talon.selectProfileSlot(0, 0)
+//        1 * talon.enableLimitSwitch(false, false)
         1 * talon.changeControlMode(TalonControlMode.Speed)
-        1 * talon.setExpiration(0.1)
+        1 * talon.setExpiration(MotorSafety.DEFAULT_SAFETY_EXPIRATION)
         0 * talon._
 
 
@@ -143,7 +149,7 @@ class PIDTalonConfigurationTest extends Specification {
         then:
         1 * talon.configSelectedFeedbackSensor(CTRE_MagEncoder_Relative, 0, TIMEOUT_MS)
         1 * talon.configVoltageCompSaturation(11.0d, TIMEOUT_MS)
-//        1 * talon.configCloseLoopRampRate(27.67)
+        1 * talon.configClosedloopRamp(27.67d, TIMEOUT_MS)
         1 * talon.configPeakOutputForward(0.5d, TIMEOUT_MS)
         1 * talon.configPeakOutputReverse(-0.3d, TIMEOUT_MS)
         1 * talon.configNominalOutputForward(0.1d, TIMEOUT_MS)

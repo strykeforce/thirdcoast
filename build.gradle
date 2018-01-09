@@ -25,6 +25,7 @@ ext {
             slf4j               : 'org.slf4j:slf4j-api:1.7.25',
             spock               : 'org.spockframework:spock-core:1.1-groovy-2.4',
             toml4j              : 'com.moandjiezana.toml:toml4j:0.7.2',
+            autoFactory         : 'com.google.auto.factory:auto-factory:1.0-beta5',
     ]
     specificationTitle = 'Third Coast Library'
     specificationVersion = '18.0.0'
@@ -43,10 +44,10 @@ subprojects {
 }
 
 spotless {
-  java {
-    googleJavaFormat()
-    target '**/*.java'
-  }
+    java {
+        googleJavaFormat()
+        target '**/*.java'
+    }
 }
 
 idea {

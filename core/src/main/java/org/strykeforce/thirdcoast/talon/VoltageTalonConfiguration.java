@@ -43,7 +43,9 @@ class VoltageTalonConfiguration extends TalonConfiguration {
   @Override
   public void configure(@NotNull TalonSRX talon) {
     super.configure(talon);
-    //    talon.changeControlMode(TalonControlMode.Voltage); // FIXME
+    if (talon instanceof ThirdCoastTalon) {
+      ((ThirdCoastTalon) talon).changeControlMode(TalonControlMode.Voltage);
+    }
   }
 
   @Override

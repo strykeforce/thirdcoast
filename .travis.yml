@@ -20,7 +20,7 @@ deploy:
       - tct/build/libs/tct.jar
       - tct/script/tct.sh
     skip_cleanup:  true
-    body: "This command-line utility runs on your robot's hardware or a bench system. When run manually, it will run in the place of your robot program. When not being run manually, it will not interfere with normal robot program execution.\n\nAny commands below run in a SSH session on the roboRIO.\n\n1. Download `tct.jar` and the `tct.sh` shell script from above and copy to the same directory on the roboRIO, for example `/home/admin`\n2. Make the `tct.sh` shell script executable with `chmod +x tct.sh`.\n3. Optional, but recommended, stop the auto-run of any existing robot code on the roboRIO with `/etc/init.d/nilvrt stop`. Reboot the roboRIO to restore auto-run.\n4. Run with `./tct.sh`\n"
+    body: "This command-line utility runs on your robot's hardware or a bench system. When run manually, it will run in the place of your robot program. When not being run manually, it will not interfere with normal robot program execution.\n\nAny commands below run in a SSH session on the roboRIO.\n\n1. Download `tct.jar` and the `tct.sh` shell script from above and copy to the same directory on the roboRIO, for example `/home/admin`\n2. Make the `tct.sh` shell script executable with `chmod +x tct.sh`.\n3. Optional, but recommended, stop the fauto-run of any existing robot code on the roboRIO with `/etc/init.d/nilvrt stop`. Reboot the roboRIO to restore auto-run.\n4. Run with `./tct.sh`\n"
     on:
       tags:        true
 

@@ -21,7 +21,7 @@ class PositionTalonConfiguration extends PIDTalonConfiguration {
       SoftLimit reverseSoftLimit,
       Integer currentLimit,
       Double voltageRampRate,
-      Double outputVoltageMax,
+      Double voltageCompSaturation,
       Double closedLoopRampRate,
       Double forwardOutputVoltagePeak,
       Double reverseOutputVoltagePeak,
@@ -49,7 +49,7 @@ class PositionTalonConfiguration extends PIDTalonConfiguration {
         reverseSoftLimit,
         currentLimit,
         voltageRampRate,
-        outputVoltageMax,
+        voltageCompSaturation,
         closedLoopRampRate,
         forwardOutputVoltagePeak,
         reverseOutputVoltagePeak,
@@ -66,7 +66,10 @@ class PositionTalonConfiguration extends PIDTalonConfiguration {
 
   @Override
   public void configure(@NotNull TalonSRX talon) {
-    //    talon.changeControlMode(TalonControlMode.Position); // FIXME
+    if (talon instanceof ThirdCoastTalon) {
+      ((ThirdCoastTalon) talon).changeControlMode(TalonControlMode.Position);
+    }
+
     super.configure(talon);
   }
 

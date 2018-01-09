@@ -24,7 +24,7 @@ public class MotionMagicTalonConfiguration extends PIDTalonConfiguration {
       SoftLimit reverseSoftLimit,
       Integer currentLimit,
       Double voltageRampRate,
-      Double outputVoltageMax,
+      Double voltageCompSaturation,
       Double closedLoopRampRate,
       Double forwardOutputVoltagePeak,
       Double reverseOutputVoltagePeak,
@@ -54,7 +54,7 @@ public class MotionMagicTalonConfiguration extends PIDTalonConfiguration {
         reverseSoftLimit,
         currentLimit,
         voltageRampRate,
-        outputVoltageMax,
+        voltageCompSaturation,
         closedLoopRampRate,
         forwardOutputVoltagePeak,
         reverseOutputVoltagePeak,
@@ -74,7 +74,10 @@ public class MotionMagicTalonConfiguration extends PIDTalonConfiguration {
   @Override
   public void configure(@NotNull TalonSRX talon) {
     super.configure(talon);
-    //    talon.changeControlMode(TalonControlMode.MotionMagic); // FIXME
+    if (talon instanceof ThirdCoastTalon) {
+      ((ThirdCoastTalon) talon).changeControlMode(TalonControlMode.MotionMagic);
+    }
+
     talon.configMotionAcceleration(valueOrElseZero(motionMagicAcceleration), TIMEOUT_MS);
     talon.configMotionCruiseVelocity(valueOrElseZero(motionMagicCruiseVelocity), TIMEOUT_MS);
   }

@@ -21,7 +21,7 @@ class SpeedTalonConfiguration extends PIDTalonConfiguration {
       SoftLimit reverseSoftLimit,
       Integer currentLimit,
       Double voltageRampRate,
-      Double outputVoltageMax,
+      Double voltageCompSaturation,
       Double closedLoopRampRate,
       Double forwardOutputVoltagePeak,
       Double reverseOutputVoltagePeak,
@@ -49,7 +49,7 @@ class SpeedTalonConfiguration extends PIDTalonConfiguration {
         reverseSoftLimit,
         currentLimit,
         voltageRampRate,
-        outputVoltageMax,
+        voltageCompSaturation,
         closedLoopRampRate,
         forwardOutputVoltagePeak,
         reverseOutputVoltagePeak,
@@ -67,7 +67,9 @@ class SpeedTalonConfiguration extends PIDTalonConfiguration {
   @Override
   public void configure(@NotNull TalonSRX talon) {
     super.configure(talon);
-    //    talon.changeControlMode(TalonControlMode.Speed); // FIXME
+    if (talon instanceof ThirdCoastTalon) {
+      ((ThirdCoastTalon)talon).changeControlMode(TalonControlMode.Speed);
+    }
   }
 
   @Override

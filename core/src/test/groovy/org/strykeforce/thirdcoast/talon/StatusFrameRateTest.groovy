@@ -1,10 +1,11 @@
 package org.strykeforce.thirdcoast.talon
 
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
-import spock.lang.Ignore
 import spock.lang.Specification
 
-@Ignore("2018")
+import static com.ctre.phoenix.motorcontrol.StatusFrame.*
+import static org.strykeforce.thirdcoast.talon.TalonConfiguration.TIMEOUT_MS
+
 class StatusFrameRateTest extends Specification {
 
     def "builds a StatusFrameRate"() {
@@ -13,15 +14,15 @@ class StatusFrameRateTest extends Specification {
 
         when:
         def sfr = StatusFrameRate.builder().analogTempVbat(1).feedback(2).general(3)
-            .pulseWidth(5).quadEncoder(6).build()
+                .pulseWidth(5).quadEncoder(6).build()
         sfr.configure(talon)
 
         then:
-        1 * talon.setStatusFrameRateMs(TalonSRX.StatusFrameRate.AnalogTempVbat, 1)
-        1 * talon.setStatusFrameRateMs(TalonSRX.StatusFrameRate.Feedback, 2)
-        1 * talon.setStatusFrameRateMs(TalonSRX.StatusFrameRate.General, 3)
-        1 * talon.setStatusFrameRateMs(TalonSRX.StatusFrameRate.PulseWidth, 5)
-        1 * talon.setStatusFrameRateMs(TalonSRX.StatusFrameRate.QuadEncoder, 6)
+        1 * talon.setStatusFramePeriod(Status_4_AinTempVbat, 1, TIMEOUT_MS)
+        1 * talon.setStatusFramePeriod(Status_2_Feedback0, 2, TIMEOUT_MS)
+        1 * talon.setStatusFramePeriod(Status_1_General, 3, TIMEOUT_MS)
+//        1 * talon.setStatusFramePeriod(TalonSRX.StatusFrameRate.PulseWidth, 5)
+//        1 * talon.setStatusFramePeriod(TalonSRX.StatusFrameRate.QuadEncoder, 6)
     }
 
     def "builds a StatusFrameRate with all defaults"() {
@@ -33,10 +34,10 @@ class StatusFrameRateTest extends Specification {
         sfr.configure(talon)
 
         then:
-        1 * talon.setStatusFrameRateMs(TalonSRX.StatusFrameRate.AnalogTempVbat, 100)
-        1 * talon.setStatusFrameRateMs(TalonSRX.StatusFrameRate.Feedback, 20)
-        1 * talon.setStatusFrameRateMs(TalonSRX.StatusFrameRate.General, 10)
-        1 * talon.setStatusFrameRateMs(TalonSRX.StatusFrameRate.PulseWidth, 100)
-        1 * talon.setStatusFrameRateMs(TalonSRX.StatusFrameRate.QuadEncoder, 100)
+        1 * talon.setStatusFramePeriod(Status_4_AinTempVbat, 100, TIMEOUT_MS)
+        1 * talon.setStatusFramePeriod(Status_2_Feedback0, 20, TIMEOUT_MS)
+        1 * talon.setStatusFramePeriod(Status_1_General, 10, TIMEOUT_MS)
+//        1 * talon.setStatusFrameRateMs(TalonSRX.StatusFrameRate.PulseWidth, 100)
+//        1 * talon.setStatusFrameRateMs(TalonSRX.StatusFrameRate.QuadEncoder, 100)
     }
 }

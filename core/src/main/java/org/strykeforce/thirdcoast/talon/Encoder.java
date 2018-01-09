@@ -2,6 +2,7 @@ package org.strykeforce.thirdcoast.talon;
 
 import static org.strykeforce.thirdcoast.talon.TalonConfiguration.TIMEOUT_MS;
 
+import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
@@ -48,38 +49,15 @@ public final class Encoder {
   }
 
   public void configure(TalonSRX talon) {
-    talon.configSelectedFeedbackSensor(getDevice(), 0, TIMEOUT_MS);
+    ErrorCode error = talon.configSelectedFeedbackSensor(getDevice(), 0, TIMEOUT_MS);
+    Errors.check(error, logger);
     talon.setSensorPhase(reversed);
     logger.info(
         "{}: encoder {} {} reversed",
         ((WPI_TalonSRX) talon).getDescription(),
         getDevice(),
         reversed ? "" : "not");
-    //    checkEncoder(talon);
   }
-
-  /*
-    private void checkEncoder(TalonSRX talon) {
-      FeedbackDeviceStatus status = talon.isSensorPresent(getDevice());
-      if (status == null) {
-        return; // unit testing
-      }
-
-      switch (status) {
-        case FeedbackStatusPresent:
-          logger.info("{}: {} is present", talon.getDescription(), getDevice());
-          break;
-        case FeedbackStatusNotPresent:
-          logger.warn("{}: {} is MISSING", talon.getDescription(), getDevice());
-          break;
-        case FeedbackStatusUnknown:
-          logger.info(
-              "{}: encoder is unknown, only CTRE Mag or Pulse-Width Encoder supported",
-              talon.getDescription());
-          break;
-      }
-    }
-  */
 
   @NotNull
   public FeedbackDevice getDevice() {

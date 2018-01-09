@@ -83,8 +83,8 @@ public class PIDTalonConfiguration extends TalonConfiguration {
     talon.configClosedloopRamp(closedLoopRampRate != null ? closedLoopRampRate : 0, TIMEOUT_MS);
 
     // TODO: remove voltage from names
-    talon.configPeakOutputForward(valueOrElseZero(forwardOutputVoltagePeak, 12), TIMEOUT_MS);
-    talon.configPeakOutputReverse(valueOrElseZero(reverseOutputVoltagePeak, -12), TIMEOUT_MS);
+    talon.configPeakOutputForward(valueOrElseZero(forwardOutputVoltagePeak, 1), TIMEOUT_MS);
+    talon.configPeakOutputReverse(valueOrElseZero(reverseOutputVoltagePeak, -1), TIMEOUT_MS);
 
     talon.configNominalOutputForward(valueOrElseZero(forwardOutputVoltageNominal, 0), TIMEOUT_MS);
     talon.configNominalOutputReverse(valueOrElseZero(reverseOutputVoltageNominal, 0), TIMEOUT_MS);

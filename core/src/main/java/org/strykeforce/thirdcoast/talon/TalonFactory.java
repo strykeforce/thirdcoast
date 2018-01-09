@@ -18,19 +18,19 @@ import org.slf4j.LoggerFactory;
 public class TalonFactory {
 
   public static final int CONTROL_FRAME_MS = 10;
-  private static final int TIMEOUT_MS = 10;
+  static final int TIMEOUT_MS = 10;
   private static final Logger logger = LoggerFactory.getLogger(TalonFactory.class);
 
-  @NotNull private static final Set<TalonSRX> seen = new HashSet<>();
+  @NotNull private static final Set<ThirdCoastTalon> seen = new HashSet<>();
 
   @NotNull private final TalonProvisioner provisioner;
-  //  @NotNull private final WrapperFactory wrapperFactory; // FIXME
+  @NotNull private final ThirdCoastTalonFactory wrapperFactory;
 
   @Inject
-  public TalonFactory(TalonProvisioner provisioner) {
+  public TalonFactory(TalonProvisioner provisioner, ThirdCoastTalonFactory wrapperFactory) {
     logger.debug("initializing TalonFactory: {}", provisioner);
     this.provisioner = provisioner;
-    //    this.wrapperFactory = wrapperFactory;
+    this.wrapperFactory = wrapperFactory;
   }
 
   public boolean hasSeen(int id) {
@@ -45,9 +45,10 @@ public class TalonFactory {
    */
   @NotNull
   private TalonSRX createTalon(int id) {
-    TalonSRX talon = new TalonSRX(id);
+    ThirdCoastTalon talon = wrapperFactory.create(id);
     StatusFrameRate.DEFAULT.configure(talon);
-    //    talon.changeControlMode(TalonControlMode.Voltage);
+    talon.changeControlMode(TalonControlMode.Voltage);
+    talon.enableVoltageCompensation(true);
     talon.setIntegralAccumulator(0, 0, TIMEOUT_MS);
     talon.setIntegralAccumulator(0, 1, TIMEOUT_MS);
     talon.clearMotionProfileHasUnderrun(TIMEOUT_MS);
@@ -77,7 +78,7 @@ public class TalonFactory {
    */
   @NotNull
   public TalonSRX getTalon(final int id) {
-    Optional<TalonSRX> optTalon = seen.stream().filter(it -> it.getDeviceID() == id).findFirst();
+    Optional<ThirdCoastTalon> optTalon = seen.stream().filter(it -> it.getDeviceID() == id).findFirst();
     if (optTalon.isPresent()) {
       logger.info("returning cached talon {}", id);
       return optTalon.get();
@@ -106,117 +107,4 @@ public class TalonFactory {
   public TalonProvisioner getProvisioner() {
     return provisioner;
   }
-
-  //  /** Factory class for {@link Wrapper}, facilitates testing. */
-  //  static class WrapperFactory {
-  //
-  //    @Inject
-  //    WrapperFactory() {
-  //      logger.debug("initializing WrapperFactory");
-  //    }
-  //
-  //    @NotNull
-  //    public Wrapper createWrapper(int id, int controlPeriodMs) {
-  //      return new Wrapper(id, controlPeriodMs);
-  //    }
-  //  }
-  //
-  //  /**
-  //   * TalonSRX that reduces CAN bus overhead by coalescing {@link TalonSRX#set(double)} commands
-  // and
-  //   * implements logical equality. By default the Talon flushes the Tx buffer on every set call.
-  // See
-  //   * com.team254.lib.util.drivers.LazyTalonSRX.
-  //   *
-  //   * <p>TalonSRX superclass appears to use the default {@link Object#equals(Object)} so we
-  // provide
-  //   * logical equality based on device ID.
-  //   */
-  //  static class Wrapper extends TalonSRX {
-  //
-  //    static final Logger logger = LoggerFactory.getLogger(Wrapper.class);
-  //    private double setpoint = Double.NaN;
-  //    @Nullable private TalonControlMode controlMode = null;
-  //
-  //    public Wrapper(int deviceNumber) {
-  //      super(deviceNumber);
-  //      logger.debug("initializing Wrapper for {}", getDescription());
-  //    }
-  //
-  //    public Wrapper(int deviceNumber, int controlPeriodMs) {
-  //      super(deviceNumber, controlPeriodMs);
-  //      logger.debug(
-  //          "initializing Wrapper for {} with control frame period {}",
-  //          getDescription(),
-  //          controlPeriodMs);
-  //    }
-  //
-  //    public Wrapper(int deviceNumber, int controlPeriodMs, int enablePeriodMs) {
-  //      super(deviceNumber, controlPeriodMs, enablePeriodMs);
-  //      logger.debug(
-  //          "initializing Wrapper for {} with control frame period {} and enable period {}",
-  //          getDescription(),
-  //          controlPeriodMs,
-  //          enablePeriodMs);
-  //    }
-  //
-  //    @Override
-  //    public void changeControlMode(TalonControlMode controlMode) {
-  //      super.changeControlMode(controlMode);
-  //      if (controlMode != this.controlMode) {
-  //        logger.info("{}: changed from {} to {}", getDescription(), this.controlMode,
-  // controlMode);
-  //        setpoint = Double.NaN;
-  //        this.controlMode = controlMode;
-  //        return;
-  //      }
-  //      logger.debug("{}: control mode {} not changed", getDescription(), controlMode);
-  //    }
-  //
-  //    @Override
-  //    public void setControlMode(int mode) {
-  //      throw new AssertionError("use changeControlMode");
-  //    }
-  //
-  //    @Override
-  //    public void set(double setpoint) {
-  //      if (setpoint != this.setpoint) {
-  //        this.setpoint = setpoint;
-  //        super.set(setpoint);
-  //      }
-  //    }
-  //
-  //    /**
-  //     * Returns a hashcode value for this TalonSRX.
-  //     *
-  //     * @return a hashcode value for this TalonSRX.
-  //     */
-  //    @Override
-  //    public int hashCode() {
-  //      return getDeviceID();
-  //    }
-  //
-  //    /**
-  //     * Indicates if some other TalonSRX has the same device ID as this one.
-  //     *
-  //     * @param obj the reference object with which to compare.
-  //     * @return true if this TalonSRX has the same device ID, false otherwise.
-  //     */
-  //    @Override
-  //    public boolean equals(Object obj) {
-  //      if (obj == this) {
-  //        return true;
-  //      }
-  //      if (!(obj instanceof Wrapper)) {
-  //        return false;
-  //      }
-  //      Wrapper wt = (Wrapper) obj;
-  //      return wt.getDeviceID() == getDeviceID();
-  //    }
-  //
-  //    @Override
-  //    public String toString() {
-  //      return "TalonFactory$Wrapper{" + "id=" + super.getDeviceID() + "}";
-  //    }
-  //  }
 }

@@ -203,7 +203,7 @@ public class TalonConfigurationBuilder {
                 reverseSoftLimit,
                 currentLimit,
                 openLoopRampTime,
-                outputVoltageMax,
+                voltageCompSaturation,
                 closedLoopRampRate,
                 forwardOutputVoltagePeak,
                 reverseOutputVoltagePeak,
@@ -233,7 +233,7 @@ public class TalonConfigurationBuilder {
                 reverseSoftLimit,
                 currentLimit,
                 openLoopRampTime,
-                outputVoltageMax,
+                voltageCompSaturation,
                 closedLoopRampRate,
                 forwardOutputVoltagePeak,
                 reverseOutputVoltagePeak,
@@ -263,7 +263,7 @@ public class TalonConfigurationBuilder {
                 reverseSoftLimit,
                 currentLimit,
                 openLoopRampTime,
-                outputVoltageMax,
+                voltageCompSaturation,
                 closedLoopRampRate,
                 forwardOutputVoltagePeak,
                 reverseOutputVoltagePeak,
@@ -504,14 +504,14 @@ public class TalonConfigurationBuilder {
   }
 
   /**
-   * Configure the maximum output voltage in closed-loop modes.
+   * Configure the maximum output voltage for 100% output.
    *
-   * @param outputVoltageMax the maximum output voltage.
+   * @param voltageCompSaturation the maximum output voltage.
    * @return this builder.
    */
   @NotNull
-  public TalonConfigurationBuilder outputVoltageMax(double outputVoltageMax) {
-    this.outputVoltageMax = outputVoltageMax;
+  public TalonConfigurationBuilder voltageCompSaturation(double voltageCompSaturation) {
+    this.voltageCompSaturation = voltageCompSaturation;
     return this;
   }
 
