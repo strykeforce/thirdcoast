@@ -1,5 +1,5 @@
 rootProject.name = 'thirdcoast'
 include 'core'
-// include 'tct'
 include 'robot'
-include 'sim'
+// include 'tct'
+// include 'sim'
