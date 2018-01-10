@@ -12,7 +12,7 @@ public enum Measure {
   SELECTED_SENSOR_VELOCITY("Selected Sensor Velocity"),
   ACTIVE_TRAJECTORY_POSITION("Active Trajectory Position"),
   ACTIVE_TRAJECTORY_VELOCITY("Active Trajectory Velocity"),
-//  ACTIVE_TRAJECTORY_HEADING("Active Trajectory Heading"),
+  //  ACTIVE_TRAJECTORY_HEADING("Active Trajectory Heading"),
   CLOSED_LOOP_ERROR("Closed Loop Error"),
   BUS_VOLTAGE("Bus Voltage"),
   ERROR_DERIVATIVE("Error Derivative"),
@@ -35,12 +35,12 @@ public enum Measure {
   PULSE_WIDTH_RISE_TO_RISE("Pulse Width Rise-Rise"),
   FORWARD_LIMIT_SWITCH_CLOSED("Forward Limit Switch Closed"),
   REVERSE_LIMIT_SWITCH_CLOSED("Reverse Limit Switch Closed"),
-//  FORWARD_SOFT_LIMIT("Forward Soft Limit"),
-//  REVERSE_SOFT_LIMIT("Reverse Soft Limit"),
+  //  FORWARD_SOFT_LIMIT("Forward Soft Limit"),
+  //  REVERSE_SOFT_LIMIT("Reverse Soft Limit"),
 
   ANGLE("Angle"),
   POSITION("Position"),
-//  SPEED("Speed"),
+  //  SPEED("Speed"),
   VALUE("Value"),
   GYRO_YAW("Gyro Yaw");
 
