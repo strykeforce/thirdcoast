@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
  * logical equality based on device ID.
  */
 @AutoFactory(allowSubclasses = true)
-class ThirdCoastTalon extends WPI_TalonSRX {
+public class ThirdCoastTalon extends WPI_TalonSRX {
   private static final Logger logger = LoggerFactory.getLogger(ThirdCoastTalon.class);
   private final String NOT_IMPLEMENTED = "not implemented for wrapped Talon";
   private double setpoint = Double.NaN;

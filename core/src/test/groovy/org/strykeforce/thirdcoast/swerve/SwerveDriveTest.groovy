@@ -2,10 +2,8 @@ package org.strykeforce.thirdcoast.swerve
 
 import com.moandjiezana.toml.Toml
 import org.strykeforce.thirdcoast.talon.TalonProvisioner
-import spock.lang.Ignore
 import spock.lang.Shared
 
-@Ignore("2018")
 class SwerveDriveTest extends spock.lang.Specification {
 
     static tomlString = '''
@@ -21,7 +19,7 @@ class SwerveDriveTest extends spock.lang.Specification {
     name = "azimuth"
     mode = "Position"
     setpointMax     = 4095.0
-    neutralMode = false
+    neutralMode = "Coast"
     pGain =   1.0
     iGain =   2.0
     dGain =   3.0

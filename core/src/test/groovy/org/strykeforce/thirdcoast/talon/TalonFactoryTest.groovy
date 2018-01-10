@@ -1,7 +1,6 @@
 package org.strykeforce.thirdcoast.talon
 
 import com.ctre.phoenix.motorcontrol.SensorCollection
-import spock.lang.Ignore
 import spock.lang.Specification
 
 import static com.ctre.phoenix.motorcontrol.StatusFrame.*

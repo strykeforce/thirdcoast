@@ -1,12 +1,14 @@
 package org.strykeforce.thirdcoast.swerve;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.strykeforce.thirdcoast.talon.Errors;
 import org.strykeforce.thirdcoast.talon.TalonConfiguration;
 import org.strykeforce.thirdcoast.talon.TalonFactory;
 import org.strykeforce.thirdcoast.talon.TalonProvisioner;
+import org.strykeforce.thirdcoast.talon.ThirdCoastTalon;
 
 /**
  * Controls a swerve drive wheel azimuth and drive motors. The azimuth and drive Talons are
@@ -26,12 +28,11 @@ import org.strykeforce.thirdcoast.talon.TalonProvisioner;
  */
 public class Wheel {
 
+  static final double TICKS_PER_ROTATION = 4096;
   private static final Logger logger = LoggerFactory.getLogger(Wheel.class);
-  private static final int TICKS_PER_ROTATION = 0xFFF;
-
   private final TalonProvisioner talonProvisioner;
-  private final TalonSRX azimuthTalon;
-  private final TalonSRX driveTalon;
+  private final ThirdCoastTalon azimuthTalon;
+  private final ThirdCoastTalon driveTalon;
 
   private double driveSetpointMax;
   private double azimuthSetpoint;
@@ -46,7 +47,7 @@ public class Wheel {
    * @param azimuth the azimuthTalon TalonSRX
    * @param drive the driveTalon TalonSRX
    */
-  public Wheel(TalonProvisioner talonProvisioner, TalonSRX azimuth, TalonSRX drive) {
+  public Wheel(TalonProvisioner talonProvisioner, ThirdCoastTalon azimuth, ThirdCoastTalon drive) {
     final String AZIMUTH_PARAMETERS = "azimuth";
     final String DRIVE_PARAMETERS = "drive";
 
@@ -67,8 +68,8 @@ public class Wheel {
   public Wheel(TalonFactory talonFactory, int index) {
     this(
         talonFactory.getProvisioner(),
-        talonFactory.getTalon(index),
-        talonFactory.getTalon(index + 10));
+        (ThirdCoastTalon) talonFactory.getTalon(index),
+        (ThirdCoastTalon) talonFactory.getTalon(index + 10));
   }
 
   /**
@@ -88,21 +89,21 @@ public class Wheel {
 
     // don't reset wheel azimuth direction to zero when returning to neutral
     if (driveSetpoint == 0) {
-      driveTalon.set(ControlMode.PercentOutput, 0);
+      driveTalon.set(0);
       return;
     }
 
-    // FIXME: positions are now ints
     double azimuthPosition = azimuthTalon.getSelectedSensorPosition(0);
-    double azimuthError = Math.IEEEremainder(azimuth - azimuthPosition, TICKS_PER_ROTATION);
-    if (Math.abs(azimuthError) > TICKS_PER_ROTATION / 4) {
-      azimuthError -= Math.copySign(TICKS_PER_ROTATION / 2, azimuthError);
+    double azimuthError =
+        Math.IEEEremainder(azimuth * TICKS_PER_ROTATION - azimuthPosition, TICKS_PER_ROTATION);
+    if (Math.abs(azimuthError) > 0.25 * TICKS_PER_ROTATION) {
+      azimuthError -= Math.copySign(0.5 * TICKS_PER_ROTATION, azimuthError);
       driveSetpoint *= -1.0;
     }
     azimuthSetpoint = azimuthPosition + azimuthError;
 
-    azimuthTalon.set(ControlMode.MotionMagic, azimuthSetpoint);
-    driveTalon.set(ControlMode.PercentOutput, driveSetpoint);
+    azimuthTalon.set(azimuthSetpoint);
+    driveTalon.set(driveSetpoint);
   }
 
   /**
@@ -111,8 +112,8 @@ public class Wheel {
    */
   public void stop() {
     azimuthSetpoint = azimuthTalon.getSelectedSensorPosition(0);
-    azimuthTalon.set(ControlMode.MotionMagic, azimuthSetpoint);
-    driveTalon.set(ControlMode.PercentOutput, 0);
+    azimuthTalon.set(azimuthSetpoint);
+    driveTalon.set(0);
   }
 
   void setAzimuthParameters(String name) {
@@ -142,10 +143,11 @@ public class Wheel {
    * @param zero encoder position (in ticks) where wheel is zeroed.
    */
   public void setAzimuthZero(int zero) {
-    double offset = getAzimuthAbsolutePosition() - zero; // encoder ticks
-    azimuthSetpoint = offset / TICKS_PER_ROTATION; // wheel rotations
-    azimuthTalon.setSelectedSensorPosition((int) azimuthSetpoint, 0, 0);
-    azimuthTalon.set(ControlMode.MotionMagic, azimuthSetpoint);
+    azimuthSetpoint = (double) (getAzimuthAbsolutePosition() - zero);
+    // TODO: test this timeout value is OK
+    ErrorCode e = azimuthTalon.setSelectedSensorPosition((int) azimuthSetpoint, 0, 10);
+    Errors.check(e, logger);
+    azimuthTalon.set(azimuthSetpoint);
   }
 
   /**
@@ -183,7 +185,7 @@ public class Wheel {
    * @return 0 - 4095 encoder ticks
    */
   public int getAzimuthAbsolutePosition() {
-    return azimuthTalon.getSensorCollection().getPulseWidthPosition() & TICKS_PER_ROTATION;
+    return azimuthTalon.getSensorCollection().getPulseWidthPosition() & 0xFFF;
   }
 
   /**

@@ -18,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public abstract class TalonConfiguration {
 
-  static int TIMEOUT_MS = 0;
+  public static final int TIMEOUT_MS = 0;
 
   // required
   @NotNull private final String name;

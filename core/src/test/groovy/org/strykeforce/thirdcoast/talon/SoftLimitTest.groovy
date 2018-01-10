@@ -1,6 +1,5 @@
 package org.strykeforce.thirdcoast.talon
 
-import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import com.moandjiezana.toml.Toml
 import com.moandjiezana.toml.TomlWriter
 import spock.lang.Specification

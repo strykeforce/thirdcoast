@@ -78,7 +78,8 @@ public class TalonFactory {
    */
   @NotNull
   public TalonSRX getTalon(final int id) {
-    Optional<ThirdCoastTalon> optTalon = seen.stream().filter(it -> it.getDeviceID() == id).findFirst();
+    Optional<ThirdCoastTalon> optTalon =
+        seen.stream().filter(it -> it.getDeviceID() == id).findFirst();
     if (optTalon.isPresent()) {
       logger.info("returning cached talon {}", id);
       return optTalon.get();

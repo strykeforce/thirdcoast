@@ -68,7 +68,7 @@ class SpeedTalonConfiguration extends PIDTalonConfiguration {
   public void configure(@NotNull TalonSRX talon) {
     super.configure(talon);
     if (talon instanceof ThirdCoastTalon) {
-      ((ThirdCoastTalon)talon).changeControlMode(TalonControlMode.Speed);
+      ((ThirdCoastTalon) talon).changeControlMode(TalonControlMode.Speed);
     }
   }
 
