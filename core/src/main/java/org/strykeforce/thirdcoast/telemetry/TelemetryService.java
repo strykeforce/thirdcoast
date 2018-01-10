@@ -88,9 +88,7 @@ public class TelemetryService {
       logger.info("registered talon {}", talon.getDeviceID());
       return;
     }
-    logger.info(
-        "talon {} was already registered, did not reconfigure status frame rate",
-        talon.getDeviceID());
+    logger.info("talon {} was already registered", talon.getDeviceID());
   }
 
   /**
@@ -126,6 +124,7 @@ public class TelemetryService {
    * @param talonId the Talon to registerWith
    * @param rates the status frame rates
    */
+  @Deprecated
   public void configureStatusFrameRates(int talonId, StatusFrameRate rates) {
     assert rates != null;
 

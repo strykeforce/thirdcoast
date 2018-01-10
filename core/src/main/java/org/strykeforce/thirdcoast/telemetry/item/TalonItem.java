@@ -1,5 +1,6 @@
 package org.strykeforce.thirdcoast.telemetry.item;
 
+import com.ctre.phoenix.motorcontrol.SensorCollection;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.squareup.moshi.JsonWriter;
@@ -20,33 +21,41 @@ public class TalonItem extends AbstractItem {
               Measure.SETPOINT,
               Measure.OUTPUT_CURRENT,
               Measure.OUTPUT_VOLTAGE,
-              Measure.ENCODER_POSITION,
-              Measure.ENCODER_VELOCITY,
-              Measure.ABSOLUTE_ENCODER_POSITION,
-              Measure.ANALOG_RAW,
-              Measure.CONTROL_LOOP_ERROR,
-              Measure.INTEGRATOR_ACCUMULATOR,
+              Measure.OUTPUT_PERCENT,
+              Measure.SELECTED_SENSOR_POSITION,
+              Measure.SELECTED_SENSOR_VELOCITY,
+              Measure.ACTIVE_TRAJECTORY_POSITION,
+              Measure.ACTIVE_TRAJECTORY_VELOCITY,
+              Measure.CLOSED_LOOP_ERROR,
               Measure.BUS_VOLTAGE,
-              Measure.FORWARD_HARD_LIMIT_CLOSED,
-              Measure.REVERSE_HARD_LIMIT_CLOSED,
-              Measure.FORWARD_SOFT_LIMIT_OK,
-              Measure.REVERSE_SOFT_LIMIT_OK,
-              Measure.POSITION,
-              Measure.SPEED,
-              Measure.FEEDBACK,
-              Measure.MOMAGIC_ACCL,
-              Measure.MOMAGIC_A_TRAJ_POS,
-              Measure.MOMAGIC_A_TRAJ_VEL,
-              Measure.MOMAGIC_CRUISE_VEL));
+              Measure.ERROR_DERIVATIVE,
+              Measure.INTEGRAL_ACCUMULATOR,
+              Measure.ANALOG_IN,
+              Measure.ANALOG_RAW,
+              Measure.ANALOG_POSITION,
+              Measure.ANALOG_VELOCITY,
+              Measure.QUAD_POSITION,
+              Measure.QUAD_VELOCITY,
+              Measure.QUAD_A_PIN,
+              Measure.QUAD_B_PIN,
+              Measure.QUAD_IDX_PIN,
+              Measure.PULSE_WIDTH_POSITION,
+              Measure.PULSE_WIDTH_VELOCITY,
+              Measure.PULSE_WIDTH_RISE_TO_FALL,
+              Measure.PULSE_WIDTH_RISE_TO_RISE,
+              Measure.FORWARD_LIMIT_SWITCH_CLOSED,
+              Measure.REVERSE_LIMIT_SWITCH_CLOSED));
   // TODO: getMotionProfileStatus
   private static final String NA = "not available in API";
+  private static final double TRUE = 1;
+  private static final double FALSE = 0;
   private final TalonSRX talon;
-  //  private final Set<TalonControlMode> CLOSED_LOOP =
-  //      EnumSet.of(TalonControlMode.Current, TalonControlMode.Position, TalonControlMode.Speed);
+  private final SensorCollection sensorCollection;
 
   public TalonItem(final TalonSRX talon) {
     super(TYPE, ((WPI_TalonSRX) talon).getDescription(), MEASURES);
     this.talon = talon;
+    sensorCollection = talon.getSensorCollection();
   }
 
   public TalonSRX getTalon() {
@@ -66,49 +75,61 @@ public class TalonItem extends AbstractItem {
 
     // FIXME: FIXME FIXME FIXME
     switch (measure) {
+        // TODO: should be coming in CTRE update
         //      case SETPOINT:
         //        return talon::getSetpoint;
-        //      case OUTPUT_CURRENT:
-        //        return talon::getOutputCurrent;
-        //      case OUTPUT_VOLTAGE:
-        //        return talon::getOutputVoltage;
-        //      case ENCODER_POSITION:
-        //        return talon::getEncPosition;
-        //      case ENCODER_VELOCITY:
-        //        return talon::getEncVelocity;
-        //      case ABSOLUTE_ENCODER_POSITION:
-        //        return () -> talon.getPulseWidthPosition() & 0xFFF;
-        //      case CONTROL_LOOP_ERROR:
-        //        return talon::getClosedLoopError;
-        //      case INTEGRATOR_ACCUMULATOR:
-        //        return talon::GetIaccum;
-        //      case BUS_VOLTAGE:
-        //        return talon::getBusVoltage;
-        //      case FORWARD_HARD_LIMIT_CLOSED:
-        //        return () -> talon.isFwdLimitSwitchClosed() ? 1.0 : 0.0;
-        //      case REVERSE_HARD_LIMIT_CLOSED:
-        //        return () -> talon.isRevLimitSwitchClosed() ? 1.0 : 0.0;
-        //      case FORWARD_SOFT_LIMIT_OK:
-        //        // TODO: verify soft limit
-        //        return talon::getForwardSoftLimit;
-        //      case REVERSE_SOFT_LIMIT_OK:
-        //        return talon::getReverseSoftLimit;
-        //      case SPEED:
-        //        return talon::getSpeed;
-        //      case FEEDBACK:
-        //        return talon::get;
-        //      case POSITION:
-        //        return talon::getPosition;
-        //      case ANALOG_RAW:
-        //        return talon::getAnalogInRaw;
-        //      case MOMAGIC_ACCL:
-        //        return talon::getMotionMagicAcceleration;
-        //      case MOMAGIC_A_TRAJ_POS:
-        //        return talon::getMotionMagicActTrajPosition;
-        //      case MOMAGIC_A_TRAJ_VEL:
-        //        return talon::getMotionMagicActTrajVelocity;
-        //      case MOMAGIC_CRUISE_VEL:
-        //        return talon::getMotionMagicCruiseVelocity;
+      case OUTPUT_CURRENT:
+        return talon::getOutputCurrent;
+      case OUTPUT_VOLTAGE:
+        return talon::getMotorOutputVoltage;
+      case OUTPUT_PERCENT:
+        return talon::getMotorOutputPercent;
+      case SELECTED_SENSOR_POSITION:
+        return () -> talon.getSelectedSensorPosition(0);
+      case SELECTED_SENSOR_VELOCITY:
+        return () -> talon.getSelectedSensorVelocity(0);
+      case ACTIVE_TRAJECTORY_POSITION:
+        return talon::getActiveTrajectoryPosition;
+      case ACTIVE_TRAJECTORY_VELOCITY:
+        return talon::getActiveTrajectoryVelocity;
+      case CLOSED_LOOP_ERROR:
+        return () -> talon.getClosedLoopError(0);
+      case BUS_VOLTAGE:
+        return talon::getBusVoltage;
+      case ERROR_DERIVATIVE:
+        return () -> talon.getErrorDerivative(0);
+      case INTEGRAL_ACCUMULATOR:
+        return () -> talon.getIntegralAccumulator(0);
+      case ANALOG_IN:
+        return sensorCollection::getAnalogIn;
+      case ANALOG_RAW:
+        return sensorCollection::getAnalogInRaw;
+        //      case ANALOG_POSITION:
+        //        return () -> 0;
+      case ANALOG_VELOCITY:
+        return sensorCollection::getAnalogInVel;
+      case QUAD_POSITION:
+        return sensorCollection::getQuadraturePosition;
+      case QUAD_VELOCITY:
+        return sensorCollection::getQuadratureVelocity;
+      case QUAD_A_PIN:
+        return () -> sensorCollection.getPinStateQuadA() ? TRUE : FALSE;
+      case QUAD_B_PIN:
+        return () -> sensorCollection.getPinStateQuadB() ? TRUE : FALSE;
+      case QUAD_IDX_PIN:
+        return () -> sensorCollection.getPinStateQuadIdx() ? TRUE : FALSE;
+      case PULSE_WIDTH_POSITION:
+        return sensorCollection::getPulseWidthPosition;
+      case PULSE_WIDTH_VELOCITY:
+        return sensorCollection::getPulseWidthVelocity;
+      case PULSE_WIDTH_RISE_TO_FALL:
+        return sensorCollection::getPulseWidthRiseToFallUs;
+      case PULSE_WIDTH_RISE_TO_RISE:
+        return sensorCollection::getPulseWidthRiseToRiseUs;
+      case FORWARD_LIMIT_SWITCH_CLOSED:
+        return () -> sensorCollection.isFwdLimitSwitchClosed() ? TRUE : FALSE;
+      case REVERSE_LIMIT_SWITCH_CLOSED:
+        return () -> sensorCollection.isRevLimitSwitchClosed() ? TRUE : FALSE;
       default:
         throw new AssertionError(measure);
     }
@@ -120,7 +141,7 @@ public class TalonItem extends AbstractItem {
   }
 
   @Override
-  public void toJson(JsonWriter writer) throws IOException {
+  public void toJson(JsonWriter writer) throws IOException { // FIXME: finish 2018 conversion
     writer.beginObject();
     writer.name("type").value(TYPE);
     writer.name("deviceId").value(talon.getDeviceID());

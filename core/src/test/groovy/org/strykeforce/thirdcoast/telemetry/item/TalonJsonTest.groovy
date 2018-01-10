@@ -8,7 +8,6 @@ import org.strykeforce.thirdcoast.talon.TalonControlMode
 import spock.lang.Ignore
 import spock.lang.Specification
 
-@Ignore("2018")
 class TalonJsonTest extends Specification {
 
     def random = new Random()
@@ -43,6 +42,7 @@ class TalonJsonTest extends Specification {
         talon.GetFirmwareVersion() >> random.nextLong()
     }
 
+    @Ignore("2018")
     def "ToJson"() {
         given:
         def talon = new TalonItem(this.talon)
