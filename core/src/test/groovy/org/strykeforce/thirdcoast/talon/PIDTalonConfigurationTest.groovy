@@ -1,6 +1,7 @@
 package org.strykeforce.thirdcoast.talon
 
 import com.ctre.phoenix.ErrorCode
+import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.NeutralMode
 import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod
 import com.moandjiezana.toml.Toml
@@ -8,6 +9,7 @@ import edu.wpi.first.wpilibj.MotorSafety
 import spock.lang.Shared
 import spock.lang.Specification
 
+import static com.ctre.phoenix.motorcontrol.ControlMode.Velocity
 import static com.ctre.phoenix.motorcontrol.FeedbackDevice.CTRE_MagEncoder_Relative
 import static com.ctre.phoenix.motorcontrol.FeedbackDevice.QuadEncoder
 import static org.strykeforce.thirdcoast.talon.TalonConfiguration.TIMEOUT_MS
@@ -37,12 +39,12 @@ class PIDTalonConfigurationTest extends Specification {
 
     [[TALON]]
     name = "speed"
-    mode = "Speed"
+    mode = "Velocity"
     setpointMax = 1.0
     
     [[TALON]]
     name = "pid_defaults"
-    mode = "Speed"
+    mode = "Velocity"
     setpointMax = 1.0
 
     [[TALON]]
@@ -134,7 +136,7 @@ class PIDTalonConfigurationTest extends Specification {
         1 * talon.enableCurrentLimit(false)
         1 * talon.selectProfileSlot(0, 0)
 //        1 * talon.enableLimitSwitch(false, false)
-        1 * talon.changeControlMode(TalonControlMode.Speed)
+        1 * talon.changeControlMode(Velocity)
         1 * talon.setExpiration(MotorSafety.DEFAULT_SAFETY_EXPIRATION)
         0 * talon._
 

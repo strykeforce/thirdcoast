@@ -1,10 +1,10 @@
 package org.strykeforce.thirdcoast.telemetry.tct.talon.config;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import javax.inject.Inject;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
 import org.jline.reader.UserInterruptException;
-import org.strykeforce.thirdcoast.talon.TalonControlMode;
 import org.strykeforce.thirdcoast.talon.ThirdCoastTalon;
 import org.strykeforce.thirdcoast.telemetry.tct.Messages;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
@@ -25,7 +25,6 @@ public class SelectOperatingModeCommand extends AbstractTalonConfigCommand {
       "Speed",
       "Position",
       "Current",
-      "Percent Vbus",
       "Motion Magic",
       "Motion Profile",
       "Follower",
@@ -56,35 +55,32 @@ public class SelectOperatingModeCommand extends AbstractTalonConfigCommand {
         help(types.length);
         continue;
       }
-      TalonControlMode mode;
+      ControlMode mode;
       done = true;
       switch (choice) {
         case 1:
-          mode = TalonControlMode.Voltage;
+          mode = ControlMode.PercentOutput;
           break;
         case 2:
-          mode = TalonControlMode.Speed;
+          mode = ControlMode.Velocity;
           break;
         case 3:
-          mode = TalonControlMode.Position;
+          mode = ControlMode.Position;
           break;
         case 4:
-          mode = TalonControlMode.Current;
-          break;
-        case 5:
-          mode = TalonControlMode.PercentVbus;
+          mode = ControlMode.Current;
           break;
         case 6:
-          mode = TalonControlMode.MotionMagic;
+          mode = ControlMode.MotionMagic;
           break;
         case 7:
-          mode = TalonControlMode.MotionProfile;
+          mode = ControlMode.MotionProfile;
           break;
         case 8:
-          mode = TalonControlMode.Follower;
+          mode = ControlMode.Follower;
           break;
         case 9:
-          mode = TalonControlMode.Disabled;
+          mode = ControlMode.Disabled;
           break;
         default:
           continue;

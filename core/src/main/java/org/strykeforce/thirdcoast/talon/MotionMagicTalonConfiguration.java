@@ -1,5 +1,6 @@
 package org.strykeforce.thirdcoast.talon;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
@@ -41,7 +42,7 @@ public class MotionMagicTalonConfiguration extends PIDTalonConfiguration {
       Integer motionMagicCruiseVelocity) {
     super(
         name,
-        TalonControlMode.MotionMagic,
+        ControlMode.MotionMagic,
         setpointMax,
         encoder,
         neutralMode,
@@ -75,7 +76,7 @@ public class MotionMagicTalonConfiguration extends PIDTalonConfiguration {
   public void configure(@NotNull TalonSRX talon) {
     super.configure(talon);
     if (talon instanceof ThirdCoastTalon) {
-      ((ThirdCoastTalon) talon).changeControlMode(TalonControlMode.MotionMagic);
+      ((ThirdCoastTalon) talon).changeControlMode(ControlMode.MotionMagic);
     }
 
     talon.configMotionAcceleration(valueOrElseZero(motionMagicAcceleration), TIMEOUT_MS);

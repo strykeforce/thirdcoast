@@ -1,11 +1,13 @@
 package org.strykeforce.thirdcoast.talon
 
 import com.ctre.phoenix.ErrorCode
+import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.NeutralMode
 import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod
 import edu.wpi.first.wpilibj.MotorSafety
 import spock.lang.Specification
 
+import static com.ctre.phoenix.motorcontrol.ControlMode.PercentOutput
 import static com.ctre.phoenix.motorcontrol.FeedbackDevice.QuadEncoder
 import static com.ctre.phoenix.motorcontrol.VelocityMeasPeriod.Period_5Ms
 import static org.strykeforce.thirdcoast.talon.TalonConfiguration.TIMEOUT_MS
@@ -19,7 +21,7 @@ class TalonConfigurationTest extends Specification {
     def "configures voltage mode talon"() {
         when:
         def tc = tcb.name("test")
-                .mode(TalonControlMode.Voltage)
+                .mode(PercentOutput)
                 .setpointMax(12)
                 .encoder(QuadEncoder, true)
                 .brakeInNeutral(true)
@@ -51,7 +53,7 @@ class TalonConfigurationTest extends Specification {
             1 * talon.configContinuousCurrentLimit(50, TIMEOUT_MS)
             1 * talon.enableCurrentLimit(true)
             1 * talon.getDeviceID()
-            1 * talon.changeControlMode(TalonControlMode.Voltage)
+            1 * talon.changeControlMode(PercentOutput)
             0 * talon._
         }
     }
@@ -120,7 +122,7 @@ class TalonConfigurationTest extends Specification {
         tc.configure(talon)
 
         then:
-        1 * talon.changeControlMode(TalonControlMode.Voltage)
+        1 * talon.changeControlMode(PercentOutput)
         1 * talon.enableVoltageCompensation(true)
         1 * talon.configSelectedFeedbackSensor(QuadEncoder, 0, TIMEOUT_MS) >> ErrorCode.OK
         1 * talon.configVoltageCompSaturation(12.0d, TIMEOUT_MS)

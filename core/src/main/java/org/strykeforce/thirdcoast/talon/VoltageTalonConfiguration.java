@@ -1,5 +1,6 @@
 package org.strykeforce.thirdcoast.talon;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
@@ -24,7 +25,7 @@ class VoltageTalonConfiguration extends TalonConfiguration {
       Double voltageCompSaturation) {
     super(
         name,
-        TalonControlMode.Voltage,
+        ControlMode.PercentOutput,
         setpointMax,
         encoder,
         neutralMode,
@@ -44,7 +45,7 @@ class VoltageTalonConfiguration extends TalonConfiguration {
   public void configure(@NotNull TalonSRX talon) {
     super.configure(talon);
     if (talon instanceof ThirdCoastTalon) {
-      ((ThirdCoastTalon) talon).changeControlMode(TalonControlMode.Voltage);
+      ((ThirdCoastTalon) talon).changeControlMode(ControlMode.PercentOutput);
     }
   }
 

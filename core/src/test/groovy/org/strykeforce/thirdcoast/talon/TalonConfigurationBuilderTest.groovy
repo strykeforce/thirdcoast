@@ -4,11 +4,15 @@ import com.ctre.phoenix.motorcontrol.NeutralMode
 import com.moandjiezana.toml.Toml
 import spock.lang.Specification
 
+import static com.ctre.phoenix.motorcontrol.ControlMode.Disabled
+import static com.ctre.phoenix.motorcontrol.ControlMode.MotionMagic
+import static com.ctre.phoenix.motorcontrol.ControlMode.PercentOutput
+import static com.ctre.phoenix.motorcontrol.ControlMode.Position
+import static com.ctre.phoenix.motorcontrol.ControlMode.Velocity
 import static com.ctre.phoenix.motorcontrol.FeedbackDevice.CTRE_MagEncoder_Absolute
 import static com.ctre.phoenix.motorcontrol.FeedbackDevice.QuadEncoder
 import static com.ctre.phoenix.motorcontrol.VelocityMeasPeriod.Period_25Ms
 import static com.ctre.phoenix.motorcontrol.VelocityMeasPeriod.Period_5Ms
-import static org.strykeforce.thirdcoast.talon.TalonControlMode.*
 
 // TODO: test voltageCompSaturation
 class TalonConfigurationBuilderTest extends Specification {
@@ -18,7 +22,7 @@ class TalonConfigurationBuilderTest extends Specification {
     def "creates VoltageTalonConfiguration from TOML config"() {
         def input = '''
 name = "foo"
-mode = "Voltage"
+mode = "PercentOutput"
 setpointMax = 12.0
 '''
         when:
@@ -33,7 +37,7 @@ setpointMax = 12.0
     def "creates SpeedTalonConfiguration from TOML config"() {
         def input = '''
 name = "bar"
-mode = "Speed"
+mode = "Velocity"
 setpointMax = 120.0
 pGain = 1.2
 '''
@@ -70,7 +74,7 @@ pGain = 1.2
     def "reads talon parameters"() {
         when:
         def tc = tcb.name("test")
-                .mode(TalonControlMode.Voltage)
+                .mode(PercentOutput)
                 .setpointMax(12)
                 .encoder(QuadEncoder, true)
                 .brakeInNeutral(true)
@@ -102,7 +106,7 @@ pGain = 1.2
 
     def "creates TOML for SpeedTalonConfiguration"() {
         when:
-        def toml = new Toml().read(tcb.mode(Speed).P(27.67d).getToml())
+        def toml = new Toml().read(tcb.mode(Velocity).P(27.67d).getToml())
 
         then:
         toml.getString("name") == TalonConfigurationBuilder.DEFAULT_NAME
@@ -120,7 +124,7 @@ pGain = 1.2
 
     def "builds Speed with defaults"() {
         when:
-        def tc = tcb.mode(Speed).build()
+        def tc = tcb.mode(Velocity).build()
 
         then:
         tc instanceof SpeedTalonConfiguration
@@ -247,7 +251,7 @@ pGain = 1.2
     // PIDTalonConfig
     def "configure max output voltage"() {
         when:
-        PIDTalonConfiguration tc = (PIDTalonConfiguration) tcb.mode(Speed)
+        PIDTalonConfiguration tc = (PIDTalonConfiguration) tcb.mode(Velocity)
                 .voltageCompSaturation(27.67d).build()
 
         then:
@@ -256,7 +260,7 @@ pGain = 1.2
 
     def "configure closed loop ramp rate limit"() {
         when:
-        PIDTalonConfiguration tc = (PIDTalonConfiguration) tcb.mode(Speed)
+        PIDTalonConfiguration tc = (PIDTalonConfiguration) tcb.mode(Velocity)
                 .closedLoopRampRate(27.67d).build()
 
         then:
@@ -265,7 +269,7 @@ pGain = 1.2
 
     def "configure peak output voltage limit"() {
         when:
-        PIDTalonConfiguration tc = (PIDTalonConfiguration) tcb.mode(Speed)
+        PIDTalonConfiguration tc = (PIDTalonConfiguration) tcb.mode(Velocity)
                 .outputVoltagePeak(2.7d, 6.7d).build()
 
         then:
@@ -275,7 +279,7 @@ pGain = 1.2
 
     def "configure nominal output voltage limit"() {
         when:
-        PIDTalonConfiguration tc = (PIDTalonConfiguration) tcb.mode(Speed)
+        PIDTalonConfiguration tc = (PIDTalonConfiguration) tcb.mode(Velocity)
                 .outputVoltageNominal(2.7d, 6.7d).build()
 
         then:
@@ -285,7 +289,7 @@ pGain = 1.2
 
     def "configure allowable closed loop error"() {
         when:
-        PIDTalonConfiguration tc = (PIDTalonConfiguration) tcb.mode(Speed)
+        PIDTalonConfiguration tc = (PIDTalonConfiguration) tcb.mode(Velocity)
                 .allowableClosedLoopError(2767).build()
 
         then:
@@ -294,7 +298,7 @@ pGain = 1.2
 
     def "configure nominal closed-loop voltage"() {
         when:
-        PIDTalonConfiguration tc = (PIDTalonConfiguration) tcb.mode(Speed)
+        PIDTalonConfiguration tc = (PIDTalonConfiguration) tcb.mode(Velocity)
                 .nominalClosedLoopVoltage(27.67d).build()
 
         then:
@@ -303,7 +307,7 @@ pGain = 1.2
 
     def "configure P"() {
         when:
-        PIDTalonConfiguration tc = (PIDTalonConfiguration) tcb.mode(Speed).P(27.67d).build()
+        PIDTalonConfiguration tc = (PIDTalonConfiguration) tcb.mode(Velocity).P(27.67d).build()
 
         then:
         tc.PGain == 27.67
@@ -311,7 +315,7 @@ pGain = 1.2
 
     def "configure I"() {
         when:
-        PIDTalonConfiguration tc = (PIDTalonConfiguration) tcb.mode(Speed).I(27.67d).build()
+        PIDTalonConfiguration tc = (PIDTalonConfiguration) tcb.mode(Velocity).I(27.67d).build()
 
         then:
         tc.IGain == 27.67
@@ -319,7 +323,7 @@ pGain = 1.2
 
     def "configure D"() {
         when:
-        PIDTalonConfiguration tc = (PIDTalonConfiguration) tcb.mode(Speed).D(27.67d).build()
+        PIDTalonConfiguration tc = (PIDTalonConfiguration) tcb.mode(Velocity).D(27.67d).build()
 
         then:
         tc.DGain == 27.67
@@ -327,7 +331,7 @@ pGain = 1.2
 
     def "configure F"() {
         when:
-        PIDTalonConfiguration tc = (PIDTalonConfiguration) tcb.mode(Speed).F(27.67d).build()
+        PIDTalonConfiguration tc = (PIDTalonConfiguration) tcb.mode(Velocity).F(27.67d).build()
 
         then:
         tc.FGain == 27.67
@@ -335,7 +339,7 @@ pGain = 1.2
 
     def "configure I-zone"() {
         when:
-        PIDTalonConfiguration tc = (PIDTalonConfiguration) tcb.mode(Speed).iZone(2767).build()
+        PIDTalonConfiguration tc = (PIDTalonConfiguration) tcb.mode(Velocity).iZone(2767).build()
 
         then:
         tc.IZone == 2767
@@ -381,14 +385,14 @@ pGain = 1.2
         where:
         input                                 | message
         ''                                    | 'mode missing from configuration'
-        "mode = \"Bogus\"\nsetpointMax = 0.0" | 'No enum constant org.strykeforce.thirdcoast.talon.TalonControlMode.Bogus'
+        "mode = \"Bogus\"\nsetpointMax = 0.0" | 'No enum constant com.ctre.phoenix.motorcontrol.ControlMode.Bogus'
     }
 
     // https://github.com/strykeforce/thirdcoast/issues/19
     def "reads voltageRampRate from VoltageTalonConfiguration"() {
         def input = '''
 name = "foo"
-mode = "Voltage"
+mode = "PercentOutput"
 setpointMax = 12.0
 openLoopRampTime = 4.0
 '''

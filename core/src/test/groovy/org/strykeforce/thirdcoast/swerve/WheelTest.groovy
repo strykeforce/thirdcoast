@@ -2,13 +2,12 @@ package org.strykeforce.thirdcoast.swerve
 
 import com.ctre.phoenix.motorcontrol.SensorCollection
 import com.moandjiezana.toml.Toml
-import org.strykeforce.thirdcoast.talon.TalonControlMode
 import org.strykeforce.thirdcoast.talon.TalonProvisioner
 import org.strykeforce.thirdcoast.talon.ThirdCoastTalon
 import spock.lang.Shared
 import spock.lang.Specification
 
-import static org.strykeforce.thirdcoast.talon.TalonConfiguration.TIMEOUT_MS
+import static com.ctre.phoenix.motorcontrol.ControlMode.*
 
 class WheelTest extends Specification {
 
@@ -23,7 +22,7 @@ class WheelTest extends Specification {
     static tomlString = '''
     [[TALON]]
     name = "drive"
-    mode = "Voltage"
+    mode = "PercentOutput"
     setpointMax    = 12.0
     currentLimit   = 50
     [TALON.encoder]
@@ -46,7 +45,7 @@ class WheelTest extends Specification {
     
     [[TALON]]
     name = "speed"
-    mode = "Speed"
+    mode = "Velocity"
     setpointMax = 1.0
 '''
 
@@ -64,14 +63,14 @@ class WheelTest extends Specification {
         def wheel = new Wheel(provisioner, azimuth, drive)
 
         then:
-        1 * drive.changeControlMode(TalonControlMode.Voltage)
-        1 * azimuth.changeControlMode(TalonControlMode.Position)
+        1 * drive.changeControlMode(PercentOutput)
+        1 * azimuth.changeControlMode(Position)
 
         when:
         wheel.azimuthParameters = "speed"
 
         then:
-        1 * azimuth.changeControlMode(TalonControlMode.Speed)
+        1 * azimuth.changeControlMode(Velocity)
         0 * azimuth.changeControlMode(_)
         0 * drive.changeControlMode(_)
     }

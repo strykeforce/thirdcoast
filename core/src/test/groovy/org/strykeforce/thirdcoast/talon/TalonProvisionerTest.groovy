@@ -18,7 +18,7 @@ class TalonProvisionerTest extends Specification {
 
         then:
         Files.isReadable(temp.toPath())
-        Files.size(temp.toPath()) == 787
+        Files.size(temp.toPath()) == 793
     }
 
     def "default TALON config"() {

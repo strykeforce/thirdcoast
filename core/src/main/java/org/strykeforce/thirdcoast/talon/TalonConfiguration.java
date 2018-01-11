@@ -1,5 +1,6 @@
 package org.strykeforce.thirdcoast.talon;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
@@ -22,7 +23,7 @@ public abstract class TalonConfiguration {
 
   // required
   @NotNull private final String name;
-  @NotNull private final TalonControlMode mode;
+  @NotNull private final ControlMode mode;
 
   // optional
   private final Encoder encoder;
@@ -42,7 +43,7 @@ public abstract class TalonConfiguration {
 
   TalonConfiguration(
       @NotNull String name,
-      @NotNull TalonControlMode mode,
+      @NotNull ControlMode mode,
       double setpointMax,
       Encoder encoder,
       NeutralMode neutralMode,
@@ -235,7 +236,7 @@ public abstract class TalonConfiguration {
   }
 
   @NotNull
-  public TalonControlMode getMode() {
+  public ControlMode getMode() {
     return mode;
   }
 

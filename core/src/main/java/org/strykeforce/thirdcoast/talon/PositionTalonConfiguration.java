@@ -1,5 +1,6 @@
 package org.strykeforce.thirdcoast.talon;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
@@ -36,7 +37,7 @@ class PositionTalonConfiguration extends PIDTalonConfiguration {
       Integer iZone) {
     super(
         name,
-        TalonControlMode.Position,
+        ControlMode.Position,
         setpointMax,
         encoder,
         neutralMode,
@@ -67,7 +68,7 @@ class PositionTalonConfiguration extends PIDTalonConfiguration {
   @Override
   public void configure(@NotNull TalonSRX talon) {
     if (talon instanceof ThirdCoastTalon) {
-      ((ThirdCoastTalon) talon).changeControlMode(TalonControlMode.Position);
+      ((ThirdCoastTalon) talon).changeControlMode(ControlMode.Position);
     }
 
     super.configure(talon);

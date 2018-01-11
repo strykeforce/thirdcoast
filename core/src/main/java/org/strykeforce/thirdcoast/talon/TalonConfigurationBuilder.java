@@ -1,5 +1,6 @@
 package org.strykeforce.thirdcoast.talon;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
@@ -22,7 +23,7 @@ public class TalonConfigurationBuilder {
 
   // TalonConfiguration
   @NotNull private String name = DEFAULT_NAME;
-  @NotNull private TalonControlMode mode = TalonControlMode.Voltage;
+  @NotNull private ControlMode mode = ControlMode.PercentOutput;
   private double setpointMax = 12;
   @Nullable private Encoder encoder;
   @Nullable private NeutralMode neutralMode;
@@ -38,7 +39,6 @@ public class TalonConfigurationBuilder {
   @Nullable private Double voltageCompSaturation;
 
   // PIDTalonConfiguration
-  @Nullable private Double outputVoltageMax;
   @Nullable private Double closedLoopRampRate;
   @Nullable private Double forwardOutputVoltagePeak;
   @Nullable private Double reverseOutputVoltagePeak;
@@ -77,14 +77,14 @@ public class TalonConfigurationBuilder {
     voltageCompSaturation = config.getVoltageCompSaturation();
 
     if (config instanceof VoltageTalonConfiguration) {
-      mode = TalonControlMode.Voltage;
+      mode = ControlMode.PercentOutput;
       return;
     } else if (config instanceof SpeedTalonConfiguration) {
-      mode = TalonControlMode.Speed;
+      mode = ControlMode.Velocity;
     } else if (config instanceof PositionTalonConfiguration) {
-      mode = TalonControlMode.Position;
+      mode = ControlMode.Position;
     } else if (config instanceof MotionMagicTalonConfiguration) {
-      mode = TalonControlMode.MotionMagic;
+      mode = ControlMode.MotionMagic;
       MotionMagicTalonConfiguration mm = (MotionMagicTalonConfiguration) config;
       motionMagicAcceleration = mm.getMotionMagicAcceleration();
       motionMagicCruiseVelocity = mm.getMotionMagicCruiseVelocity();
@@ -92,7 +92,7 @@ public class TalonConfigurationBuilder {
       throw new AssertionError(config.getClass().getCanonicalName());
     }
     PIDTalonConfiguration pid = (PIDTalonConfiguration) config;
-    outputVoltageMax = pid.getVoltageCompSaturation();
+    voltageCompSaturation = pid.getVoltageCompSaturation();
     forwardOutputVoltagePeak = pid.getForwardOutputVoltagePeak();
     reverseOutputVoltagePeak = pid.getReverseOutputVoltagePeak();
     forwardOutputVoltageNominal = pid.getForwardOutputVoltageNominal();
@@ -116,21 +116,22 @@ public class TalonConfigurationBuilder {
   @NotNull
   public static TalonConfiguration create(Toml config) {
     TalonConfiguration talonConfiguration = null;
-    TalonControlMode mode = getMode(config);
+    ControlMode mode = getMode(config);
     switch (mode) {
-      case Voltage:
+      case PercentOutput:
         talonConfiguration = config.to(VoltageTalonConfiguration.class);
         break;
       case Position:
         talonConfiguration = config.to(PositionTalonConfiguration.class);
         break;
-      case Speed:
+      case Velocity:
         talonConfiguration = config.to(SpeedTalonConfiguration.class);
         break;
       case MotionMagic:
         talonConfiguration = config.to(MotionMagicTalonConfiguration.class);
         break;
-      case PercentVbus:
+      case MotionMagicArc:
+      case MotionProfileArc:
       case Current:
       case Follower:
       case MotionProfile:
@@ -140,12 +141,12 @@ public class TalonConfigurationBuilder {
     return talonConfiguration;
   }
 
-  static TalonControlMode getMode(Toml config) {
+  static ControlMode getMode(Toml config) {
     String mode = config.getString(MODE);
     if (mode == null) {
       throw new IllegalArgumentException("mode missing from configuration");
     }
-    return TalonControlMode.valueOf(mode);
+    return ControlMode.valueOf(mode);
   }
 
   /**
@@ -169,7 +170,7 @@ public class TalonConfigurationBuilder {
   public TalonConfiguration build() {
     TalonConfiguration tc = null;
     switch (mode) {
-      case Voltage:
+      case PercentOutput:
         tc =
             new VoltageTalonConfiguration(
                 name,
@@ -217,7 +218,7 @@ public class TalonConfigurationBuilder {
                 fGain,
                 iZone);
         break;
-      case Speed:
+      case Velocity:
         tc =
             new SpeedTalonConfiguration(
                 name,
@@ -279,11 +280,12 @@ public class TalonConfigurationBuilder {
                 motionMagicAcceleration,
                 motionMagicCruiseVelocity);
         break;
+      case MotionMagicArc:
+      case MotionProfileArc:
       case Follower:
       case MotionProfile:
       case Current:
       case Disabled:
-      case PercentVbus:
         throw new UnsupportedOperationException(mode.name());
     }
     return tc;
@@ -310,7 +312,7 @@ public class TalonConfigurationBuilder {
    * @throws IllegalArgumentException if mode is null
    */
   @NotNull
-  public TalonConfigurationBuilder mode(TalonControlMode mode) {
+  public TalonConfigurationBuilder mode(ControlMode mode) {
     this.mode = mode;
     return this;
   }

@@ -4,7 +4,6 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import com.squareup.moshi.JsonWriter
 import groovy.json.JsonSlurper
 import okio.Buffer
-import org.strykeforce.thirdcoast.talon.TalonControlMode
 import spock.lang.Ignore
 import spock.lang.Specification
 

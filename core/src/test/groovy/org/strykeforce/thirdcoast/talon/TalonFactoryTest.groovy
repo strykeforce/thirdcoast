@@ -3,6 +3,7 @@ package org.strykeforce.thirdcoast.talon
 import com.ctre.phoenix.motorcontrol.SensorCollection
 import spock.lang.Specification
 
+import static com.ctre.phoenix.motorcontrol.ControlMode.PercentOutput
 import static com.ctre.phoenix.motorcontrol.StatusFrame.*
 import static org.strykeforce.thirdcoast.talon.TalonConfiguration.TIMEOUT_MS
 
@@ -22,7 +23,7 @@ class TalonFactoryTest extends Specification {
 
         then:
         1 * wrapperFactory.create(27) >> wrapper
-        1 * wrapper.changeControlMode(TalonControlMode.Voltage)
+        1 * wrapper.changeControlMode(PercentOutput)
         1 * wrapper.selectProfileSlot(0, 0)
         1 * wrapper.setInverted(false)
         1 * wrapper.setStatusFramePeriod(Status_4_AinTempVbat, 100, TIMEOUT_MS)

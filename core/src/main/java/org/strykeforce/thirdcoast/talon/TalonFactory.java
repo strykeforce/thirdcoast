@@ -1,5 +1,6 @@
 package org.strykeforce.thirdcoast.talon;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.SensorCollection;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import java.util.HashSet;
@@ -17,7 +18,6 @@ import org.slf4j.LoggerFactory;
 @ParametersAreNonnullByDefault
 public class TalonFactory {
 
-  public static final int CONTROL_FRAME_MS = 10;
   static final int TIMEOUT_MS = 10;
   private static final Logger logger = LoggerFactory.getLogger(TalonFactory.class);
 
@@ -47,7 +47,7 @@ public class TalonFactory {
   private TalonSRX createTalon(int id) {
     ThirdCoastTalon talon = wrapperFactory.create(id);
     StatusFrameRate.DEFAULT.configure(talon);
-    talon.changeControlMode(TalonControlMode.Voltage);
+    talon.changeControlMode(ControlMode.PercentOutput);
     talon.enableVoltageCompensation(true);
     talon.setIntegralAccumulator(0, 0, TIMEOUT_MS);
     talon.setIntegralAccumulator(0, 1, TIMEOUT_MS);

@@ -4,7 +4,6 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.google.auto.factory.AutoFactory;
-import javax.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,16 +17,16 @@ import org.slf4j.LoggerFactory;
 @AutoFactory(allowSubclasses = true)
 public class ThirdCoastTalon extends WPI_TalonSRX {
   private static final Logger logger = LoggerFactory.getLogger(ThirdCoastTalon.class);
-  private final String NOT_IMPLEMENTED = "not implemented for wrapped Talon";
+
   private double setpoint = Double.NaN;
-  @Nullable private TalonControlMode controlMode = null;
+  private ControlMode controlMode = ControlMode.Disabled;
 
   public ThirdCoastTalon(int deviceNumber) {
     super(deviceNumber);
     logger.debug("initializing {}", getDescription());
   }
 
-  public void changeControlMode(TalonControlMode controlMode) {
+  public void changeControlMode(ControlMode controlMode) {
     if (controlMode != this.controlMode) {
       logger.info("{}: changed from {} to {}", getDescription(), this.controlMode, controlMode);
       setpoint = Double.NaN;
@@ -38,21 +37,16 @@ public class ThirdCoastTalon extends WPI_TalonSRX {
   }
 
   @Override
+  public ControlMode getControlMode() {
+    return controlMode;
+  }
+
+  @Override
   public void set(double setpoint) {
     if (setpoint != this.setpoint) {
       this.setpoint = setpoint;
-      super.set(setpoint); // FIXME: add control mode
+      super.set(controlMode, setpoint); // FIXME: add control mode
     }
-  }
-
-  @Override
-  public void set(ControlMode mode, double value) {
-    throw new AssertionError(NOT_IMPLEMENTED);
-  }
-
-  @Override
-  public void set(ControlMode mode, double demand0, double demand1) {
-    throw new AssertionError(NOT_IMPLEMENTED);
   }
 
   /**

@@ -1,5 +1,6 @@
 package org.strykeforce.thirdcoast.talon;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
@@ -22,7 +23,7 @@ public class PIDTalonConfiguration extends TalonConfiguration {
 
   PIDTalonConfiguration(
       @NotNull String name,
-      @NotNull TalonControlMode mode,
+      @NotNull ControlMode mode,
       double setpointMax,
       Encoder encoder,
       NeutralMode neutralMode,

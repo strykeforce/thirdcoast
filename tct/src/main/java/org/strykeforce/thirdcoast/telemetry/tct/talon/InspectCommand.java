@@ -1,5 +1,7 @@
 package org.strykeforce.thirdcoast.telemetry.tct.talon;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
 import java.io.PrintWriter;
 import java.util.Formatter;
@@ -13,7 +15,6 @@ import org.strykeforce.thirdcoast.talon.MotionMagicTalonConfiguration;
 import org.strykeforce.thirdcoast.talon.PIDTalonConfiguration;
 import org.strykeforce.thirdcoast.talon.SoftLimit;
 import org.strykeforce.thirdcoast.talon.TalonConfiguration;
-import org.strykeforce.thirdcoast.talon.TalonControlMode;
 import org.strykeforce.thirdcoast.telemetry.tct.AbstractCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.Messages;
 
@@ -51,7 +52,8 @@ public class InspectCommand extends AbstractCommand {
       stringLine("Encoder:", "DEFAULT");
     }
 
-    stringLine("Neutral Mode:", config.getBrakeInNeutral().toString());
+    NeutralMode neutralMode = config.getBrakeInNeutral();
+    stringLine("Neutral Mode:", neutralMode != null ? neutralMode.name() : "DEFAULT");
     booleanLine("Output Reversed:", config.getOutputReversed());
     VelocityMeasPeriod period = config.getVelocityMeasurementPeriod();
     stringLine("Vel. Meas. Period:", period != null ? period.name() : "DEFAULT");
@@ -99,7 +101,7 @@ public class InspectCommand extends AbstractCommand {
     intLine("Current Limit:", config.getCurrentLimit());
     doubleLine("Voltage Ramp Rate:", config.getOpenLoopRampTime());
 
-    if (config.getMode() == TalonControlMode.Voltage) {
+    if (config.getMode() == ControlMode.PercentOutput) {
       return;
     }
     PIDTalonConfiguration pid = (PIDTalonConfiguration) config;
@@ -109,7 +111,7 @@ public class InspectCommand extends AbstractCommand {
     doubleLine("D:", pid.getDGain());
     doubleLine("F:", pid.getFGain());
     intLine("I-zone:", pid.getIZone());
-    if (config.getMode() == TalonControlMode.MotionMagic) {
+    if (config.getMode() == ControlMode.MotionMagic) {
       writer.println();
       MotionMagicTalonConfiguration mmtc = (MotionMagicTalonConfiguration) pid;
       intLine("MM Cruise Velocity:", mmtc.getMotionMagicCruiseVelocity());

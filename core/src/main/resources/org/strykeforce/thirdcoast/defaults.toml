@@ -6,7 +6,7 @@
 
 [[TALON]]
   name = "drive"
-  mode = "Voltage"
+  mode = "PercentOutput"
   setpointMax    = 12.0
   currentLimit   = 50
   [TALON.encoder]
