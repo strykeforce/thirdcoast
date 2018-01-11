@@ -1,6 +1,7 @@
 package org.strykeforce.thirdcoast.telemetry.tct.talon.config.out
 
 import org.strykeforce.thirdcoast.telemetry.tct.Command
+import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractDoubleConfigCommand
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractTalonConfigCommandTest
 import spock.lang.Ignore
 
@@ -22,7 +23,6 @@ class CurrentLimitCommandTest extends AbstractTalonConfigCommandTest {
         0 * talon._
     }
 
-    @Ignore
     def "enables a current limit"() {
         when:
         command.perform()
@@ -32,13 +32,12 @@ class CurrentLimitCommandTest extends AbstractTalonConfigCommandTest {
 
         1 * writer.println("please enter an integer") // ABC
 
-        1 * talon.setCurrentLimit(2767) // 2767
-        1 * talon.EnableCurrentLimit(true)
+        1 * talon.configContinuousCurrentLimit(2767, AbstractDoubleConfigCommand.TIMEOUT_MS) // 2767
+        1 * talon.enableCurrentLimit(true)
         1 * talon.getDescription()
         0 * talon._
     }
 
-    @Ignore
     def "disables current limit"() {
         when:
         command.perform()
@@ -46,7 +45,7 @@ class CurrentLimitCommandTest extends AbstractTalonConfigCommandTest {
         then:
         1 * reader.readLine(_) >> "0"
 
-        1 * talon.EnableCurrentLimit(false)
+        1 * talon.enableCurrentLimit(false)
         1 * talon.getDescription()
         0 * talon._
     }

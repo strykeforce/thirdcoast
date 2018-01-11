@@ -1,6 +1,7 @@
 package org.strykeforce.thirdcoast.telemetry.tct.talon.config.cl
 
 import org.strykeforce.thirdcoast.telemetry.tct.Command
+import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractDoubleConfigCommand
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractTalonConfigCommandTest
 import spock.lang.Ignore
 
@@ -23,7 +24,6 @@ class IZoneCommandTest extends AbstractTalonConfigCommandTest {
         0 * talon._
     }
 
-    @Ignore
     def "handles input"() {
         when:
         command.perform()
@@ -33,7 +33,7 @@ class IZoneCommandTest extends AbstractTalonConfigCommandTest {
 
         1 * writer.println("please enter an integer") // ABC
 
-        1 * talon.setIZone(2767) // 2767
+        1 * talon.config_IntegralZone(0, 2767, AbstractDoubleConfigCommand.TIMEOUT_MS) // 2767
         1 * talon.getDescription()
         0 * talon._
     }
