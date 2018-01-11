@@ -2,6 +2,7 @@ package org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc
 
 import org.strykeforce.thirdcoast.telemetry.tct.Command
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractTalonConfigCommandTest
+import spock.lang.Ignore
 
 class VelocityMeasurementWindowCommandTest extends AbstractTalonConfigCommandTest {
 
@@ -21,6 +22,7 @@ class VelocityMeasurementWindowCommandTest extends AbstractTalonConfigCommandTes
         0 * talon._
     }
 
+    @Ignore
     def "input window size 1"() {
         when:
         command.perform()
@@ -33,6 +35,7 @@ class VelocityMeasurementWindowCommandTest extends AbstractTalonConfigCommandTes
         0 * talon._
     }
 
+    @Ignore
     def "input window size 4"() {
         when:
         command.perform()
@@ -45,6 +48,7 @@ class VelocityMeasurementWindowCommandTest extends AbstractTalonConfigCommandTes
         0 * talon._
     }
 
+    @Ignore
     def "input window size 64"() {
         when:
         command.perform()

@@ -1,14 +1,14 @@
 package org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc;
 
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import javax.inject.Inject;
 import org.jline.reader.LineReader;
+import org.strykeforce.thirdcoast.talon.ThirdCoastTalon;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractBooleanConfigCommand;
 
 public class ReverseSensorCommand extends AbstractBooleanConfigCommand {
 
-  public static final String NAME = "Sensor Reversed";
+  public static final String NAME = "Sensor Phase Reversed";
 
   @Inject
   public ReverseSensorCommand(LineReader reader, TalonSet talonSet) {
@@ -21,7 +21,7 @@ public class ReverseSensorCommand extends AbstractBooleanConfigCommand {
   }
 
   @Override
-  protected void config(TalonSRX talon, boolean value) {
-    talon.reverseSensor(value);
+  protected void config(ThirdCoastTalon talon, boolean value) {
+    talon.setSensorPhase(value);
   }
 }

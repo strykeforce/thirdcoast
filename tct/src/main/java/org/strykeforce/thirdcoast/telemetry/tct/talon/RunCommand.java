@@ -1,6 +1,5 @@
 package org.strykeforce.thirdcoast.telemetry.tct.talon;
 
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.wpilibj.Timer;
 import java.util.Arrays;
 import java.util.List;
@@ -9,6 +8,7 @@ import javax.inject.Inject;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
 import org.jline.reader.UserInterruptException;
+import org.strykeforce.thirdcoast.talon.ThirdCoastTalon;
 import org.strykeforce.thirdcoast.telemetry.tct.AbstractCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.Messages;
 
@@ -66,7 +66,7 @@ public class RunCommand extends AbstractCommand {
                 Messages.bold(
                     String.format("setting talons to %.2f for %.2f sec%n", setpoint, duration)));
         terminal.flush();
-        double old = talonSet.selected().stream().findFirst().map(TalonSRX::get).orElse(0.0);
+        double old = talonSet.selected().stream().findFirst().map(ThirdCoastTalon::get).orElse(0.0);
         setTalons(setpoint);
         Timer.delay(duration);
         setTalons(old);
@@ -79,12 +79,12 @@ public class RunCommand extends AbstractCommand {
   }
 
   protected void setTalons(double setpoint) {
-    for (TalonSRX talon : talonSet.selected()) {
+    for (ThirdCoastTalon talon : talonSet.selected()) {
       talon.set(setpoint);
     }
   }
 
-  protected void help() {
+  private void help() {
     terminal
         .writer()
         .println(Messages.boldRed("please enter a number or two numbers separated by a commma"));

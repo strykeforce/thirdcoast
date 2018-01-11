@@ -1,11 +1,11 @@
 package org.strykeforce.thirdcoast.telemetry.tct.talon.config;
 
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import java.util.Arrays;
 import java.util.List;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
 import org.jline.reader.UserInterruptException;
+import org.strykeforce.thirdcoast.talon.ThirdCoastTalon;
 import org.strykeforce.thirdcoast.telemetry.tct.Messages;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 
@@ -15,7 +15,7 @@ public abstract class AbstractFwdRevBooleanConfigCommand extends AbstractTalonCo
     super(name, reader, talonSet);
   }
 
-  protected abstract void config(TalonSRX talon, boolean foward, boolean reverse);
+  protected abstract void config(ThirdCoastTalon talon, boolean foward, boolean reverse);
 
   protected abstract void saveConfig(boolean forward, boolean reverse);
 
@@ -26,7 +26,7 @@ public abstract class AbstractFwdRevBooleanConfigCommand extends AbstractTalonCo
       return;
     }
     saveConfig(values[0], values[1]);
-    for (TalonSRX talon : talonSet.selected()) {
+    for (ThirdCoastTalon talon : talonSet.selected()) {
       config(talon, values[0], values[1]);
       logger.info("set {} for {} to {}/{}", name(), talon.getDescription(), values[0], values[1]);
     }
@@ -85,7 +85,7 @@ public abstract class AbstractFwdRevBooleanConfigCommand extends AbstractTalonCo
     return setpoint;
   }
 
-  protected void help() {
+  private void help() {
     terminal
         .writer()
         .println(Messages.boldRed("please enter <Y>, <N> or two values separated by a commma"));

@@ -1,10 +1,11 @@
 package org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc;
 
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
 import javax.inject.Inject;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
 import org.jline.reader.UserInterruptException;
+import org.strykeforce.thirdcoast.talon.ThirdCoastTalon;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractTalonConfigCommand;
 
@@ -45,39 +46,39 @@ public class VelocityMeasurementPeriodCommand extends AbstractTalonConfigCommand
         terminal.writer().println("please enter an integer");
         continue;
       }
-      TalonSRX.VelocityMeasurementPeriod setpoint;
+      VelocityMeasPeriod setpoint;
       done = true;
       switch (choice) {
         case 1:
-          setpoint = VelocityMeasurementPeriod.Period_1Ms;
+          setpoint = VelocityMeasPeriod.Period_1Ms;
           break;
         case 2:
-          setpoint = VelocityMeasurementPeriod.Period_2Ms;
+          setpoint = VelocityMeasPeriod.Period_2Ms;
           break;
         case 3:
-          setpoint = VelocityMeasurementPeriod.Period_5Ms;
+          setpoint = VelocityMeasPeriod.Period_5Ms;
           break;
         case 4:
-          setpoint = VelocityMeasurementPeriod.Period_10Ms;
+          setpoint = VelocityMeasPeriod.Period_10Ms;
           break;
         case 5:
-          setpoint = VelocityMeasurementPeriod.Period_20Ms;
+          setpoint = VelocityMeasPeriod.Period_20Ms;
           break;
         case 6:
-          setpoint = VelocityMeasurementPeriod.Period_25Ms;
+          setpoint = VelocityMeasPeriod.Period_25Ms;
           break;
         case 7:
-          setpoint = VelocityMeasurementPeriod.Period_50Ms;
+          setpoint = VelocityMeasPeriod.Period_50Ms;
           break;
         case 8:
-          setpoint = VelocityMeasurementPeriod.Period_100Ms;
+          setpoint = VelocityMeasPeriod.Period_100Ms;
           break;
         default:
           continue;
       }
       talonSet.talonConfigurationBuilder().velocityMeasurementPeriod(setpoint);
-      for (TalonSRX talon : talonSet.selected()) {
-        talon.SetVelocityMeasurementPeriod(setpoint);
+      for (ThirdCoastTalon talon : talonSet.selected()) {
+        talon.configVelocityMeasurementPeriod(setpoint, TIMEOUT_MS);
         logger.info("set {} for {} to {}", name(), talon.getDescription(), setpoint);
       }
     }

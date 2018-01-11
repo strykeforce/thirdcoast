@@ -1,8 +1,8 @@
 package org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc;
 
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import javax.inject.Inject;
 import org.jline.reader.LineReader;
+import org.strykeforce.thirdcoast.talon.ThirdCoastTalon;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractBooleanConfigCommand;
 
@@ -21,7 +21,7 @@ public class ReverseOutputCommand extends AbstractBooleanConfigCommand {
   }
 
   @Override
-  protected void config(TalonSRX talon, boolean value) {
-    talon.reverseOutput(value);
+  protected void config(ThirdCoastTalon talon, boolean value) {
+    talon.setInverted(value);
   }
 }

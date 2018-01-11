@@ -1,24 +1,24 @@
 package org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc;
 
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX.StatusFrameRate;
+import com.ctre.phoenix.motorcontrol.StatusFrame;
 import javax.inject.Inject;
 import org.jline.reader.LineReader;
+import org.strykeforce.thirdcoast.talon.ThirdCoastTalon;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractIntConfigCommand;
 
 public class AnalogTempVbatFrameRateCommand extends AbstractIntConfigCommand {
 
-  public static final String NAME = "AnalogTempVbat Status Frame Rate";
+  public static final String NAME = VERIFY + "AnalogTempVbat Status Frame Rate";
 
   @Inject
-  public AnalogTempVbatFrameRateCommand(LineReader reader, TalonSet talonSet) {
+  AnalogTempVbatFrameRateCommand(LineReader reader, TalonSet talonSet) {
     super(NAME, reader, talonSet);
   }
 
   @Override
-  protected void config(TalonSRX talon, int value) {
-    talon.setStatusFrameRateMs(StatusFrameRate.AnalogTempVbat, value);
+  protected void config(ThirdCoastTalon talon, int value) {
+    talon.setStatusFramePeriod(StatusFrame.Status_4_AinTempVbat, value, TIMEOUT_MS);
   }
 
   @Override

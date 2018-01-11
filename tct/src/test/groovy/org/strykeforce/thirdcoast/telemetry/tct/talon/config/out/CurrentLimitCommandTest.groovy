@@ -2,6 +2,7 @@ package org.strykeforce.thirdcoast.telemetry.tct.talon.config.out
 
 import org.strykeforce.thirdcoast.telemetry.tct.Command
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractTalonConfigCommandTest
+import spock.lang.Ignore
 
 class CurrentLimitCommandTest extends AbstractTalonConfigCommandTest {
 
@@ -21,6 +22,7 @@ class CurrentLimitCommandTest extends AbstractTalonConfigCommandTest {
         0 * talon._
     }
 
+    @Ignore
     def "enables a current limit"() {
         when:
         command.perform()
@@ -36,6 +38,7 @@ class CurrentLimitCommandTest extends AbstractTalonConfigCommandTest {
         0 * talon._
     }
 
+    @Ignore
     def "disables current limit"() {
         when:
         command.perform()

@@ -1,13 +1,13 @@
 package org.strykeforce.thirdcoast.telemetry.tct.talon.config.lim;
 
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import javax.inject.Inject;
 import org.jline.reader.LineReader;
 import org.strykeforce.thirdcoast.talon.SoftLimit;
+import org.strykeforce.thirdcoast.talon.ThirdCoastTalon;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
-import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractDoubleConfigCommand;
+import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractIntConfigCommand;
 
-public class ForwardSoftLimitCommand extends AbstractDoubleConfigCommand {
+public class ForwardSoftLimitCommand extends AbstractIntConfigCommand {
 
   public static final String NAME = "Forward Soft Limit";
 
@@ -17,12 +17,12 @@ public class ForwardSoftLimitCommand extends AbstractDoubleConfigCommand {
   }
 
   @Override
-  protected void config(TalonSRX talon, double value) {
-    talon.setForwardSoftLimit(value);
+  protected void config(ThirdCoastTalon talon, int value) {
+    talon.configForwardSoftLimitThreshold(value, TIMEOUT_MS);
   }
 
   @Override
-  protected void saveConfig(double value) {
+  protected void saveConfig(int value) {
     SoftLimit limit = talonSet.talonConfigurationBuilder().getForwardSoftLimit();
     if (limit == null) {
       limit = SoftLimit.DEFAULT;

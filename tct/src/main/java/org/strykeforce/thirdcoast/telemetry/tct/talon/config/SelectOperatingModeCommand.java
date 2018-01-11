@@ -1,11 +1,11 @@
 package org.strykeforce.thirdcoast.telemetry.tct.talon.config;
 
-import com.ctre.TalonControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import javax.inject.Inject;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
 import org.jline.reader.UserInterruptException;
+import org.strykeforce.thirdcoast.talon.TalonControlMode;
+import org.strykeforce.thirdcoast.talon.ThirdCoastTalon;
 import org.strykeforce.thirdcoast.telemetry.tct.Messages;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 
@@ -14,7 +14,7 @@ public class SelectOperatingModeCommand extends AbstractTalonConfigCommand {
   public static final String NAME = "Control Mode";
 
   @Inject
-  public SelectOperatingModeCommand(TalonSet talonSet, LineReader reader) {
+  SelectOperatingModeCommand(TalonSet talonSet, LineReader reader) {
     super(NAME, reader, talonSet);
   }
 
@@ -89,7 +89,7 @@ public class SelectOperatingModeCommand extends AbstractTalonConfigCommand {
         default:
           continue;
       }
-      for (TalonSRX talon : talonSet.selected()) {
+      for (ThirdCoastTalon talon : talonSet.selected()) {
         talon.changeControlMode(mode);
         logger.info("set {} for {} to {}", name(), talon.getDescription(), mode);
       }

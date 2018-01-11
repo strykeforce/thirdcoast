@@ -35,12 +35,12 @@ public abstract class OutputMenuModule {
   @Binds
   @IntoSet
   @Named("TALON_CONFIG_OUT")
-  public abstract Command voltageRampRateCommand(VoltageRampRateCommand command);
+  public abstract Command voltageRampRateCommand(OpenLoopRampRateCommand command);
 
   @Binds
   @IntoSet
   @Named("TALON_CONFIG_OUT")
-  public abstract Command peakOutputVoltageCommand(PeakOutputVoltageCommand command);
+  public abstract Command peakOutputVoltageCommand(PeakOutputCommand command);
 
   @Binds
   @IntoSet
@@ -50,7 +50,7 @@ public abstract class OutputMenuModule {
   @Binds
   @IntoSet
   @Named("TALON_CONFIG_OUT")
-  public abstract Command nominalOutputVoltageCommand(NominalOutputVoltageCommand command);
+  public abstract Command nominalOutputVoltageCommand(NominalOutputCommand command);
 
   @Binds
   @IntoSet

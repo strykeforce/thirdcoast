@@ -1,10 +1,10 @@
 package org.strykeforce.thirdcoast.telemetry.tct.talon.config;
 
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import java.io.PrintWriter;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
 import org.jline.reader.UserInterruptException;
+import org.strykeforce.thirdcoast.talon.ThirdCoastTalon;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 
 public abstract class AbstractDoubleConfigCommand extends AbstractTalonConfigCommand {
@@ -13,7 +13,7 @@ public abstract class AbstractDoubleConfigCommand extends AbstractTalonConfigCom
     super(name, reader, talonSet);
   }
 
-  protected abstract void config(TalonSRX talon, double value);
+  protected abstract void config(ThirdCoastTalon talon, double value);
 
   protected abstract void saveConfig(double value);
 
@@ -24,13 +24,13 @@ public abstract class AbstractDoubleConfigCommand extends AbstractTalonConfigCom
       return;
     }
     saveConfig(value);
-    for (TalonSRX talon : talonSet.selected()) {
+    for (ThirdCoastTalon talon : talonSet.selected()) {
       config(talon, value);
       logger.info("set {} for {} to {}", name(), talon.getDescription(), value);
     }
   }
 
-  protected Double getDoubleValue() {
+  private Double getDoubleValue() {
     Double value = null;
 
     while (value == null) {

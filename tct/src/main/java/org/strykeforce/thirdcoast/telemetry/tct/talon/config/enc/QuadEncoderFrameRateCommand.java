@@ -1,15 +1,14 @@
 package org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc;
 
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX.StatusFrameRate;
 import javax.inject.Inject;
 import org.jline.reader.LineReader;
+import org.strykeforce.thirdcoast.talon.ThirdCoastTalon;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractIntConfigCommand;
 
 public class QuadEncoderFrameRateCommand extends AbstractIntConfigCommand {
 
-  public static final String NAME = "QuadEncoder Status Frame Rate";
+  public static final String NAME = UNAVAILABLE + "QuadEncoder Status Frame Rate";
 
   @Inject
   public QuadEncoderFrameRateCommand(LineReader reader, TalonSet talonSet) {
@@ -17,8 +16,8 @@ public class QuadEncoderFrameRateCommand extends AbstractIntConfigCommand {
   }
 
   @Override
-  protected void config(TalonSRX talon, int value) {
-    talon.setStatusFrameRateMs(StatusFrameRate.QuadEncoder, value);
+  protected void config(ThirdCoastTalon talon, int value) {
+    //    talon.setStatusFrameRateMs(StatusFrame., value);
   }
 
   @Override

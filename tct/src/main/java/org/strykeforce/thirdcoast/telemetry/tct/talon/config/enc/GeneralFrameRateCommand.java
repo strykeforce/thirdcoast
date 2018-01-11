@@ -1,24 +1,24 @@
 package org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc;
 
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX.StatusFrameRate;
+import com.ctre.phoenix.motorcontrol.StatusFrame;
 import javax.inject.Inject;
 import org.jline.reader.LineReader;
+import org.strykeforce.thirdcoast.talon.ThirdCoastTalon;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractIntConfigCommand;
 
 public class GeneralFrameRateCommand extends AbstractIntConfigCommand {
 
-  public static final String NAME = "General Status Frame Rate";
+  public static final String NAME = VERIFY + "General Status Frame Rate";
 
   @Inject
-  public GeneralFrameRateCommand(LineReader reader, TalonSet talonSet) {
+  GeneralFrameRateCommand(LineReader reader, TalonSet talonSet) {
     super(NAME, reader, talonSet);
   }
 
   @Override
-  protected void config(TalonSRX talon, int value) {
-    talon.setStatusFrameRateMs(StatusFrameRate.General, value);
+  protected void config(ThirdCoastTalon talon, int value) {
+    talon.setStatusFramePeriod(StatusFrame.Status_1_General, value, TIMEOUT_MS);
   }
 
   @Override

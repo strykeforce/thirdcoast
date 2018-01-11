@@ -1,6 +1,5 @@
 package org.strykeforce.thirdcoast.telemetry.tct.talon;
 
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -17,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.talon.TalonConfiguration;
 import org.strykeforce.thirdcoast.talon.TalonFactory;
 import org.strykeforce.thirdcoast.talon.TalonProvisioner;
+import org.strykeforce.thirdcoast.talon.ThirdCoastTalon;
 import org.strykeforce.thirdcoast.telemetry.tct.AbstractCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.Command;
 import org.strykeforce.thirdcoast.telemetry.tct.ConfigurationsManager;
@@ -101,7 +101,8 @@ public class LoadConfigsCommand extends AbstractCommand {
       talonSet.clearSelected();
 
       for (Integer id : configuration.getTalonIds()) {
-        TalonSRX talon = talonFactory.getTalonWithConfiguration(id, selected);
+        ThirdCoastTalon talon =
+            (ThirdCoastTalon) talonFactory.getTalonWithConfiguration(id, selected);
         talonSet.selectTalon(talon);
         logger.info("adding talon with id {} and configuration {}", id, selected);
       }

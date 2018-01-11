@@ -1,12 +1,11 @@
 package org.strykeforce.thirdcoast.telemetry.tct.talon.config.cl;
 
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import javax.inject.Inject;
 import org.jline.reader.LineReader;
+import org.strykeforce.thirdcoast.talon.ThirdCoastTalon;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractDoubleConfigCommand;
 
-/** Configure P. */
 public class DCommand extends AbstractDoubleConfigCommand {
 
   public static final String NAME = "D";
@@ -22,7 +21,7 @@ public class DCommand extends AbstractDoubleConfigCommand {
   }
 
   @Override
-  protected void config(TalonSRX talon, double value) {
-    talon.setD(value);
+  protected void config(ThirdCoastTalon talon, double value) {
+    talon.config_kD(0, value, TIMEOUT_MS);
   }
 }

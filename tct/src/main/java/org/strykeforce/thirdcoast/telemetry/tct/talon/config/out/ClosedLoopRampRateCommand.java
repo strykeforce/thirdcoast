@@ -1,8 +1,8 @@
 package org.strykeforce.thirdcoast.telemetry.tct.talon.config.out;
 
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import javax.inject.Inject;
 import org.jline.reader.LineReader;
+import org.strykeforce.thirdcoast.talon.ThirdCoastTalon;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractDoubleConfigCommand;
 
@@ -22,7 +22,7 @@ public class ClosedLoopRampRateCommand extends AbstractDoubleConfigCommand {
   }
 
   @Override
-  protected void config(TalonSRX talon, double value) {
-    talon.setCloseLoopRampRate(value);
+  protected void config(ThirdCoastTalon talon, double value) {
+    talon.configClosedloopRamp(value, TIMEOUT_MS);
   }
 }

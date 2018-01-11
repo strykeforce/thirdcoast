@@ -1,8 +1,8 @@
 package org.strykeforce.thirdcoast.telemetry.tct.talon.config.cl;
 
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import javax.inject.Inject;
 import org.jline.reader.LineReader;
+import org.strykeforce.thirdcoast.talon.ThirdCoastTalon;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractIntConfigCommand;
 
@@ -22,7 +22,7 @@ public class IZoneCommand extends AbstractIntConfigCommand {
   }
 
   @Override
-  protected void config(TalonSRX talon, int value) {
-    talon.setIZone(value);
+  protected void config(ThirdCoastTalon talon, int value) {
+    talon.config_IntegralZone(0, value, TIMEOUT_MS);
   }
 }

@@ -1,8 +1,8 @@
 package org.strykeforce.thirdcoast.telemetry.tct.talon.config.out;
 
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import javax.inject.Inject;
 import org.jline.reader.LineReader;
+import org.strykeforce.thirdcoast.talon.ThirdCoastTalon;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractIntConfigCommand;
 
@@ -22,12 +22,12 @@ public class CurrentLimitCommand extends AbstractIntConfigCommand {
   }
 
   @Override
-  protected void config(TalonSRX talon, int value) {
+  protected void config(ThirdCoastTalon talon, int value) {
     if (value > 0) {
-      talon.setCurrentLimit(value);
-      talon.EnableCurrentLimit(true);
+      talon.configContinuousCurrentLimit(value, TIMEOUT_MS);
+      talon.enableCurrentLimit(true);
       return;
     }
-    talon.EnableCurrentLimit(false);
+    talon.enableCurrentLimit(false);
   }
 }

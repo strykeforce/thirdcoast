@@ -1,18 +1,17 @@
 package org.strykeforce.thirdcoast.telemetry.tct.talon.config.out;
 
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import javax.inject.Inject;
 import org.jline.reader.LineReader;
+import org.strykeforce.thirdcoast.talon.ThirdCoastTalon;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractFwdRevDoubleConfigCommand;
 
-/** Configure F. */
-public class NominalOutputVoltageCommand extends AbstractFwdRevDoubleConfigCommand {
+public class NominalOutputCommand extends AbstractFwdRevDoubleConfigCommand {
 
-  public static final String NAME = "Nominal Output Voltage: Vfwd, Vrev";
+  public static final String NAME = "Nominal Percent Output: fwd, rev";
 
   @Inject
-  public NominalOutputVoltageCommand(LineReader reader, TalonSet talonSet) {
+  public NominalOutputCommand(LineReader reader, TalonSet talonSet) {
     super(NAME, reader, talonSet, true);
   }
 
@@ -22,7 +21,8 @@ public class NominalOutputVoltageCommand extends AbstractFwdRevDoubleConfigComma
   }
 
   @Override
-  protected void config(TalonSRX talon, double foward, double reverse) {
-    talon.configNominalOutputVoltage(foward, reverse);
+  protected void config(ThirdCoastTalon talon, double foward, double reverse) {
+    talon.configNominalOutputForward(foward, TIMEOUT_MS);
+    talon.configNominalOutputReverse(reverse, TIMEOUT_MS);
   }
 }

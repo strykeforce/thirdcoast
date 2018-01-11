@@ -2,6 +2,7 @@ package org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc
 
 import org.strykeforce.thirdcoast.telemetry.tct.Command
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractTalonConfigCommandTest
+import spock.lang.Ignore
 
 class SetPositionCommandTest extends AbstractTalonConfigCommandTest {
 
@@ -22,6 +23,7 @@ class SetPositionCommandTest extends AbstractTalonConfigCommandTest {
         0 * talon._
     }
 
+    @Ignore
     def "handles input"() {
         when:
         command.perform()

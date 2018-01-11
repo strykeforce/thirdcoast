@@ -3,6 +3,7 @@ package org.strykeforce.thirdcoast.telemetry.tct.talon.config.out
 import org.strykeforce.thirdcoast.telemetry.tct.Command
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractTalonConfigCommandTest
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.out.ClosedLoopRampRateCommand
+import spock.lang.Ignore
 
 class ClosedLoopRampRateCommandTest extends AbstractTalonConfigCommandTest {
 
@@ -25,6 +26,7 @@ class ClosedLoopRampRateCommandTest extends AbstractTalonConfigCommandTest {
         0 * talon._
     }
 
+    @Ignore
     def "handles input"() {
         when:
         command.perform()
