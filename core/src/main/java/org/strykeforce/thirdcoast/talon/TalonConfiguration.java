@@ -94,7 +94,7 @@ public abstract class TalonConfiguration {
     Encoder enc = encoder != null ? encoder : Encoder.DEFAULT;
     enc.configure(talon);
 
-    talon.setNeutralMode(neutralMode != null ? neutralMode : NeutralMode.Brake);
+    talon.setNeutralMode(neutralMode != null ? neutralMode : NeutralMode.Coast);
     talon.setInverted(outputReversed != null ? outputReversed : false);
 
     if (velocityMeasurementPeriod != null) {
@@ -109,8 +109,10 @@ public abstract class TalonConfiguration {
       talon.configVelocityMeasurementWindow(64, TIMEOUT_MS);
     }
 
-    //    LimitSwitch fls = forwardLimitSwitch != null ? forwardLimitSwitch : LimitSwitch.DEFAULT;
-    //    LimitSwitch rls = reverseLimitSwitch != null ? reverseLimitSwitch : LimitSwitch.DEFAULT;
+    //    LimitSwitch fls = forwardLimitSwitch != null ? forwardLimitSwitch :
+    //     LimitSwitch.DEFAULT;
+    //    LimitSwitch rls = reverseLimitSwitch != null ? reverseLimitSwitch :
+    //     LimitSwitch.DEFAULT;
     // TODO: configForwardLimitSwitchSource
     //    talon.enableLimitSwitch(fls.isEnabled(), rls.isEnabled());
     //    if (fls.isEnabled()) {
@@ -280,5 +282,40 @@ public abstract class TalonConfiguration {
     return 0;
   }
 
-  // TODO: generate toString
+  @Override
+  public String toString() {
+    return "TalonConfiguration{"
+        + "name='"
+        + name
+        + '\''
+        + ", mode="
+        + mode
+        + ", encoder="
+        + encoder
+        + ", setpointMax="
+        + setpointMax
+        + ", neutralMode="
+        + neutralMode
+        + ", outputReversed="
+        + outputReversed
+        + ", velocityMeasurementPeriod="
+        + velocityMeasurementPeriod
+        + ", velocityMeasurementWindow="
+        + velocityMeasurementWindow
+        + ", forwardLimitSwitch="
+        + forwardLimitSwitch
+        + ", reverseLimitSwitch="
+        + reverseLimitSwitch
+        + ", forwardSoftLimit="
+        + forwardSoftLimit
+        + ", reverseSoftLimit="
+        + reverseSoftLimit
+        + ", currentLimit="
+        + currentLimit
+        + ", openLoopRampTime="
+        + openLoopRampTime
+        + ", voltageCompSaturation="
+        + voltageCompSaturation
+        + '}';
+  }
 }
