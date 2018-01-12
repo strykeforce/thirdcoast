@@ -36,7 +36,9 @@ public abstract class TalonConfiguration {
   private final LimitSwitch reverseLimitSwitch;
   private final SoftLimit forwardSoftLimit;
   private final SoftLimit reverseSoftLimit;
-  private final Integer currentLimit;
+  private final Integer continuousCurrentLimit;
+  private final Integer peakCurrentLimit;
+  private final Integer peakCurrentLimitDuration;
   private final Double openLoopRampTime;
   private final Double voltageCompSaturation;
   private Set<Integer> talonIds;
@@ -54,7 +56,9 @@ public abstract class TalonConfiguration {
       LimitSwitch reverseLimitSwitch,
       SoftLimit forwardSoftLimit,
       SoftLimit reverseSoftLimit,
-      Integer currentLimit,
+      Integer continuousCurrentLimit,
+      Integer peakCurrentLimit,
+      Integer peakCurrentLimitDuration,
       Double openLoopRampTime,
       Double voltageCompSaturation) {
     this.name = name;
@@ -69,7 +73,9 @@ public abstract class TalonConfiguration {
     this.reverseLimitSwitch = reverseLimitSwitch;
     this.forwardSoftLimit = forwardSoftLimit;
     this.reverseSoftLimit = reverseSoftLimit;
-    this.currentLimit = currentLimit;
+    this.continuousCurrentLimit = continuousCurrentLimit;
+    this.peakCurrentLimit = peakCurrentLimit;
+    this.peakCurrentLimitDuration = peakCurrentLimitDuration;
     this.openLoopRampTime = openLoopRampTime;
     this.voltageCompSaturation = voltageCompSaturation;
   }
@@ -134,13 +140,27 @@ public abstract class TalonConfiguration {
     //      talon.setReverseSoftLimit(sl.getPosition());
     //    }
 
-    if (currentLimit != null && currentLimit > 0) {
-      talon.configContinuousCurrentLimit(currentLimit, TIMEOUT_MS);
+    if (continuousCurrentLimit != null && continuousCurrentLimit > 0) {
+      talon.configContinuousCurrentLimit(continuousCurrentLimit, TIMEOUT_MS);
       talon.enableCurrentLimit(true);
     } else {
       talon.configContinuousCurrentLimit(0, TIMEOUT_MS);
       talon.enableCurrentLimit(false);
     }
+
+    if (peakCurrentLimit != null && peakCurrentLimit > 0) {
+      if (peakCurrentLimitDuration == null) {
+        throw new IllegalArgumentException(
+            "peakCurrentLimitDuration must be specified for peakCurrentLimit = "
+                + peakCurrentLimit);
+      }
+      talon.configPeakCurrentLimit(peakCurrentLimit, TIMEOUT_MS);
+      talon.configPeakCurrentDuration(peakCurrentLimitDuration, TIMEOUT_MS);
+      talon.enableCurrentLimit(true);
+    } else {
+      talon.configPeakCurrentLimit(0, TIMEOUT_MS);
+    }
+
     addTalonId(talon.getDeviceID());
   }
 
@@ -233,8 +253,16 @@ public abstract class TalonConfiguration {
    *
    * @return the current limit, or null if not enabled.
    */
-  public Integer getCurrentLimit() {
-    return currentLimit;
+  public Integer getContinuousCurrentLimit() {
+    return continuousCurrentLimit;
+  }
+
+  public Integer getPeakCurrentLimit() {
+    return peakCurrentLimit;
+  }
+
+  public Integer getPeakCurrentLimitDuration() {
+    return peakCurrentLimitDuration;
   }
 
   @NotNull
@@ -310,8 +338,8 @@ public abstract class TalonConfiguration {
         + forwardSoftLimit
         + ", reverseSoftLimit="
         + reverseSoftLimit
-        + ", currentLimit="
-        + currentLimit
+        + ", continuousCurrentLimit="
+        + continuousCurrentLimit
         + ", openLoopRampTime="
         + openLoopRampTime
         + ", voltageCompSaturation="

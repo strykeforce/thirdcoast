@@ -34,7 +34,9 @@ public class TalonConfigurationBuilder {
   @Nullable private LimitSwitch reverseLimitSwitch;
   @Nullable private SoftLimit forwardSoftLimit;
   @Nullable private SoftLimit reverseSoftLimit;
-  @Nullable private Integer currentLimit;
+  @Nullable private Integer continuousCurrentLimit;
+  @Nullable private Integer peakCurrentLimit;
+  @Nullable private Integer peakCurrentLimitDuration;
   @Nullable private Double openLoopRampTime;
   @Nullable private Double voltageCompSaturation;
 
@@ -72,7 +74,9 @@ public class TalonConfigurationBuilder {
     reverseLimitSwitch = config.getReverseLimitSwitch();
     forwardSoftLimit = config.getForwardSoftLimit();
     reverseSoftLimit = config.getReverseSoftLimit();
-    currentLimit = config.getCurrentLimit();
+    continuousCurrentLimit = config.getContinuousCurrentLimit();
+    peakCurrentLimit = config.getPeakCurrentLimit();
+    peakCurrentLimitDuration = config.getPeakCurrentLimitDuration();
     openLoopRampTime = config.getOpenLoopRampTime();
     voltageCompSaturation = config.getVoltageCompSaturation();
 
@@ -184,7 +188,9 @@ public class TalonConfigurationBuilder {
                 reverseLimitSwitch,
                 forwardSoftLimit,
                 reverseSoftLimit,
-                currentLimit,
+                continuousCurrentLimit,
+                peakCurrentLimit,
+                peakCurrentLimitDuration,
                 openLoopRampTime,
                 voltageCompSaturation);
         break;
@@ -202,7 +208,9 @@ public class TalonConfigurationBuilder {
                 reverseLimitSwitch,
                 forwardSoftLimit,
                 reverseSoftLimit,
-                currentLimit,
+                continuousCurrentLimit,
+                peakCurrentLimit,
+                peakCurrentLimitDuration,
                 openLoopRampTime,
                 voltageCompSaturation,
                 closedLoopRampRate,
@@ -232,7 +240,9 @@ public class TalonConfigurationBuilder {
                 reverseLimitSwitch,
                 forwardSoftLimit,
                 reverseSoftLimit,
-                currentLimit,
+                continuousCurrentLimit,
+                peakCurrentLimit,
+                peakCurrentLimitDuration,
                 openLoopRampTime,
                 voltageCompSaturation,
                 closedLoopRampRate,
@@ -262,7 +272,9 @@ public class TalonConfigurationBuilder {
                 reverseLimitSwitch,
                 forwardSoftLimit,
                 reverseSoftLimit,
-                currentLimit,
+                continuousCurrentLimit,
+                peakCurrentLimit,
+                peakCurrentLimitDuration,
                 openLoopRampTime,
                 voltageCompSaturation,
                 closedLoopRampRate,
@@ -488,7 +500,7 @@ public class TalonConfigurationBuilder {
    */
   @NotNull
   public TalonConfigurationBuilder currentLimit(int currentLimit) {
-    this.currentLimit = currentLimit;
+    this.continuousCurrentLimit = currentLimit;
     return this;
   }
 

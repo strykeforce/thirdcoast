@@ -20,7 +20,9 @@ class VoltageTalonConfiguration extends TalonConfiguration {
       LimitSwitch reverseLimitSwitch,
       SoftLimit forwardSoftLimit,
       SoftLimit reverseSoftLimit,
-      Integer currentLimit,
+      Integer continuousCurrentLimit,
+      Integer peakCurrentLimit,
+      Integer peakCurrentLimitDuration,
       Double voltageRampRate,
       Double voltageCompSaturation) {
     super(
@@ -36,7 +38,9 @@ class VoltageTalonConfiguration extends TalonConfiguration {
         reverseLimitSwitch,
         forwardSoftLimit,
         reverseSoftLimit,
-        currentLimit,
+        continuousCurrentLimit,
+        peakCurrentLimit,
+        peakCurrentLimitDuration,
         voltageRampRate,
         voltageCompSaturation);
   }

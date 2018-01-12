@@ -54,6 +54,7 @@ class TalonConfigurationTest extends Specification {
             1 * talon.enableCurrentLimit(true)
             1 * talon.getDeviceID()
             1 * talon.changeControlMode(PercentOutput)
+            1 * talon.configPeakCurrentLimit(0, TIMEOUT_MS)
             0 * talon._
         }
     }
@@ -75,7 +76,7 @@ class TalonConfigurationTest extends Specification {
         tc.configure(talon)
 
         then:
-        1 * talon.setNeutralMode(NeutralMode.Brake)
+        1 * talon.setNeutralMode(NeutralMode.Coast)
     }
 
     def "don't brake in neutral set"() {
@@ -127,7 +128,7 @@ class TalonConfigurationTest extends Specification {
         1 * talon.configSelectedFeedbackSensor(QuadEncoder, 0, TIMEOUT_MS) >> ErrorCode.OK
         1 * talon.configVoltageCompSaturation(12.0d, TIMEOUT_MS)
 
-        1 * talon.setNeutralMode(NeutralMode.Brake)
+        1 * talon.setNeutralMode(NeutralMode.Coast)
         1 * talon.setSafetyEnabled(false)
         1 * talon.setInverted(false)
         1 * talon.configOpenloopRamp(0d, TIMEOUT_MS)
@@ -143,6 +144,7 @@ class TalonConfigurationTest extends Specification {
         1 * talon.selectProfileSlot(0, 0)
 //        1 * talon.enableLimitSwitch(false, false)
         1 * talon.setExpiration(MotorSafety.DEFAULT_SAFETY_EXPIRATION)
+        1 * talon.configPeakCurrentLimit(0, TIMEOUT_MS)
         0 * talon._
 
     }

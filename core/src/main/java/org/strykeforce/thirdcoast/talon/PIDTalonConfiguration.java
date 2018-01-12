@@ -34,7 +34,9 @@ public class PIDTalonConfiguration extends TalonConfiguration {
       LimitSwitch reverseLimitSwitch,
       SoftLimit forwardSoftLimit,
       SoftLimit reverseSoftLimit,
-      Integer currentLimit,
+      Integer continuousCurrentLimit,
+      Integer peakCurrentLimit,
+      Integer peakCurrentLimitDuration,
       Double openLoopRampRate,
       Double voltageCompSaturation,
       Double closedLoopRampRate,
@@ -62,7 +64,9 @@ public class PIDTalonConfiguration extends TalonConfiguration {
         reverseLimitSwitch,
         forwardSoftLimit,
         reverseSoftLimit,
-        currentLimit,
+        continuousCurrentLimit,
+        peakCurrentLimit,
+        peakCurrentLimitDuration,
         openLoopRampRate,
         voltageCompSaturation);
     this.closedLoopRampRate = closedLoopRampRate;

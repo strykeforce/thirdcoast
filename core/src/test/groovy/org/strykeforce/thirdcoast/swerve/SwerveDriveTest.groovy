@@ -11,7 +11,7 @@ class SwerveDriveTest extends spock.lang.Specification {
     name = "drive"
     mode = "PercentOutput"
     setpointMax    = 1.0
-    currentLimit   = 50
+    continuousCurrentLimit   = 50
     [TALON.encoder]
     device = "QuadEncoder"
 

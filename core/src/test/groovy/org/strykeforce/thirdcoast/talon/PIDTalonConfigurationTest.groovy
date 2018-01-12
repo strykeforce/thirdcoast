@@ -121,7 +121,7 @@ class PIDTalonConfigurationTest extends Specification {
         1 * talon.configNominalOutputForward(0d, TIMEOUT_MS)
         1 * talon.configNominalOutputReverse(0d, TIMEOUT_MS)
 
-        1 * talon.setNeutralMode(NeutralMode.Brake)
+        1 * talon.setNeutralMode(NeutralMode.Coast)
         1 * talon.setSafetyEnabled(false)
         1 * talon.setInverted(false)
         1 * talon.configOpenloopRamp(0d, TIMEOUT_MS)
@@ -138,6 +138,7 @@ class PIDTalonConfigurationTest extends Specification {
 //        1 * talon.enableLimitSwitch(false, false)
         1 * talon.changeControlMode(Velocity)
         1 * talon.setExpiration(MotorSafety.DEFAULT_SAFETY_EXPIRATION)
+        1 * talon.configPeakCurrentLimit(0, TIMEOUT_MS)
         0 * talon._
 
 

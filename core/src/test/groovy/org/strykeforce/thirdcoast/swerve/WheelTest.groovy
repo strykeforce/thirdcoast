@@ -24,7 +24,7 @@ class WheelTest extends Specification {
     name = "drive"
     mode = "PercentOutput"
     setpointMax    = 12.0
-    currentLimit   = 50
+    continuousCurrentLimit   = 50
     [TALON.encoder]
     device = "QuadEncoder"
 

@@ -59,7 +59,7 @@ pGain = 1.2
         tc.name == TalonConfigurationBuilder.DEFAULT_NAME
         tc.setpointMax == 12.0d
         tc.voltageCompSaturation == null
-        tc.currentLimit == null
+        tc.continuousCurrentLimit == null
         tc.encoder == null
         tc.brakeInNeutral == null
         tc.outputReversed == null
@@ -101,7 +101,7 @@ pGain = 1.2
         tc.outputReversed
         tc.velocityMeasurementPeriod == Period_5Ms
         tc.velocityMeasurementWindow == 16
-        tc.currentLimit == 50
+        tc.continuousCurrentLimit == 50
     }
 
     def "creates TOML for SpeedTalonConfiguration"() {
@@ -237,7 +237,7 @@ pGain = 1.2
         def tc = tcb.currentLimit(2767).build()
 
         then:
-        tc.currentLimit == 2767
+        tc.continuousCurrentLimit == 2767
     }
 
     def "configure voltage ramp rate"() {

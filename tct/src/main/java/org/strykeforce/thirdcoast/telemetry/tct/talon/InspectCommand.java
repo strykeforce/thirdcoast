@@ -98,7 +98,7 @@ public class InspectCommand extends AbstractCommand {
       stringLine("Rev Soft Limit:", "DEFAULT");
     }
 
-    intLine("Current Limit:", config.getCurrentLimit());
+    intLine("Current Limit:", config.getContinuousCurrentLimit());
     doubleLine("Voltage Ramp Rate:", config.getOpenLoopRampTime());
 
     if (config.getMode() == ControlMode.PercentOutput) {
