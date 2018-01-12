@@ -24,7 +24,6 @@ class ReverseOutputCommandTest extends AbstractTalonConfigCommandTest {
         0 * talon._
     }
 
-    @Ignore
     def "yes selected"() {
         given:
         reader.readLine(_) >> "Y"
@@ -33,12 +32,11 @@ class ReverseOutputCommandTest extends AbstractTalonConfigCommandTest {
         command.perform()
 
         then:
-        1 * talon.reverseOutput(true)
+        1 * talon.setInverted(true)
         1 * talon.getDescription()
         0 * talon._
     }
 
-    @Ignore
     def "no selected"() {
         given:
         reader.readLine(_) >> "N"
@@ -47,7 +45,7 @@ class ReverseOutputCommandTest extends AbstractTalonConfigCommandTest {
         command.perform()
 
         then:
-        1 * talon.reverseOutput(false)
+        1 * talon.setInverted(false)
         1 * talon.getDescription()
         0 * talon._
     }

@@ -13,7 +13,7 @@ public abstract class AbstractTalonConfigCommand extends AbstractCommand {
   protected static final String TODO = "TODO FOR 2018 - ";
   protected static final String UNAVAILABLE = "UNAVAILABLE FOR 2018 - ";
   public static final String VERIFY = "VERIFY FOR 2018 - ";
-  protected static final int TIMEOUT_MS = 10;
+  public static final int TIMEOUT_MS = 10;
 
   protected static final Logger logger = LoggerFactory.getLogger(AbstractTalonConfigCommand.class);
   protected final TalonSet talonSet;

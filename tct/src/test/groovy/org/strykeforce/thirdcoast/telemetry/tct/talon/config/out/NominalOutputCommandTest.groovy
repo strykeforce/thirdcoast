@@ -1,6 +1,7 @@
 package org.strykeforce.thirdcoast.telemetry.tct.talon.config.out
 
 import org.strykeforce.thirdcoast.telemetry.tct.Command
+import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractTalonConfigCommand
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractTalonConfigCommandTest
 import spock.lang.Ignore
 
@@ -21,7 +22,6 @@ class NominalOutputCommandTest extends AbstractTalonConfigCommandTest {
         0 * talon._
     }
 
-    @Ignore
     def "enters one number for both fwd/rev"() {
         when:
         command.perform()
@@ -29,12 +29,12 @@ class NominalOutputCommandTest extends AbstractTalonConfigCommandTest {
         then:
         1 * reader.readLine(_) >> "27.67"
 
-        1 * talon.configNominalOutputVoltage(27.67, -27.67)
+        1 * talon.configNominalOutputForward(27.67, AbstractTalonConfigCommand.TIMEOUT_MS)
+        1 * talon.configNominalOutputReverse(-27.67, AbstractTalonConfigCommand.TIMEOUT_MS)
         1 * talon.getDescription()
         0 * talon._
     }
 
-    @Ignore
     def "enters two numbers for fwd/rev"() {
         when:
         command.perform()
@@ -42,7 +42,9 @@ class NominalOutputCommandTest extends AbstractTalonConfigCommandTest {
         then:
         1 * reader.readLine(_) >> "27,67"
 
-        1 * talon.configNominalOutputVoltage(27.0, 67.0)
+        //1 * talon.configNominalOutputVoltage(27.0, 67.0)
+        1 * talon.configNominalOutputForward(27.0, AbstractTalonConfigCommand.TIMEOUT_MS)
+        1 * talon.configNominalOutputReverse(67.0, AbstractTalonConfigCommand.TIMEOUT_MS)
         1 * talon.getDescription()
         0 * talon._
     }

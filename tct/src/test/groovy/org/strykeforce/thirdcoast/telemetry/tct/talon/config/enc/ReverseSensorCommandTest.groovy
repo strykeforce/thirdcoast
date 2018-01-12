@@ -24,8 +24,6 @@ class ReverseSensorCommandTest extends AbstractTalonConfigCommandTest {
         0 * talon._
     }
 
-
-    @Ignore
     def "yes selected"() {
         given:
         reader.readLine(_) >> "Y"
@@ -34,12 +32,11 @@ class ReverseSensorCommandTest extends AbstractTalonConfigCommandTest {
         command.perform()
 
         then:
-        1 * talon.reverseSensor(true)
+        1 * talon.setSensorPhase(true)
         1 * talon.getDescription()
         0 * talon._
     }
 
-    @Ignore
     def "no selected"() {
         given:
         reader.readLine(_) >> "N"
@@ -48,7 +45,7 @@ class ReverseSensorCommandTest extends AbstractTalonConfigCommandTest {
         command.perform()
 
         then:
-        1 * talon.reverseSensor(false)
+        1 * talon.setSensorPhase(false)
         1 * talon.getDescription()
         0 * talon._
     }
