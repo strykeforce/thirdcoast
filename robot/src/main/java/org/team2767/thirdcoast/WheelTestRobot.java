@@ -9,8 +9,20 @@ public class WheelTestRobot extends IterativeRobot {
 
   private final double[][] testCases =
       new double[][] {
-        {0, 0}, {0, 2}, {0.5, 2}, {-0.5, 2}, {0.1, 2}, {0.4, 2}, {-0.4, 2}, {-0.2, 2}, {0, 2},
-        {0.2, 2}, {0.4, 2}, {0.5, 2}, {-0.4, 2}, {-0.2, 2}
+        {0, 0},
+        {0, 0.2},
+        {0.5, 0.2},
+        {-0.5, 0.2},
+        {0.1, 0.2},
+        {0.4, 0.2},
+        {-0.4, 0.2},
+        {-0.2, 0.2},
+        {0, 0.2},
+        {0.2, 0.2},
+        {0.4, 0.2},
+        {0.5, 0.2},
+        {-0.4, 0.2},
+        {-0.2, 0.2}
       };
   private Wheel wheel;
   private Controls controls;
@@ -36,8 +48,8 @@ public class WheelTestRobot extends IterativeRobot {
     RobotComponent component = DaggerRobotComponent.builder().config(Robot.CONFIG_FILE).build();
     controls = component.controls();
     TalonFactory talonFactory = component.talonFactory();
-    wheel = new Wheel(talonFactory, 0);
-    wheel.setAzimuthZero(2281);
+    wheel = new Wheel(talonFactory, 1);
+    wheel.setAzimuthZero(1000);
   }
 
   @Override
@@ -45,8 +57,11 @@ public class WheelTestRobot extends IterativeRobot {
 
   private void logTestCase(double[] tc) {
     System.out.printf(
-        "azimuth = %f, speed = %f, actual = %f, reversed = %b%n",
-        tc[0], tc[1], wheel.getAzimuthSetpoint(), wheel.isDriveReversed());
+        "azimuth = %f, speed = %f, actual azimuth = %f, reversed = %b%n",
+        tc[0] * Wheel.TICKS_PER_ROTATION,
+        tc[1],
+        wheel.getAzimuthSetpoint(),
+        wheel.isDriveReversed());
   }
 
   @Override

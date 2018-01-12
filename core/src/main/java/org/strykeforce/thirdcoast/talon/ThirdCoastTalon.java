@@ -27,13 +27,13 @@ public class ThirdCoastTalon extends WPI_TalonSRX {
   }
 
   public void changeControlMode(ControlMode controlMode) {
-    if (controlMode != this.controlMode) {
-      logger.info("{}: changed from {} to {}", getDescription(), this.controlMode, controlMode);
-      setpoint = Double.NaN;
-      this.controlMode = controlMode;
+    if (controlMode == this.controlMode) {
+      logger.debug("{}: control mode {} not changed", getDescription(), controlMode);
       return;
     }
-    logger.debug("{}: control mode {} not changed", getDescription(), controlMode);
+    logger.info("{}: changed from {} to {}", getDescription(), this.controlMode, controlMode);
+    setpoint = Double.NaN;
+    this.controlMode = controlMode;
   }
 
   @Override
@@ -43,10 +43,13 @@ public class ThirdCoastTalon extends WPI_TalonSRX {
 
   @Override
   public void set(double setpoint) {
-    if (setpoint != this.setpoint) {
-      this.setpoint = setpoint;
-      super.set(controlMode, setpoint); // FIXME: add control mode
+    if (setpoint == this.setpoint) {
+      return;
     }
+    this.setpoint = setpoint;
+    set(controlMode, setpoint);
+    logger.trace(
+        "ID {} set with controlMode={} and setpoint={}", getDeviceID(), controlMode, setpoint);
   }
 
   /**

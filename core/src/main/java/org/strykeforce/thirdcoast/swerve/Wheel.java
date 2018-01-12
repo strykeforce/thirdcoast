@@ -28,7 +28,7 @@ import org.strykeforce.thirdcoast.talon.ThirdCoastTalon;
  */
 public class Wheel {
 
-  static final double TICKS_PER_ROTATION = 4096;
+  public static final double TICKS_PER_ROTATION = 4096;
   private static final Logger logger = LoggerFactory.getLogger(Wheel.class);
   private final TalonProvisioner talonProvisioner;
   private final ThirdCoastTalon azimuthTalon;
@@ -98,7 +98,7 @@ public class Wheel {
         Math.IEEEremainder(azimuth * TICKS_PER_ROTATION - azimuthPosition, TICKS_PER_ROTATION);
     if (Math.abs(azimuthError) > 0.25 * TICKS_PER_ROTATION) {
       azimuthError -= Math.copySign(0.5 * TICKS_PER_ROTATION, azimuthError);
-      driveSetpoint *= -1.0;
+      driveSetpoint = -driveSetpoint;
     }
     azimuthSetpoint = azimuthPosition + azimuthError;
 

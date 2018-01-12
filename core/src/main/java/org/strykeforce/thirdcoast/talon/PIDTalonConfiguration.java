@@ -149,5 +149,34 @@ public class PIDTalonConfiguration extends TalonConfiguration {
     return iZone;
   }
 
-  // TODO: generate toString
+  @Override
+  public String toString() {
+    return "PIDTalonConfiguration{"
+        + "closedLoopRampRate="
+        + closedLoopRampRate
+        + ", forwardOutputVoltagePeak="
+        + forwardOutputVoltagePeak
+        + ", reverseOutputVoltagePeak="
+        + reverseOutputVoltagePeak
+        + ", forwardOutputVoltageNominal="
+        + forwardOutputVoltageNominal
+        + ", reverseOutputVoltageNominal="
+        + reverseOutputVoltageNominal
+        + ", allowableClosedLoopError="
+        + allowableClosedLoopError
+        + ", nominalClosedLoopVoltage="
+        + nominalClosedLoopVoltage
+        + ", pGain="
+        + pGain
+        + ", iGain="
+        + iGain
+        + ", dGain="
+        + dGain
+        + ", fGain="
+        + fGain
+        + ", iZone="
+        + iZone
+        + "} "
+        + super.toString();
+  }
 }
