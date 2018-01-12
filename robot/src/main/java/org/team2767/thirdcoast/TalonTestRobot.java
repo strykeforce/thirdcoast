@@ -5,31 +5,24 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Timer;
-import org.strykeforce.thirdcoast.talon.TalonFactory;
-import org.strykeforce.thirdcoast.talon.ThirdCoastTalon;
-import org.strykeforce.thirdcoast.telemetry.TelemetryService;
 
 public class TalonTestRobot extends IterativeRobot {
 
-  private ThirdCoastTalon talon;
+  private TalonSRX talon;
   private Timer timer = new Timer();
   private double setpoint;
 
   @Override
   public void robotInit() {
-    RobotComponent component = DaggerRobotComponent.builder().config(Robot.CONFIG_FILE).build();
-    TalonFactory talonFactory = component.talonFactory();
-    TelemetryService telemetryService = component.telemetryService();
-//    talon = new TalonSRX(11);
-    talon = (ThirdCoastTalon) talonFactory.getTalon(11);
-    telemetryService.register(talon);
+    talon = new TalonSRX(12);
     ErrorCode err = talon.configVoltageCompSaturation(12, 10);
     check(err);
     err = talon.configContinuousCurrentLimit(50, 10);
     check(err);
-    talon.enableCurrentLimit(false);
+    err = talon.configPeakCurrentDuration(0, 10);
+    check(err);
+    talon.enableCurrentLimit(true);
     talon.enableVoltageCompensation(true);
-    telemetryService.start();
   }
 
   @Override
@@ -41,7 +34,7 @@ public class TalonTestRobot extends IterativeRobot {
   @Override
   public void teleopPeriodic() {
     // reverse Talon every 2 seconds
-    setpoint *= timer.hasPeriodPassed(1) ? -1 : 1;
+    setpoint *= timer.hasPeriodPassed(2) ? -1 : 1;
     talon.set(ControlMode.PercentOutput, setpoint);
   }
 
