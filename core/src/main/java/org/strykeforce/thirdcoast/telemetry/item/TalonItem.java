@@ -157,9 +157,15 @@ public class TalonItem extends AbstractItem {
         .name("onBootBrakeMode")
         .value(talon.configGetParameter(ParamEnum.eOnBoot_BrakeMode, 0, 0));
     writer.name("busVoltage").value(talon.getBusVoltage());
-    writer.name("feedbackSensorType").value(talon.configGetParameter(ParamEnum.eFeedbackSensorType, 0, 0));
-    writer.name("peakCurrentLimitMs").value(talon.configGetParameter(ParamEnum.ePeakCurrentLimitMs, 0, 0));
-    writer.name("peakCurrentLimitAmps").value(talon.configGetParameter(ParamEnum.ePeakCurrentLimitAmps, 0, 0));
+    writer
+        .name("feedbackSensorType")
+        .value(talon.configGetParameter(ParamEnum.eFeedbackSensorType, 0, 0));
+    writer
+        .name("peakCurrentLimitMs")
+        .value(talon.configGetParameter(ParamEnum.ePeakCurrentLimitMs, 0, 0));
+    writer
+        .name("peakCurrentLimitAmps")
+        .value(talon.configGetParameter(ParamEnum.ePeakCurrentLimitAmps, 0, 0));
 
     //writer.name("encoderCodesPerRef").value(NA);
     writer.name("inverted").value(talon.getInverted());
