@@ -115,10 +115,9 @@ public abstract class TalonConfiguration {
       talon.configVelocityMeasurementWindow(64, TIMEOUT_MS);
     }
 
-    //    LimitSwitch fls = forwardLimitSwitch != null ? forwardLimitSwitch :
-    //     LimitSwitch.DEFAULT;
-    //    LimitSwitch rls = reverseLimitSwitch != null ? reverseLimitSwitch :
-    //     LimitSwitch.DEFAULT;
+    LimitSwitch hardLimit = forwardLimitSwitch != null ? forwardLimitSwitch : LimitSwitch.DEFAULT;
+    hardLimit = reverseLimitSwitch != null ? reverseLimitSwitch : LimitSwitch.DEFAULT;
+
     // TODO: configForwardLimitSwitchSource
     //    talon.enableLimitSwitch(fls.isEnabled(), rls.isEnabled());
     //    if (fls.isEnabled()) {
@@ -128,17 +127,13 @@ public abstract class TalonConfiguration {
     //      talon.ConfigRevLimitSwitchNormallyOpen(rls.isNormallyOpen());
     //    }
 
-    // TODO: configForwardSoftLimitEnable
-    //    SoftLimit sl = forwardSoftLimit != null ? forwardSoftLimit : SoftLimit.DEFAULT;
-    //    talon.enableForwardSoftLimit(sl.isEnabled());
-    //    if (sl.isEnabled()) {
-    //      talon.setForwardSoftLimit(sl.getPosition());
-    //    }
-    //    sl = reverseSoftLimit != null ? reverseSoftLimit : SoftLimit.DEFAULT;
-    //    talon.enableReverseSoftLimit(sl.isEnabled());
-    //    if (sl.isEnabled()) {
-    //      talon.setReverseSoftLimit(sl.getPosition());
-    //    }
+    SoftLimit softLimit = forwardSoftLimit != null ? forwardSoftLimit : SoftLimit.DEFAULT;
+    talon.configForwardSoftLimitEnable(softLimit.isEnabled(), TIMEOUT_MS);
+    talon.configForwardSoftLimitThreshold(softLimit.getPosition(), TIMEOUT_MS);
+
+    softLimit = reverseSoftLimit != null ? reverseSoftLimit : SoftLimit.DEFAULT;
+    talon.configReverseSoftLimitEnable(softLimit.isEnabled(), TIMEOUT_MS);
+    talon.configReverseSoftLimitThreshold(softLimit.getPosition(), TIMEOUT_MS);
 
     if (continuousCurrentLimit != null && continuousCurrentLimit > 0) {
       talon.configContinuousCurrentLimit(continuousCurrentLimit, TIMEOUT_MS);

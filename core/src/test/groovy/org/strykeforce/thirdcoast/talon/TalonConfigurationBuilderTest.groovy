@@ -216,20 +216,20 @@ pGain = 1.2
 
     def "configure foward soft limit"() {
         when:
-        def tc = tcb.forwardSoftLimit(27.67d).build()
+        def tc = tcb.forwardSoftLimit(2767).build()
 
         then:
         tc.forwardSoftLimit.enabled
-        tc.forwardSoftLimit.position == 27.67d
+        tc.forwardSoftLimit.position == 2767
     }
 
     def "configure reverse soft limit"() {
         when:
-        def tc = tcb.reverseSoftLimit(27.67d).build()
+        def tc = tcb.reverseSoftLimit(2767).build()
 
         then:
         tc.reverseSoftLimit.enabled
-        tc.reverseSoftLimit.position == 27.67d
+        tc.reverseSoftLimit.position == 2767
     }
 
     def "configure current limit"() {

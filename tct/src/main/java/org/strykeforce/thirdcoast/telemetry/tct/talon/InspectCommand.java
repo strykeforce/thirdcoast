@@ -82,7 +82,7 @@ public class InspectCommand extends AbstractCommand {
     if (soft != null) {
       writer.println();
       booleanLine("Fwd Soft Limit:", soft.isEnabled());
-      doubleLine("  Position:", soft.getPosition());
+      intLine("  Position:", soft.getPosition());
       writer.println();
     } else {
       stringLine("Fwd Soft Limit:", "DEFAULT");
@@ -92,7 +92,7 @@ public class InspectCommand extends AbstractCommand {
     if (soft != null) {
       writer.println();
       booleanLine("Rev Soft Limit:", soft.isEnabled());
-      doubleLine("  Position:", soft.getPosition());
+      intLine("  Position:", soft.getPosition());
       writer.println();
     } else {
       stringLine("Rev Soft Limit:", "DEFAULT");

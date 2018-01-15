@@ -475,7 +475,7 @@ public class TalonConfigurationBuilder {
    * @return this builder.
    */
   @NotNull
-  public TalonConfigurationBuilder forwardSoftLimit(@Nullable Double forwardSoftLimit) {
+  public TalonConfigurationBuilder forwardSoftLimit(@Nullable Integer forwardSoftLimit) {
     this.forwardSoftLimit = new SoftLimit(forwardSoftLimit);
     return this;
   }
@@ -487,7 +487,7 @@ public class TalonConfigurationBuilder {
    * @return this builder.
    */
   @NotNull
-  public TalonConfigurationBuilder reverseSoftLimit(@Nullable Double reverseSoftLimit) {
+  public TalonConfigurationBuilder reverseSoftLimit(@Nullable Integer reverseSoftLimit) {
     this.reverseSoftLimit = new SoftLimit(reverseSoftLimit);
     return this;
   }

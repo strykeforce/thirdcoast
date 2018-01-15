@@ -16,11 +16,11 @@ class SoftLimitTest extends Specification {
 
     def "config present"() {
         when:
-        def sl = new SoftLimit(123.0)
+        def sl = new SoftLimit(123)
 
         then:
         sl.enabled
-        sl.position == 123.0
+        sl.position == 123
     }
 
     def "creates instance from full TOML"() {
@@ -79,7 +79,7 @@ enabled = false
 
         then:
         output == '''enabled = true
-position = 2767.0
+position = 2767
 '''
     }
 

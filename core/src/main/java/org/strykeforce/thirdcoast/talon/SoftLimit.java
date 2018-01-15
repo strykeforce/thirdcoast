@@ -9,14 +9,14 @@ public final class SoftLimit {
 
   @NotNull public static final SoftLimit DEFAULT = new SoftLimit();
   private final boolean enabled;
-  private final double position;
+  private final int position;
 
-  private SoftLimit(boolean enabled, double position) {
+  private SoftLimit(boolean enabled, int position) {
     this.enabled = enabled;
     this.position = position;
   }
 
-  SoftLimit(@Nullable Double position) {
+  SoftLimit(@Nullable Integer position) {
     this(position != null, position != null ? position : 0);
   }
 
@@ -28,7 +28,7 @@ public final class SoftLimit {
     return new SoftLimit(enabled, position);
   }
 
-  public SoftLimit copyWithPosition(double position) {
+  public SoftLimit copyWithPosition(int position) {
     return new SoftLimit(enabled, position);
   }
 
@@ -36,7 +36,7 @@ public final class SoftLimit {
     return enabled;
   }
 
-  public double getPosition() {
+  public int getPosition() {
     return position;
   }
 

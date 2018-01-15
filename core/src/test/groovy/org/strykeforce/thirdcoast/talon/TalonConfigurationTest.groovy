@@ -55,6 +55,11 @@ class TalonConfigurationTest extends Specification {
             1 * talon.getDeviceID()
             1 * talon.changeControlMode(PercentOutput)
             1 * talon.configPeakCurrentLimit(0, TIMEOUT_MS)
+            1 * talon.configForwardSoftLimitEnable(true, TIMEOUT_MS)
+            1 * talon.configForwardSoftLimitThreshold(10000, TIMEOUT_MS)
+            1 * talon.configReverseSoftLimitEnable(true, TIMEOUT_MS)
+            1 * talon.configReverseSoftLimitThreshold(12000, TIMEOUT_MS)
+
             0 * talon._
         }
     }
@@ -137,8 +142,10 @@ class TalonConfigurationTest extends Specification {
         1 * talon.setSensorPhase(false)
         1 * talon.configVelocityMeasurementWindow(64, TIMEOUT_MS)
         1 * talon.configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_100Ms, TIMEOUT_MS)
-//        1 * talon.enableForwardSoftLimit(false)
-//        1 * talon.enableReverseSoftLimit(false)
+        1 * talon.configForwardSoftLimitEnable(false, TIMEOUT_MS)
+        1 * talon.configForwardSoftLimitThreshold(0, TIMEOUT_MS)
+        1 * talon.configReverseSoftLimitEnable(false, TIMEOUT_MS)
+        1 * talon.configReverseSoftLimitThreshold(0, TIMEOUT_MS)
         1 * talon.configContinuousCurrentLimit(0, TIMEOUT_MS)
         1 * talon.enableCurrentLimit(false)
         1 * talon.selectProfileSlot(0, 0)
