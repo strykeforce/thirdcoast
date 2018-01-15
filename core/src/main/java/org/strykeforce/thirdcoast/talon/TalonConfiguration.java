@@ -1,5 +1,11 @@
 package org.strykeforce.thirdcoast.talon;
 
+import static com.ctre.phoenix.motorcontrol.LimitSwitchNormal.Disabled;
+import static com.ctre.phoenix.motorcontrol.LimitSwitchNormal.NormallyClosed;
+import static com.ctre.phoenix.motorcontrol.LimitSwitchNormal.NormallyOpen;
+import static com.ctre.phoenix.motorcontrol.LimitSwitchSource.Deactivated;
+import static com.ctre.phoenix.motorcontrol.LimitSwitchSource.FeedbackConnector;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
@@ -116,24 +122,33 @@ public abstract class TalonConfiguration {
     }
 
     LimitSwitch hardLimit = forwardLimitSwitch != null ? forwardLimitSwitch : LimitSwitch.DEFAULT;
+    boolean enabled = hardLimit.isEnabled();
+    talon.configForwardLimitSwitchSource(
+        hardLimit.isEnabled() ? FeedbackConnector : Deactivated,
+        hardLimit.isEnabled()
+            ? (hardLimit.isNormallyOpen() ? NormallyOpen : NormallyClosed)
+            : Disabled,
+        TIMEOUT_MS);
     hardLimit = reverseLimitSwitch != null ? reverseLimitSwitch : LimitSwitch.DEFAULT;
-
-    // TODO: configForwardLimitSwitchSource
-    //    talon.enableLimitSwitch(fls.isEnabled(), rls.isEnabled());
-    //    if (fls.isEnabled()) {
-    //      talon.ConfigFwdLimitSwitchNormallyOpen(fls.isNormallyOpen());
-    //    }
-    //    if (rls.isEnabled()) {
-    //      talon.ConfigRevLimitSwitchNormallyOpen(rls.isNormallyOpen());
-    //    }
+    enabled |= hardLimit.isEnabled();
+    talon.configReverseLimitSwitchSource(
+        hardLimit.isEnabled() ? FeedbackConnector : Deactivated,
+        hardLimit.isEnabled()
+            ? (hardLimit.isNormallyOpen() ? NormallyOpen : NormallyClosed)
+            : Disabled,
+        TIMEOUT_MS);
+    talon.overrideLimitSwitchesEnable(enabled);
 
     SoftLimit softLimit = forwardSoftLimit != null ? forwardSoftLimit : SoftLimit.DEFAULT;
+    enabled = softLimit.isEnabled();
     talon.configForwardSoftLimitEnable(softLimit.isEnabled(), TIMEOUT_MS);
     talon.configForwardSoftLimitThreshold(softLimit.getPosition(), TIMEOUT_MS);
 
     softLimit = reverseSoftLimit != null ? reverseSoftLimit : SoftLimit.DEFAULT;
+    enabled |= softLimit.isEnabled();
     talon.configReverseSoftLimitEnable(softLimit.isEnabled(), TIMEOUT_MS);
     talon.configReverseSoftLimitThreshold(softLimit.getPosition(), TIMEOUT_MS);
+    talon.overrideSoftLimitsEnable(enabled);
 
     if (continuousCurrentLimit != null && continuousCurrentLimit > 0) {
       talon.configContinuousCurrentLimit(continuousCurrentLimit, TIMEOUT_MS);

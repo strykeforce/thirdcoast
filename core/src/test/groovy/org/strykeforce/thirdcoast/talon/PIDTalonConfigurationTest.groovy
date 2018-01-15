@@ -12,6 +12,10 @@ import spock.lang.Specification
 import static com.ctre.phoenix.motorcontrol.ControlMode.Velocity
 import static com.ctre.phoenix.motorcontrol.FeedbackDevice.CTRE_MagEncoder_Relative
 import static com.ctre.phoenix.motorcontrol.FeedbackDevice.QuadEncoder
+import static com.ctre.phoenix.motorcontrol.LimitSwitchNormal.Disabled
+import static com.ctre.phoenix.motorcontrol.LimitSwitchNormal.Disabled
+import static com.ctre.phoenix.motorcontrol.LimitSwitchSource.Deactivated
+import static com.ctre.phoenix.motorcontrol.LimitSwitchSource.Deactivated
 import static org.strykeforce.thirdcoast.talon.TalonConfiguration.TIMEOUT_MS
 
 class PIDTalonConfigurationTest extends Specification {
@@ -134,10 +138,13 @@ class PIDTalonConfigurationTest extends Specification {
         1 * talon.configForwardSoftLimitThreshold(0, TIMEOUT_MS)
         1 * talon.configReverseSoftLimitEnable(false, TIMEOUT_MS)
         1 * talon.configReverseSoftLimitThreshold(0, TIMEOUT_MS)
+        1 * talon.overrideSoftLimitsEnable(false)
         1 * talon.configContinuousCurrentLimit(0, TIMEOUT_MS)
         1 * talon.enableCurrentLimit(false)
         1 * talon.selectProfileSlot(0, 0)
-//        1 * talon.enableLimitSwitch(false, false)
+        1 * talon.configForwardLimitSwitchSource(Deactivated, Disabled, TIMEOUT_MS)
+        1 * talon.configReverseLimitSwitchSource(Deactivated, Disabled, TIMEOUT_MS)
+        1 * talon.overrideLimitSwitchesEnable(false)
         1 * talon.changeControlMode(Velocity)
         1 * talon.setExpiration(MotorSafety.DEFAULT_SAFETY_EXPIRATION)
         1 * talon.configPeakCurrentLimit(0, TIMEOUT_MS)

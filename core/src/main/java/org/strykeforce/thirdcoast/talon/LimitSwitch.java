@@ -25,10 +25,10 @@ public final class LimitSwitch {
     return new LimitSwitch(enabled, normallyOpen);
   }
 
-  //  @NotNull
-  //  public LimitSwitch copyWithNormallyOpen(boolean normallyOpen) { FIXME
-  //    return new LimitSwitch(enabled, normallyOpen);
-  //  }
+  @NotNull
+  public LimitSwitch copyWithNormallyOpen(boolean normallyOpen) {
+    return new LimitSwitch(enabled, normallyOpen);
+  }
 
   public boolean isEnabled() {
     return enabled;

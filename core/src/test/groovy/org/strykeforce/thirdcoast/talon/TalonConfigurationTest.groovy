@@ -1,7 +1,6 @@
 package org.strykeforce.thirdcoast.talon
 
 import com.ctre.phoenix.ErrorCode
-import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.NeutralMode
 import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod
 import edu.wpi.first.wpilibj.MotorSafety
@@ -9,6 +8,10 @@ import spock.lang.Specification
 
 import static com.ctre.phoenix.motorcontrol.ControlMode.PercentOutput
 import static com.ctre.phoenix.motorcontrol.FeedbackDevice.QuadEncoder
+import static com.ctre.phoenix.motorcontrol.LimitSwitchNormal.Disabled
+import static com.ctre.phoenix.motorcontrol.LimitSwitchNormal.NormallyOpen
+import static com.ctre.phoenix.motorcontrol.LimitSwitchSource.Deactivated
+import static com.ctre.phoenix.motorcontrol.LimitSwitchSource.FeedbackConnector
 import static com.ctre.phoenix.motorcontrol.VelocityMeasPeriod.Period_5Ms
 import static org.strykeforce.thirdcoast.talon.TalonConfiguration.TIMEOUT_MS
 
@@ -59,7 +62,10 @@ class TalonConfigurationTest extends Specification {
             1 * talon.configForwardSoftLimitThreshold(10000, TIMEOUT_MS)
             1 * talon.configReverseSoftLimitEnable(true, TIMEOUT_MS)
             1 * talon.configReverseSoftLimitThreshold(12000, TIMEOUT_MS)
-
+            1 * talon.overrideSoftLimitsEnable(true)
+            1 * talon.configForwardLimitSwitchSource(FeedbackConnector, NormallyOpen, TIMEOUT_MS)
+            1 * talon.configReverseLimitSwitchSource(Deactivated, Disabled, TIMEOUT_MS)
+            1 * talon.overrideLimitSwitchesEnable(true)
             0 * talon._
         }
     }
@@ -146,10 +152,13 @@ class TalonConfigurationTest extends Specification {
         1 * talon.configForwardSoftLimitThreshold(0, TIMEOUT_MS)
         1 * talon.configReverseSoftLimitEnable(false, TIMEOUT_MS)
         1 * talon.configReverseSoftLimitThreshold(0, TIMEOUT_MS)
+        1 * talon.overrideSoftLimitsEnable(false)
         1 * talon.configContinuousCurrentLimit(0, TIMEOUT_MS)
         1 * talon.enableCurrentLimit(false)
         1 * talon.selectProfileSlot(0, 0)
-//        1 * talon.enableLimitSwitch(false, false)
+        1 * talon.configForwardLimitSwitchSource(Deactivated, Disabled, TIMEOUT_MS)
+        1 * talon.configReverseLimitSwitchSource(Deactivated, Disabled, TIMEOUT_MS)
+        1 * talon.overrideLimitSwitchesEnable(false)
         1 * talon.setExpiration(MotorSafety.DEFAULT_SAFETY_EXPIRATION)
         1 * talon.configPeakCurrentLimit(0, TIMEOUT_MS)
         0 * talon._
