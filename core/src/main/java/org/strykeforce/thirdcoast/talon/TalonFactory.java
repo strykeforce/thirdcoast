@@ -1,8 +1,7 @@
 package org.strykeforce.thirdcoast.talon;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.SensorCollection;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import edu.wpi.first.wpilibj.MotorSafety;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -46,23 +45,9 @@ public class TalonFactory {
   @NotNull
   private TalonSRX createTalon(int id) {
     ThirdCoastTalon talon = wrapperFactory.create(id);
-    StatusFrameRate.DEFAULT.configure(talon);
-    talon.changeControlMode(ControlMode.PercentOutput);
-    talon.enableVoltageCompensation(true);
-    talon.setIntegralAccumulator(0, 0, TIMEOUT_MS);
-    talon.setIntegralAccumulator(0, 1, TIMEOUT_MS);
-    talon.clearMotionProfileHasUnderrun(TIMEOUT_MS);
-    talon.clearMotionProfileTrajectories();
     talon.clearStickyFaults(TIMEOUT_MS);
-    //    talon.enableZeroSensorPositionOnForwardLimit(false);
-    //    talon.enableZeroSensorPositionOnIndex(false, false);
-    //    talon.enableZeroSensorPositionOnReverseLimit(false);
-    talon.setInverted(false);
-    SensorCollection sensorCollection = talon.getSensorCollection();
-    sensorCollection.setAnalogPosition(0, TIMEOUT_MS);
-    sensorCollection.setPulseWidthPosition(0, TIMEOUT_MS);
-    sensorCollection.setQuadraturePosition(0, TIMEOUT_MS);
-    talon.selectProfileSlot(0, 0);
+    talon.setSafetyEnabled(false);
+    talon.setExpiration(MotorSafety.DEFAULT_SAFETY_EXPIRATION);
     if (!seen.add(talon)) {
       throw new IllegalStateException("creating an already-existing talon");
     }

@@ -1,6 +1,7 @@
 package org.strykeforce.thirdcoast.talon
 
 import com.ctre.phoenix.motorcontrol.SensorCollection
+import edu.wpi.first.wpilibj.MotorSafety
 import spock.lang.Specification
 
 import static com.ctre.phoenix.motorcontrol.ControlMode.PercentOutput
@@ -11,7 +12,6 @@ class TalonFactoryTest extends Specification {
 
     def wrapperFactory = Mock(ThirdCoastTalonFactory)
     def wrapper = Mock(ThirdCoastTalon)
-    def sensorCollection = Mock(SensorCollection)
 
 
     def "creation of wrapped talon with defaults"() {
@@ -23,19 +23,9 @@ class TalonFactoryTest extends Specification {
 
         then:
         1 * wrapperFactory.create(27) >> wrapper
-        1 * wrapper.changeControlMode(PercentOutput)
-        1 * wrapper.selectProfileSlot(0, 0)
-        1 * wrapper.setInverted(false)
-        1 * wrapper.setStatusFramePeriod(Status_4_AinTempVbat, 100, TIMEOUT_MS)
-        1 * wrapper.setStatusFramePeriod(Status_2_Feedback0, 20, TIMEOUT_MS)
-        1 * wrapper.setStatusFramePeriod(Status_1_General, 10, TIMEOUT_MS)
-        1 * wrapper.enableVoltageCompensation(true)
-        1 * wrapper.setIntegralAccumulator(0.0d, 0, 10)
-        1 * wrapper.setIntegralAccumulator(0.0d, 1, 10)
-        1 * wrapper.clearMotionProfileHasUnderrun(TalonFactory.TIMEOUT_MS)
+        1 * wrapper.setSafetyEnabled(false)
+        1 * wrapper.setExpiration(MotorSafety.DEFAULT_SAFETY_EXPIRATION)
         1 * wrapper.clearStickyFaults(TalonFactory.TIMEOUT_MS)
-        1 * wrapper.clearMotionProfileTrajectories()
-        1 * wrapper.getSensorCollection() >> sensorCollection
         0 * wrapper._
     }
 
@@ -52,7 +42,6 @@ class TalonFactoryTest extends Specification {
 
         then:
         1 * wrapperFactory.create(67) >> wrapper
-        1 * wrapper.getSensorCollection() >> sensorCollection
         1 * provisioner.configurationFor("test-config") >> config
         1 * config.configure(wrapper)
     }
@@ -67,7 +56,6 @@ class TalonFactoryTest extends Specification {
 
         then:
         1 * wrapperFactory.create(27) >> wrapper
-        1 * wrapper.getSensorCollection() >> sensorCollection
 
         and:
         factory.hasSeen(27)
