@@ -93,6 +93,8 @@ public abstract class TalonConfiguration {
    * @param talon the Talon to registerWith
    */
   public void configure(@NotNull TalonSRX talon) {
+    logger.info("configuring Talon {} with timeout = {}", talon.getDeviceID(), timeout);
+
     ErrorCode err;
     talon.selectProfileSlot(0, 0);
 

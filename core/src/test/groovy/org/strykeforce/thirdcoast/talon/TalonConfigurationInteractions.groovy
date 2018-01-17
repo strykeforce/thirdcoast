@@ -23,6 +23,7 @@ class TalonConfigurationInteractions extends Specification {
     }
 
     void defaultProfileSlotInteractions(talon) {
+        1 * talon.getDeviceID()
         1 * talon.selectProfileSlot(0, 0)
     }
 
