@@ -10,7 +10,6 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import edu.wpi.first.wpilibj.MotorSafety;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -92,11 +91,6 @@ public abstract class TalonConfiguration {
    * @param talon the Talon to registerWith
    */
   public void configure(@NotNull TalonSRX talon) {
-    if (talon instanceof ThirdCoastTalon) {
-      ((ThirdCoastTalon) talon).setSafetyEnabled(false);
-      ((ThirdCoastTalon) talon).setExpiration(MotorSafety.DEFAULT_SAFETY_EXPIRATION);
-    }
-
     talon.selectProfileSlot(0, 0);
 
     talon.enableVoltageCompensation(true);
@@ -150,28 +144,27 @@ public abstract class TalonConfiguration {
     talon.configReverseSoftLimitThreshold(softLimit.getPosition(), TIMEOUT_MS);
     talon.overrideSoftLimitsEnable(enabled);
 
-    if (continuousCurrentLimit != null && continuousCurrentLimit > 0) {
-      talon.configContinuousCurrentLimit(continuousCurrentLimit, TIMEOUT_MS);
-      talon.enableCurrentLimit(true);
-    } else {
-      talon.configContinuousCurrentLimit(0, TIMEOUT_MS);
-      talon.enableCurrentLimit(false);
-    }
+    configCurrentLimits(talon);
 
-    if (peakCurrentLimit != null && peakCurrentLimit > 0) {
+    addTalonId(talon.getDeviceID());
+  }
+
+  private void configCurrentLimits(TalonSRX talon) {
+    boolean contEnabled = continuousCurrentLimit != null && continuousCurrentLimit > 0;
+    talon.configContinuousCurrentLimit(contEnabled ? continuousCurrentLimit : 0, TIMEOUT_MS);
+
+    boolean peakEnabled = peakCurrentLimit != null && peakCurrentLimit > 0;
+    talon.configPeakCurrentLimit(peakEnabled ? peakCurrentLimit : 0, TIMEOUT_MS);
+
+    if (peakEnabled) {
       if (peakCurrentLimitDuration == null) {
         throw new IllegalArgumentException(
             "peakCurrentLimitDuration must be specified for peakCurrentLimit = "
                 + peakCurrentLimit);
       }
-      talon.configPeakCurrentLimit(peakCurrentLimit, TIMEOUT_MS);
       talon.configPeakCurrentDuration(peakCurrentLimitDuration, TIMEOUT_MS);
-      talon.enableCurrentLimit(true);
-    } else {
-      talon.configPeakCurrentLimit(0, TIMEOUT_MS);
     }
-
-    addTalonId(talon.getDeviceID());
+    talon.enableCurrentLimit(contEnabled || peakEnabled);
   }
 
   /**

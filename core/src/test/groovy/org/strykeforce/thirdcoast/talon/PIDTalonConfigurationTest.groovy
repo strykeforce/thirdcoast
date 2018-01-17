@@ -1,24 +1,13 @@
 package org.strykeforce.thirdcoast.talon
 
-import com.ctre.phoenix.ErrorCode
-import com.ctre.phoenix.motorcontrol.ControlMode
-import com.ctre.phoenix.motorcontrol.NeutralMode
-import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod
 import com.moandjiezana.toml.Toml
-import edu.wpi.first.wpilibj.MotorSafety
 import spock.lang.Shared
-import spock.lang.Specification
 
 import static com.ctre.phoenix.motorcontrol.ControlMode.Velocity
 import static com.ctre.phoenix.motorcontrol.FeedbackDevice.CTRE_MagEncoder_Relative
-import static com.ctre.phoenix.motorcontrol.FeedbackDevice.QuadEncoder
-import static com.ctre.phoenix.motorcontrol.LimitSwitchNormal.Disabled
-import static com.ctre.phoenix.motorcontrol.LimitSwitchNormal.Disabled
-import static com.ctre.phoenix.motorcontrol.LimitSwitchSource.Deactivated
-import static com.ctre.phoenix.motorcontrol.LimitSwitchSource.Deactivated
 import static org.strykeforce.thirdcoast.talon.TalonConfiguration.TIMEOUT_MS
 
-class PIDTalonConfigurationTest extends Specification {
+class PIDTalonConfigurationTest extends TalonConfigurationInteractions {
 
     static tomlString = '''
     [[TALON]]
@@ -110,47 +99,23 @@ class PIDTalonConfigurationTest extends Specification {
         t.nominalClosedLoopVoltage == null
 
         and:
-        1 * talon.enableVoltageCompensation(true)
-        1 * talon.configSelectedFeedbackSensor(QuadEncoder, 0, TIMEOUT_MS) >> ErrorCode.OK
-        1 * talon.configVoltageCompSaturation(12.0d, TIMEOUT_MS)
-        1 * talon.configAllowableClosedloopError(0, 0, TIMEOUT_MS)
-        1 * talon.config_kP(0, 0d, TIMEOUT_MS)
-        1 * talon.config_kI(0, 0d, TIMEOUT_MS)
-        1 * talon.config_kD(0, 0d, TIMEOUT_MS)
-        1 * talon.config_kF(0, 0d, TIMEOUT_MS)
-        1 * talon.config_IntegralZone(0, 0, TIMEOUT_MS)
-        1 * talon.configClosedloopRamp(0, TIMEOUT_MS)
-        1 * talon.configPeakOutputForward(1d, TIMEOUT_MS)
-        1 * talon.configPeakOutputReverse(-1d, TIMEOUT_MS)
-        1 * talon.configNominalOutputForward(0d, TIMEOUT_MS)
-        1 * talon.configNominalOutputReverse(0d, TIMEOUT_MS)
+        interaction {
+            defaultTalonInteraction(talon)
+            1 * talon.changeControlMode(Velocity)
+            1 * talon.configAllowableClosedloopError(0, 0, TIMEOUT_MS)
+            1 * talon.config_kP(0, 0d, TIMEOUT_MS)
+            1 * talon.config_kI(0, 0d, TIMEOUT_MS)
+            1 * talon.config_kD(0, 0d, TIMEOUT_MS)
+            1 * talon.config_kF(0, 0d, TIMEOUT_MS)
+            1 * talon.config_IntegralZone(0, 0, TIMEOUT_MS)
+            1 * talon.configClosedloopRamp(0, TIMEOUT_MS)
+            1 * talon.configPeakOutputForward(1d, TIMEOUT_MS)
+            1 * talon.configPeakOutputReverse(-1d, TIMEOUT_MS)
+            1 * talon.configNominalOutputForward(0d, TIMEOUT_MS)
+            1 * talon.configNominalOutputReverse(0d, TIMEOUT_MS)
 
-        1 * talon.setNeutralMode(NeutralMode.Coast)
-        1 * talon.setSafetyEnabled(false)
-        1 * talon.setInverted(false)
-        1 * talon.configOpenloopRamp(0d, TIMEOUT_MS)
-        1 * talon.getDeviceID()
-        1 * talon.getDescription()
-        1 * talon.setSensorPhase(false)
-        1 * talon.configVelocityMeasurementWindow(64, TIMEOUT_MS)
-        1 * talon.configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_100Ms, TIMEOUT_MS)
-        1 * talon.configForwardSoftLimitEnable(false, TIMEOUT_MS)
-        1 * talon.configForwardSoftLimitThreshold(0, TIMEOUT_MS)
-        1 * talon.configReverseSoftLimitEnable(false, TIMEOUT_MS)
-        1 * talon.configReverseSoftLimitThreshold(0, TIMEOUT_MS)
-        1 * talon.overrideSoftLimitsEnable(false)
-        1 * talon.configContinuousCurrentLimit(0, TIMEOUT_MS)
-        1 * talon.enableCurrentLimit(false)
-        1 * talon.selectProfileSlot(0, 0)
-        1 * talon.configForwardLimitSwitchSource(Deactivated, Disabled, TIMEOUT_MS)
-        1 * talon.configReverseLimitSwitchSource(Deactivated, Disabled, TIMEOUT_MS)
-        1 * talon.overrideLimitSwitchesEnable(false)
-        1 * talon.changeControlMode(Velocity)
-        1 * talon.setExpiration(MotorSafety.DEFAULT_SAFETY_EXPIRATION)
-        1 * talon.configPeakCurrentLimit(0, TIMEOUT_MS)
-        0 * talon._
-
-
+            0 * talon._
+        }
     }
 
     def "configures PID position mode talon"() {
@@ -159,19 +124,30 @@ class PIDTalonConfigurationTest extends Specification {
         t.configure(talon)
 
         then:
-        1 * talon.configSelectedFeedbackSensor(CTRE_MagEncoder_Relative, 0, TIMEOUT_MS)
-        1 * talon.configVoltageCompSaturation(11.0d, TIMEOUT_MS)
-        1 * talon.configClosedloopRamp(27.67d, TIMEOUT_MS)
-        1 * talon.configPeakOutputForward(0.5d, TIMEOUT_MS)
-        1 * talon.configPeakOutputReverse(-0.3d, TIMEOUT_MS)
-        1 * talon.configNominalOutputForward(0.1d, TIMEOUT_MS)
-        1 * talon.configNominalOutputReverse(-0.2d, TIMEOUT_MS)
-        1 * talon.configAllowableClosedloopError(0, 10, TIMEOUT_MS)
-        1 * talon.config_kP(0, 0.1d, TIMEOUT_MS)
-        1 * talon.config_kI(0, 0.2d, TIMEOUT_MS)
-        1 * talon.config_kD(0, 0.3d, TIMEOUT_MS)
-        1 * talon.config_kF(0, 0.4d, TIMEOUT_MS)
-        1 * talon.config_IntegralZone(0, 50, TIMEOUT_MS)
+        interaction {
+            defaultNeutralModeInteractions(talon)
+            defaultInvertedInteractions(talon)
+            defaultOpenLoopRampInteractions(talon)
+            defaultLimitSwitchInteractions(talon)
+            defaultSoftLimitInteractions(talon)
+            defaultCurrentLimitInteractions(talon)
+            defaultProfileSlotInteractions(talon)
+            defaultVelocityMeasurementInteractions(talon)
+
+            selectedFeedbackSensorInteraction(talon, CTRE_MagEncoder_Relative, false)
+            1 * talon.configVoltageCompSaturation(11.0d, TIMEOUT_MS)
+            1 * talon.configClosedloopRamp(27.67d, TIMEOUT_MS)
+            1 * talon.configPeakOutputForward(0.5d, TIMEOUT_MS)
+            1 * talon.configPeakOutputReverse(-0.3d, TIMEOUT_MS)
+            1 * talon.configNominalOutputForward(0.1d, TIMEOUT_MS)
+            1 * talon.configNominalOutputReverse(-0.2d, TIMEOUT_MS)
+            1 * talon.configAllowableClosedloopError(0, 10, TIMEOUT_MS)
+            1 * talon.config_kP(0, 0.1d, TIMEOUT_MS)
+            1 * talon.config_kI(0, 0.2d, TIMEOUT_MS)
+            1 * talon.config_kD(0, 0.3d, TIMEOUT_MS)
+            1 * talon.config_kF(0, 0.4d, TIMEOUT_MS)
+            1 * talon.config_IntegralZone(0, 50, TIMEOUT_MS)
+        }
     }
 
     def "configures speed mode talon"() {
