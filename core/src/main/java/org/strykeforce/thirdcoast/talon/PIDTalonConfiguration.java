@@ -21,7 +21,8 @@ public class PIDTalonConfiguration extends TalonConfiguration {
   private final Double fGain;
   private final Integer iZone;
 
-  PIDTalonConfiguration(@NotNull String name,
+  PIDTalonConfiguration(
+      @NotNull String name,
       @NotNull CANTalon.TalonControlMode mode,
       double setpointMax,
       Encoder encoder,
@@ -43,10 +44,26 @@ public class PIDTalonConfiguration extends TalonConfiguration {
       Double reverseOutputVoltageNominal,
       Integer allowableClosedLoopError,
       Double nominalClosedLoopVoltage,
-      Double pGain, Double iGain, Double dGain, Double fGain, Integer iZone) {
-    super(name, mode, setpointMax, encoder, isBrakeInNeutral, isOutputReversed,
-        velocityMeasurementPeriod, velocityMeasurementWindow, forwardLimitSwitch,
-        reverseLimitSwitch, forwardSoftLimit, reverseSoftLimit, currentLimit, voltageRampRate);
+      Double pGain,
+      Double iGain,
+      Double dGain,
+      Double fGain,
+      Integer iZone) {
+    super(
+        name,
+        mode,
+        setpointMax,
+        encoder,
+        isBrakeInNeutral,
+        isOutputReversed,
+        velocityMeasurementPeriod,
+        velocityMeasurementWindow,
+        forwardLimitSwitch,
+        reverseLimitSwitch,
+        forwardSoftLimit,
+        reverseSoftLimit,
+        currentLimit,
+        voltageRampRate);
     this.outputVoltageMax = outputVoltageMax;
     this.closedLoopRampRate = closedLoopRampRate;
     this.forwardOutputVoltagePeak = forwardOutputVoltagePeak;
@@ -64,17 +81,15 @@ public class PIDTalonConfiguration extends TalonConfiguration {
 
   @Override
   public void configure(@NotNull CANTalon talon) {
-    talon.configMaxOutputVoltage(valueOrElse(outputVoltageMax,12));
+    talon.configMaxOutputVoltage(valueOrElse(outputVoltageMax, 12));
 
     talon.setCloseLoopRampRate(closedLoopRampRate != null ? closedLoopRampRate : 0);
 
     talon.configPeakOutputVoltage(
-        valueOrElse(forwardOutputVoltagePeak, 12),
-        valueOrElse(reverseOutputVoltagePeak, -12));
+        valueOrElse(forwardOutputVoltagePeak, 12), valueOrElse(reverseOutputVoltagePeak, -12));
 
     talon.configNominalOutputVoltage(
-        valueOrElse(forwardOutputVoltageNominal, 0),
-        valueOrElse(reverseOutputVoltageNominal, 0));
+        valueOrElse(forwardOutputVoltageNominal, 0), valueOrElse(reverseOutputVoltageNominal, 0));
 
     talon.setAllowableClosedLoopErr(valueOrElse(allowableClosedLoopError, 0));
 
@@ -156,19 +171,32 @@ public class PIDTalonConfiguration extends TalonConfiguration {
   @Override
   @NotNull
   public String toString() {
-    return "PIDTalonParameters{" +
-        "outputVoltageMax=" + outputVoltageMax +
-        ", forwardOutputVoltagePeak=" + forwardOutputVoltagePeak +
-        ", reverseOutputVoltagePeak=" + reverseOutputVoltagePeak +
-        ", forwardOutputVoltageNominal=" + forwardOutputVoltageNominal +
-        ", reverseOutputVoltageNominal=" + reverseOutputVoltageNominal +
-        ", allowableClosedLoopError=" + allowableClosedLoopError +
-        ", nominalClosedLoopVoltage=" + nominalClosedLoopVoltage +
-        ", pGain=" + pGain +
-        ", iGain=" + iGain +
-        ", dGain=" + dGain +
-        ", fGain=" + fGain +
-        ", iZone=" + iZone +
-        "} " + super.toString();
+    return "PIDTalonParameters{"
+        + "outputVoltageMax="
+        + outputVoltageMax
+        + ", forwardOutputVoltagePeak="
+        + forwardOutputVoltagePeak
+        + ", reverseOutputVoltagePeak="
+        + reverseOutputVoltagePeak
+        + ", forwardOutputVoltageNominal="
+        + forwardOutputVoltageNominal
+        + ", reverseOutputVoltageNominal="
+        + reverseOutputVoltageNominal
+        + ", allowableClosedLoopError="
+        + allowableClosedLoopError
+        + ", nominalClosedLoopVoltage="
+        + nominalClosedLoopVoltage
+        + ", pGain="
+        + pGain
+        + ", iGain="
+        + iGain
+        + ", dGain="
+        + dGain
+        + ", fGain="
+        + fGain
+        + ", iZone="
+        + iZone
+        + "} "
+        + super.toString();
   }
 }

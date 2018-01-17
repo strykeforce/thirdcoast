@@ -17,12 +17,14 @@ import org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc.EncoderMenuModu
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.lim.LimitMenuModule;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.out.OutputMenuModule;
 
-@Module(includes = {
+@Module(
+  includes = {
     ClosedLoopMenuModule.class,
     EncoderMenuModule.class,
     LimitMenuModule.class,
     OutputMenuModule.class,
-})
+  }
+)
 public abstract class ConfigMenuModule {
 
   @Provides
@@ -33,9 +35,8 @@ public abstract class ConfigMenuModule {
 
   @Provides
   @Named("TALON_CONFIG")
-  public static Menu configMenu(@Named("TALON_CONFIG") CommandAdapter commandAdapter,
-      LineReader reader,
-      TalonSet talonSet) {
+  public static Menu configMenu(
+      @Named("TALON_CONFIG") CommandAdapter commandAdapter, LineReader reader, TalonSet talonSet) {
     return new TalonMenu(commandAdapter, reader, talonSet);
   }
 
@@ -63,5 +64,4 @@ public abstract class ConfigMenuModule {
   @IntoSet
   @Named("TALON_CONFIG")
   public abstract Command limitConfigCommand(LimitConfigCommand command);
-
 }

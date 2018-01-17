@@ -6,8 +6,7 @@ import org.jetbrains.annotations.NotNull;
 @ParametersAreNonnullByDefault
 public final class LimitSwitch {
 
-  @NotNull
-  public final static LimitSwitch DEFAULT = new LimitSwitch();
+  @NotNull public static final LimitSwitch DEFAULT = new LimitSwitch();
 
   private final boolean enabled;
   private final boolean normallyOpen;
@@ -18,7 +17,7 @@ public final class LimitSwitch {
   }
 
   public LimitSwitch() {
-    this(false,false);
+    this(false, false);
   }
 
   public LimitSwitch copyWithEnabled(boolean enabled) {
@@ -28,6 +27,7 @@ public final class LimitSwitch {
   public LimitSwitch copyWithNormallyOpen(boolean normallyOpen) {
     return new LimitSwitch(enabled, normallyOpen);
   }
+
   public boolean isEnabled() {
     return enabled;
   }
@@ -38,10 +38,6 @@ public final class LimitSwitch {
 
   @Override
   public String toString() {
-    return "LimitSwitch{" +
-        "enabled=" + enabled +
-        ", normallyOpen=" + normallyOpen +
-        '}';
+    return "LimitSwitch{" + "enabled=" + enabled + ", normallyOpen=" + normallyOpen + '}';
   }
-
 }

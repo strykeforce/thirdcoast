@@ -7,38 +7,41 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Represents a set of frame update rates for a {@link com.ctre.CANTalon}.
  *
- * If not modified, default status frame update rates are:
+ * <p>If not modified, default status frame update rates are:
  *
  * <ul>
- *   <li>General <b>10ms</b>: error, output duty cycle, limit switches, faults, mode</li>
- *   <li>Feedback <b>20ms</b>: selected encoder pos/vel, current, sticky faults, brake neutral state,
- *   motion control profile select</li>
- *   <li>Quad Encoder <b>100ms</b>: pos/vel, Index rising edge count, A/B/Index pin state</li>
- *   <li>Pulse Width <b>100ms</b>: assume abs encoder pos</li>
- *   <li>Analog In/Temp/Bus Voltage <b>100ms</b>: analog pos/vel, temp, bus voltage</li>
+ *   <li>General <b>10ms</b>: error, output duty cycle, limit switches, faults, mode
+ *   <li>Feedback <b>20ms</b>: selected encoder pos/vel, current, sticky faults, brake neutral
+ *       state, motion control profile select
+ *   <li>Quad Encoder <b>100ms</b>: pos/vel, Index rising edge count, A/B/Index pin state
+ *   <li>Pulse Width <b>100ms</b>: assume abs encoder pos
+ *   <li>Analog In/Temp/Bus Voltage <b>100ms</b>: analog pos/vel, temp, bus voltage
  * </ul>
  */
 @ParametersAreNonnullByDefault
 public final class StatusFrameRate {
 
-  @NotNull
-  public final static StatusFrameRate DEFAULT = StatusFrameRate.builder().build();
-  public final static StatusFrameRate GRAPHER;
+  /** Sets Talon to default frame rates. */
+  public static final StatusFrameRate DEFAULT = StatusFrameRate.builder().build();
+  /** Sets Talon to 5 ms rate for all frames. */
+  public static final StatusFrameRate GRAPHER;
 
   static {
-    GRAPHER = StatusFrameRate.builder()
-        .analogTempVbat(5)
-        .feedback(5)
-        .general(5)
-        .pulseWidth(5)
-        .quadEncoder(5).build();
+    GRAPHER =
+        StatusFrameRate.builder()
+            .analogTempVbat(5)
+            .feedback(5)
+            .general(5)
+            .pulseWidth(5)
+            .quadEncoder(5)
+            .build();
   }
 
-  public final int analogTempVbat;
-  public final int feedback;
-  public final int general;
-  public final int pulseWidth;
-  public final int quadEncoder;
+  private final int analogTempVbat;
+  private final int feedback;
+  private final int general;
+  private final int pulseWidth;
+  private final int quadEncoder;
 
   StatusFrameRate(int analogTempVbat, int feedback, int general, int pulseWidth, int quadEncoder) {
     this.analogTempVbat = analogTempVbat;
@@ -64,13 +67,18 @@ public final class StatusFrameRate {
   @Override
   @NotNull
   public String toString() {
-    return "StatusFrameRate{" +
-        "analogTempVbat=" + analogTempVbat +
-        ", feedback=" + feedback +
-        ", general=" + general +
-        ", pulseWidth=" + pulseWidth +
-        ", quadEncoder=" + quadEncoder +
-        '}';
+    return "StatusFrameRate{"
+        + "analogTempVbat="
+        + analogTempVbat
+        + ", feedback="
+        + feedback
+        + ", general="
+        + general
+        + ", pulseWidth="
+        + pulseWidth
+        + ", quadEncoder="
+        + quadEncoder
+        + '}';
   }
 
   /**
@@ -83,9 +91,7 @@ public final class StatusFrameRate {
     return new Builder();
   }
 
-  /**
-   * Builder for StatusFrameRate with default values.
-   */
+  /** Builder for StatusFrameRate with default values. */
   public static class Builder {
 
     private int analogTempVbat = 100;

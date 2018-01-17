@@ -6,12 +6,10 @@ import org.jline.reader.LineReader;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractFwdRevDoubleConfigCommand;
 
-/**
- * Configure F.
- */
+/** Configure F. */
 public class NominalOutputVoltageCommand extends AbstractFwdRevDoubleConfigCommand {
 
-  public final static String NAME = "Nominal Output Voltage: Vfwd, Vrev";
+  public static final String NAME = "Nominal Output Voltage: Vfwd, Vrev";
 
   @Inject
   public NominalOutputVoltageCommand(LineReader reader, TalonSet talonSet) {

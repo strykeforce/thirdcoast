@@ -9,8 +9,8 @@ import org.strykeforce.thirdcoast.telemetry.tct.Messages;
 
 public class DemoPwmDigitalOutputCommand extends AbstractCommand {
 
-  public final static String NAME = "Demo PWM Sweep";
-  private final static double SLEEP_SEC = 1e-3;
+  public static final String NAME = "Demo PWM Sweep";
+  private static final double SLEEP_SEC = 1e-3;
   private final DioSet dioSet;
 
   @Inject
@@ -21,6 +21,7 @@ public class DemoPwmDigitalOutputCommand extends AbstractCommand {
 
   @Override
   public void perform() {
+    terminal.writer().println();
     terminal.writer().println(Messages.bold(NAME));
     terminal.writer().println();
     DigitalOutput digitalOutput = dioSet.getDigitalOutput();
@@ -36,7 +37,5 @@ public class DemoPwmDigitalOutputCommand extends AbstractCommand {
     digitalOutput.updateDutyCycle(0.75);
     Timer.delay(SLEEP_SEC);
     digitalOutput.updateDutyCycle(1.0);
-
   }
-
 }

@@ -10,90 +10,54 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import javax.inject.Inject;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * Builder for {@link TalonConfiguration}.
- */
+/** Builder for {@link TalonConfiguration}. */
 @ParametersAreNonnullByDefault
 public class TalonConfigurationBuilder {
 
-  @NotNull
-  public final static String DEFAULT_NAME = "DEFAULT";
+  @NotNull public static final String DEFAULT_NAME = "DEFAULT";
 
   // TalonConfiguration
-  @NotNull
-  public final static String NAME = "name";
-  @NotNull
-  public final static String MODE = "mode";
+  @NotNull public static final String NAME = "name";
+  @NotNull public static final String MODE = "mode";
 
   // TalonConfiguration
-  @NotNull
-  private String name = DEFAULT_NAME;
-  @NotNull
-  private CANTalon.TalonControlMode mode = TalonControlMode.Voltage;
+  @NotNull private String name = DEFAULT_NAME;
+  @NotNull private CANTalon.TalonControlMode mode = TalonControlMode.Voltage;
   private double setpointMax = 12;
-  @Nullable
-  private Encoder encoder;
-  @Nullable
-  private Boolean brakeInNeutral;
-  @Nullable
-  private Boolean outputReversed;
-  @Nullable
-  private VelocityMeasurementPeriod velocityMeasurementPeriod;
-  @Nullable
-  private Integer velocityMeasurementWindow;
-  @Nullable
-  private LimitSwitch forwardLimitSwitch;
-  @Nullable
-  private LimitSwitch reverseLimitSwitch;
-  @Nullable
-  private SoftLimit forwardSoftLimit;
-  @Nullable
-  private SoftLimit reverseSoftLimit;
-  @Nullable
-  private Integer currentLimit;
-  @Nullable
-  private Double voltageRampRate;
+  @Nullable private Encoder encoder;
+  @Nullable private Boolean brakeInNeutral;
+  @Nullable private Boolean outputReversed;
+  @Nullable private VelocityMeasurementPeriod velocityMeasurementPeriod;
+  @Nullable private Integer velocityMeasurementWindow;
+  @Nullable private LimitSwitch forwardLimitSwitch;
+  @Nullable private LimitSwitch reverseLimitSwitch;
+  @Nullable private SoftLimit forwardSoftLimit;
+  @Nullable private SoftLimit reverseSoftLimit;
+  @Nullable private Integer currentLimit;
+  @Nullable private Double voltageRampRate;
 
   // PIDTalonConfiguration
-  @Nullable
-  private Double outputVoltageMax;
-  @Nullable
-  private Double closedLoopRampRate;
-  @Nullable
-  private Double forwardOutputVoltagePeak;
-  @Nullable
-  private Double reverseOutputVoltagePeak;
-  @Nullable
-  private Double forwardOutputVoltageNominal;
-  @Nullable
-  private Double reverseOutputVoltageNominal;
-  @Nullable
-  private Integer allowableClosedLoopError;
-  @Nullable
-  private Double nominalClosedLoopVoltage;
-  @Nullable
-  private Double pGain;
-  @Nullable
-  private Double iGain;
-  @Nullable
-  private Double dGain;
-  @Nullable
-  private Double fGain;
-  @Nullable
-  private Integer iZone;
+  @Nullable private Double outputVoltageMax;
+  @Nullable private Double closedLoopRampRate;
+  @Nullable private Double forwardOutputVoltagePeak;
+  @Nullable private Double reverseOutputVoltagePeak;
+  @Nullable private Double forwardOutputVoltageNominal;
+  @Nullable private Double reverseOutputVoltageNominal;
+  @Nullable private Integer allowableClosedLoopError;
+  @Nullable private Double nominalClosedLoopVoltage;
+  @Nullable private Double pGain;
+  @Nullable private Double iGain;
+  @Nullable private Double dGain;
+  @Nullable private Double fGain;
+  @Nullable private Integer iZone;
 
   // MotionMagicTalonConfiguration
-  @Nullable
-  private Double motionMagicAcceleration;
-  @Nullable
-  private Double motionMagicCruiseVelocity;
+  @Nullable private Double motionMagicAcceleration;
+  @Nullable private Double motionMagicCruiseVelocity;
 
-  /**
-   * Create a builder with defaults.
-   */
+  /** Create a builder with defaults. */
   @Inject
-  public TalonConfigurationBuilder() {
-  }
+  public TalonConfigurationBuilder() {}
 
   public TalonConfigurationBuilder(final TalonConfiguration config) {
     name = config.getName();
@@ -204,38 +168,113 @@ public class TalonConfigurationBuilder {
     TalonConfiguration tc = null;
     switch (mode) {
       case Voltage:
-        tc = new VoltageTalonConfiguration(name, setpointMax, encoder, brakeInNeutral,
-            outputReversed, velocityMeasurementPeriod, velocityMeasurementWindow,
-            forwardLimitSwitch, reverseLimitSwitch, forwardSoftLimit, reverseSoftLimit,
-            currentLimit, voltageRampRate);
+        tc =
+            new VoltageTalonConfiguration(
+                name,
+                setpointMax,
+                encoder,
+                brakeInNeutral,
+                outputReversed,
+                velocityMeasurementPeriod,
+                velocityMeasurementWindow,
+                forwardLimitSwitch,
+                reverseLimitSwitch,
+                forwardSoftLimit,
+                reverseSoftLimit,
+                currentLimit,
+                voltageRampRate);
         break;
       case Position:
-        tc = new PositionTalonConfiguration(name, setpointMax, encoder, brakeInNeutral,
-            outputReversed, velocityMeasurementPeriod, velocityMeasurementWindow,
-            forwardLimitSwitch, reverseLimitSwitch, forwardSoftLimit, reverseSoftLimit,
-            currentLimit, voltageRampRate, outputVoltageMax, closedLoopRampRate,
-            forwardOutputVoltagePeak,
-            reverseOutputVoltagePeak, forwardOutputVoltageNominal, reverseOutputVoltageNominal,
-            allowableClosedLoopError, nominalClosedLoopVoltage, pGain, iGain, dGain, fGain, iZone);
+        tc =
+            new PositionTalonConfiguration(
+                name,
+                setpointMax,
+                encoder,
+                brakeInNeutral,
+                outputReversed,
+                velocityMeasurementPeriod,
+                velocityMeasurementWindow,
+                forwardLimitSwitch,
+                reverseLimitSwitch,
+                forwardSoftLimit,
+                reverseSoftLimit,
+                currentLimit,
+                voltageRampRate,
+                outputVoltageMax,
+                closedLoopRampRate,
+                forwardOutputVoltagePeak,
+                reverseOutputVoltagePeak,
+                forwardOutputVoltageNominal,
+                reverseOutputVoltageNominal,
+                allowableClosedLoopError,
+                nominalClosedLoopVoltage,
+                pGain,
+                iGain,
+                dGain,
+                fGain,
+                iZone);
         break;
       case Speed:
-        tc = new SpeedTalonConfiguration(name, setpointMax, encoder, brakeInNeutral,
-            outputReversed, velocityMeasurementPeriod, velocityMeasurementWindow,
-            forwardLimitSwitch, reverseLimitSwitch, forwardSoftLimit, reverseSoftLimit,
-            currentLimit, voltageRampRate, outputVoltageMax, closedLoopRampRate,
-            forwardOutputVoltagePeak,
-            reverseOutputVoltagePeak, forwardOutputVoltageNominal, reverseOutputVoltageNominal,
-            allowableClosedLoopError, nominalClosedLoopVoltage, pGain, iGain, dGain, fGain, iZone);
+        tc =
+            new SpeedTalonConfiguration(
+                name,
+                setpointMax,
+                encoder,
+                brakeInNeutral,
+                outputReversed,
+                velocityMeasurementPeriod,
+                velocityMeasurementWindow,
+                forwardLimitSwitch,
+                reverseLimitSwitch,
+                forwardSoftLimit,
+                reverseSoftLimit,
+                currentLimit,
+                voltageRampRate,
+                outputVoltageMax,
+                closedLoopRampRate,
+                forwardOutputVoltagePeak,
+                reverseOutputVoltagePeak,
+                forwardOutputVoltageNominal,
+                reverseOutputVoltageNominal,
+                allowableClosedLoopError,
+                nominalClosedLoopVoltage,
+                pGain,
+                iGain,
+                dGain,
+                fGain,
+                iZone);
         break;
       case MotionMagic:
-        tc = new MotionMagicTalonConfiguration(name, setpointMax, encoder, brakeInNeutral,
-            outputReversed, velocityMeasurementPeriod, velocityMeasurementWindow,
-            forwardLimitSwitch, reverseLimitSwitch, forwardSoftLimit, reverseSoftLimit,
-            currentLimit, voltageRampRate, outputVoltageMax, closedLoopRampRate,
-            forwardOutputVoltagePeak,
-            reverseOutputVoltagePeak, forwardOutputVoltageNominal, reverseOutputVoltageNominal,
-            allowableClosedLoopError, nominalClosedLoopVoltage, pGain, iGain, dGain, fGain, iZone,
-            motionMagicAcceleration, motionMagicCruiseVelocity);
+        tc =
+            new MotionMagicTalonConfiguration(
+                name,
+                setpointMax,
+                encoder,
+                brakeInNeutral,
+                outputReversed,
+                velocityMeasurementPeriod,
+                velocityMeasurementWindow,
+                forwardLimitSwitch,
+                reverseLimitSwitch,
+                forwardSoftLimit,
+                reverseSoftLimit,
+                currentLimit,
+                voltageRampRate,
+                outputVoltageMax,
+                closedLoopRampRate,
+                forwardOutputVoltagePeak,
+                reverseOutputVoltagePeak,
+                forwardOutputVoltageNominal,
+                reverseOutputVoltageNominal,
+                allowableClosedLoopError,
+                nominalClosedLoopVoltage,
+                pGain,
+                iGain,
+                dGain,
+                fGain,
+                iZone,
+                motionMagicAcceleration,
+                motionMagicCruiseVelocity);
         break;
       case Follower:
       case MotionProfile:
@@ -295,8 +334,10 @@ public class TalonConfigurationBuilder {
    * @throws IllegalArgumentException if feedbackDevice is null
    */
   @NotNull
-  public TalonConfigurationBuilder encoder(CANTalon.FeedbackDevice feedbackDevice,
-      boolean isReversed, @Nullable Integer ticksPerRevolution) {
+  public TalonConfigurationBuilder encoder(
+      CANTalon.FeedbackDevice feedbackDevice,
+      boolean isReversed,
+      @Nullable Integer ticksPerRevolution) {
     this.encoder = new Encoder(feedbackDevice, isReversed, ticksPerRevolution);
     return this;
   }

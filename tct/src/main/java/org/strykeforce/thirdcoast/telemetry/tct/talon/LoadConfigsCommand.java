@@ -22,24 +22,25 @@ import org.strykeforce.thirdcoast.telemetry.tct.Command;
 import org.strykeforce.thirdcoast.telemetry.tct.ConfigurationsManager;
 import org.strykeforce.thirdcoast.telemetry.tct.Messages;
 
-/**
- * Loads Talons from TOML configuration file named {@code tct.toml}.
- */
+/** Loads Talons from TOML configuration file named {@code tct.toml}. */
 @ParametersAreNonnullByDefault
 public class LoadConfigsCommand extends AbstractCommand {
 
-  public final static String NAME = "Load Talons";
-  private final static Logger logger = LoggerFactory.getLogger(LoadConfigsCommand.class);
+  public static final String NAME = "Load Talons";
+  private static final Logger logger = LoggerFactory.getLogger(LoadConfigsCommand.class);
 
   private final ConfigurationsManager configurationsManager;
   private final TalonSet talonSet;
   private final TalonFactory talonFactory;
   private final Command listCommand;
 
-
   @Inject
-  LoadConfigsCommand(ConfigurationsManager configurationsManager, TalonSet talonSet,
-      LineReader reader, TalonFactory talonFactory, ListCommand listCommand) {
+  LoadConfigsCommand(
+      ConfigurationsManager configurationsManager,
+      TalonSet talonSet,
+      LineReader reader,
+      TalonFactory talonFactory,
+      ListCommand listCommand) {
     super(NAME, reader);
     this.configurationsManager = configurationsManager;
     this.talonSet = talonSet;
@@ -50,14 +51,16 @@ public class LoadConfigsCommand extends AbstractCommand {
   protected static String prompt() {
     return new AttributedStringBuilder()
         .style(AttributedStyle.BOLD.foreground(AttributedStyle.YELLOW))
-        .append("config to load or <enter> to return> ").toAnsi();
+        .append("config to load or <enter> to return> ")
+        .toAnsi();
   }
 
   @Override
   public void perform() {
     TalonProvisioner provisioner = configurationsManager.getTalonProvisioner();
-    List<String> configNames = provisioner.getConfigurationNames().stream()
-        .sorted().collect(Collectors.toList());
+    List<String> configNames =
+        provisioner.getConfigurationNames().stream().sorted().collect(Collectors.toList());
+    terminal.writer().println();
     for (int i = 0; i < configNames.size(); i++) {
       terminal.writer().printf("%2d - %s%n", i + 1, configNames.get(i));
     }
@@ -120,6 +123,4 @@ public class LoadConfigsCommand extends AbstractCommand {
   private void help(int size) {
     terminal.writer().print(Messages.menuHelp(size));
   }
-
 }
-

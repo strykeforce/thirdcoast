@@ -25,8 +25,10 @@ public abstract class EncoderMenuModule {
 
   @Provides
   @Named("TALON_CONFIG_ENC")
-  public static Menu configMenu(@Named("TALON_CONFIG_ENC") CommandAdapter commandAdapter,
-      LineReader reader, TalonSet talonSet) {
+  public static Menu configMenu(
+      @Named("TALON_CONFIG_ENC") CommandAdapter commandAdapter,
+      LineReader reader,
+      TalonSet talonSet) {
     return new TalonMenu(commandAdapter, reader, talonSet);
   }
 
@@ -71,6 +73,16 @@ public abstract class EncoderMenuModule {
   @IntoSet
   @Named("TALON_CONFIG_ENC")
   public abstract Command feedbackFrameRateCommand(FeedbackFrameRateCommand command);
+
+  @Binds
+  @IntoSet
+  @Named("TALON_CONFIG_ENC")
+  public abstract Command defaultFrameRatesCommand(DefaultFrameRatesCommand command);
+
+  @Binds
+  @IntoSet
+  @Named("TALON_CONFIG_ENC")
+  public abstract Command grapherFrameRatesCommand(GrapherFrameRatesCommand command);
 
   @Binds
   @IntoSet

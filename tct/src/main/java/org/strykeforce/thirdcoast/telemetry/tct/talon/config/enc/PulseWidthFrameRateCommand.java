@@ -9,7 +9,7 @@ import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractIntConfigCo
 
 public class PulseWidthFrameRateCommand extends AbstractIntConfigCommand {
 
-  public final static String NAME = "PulseWidth Status Frame Rate";
+  public static final String NAME = "PulseWidth Status Frame Rate";
 
   @Inject
   public PulseWidthFrameRateCommand(LineReader reader, TalonSet talonSet) {

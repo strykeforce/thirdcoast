@@ -1,12 +1,10 @@
-package org.strykeforce.thirdcoast.robot;
+package org.team2767.thirdcoast;
 
 import edu.wpi.first.wpilibj.Joystick;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-/**
- * Accesses driver control input.
- */
+/** Accesses driver control input. */
 @Singleton
 public class Controls {
 
@@ -37,10 +35,9 @@ public class Controls {
   private final Joystick driverController = new Joystick(1);
 
   @Inject
-  public Controls() {
-  }
+  public Controls() {}
 
-   /**
+  /**
    * Return the driver controller left stick Y-axis position.
    *
    * @return the position, range is -1.0 (full reverse) to 1.0 (full forward)
@@ -70,7 +67,7 @@ public class Controls {
   /**
    * Return the "Ch 6. Flaps Gain" knob value.
    *
-   * @return the knob position,  range is -1.0 (full left) to 1.0 (full right)
+   * @return the knob position, range is -1.0 (full left) to 1.0 (full right)
    */
   public double getTuner() {
     return driverController.getRawAxis(DRIVER_TUNER_AXIS);

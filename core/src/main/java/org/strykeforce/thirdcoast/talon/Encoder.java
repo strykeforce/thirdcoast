@@ -12,17 +12,17 @@ import org.slf4j.LoggerFactory;
 @ParametersAreNonnullByDefault
 public final class Encoder {
 
-  @NotNull
-  final static Encoder DEFAULT = new Encoder();
+  @NotNull static final Encoder DEFAULT = new Encoder();
 
-  final static Logger logger = LoggerFactory.getLogger(Encoder.class);
-  @Nullable
-  private final CANTalon.FeedbackDevice device;
+  static final Logger logger = LoggerFactory.getLogger(Encoder.class);
+  @Nullable private final CANTalon.FeedbackDevice device;
   private final boolean reversed;
   private final boolean unitScalingEnabled;
   private final int ticksPerRevolution;
 
-  Encoder(@Nullable CANTalon.FeedbackDevice device, @Nullable Boolean reversed,
+  Encoder(
+      @Nullable CANTalon.FeedbackDevice device,
+      @Nullable Boolean reversed,
       @Nullable Integer ticksPerRevolution) {
     this.device = device;
     this.reversed = reversed != null ? reversed : false;
@@ -60,11 +60,13 @@ public final class Encoder {
   public void configure(CANTalon talon) {
     talon.setFeedbackDevice(getDevice());
     talon.reverseSensor(reversed);
-    logger.info("{}: encoder {} {} reversed", talon.getDescription(), getDevice(),
-        reversed ? "" : "not");
+    logger.info(
+        "{}: encoder {} {} reversed", talon.getDescription(), getDevice(), reversed ? "" : "not");
     if (unitScalingEnabled) {
       talon.configEncoderCodesPerRev(ticksPerRevolution);
-      logger.info("{}: configured {} encoder codes per revolution", talon.getDescription(),
+      logger.info(
+          "{}: configured {} encoder codes per revolution",
+          talon.getDescription(),
           ticksPerRevolution);
     }
     checkEncoder(talon);
@@ -84,7 +86,8 @@ public final class Encoder {
         logger.warn("{}: {} is MISSING", talon.getDescription(), getDevice());
         break;
       case FeedbackStatusUnknown:
-        logger.info("{}: encoder is unknown, only CTRE Mag or Pulse-Width Encoder supported",
+        logger.info(
+            "{}: encoder is unknown, only CTRE Mag or Pulse-Width Encoder supported",
             talon.getDescription());
         break;
     }
@@ -109,11 +112,15 @@ public final class Encoder {
 
   @Override
   public String toString() {
-    return "Encoder{" +
-        "device=" + device +
-        ", reversed=" + reversed +
-        ", unitScalingEnabled=" + unitScalingEnabled +
-        ", ticksPerRevolution=" + ticksPerRevolution +
-        '}';
+    return "Encoder{"
+        + "device="
+        + device
+        + ", reversed="
+        + reversed
+        + ", unitScalingEnabled="
+        + unitScalingEnabled
+        + ", ticksPerRevolution="
+        + ticksPerRevolution
+        + '}';
   }
 }

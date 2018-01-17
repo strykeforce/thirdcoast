@@ -7,7 +7,7 @@ import org.jline.reader.LineReader;
 @ParametersAreNonnullByDefault
 public class QuitCommand extends AbstractCommand {
 
-  public final static String NAME = "Quit";
+  public static final String NAME = "Quit";
 
   @Inject
   QuitCommand(LineReader reader) {

@@ -9,7 +9,7 @@ import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractIntConfigCo
 
 public class GeneralFrameRateCommand extends AbstractIntConfigCommand {
 
-  public final static String NAME = "General Status Frame Rate";
+  public static final String NAME = "General Status Frame Rate";
 
   @Inject
   public GeneralFrameRateCommand(LineReader reader, TalonSet talonSet) {
@@ -23,5 +23,4 @@ public class GeneralFrameRateCommand extends AbstractIntConfigCommand {
 
   @Override
   protected void saveConfig(int value) {}
-
 }

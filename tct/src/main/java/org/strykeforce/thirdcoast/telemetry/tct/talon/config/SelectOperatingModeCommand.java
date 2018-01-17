@@ -11,7 +11,7 @@ import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 
 public class SelectOperatingModeCommand extends AbstractTalonConfigCommand {
 
-  public final static String NAME = "Control Mode";
+  public static final String NAME = "Control Mode";
 
   @Inject
   public SelectOperatingModeCommand(TalonSet talonSet, LineReader reader) {
@@ -20,8 +20,18 @@ public class SelectOperatingModeCommand extends AbstractTalonConfigCommand {
 
   @Override
   public void perform() {
-    String[] types = {"Voltage", "Speed", "Position", "Current", "Percent Vbus", "Motion Magic",
-        "Motion Profile", "Follower", "Disabled"};
+    String[] types = {
+      "Voltage",
+      "Speed",
+      "Position",
+      "Current",
+      "Percent Vbus",
+      "Motion Magic",
+      "Motion Profile",
+      "Follower",
+      "Disabled"
+    };
+    terminal.writer().println();
     for (int i = 0; i < types.length; i++) {
       terminal.writer().printf("%2d - %s%n", i + 1, types[i]);
     }
@@ -84,12 +94,10 @@ public class SelectOperatingModeCommand extends AbstractTalonConfigCommand {
         logger.info("set {} for {} to {}", name(), talon.getDescription(), mode);
       }
       talonSet.talonConfigurationBuilder().mode(mode);
-
     }
   }
 
   private void help(int size) {
     terminal.writer().print(Messages.menuHelp(size));
   }
-
 }

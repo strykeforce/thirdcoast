@@ -11,7 +11,7 @@ import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractTalonConfig
 
 public class VelocityMeasurementPeriodCommand extends AbstractTalonConfigCommand {
 
-  public final static String NAME = "Velocity Measurement Period";
+  public static final String NAME = "Velocity Measurement Period";
 
   @Inject
   public VelocityMeasurementPeriodCommand(LineReader reader, TalonSet talonSet) {
@@ -21,6 +21,7 @@ public class VelocityMeasurementPeriodCommand extends AbstractTalonConfigCommand
   @Override
   public void perform() {
     int[] periods = {1, 2, 5, 10, 20, 25, 50, 100};
+    terminal.writer().println();
     for (int i = 0; i < periods.length; i++) {
       terminal.writer().printf("%2d - %3d ms%n", i + 1, periods[i]);
     }

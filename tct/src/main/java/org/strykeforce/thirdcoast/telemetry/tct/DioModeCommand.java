@@ -5,13 +5,11 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import org.jline.reader.LineReader;
 
-/**
- * Command to enter mode for working with Dios.
- */
+/** Command to enter mode for working with Dios. */
 @ParametersAreNonnullByDefault
 public class DioModeCommand extends AbstractCommand {
 
-  public final static String NAME = "Work with Digital Inputs and Outputs";
+  public static final String NAME = "Work with Digital Inputs and Outputs";
   private final Menu dioMenu;
 
   @Inject

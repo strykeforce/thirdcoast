@@ -14,8 +14,8 @@ import org.strykeforce.thirdcoast.telemetry.tct.Messages;
 
 public class SelectServoCommand extends AbstractCommand {
 
-  public final static String NAME = "Select Servo";
-  private final static Logger logger = LoggerFactory.getLogger(SelectServoCommand.class);
+  public static final String NAME = "Select Servo";
+  private static final Logger logger = LoggerFactory.getLogger(SelectServoCommand.class);
   private final ServoSet servoSet;
 
   @Inject
@@ -27,13 +27,13 @@ public class SelectServoCommand extends AbstractCommand {
   protected static String prompt() {
     return new AttributedStringBuilder()
         .style(AttributedStyle.BOLD.foreground(AttributedStyle.YELLOW))
-        .append("servo channel or <enter> to return> ").toAnsi();
+        .append("servo channel or <enter> to return> ")
+        .toAnsi();
   }
-
 
   @Override
   public void perform() {
-    terminal.writer().println(Messages.bold("enter servo channel"));
+    terminal.writer().println(Messages.bold("\nenter servo channel"));
 
     String line;
     while (true) {
@@ -53,7 +53,9 @@ public class SelectServoCommand extends AbstractCommand {
       try {
         id = Integer.valueOf(line);
       } catch (NumberFormatException e) {
-        terminal.writer().print(Messages.boldRed(String.format("%s is not a number, ignoring%n", line)));
+        terminal
+            .writer()
+            .print(Messages.boldRed(String.format("%s is not a number, ignoring%n", line)));
         continue;
       }
       servoSet.setServo(new Servo(id));
@@ -63,4 +65,3 @@ public class SelectServoCommand extends AbstractCommand {
     }
   }
 }
-

@@ -18,5 +18,4 @@ public abstract class GyroModule {
   public static AHRS provideGyro() {
     return new AHRS(Port.kMXP);
   }
-
 }

@@ -8,18 +8,16 @@ import org.strykeforce.thirdcoast.telemetry.tct.Menu;
 import org.strykeforce.thirdcoast.telemetry.tct.Messages;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 
-/**
- * Configure selected Talons.
- */
+/** Configure selected Talons. */
 public class EncoderConfigCommand extends AbstractCommand {
 
-  public final static String NAME = "Encoders, Velocity Measurement and Frame Rates";
+  public static final String NAME = "Encoders, Velocity Measurement and Frame Rates";
   private final Menu encoderMenu;
   private final TalonSet talonSet;
 
   @Inject
-  public EncoderConfigCommand(TalonSet talonSet, @Named("TALON_CONFIG_ENC") Menu encoderMenu,
-      LineReader reader) {
+  public EncoderConfigCommand(
+      TalonSet talonSet, @Named("TALON_CONFIG_ENC") Menu encoderMenu, LineReader reader) {
     super(NAME, reader);
     this.talonSet = talonSet;
     this.encoderMenu = encoderMenu;

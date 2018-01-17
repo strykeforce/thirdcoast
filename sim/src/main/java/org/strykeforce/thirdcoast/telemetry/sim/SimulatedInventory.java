@@ -59,23 +59,25 @@ public class SimulatedInventory extends AbstractInventory {
 
     System.out.printf("%-25s %s%n", SETPOINT.getDescription(), ": SINE inv even ids");
     System.out.printf("%-25s %s%n", OUTPUT_CURRENT.getDescription(), ": SINE, ampl 1000, ph 0.25");
-    System.out.printf("%-25s %s%n", OUTPUT_VOLTAGE.getDescription(),
-        ": SINE, ampl 2, ph -0.25, off 2/-2 even/odd id");
+    System.out.printf(
+        "%-25s %s%n",
+        OUTPUT_VOLTAGE.getDescription(), ": SINE, ampl 2, ph -0.25, off 2/-2 even/odd id");
     System.out.printf("%-25s %s%n", ENCODER_POSITION.getDescription(), ": SAWTOOTH, inv odd ids");
     System.out.printf("%-25s %s%n", ENCODER_VELOCITY.getDescription(), ": SAWTOOTH, ampl 0.1");
-    System.out.printf("%-25s %s%n", ABSOLUTE_ENCODER_POSITION.getDescription(),
-        ": SAWTOOTH, off 2/-2 even/odd");
-    System.out
-        .printf("%-25s %s%n", CONTROL_LOOP_ERROR.getDescription(), ": TRIANGLE, inv even ids");
-    System.out.printf("%-25s %s%n", INTEGRATOR_ACCUMULATOR.getDescription(),
-        ": TRIANGLE, ampl 50 ph 0.25");
-    System.out.printf("%-25s %s%n", BUS_VOLTAGE.getDescription(),
-        ": TRIANGLE, ampl id ph 0.33 off id/-id even/odd");
+    System.out.printf(
+        "%-25s %s%n", ABSOLUTE_ENCODER_POSITION.getDescription(), ": SAWTOOTH, off 2/-2 even/odd");
+    System.out.printf(
+        "%-25s %s%n", CONTROL_LOOP_ERROR.getDescription(), ": TRIANGLE, inv even ids");
+    System.out.printf(
+        "%-25s %s%n", INTEGRATOR_ACCUMULATOR.getDescription(), ": TRIANGLE, ampl 50 ph 0.25");
+    System.out.printf(
+        "%-25s %s%n",
+        BUS_VOLTAGE.getDescription(), ": TRIANGLE, ampl id ph 0.33 off id/-id even/odd");
     System.out.printf("%-25s %s%n", FORWARD_HARD_LIMIT_CLOSED.getDescription(), ": SQUARE");
     System.out.printf("%-25s %s%n", REVERSE_HARD_LIMIT_CLOSED.getDescription(), ": SQUARE, inv");
     System.out.printf("%-25s %s%n", FORWARD_SOFT_LIMIT_OK.getDescription(), ": SQUARE, ph 0.33");
-    System.out
-        .printf("%-25s %s%n", REVERSE_SOFT_LIMIT_OK.getDescription(), ": SQUARE, ph 0.33 inv");
+    System.out.printf(
+        "%-25s %s%n", REVERSE_SOFT_LIMIT_OK.getDescription(), ": SQUARE, ph 0.33 inv");
     System.out.printf("%-25s %s%n", VALUE.getDescription(), ": SINE");
     System.out.printf("%-25s %s%n", POSITION.getDescription(), ": SAWTOOTH");
     System.out.printf("%-25s %s%n", ANGLE.getDescription(), ": TRIANGLE");
@@ -95,15 +97,15 @@ public class SimulatedInventory extends AbstractInventory {
       boolean even = id % 2 == 0;
       double freq = id % 5 + 1;
 
-      SignalGenerator.Builder builder = new SignalGenerator.Builder(SignalType.SINE)
-          .frequency(freq);
+      SignalGenerator.Builder builder =
+          new SignalGenerator.Builder(SignalType.SINE).frequency(freq);
       sigs.put(VALUE, builder.build());
       sigs.put(SETPOINT, builder.invert(even).build()); // 0
 
       sigs.put(OUTPUT_CURRENT, builder.amplitude(1000).phase(0.25).build()); // 1
 
-      sigs.put(OUTPUT_VOLTAGE,
-          builder.amplitude(2).phase(-0.25).offset(even ? 2 : -2).build()); // 2
+      sigs.put(
+          OUTPUT_VOLTAGE, builder.amplitude(2).phase(-0.25).offset(even ? 2 : -2).build()); // 2
 
       builder = new SignalGenerator.Builder(SignalType.SAWTOOTH).frequency(freq);
       sigs.put(POSITION, builder.build());

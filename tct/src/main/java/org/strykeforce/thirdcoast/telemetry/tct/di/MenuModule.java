@@ -58,5 +58,4 @@ public abstract class MenuModule {
   @IntoSet
   @Named("MAIN")
   public abstract Command quitCommand(QuitCommand command);
-
 }

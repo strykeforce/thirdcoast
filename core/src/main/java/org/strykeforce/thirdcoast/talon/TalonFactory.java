@@ -13,23 +13,18 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Instantiate {@link CANTalon} instances with defaults.
- */
+/** Instantiate {@link CANTalon} instances with defaults. */
 @Singleton
 @ParametersAreNonnullByDefault
 public class TalonFactory {
 
-  public final static int CONTROL_FRAME_MS = 10;
-  final static Logger logger = LoggerFactory.getLogger(TalonFactory.class);
+  public static final int CONTROL_FRAME_MS = 10;
+  static final Logger logger = LoggerFactory.getLogger(TalonFactory.class);
 
-  @NotNull
-  private final static Set<CANTalon> seen = new HashSet<>();
+  @NotNull private static final Set<CANTalon> seen = new HashSet<>();
 
-  @NotNull
-  private final TalonProvisioner provisioner;
-  @NotNull
-  private final WrapperFactory wrapperFactory;
+  @NotNull private final TalonProvisioner provisioner;
+  @NotNull private final WrapperFactory wrapperFactory;
 
   @Inject
   public TalonFactory(TalonProvisioner provisioner, WrapperFactory wrapperFactory) {
@@ -52,6 +47,7 @@ public class TalonFactory {
   @NotNull
   private CANTalon createTalon(int id) {
     CANTalon talon = wrapperFactory.createWrapper(id, CONTROL_FRAME_MS);
+    StatusFrameRate.DEFAULT.configure(talon);
     talon.changeControlMode(TalonControlMode.Voltage);
     talon.clearIAccum();
     talon.ClearIaccum();
@@ -109,13 +105,12 @@ public class TalonFactory {
     return talon;
   }
 
+  @NotNull
   public TalonProvisioner getProvisioner() {
     return provisioner;
   }
 
-  /**
-   * Factory class for {@link Wrapper}, facilitates testing.
-   */
+  /** Factory class for {@link Wrapper}, facilitates testing. */
   static class WrapperFactory {
 
     @Inject
@@ -134,15 +129,14 @@ public class TalonFactory {
    * implements logical equality. By default the Talon flushes the Tx buffer on every set call. See
    * com.team254.lib.util.drivers.LazyCANTalon.
    *
-   * CANTalon superclass appears to use the default {@link Object#equals(Object)} so we provide
+   * <p>CANTalon superclass appears to use the default {@link Object#equals(Object)} so we provide
    * logical equality based on device ID.
    */
   static class Wrapper extends CANTalon {
 
-    final static Logger logger = LoggerFactory.getLogger(Wrapper.class);
+    static final Logger logger = LoggerFactory.getLogger(Wrapper.class);
     private double setpoint = Double.NaN;
-    @Nullable
-    private TalonControlMode controlMode = null;
+    @Nullable private TalonControlMode controlMode = null;
 
     public Wrapper(int deviceNumber) {
       super(deviceNumber);
@@ -151,14 +145,19 @@ public class TalonFactory {
 
     public Wrapper(int deviceNumber, int controlPeriodMs) {
       super(deviceNumber, controlPeriodMs);
-      logger.debug("initializing Wrapper for {} with control frame period {}", getDescription(),
+      logger.debug(
+          "initializing Wrapper for {} with control frame period {}",
+          getDescription(),
           controlPeriodMs);
     }
 
     public Wrapper(int deviceNumber, int controlPeriodMs, int enablePeriodMs) {
       super(deviceNumber, controlPeriodMs, enablePeriodMs);
-      logger.debug("initializing Wrapper for {} with control frame period {} and enable period {}",
-          getDescription(), controlPeriodMs, enablePeriodMs);
+      logger.debug(
+          "initializing Wrapper for {} with control frame period {} and enable period {}",
+          getDescription(),
+          controlPeriodMs,
+          enablePeriodMs);
     }
 
     @Override
@@ -216,11 +215,7 @@ public class TalonFactory {
 
     @Override
     public String toString() {
-      return "TalonFactory$Wrapper{" +
-          "id=" + super.getDeviceID() +
-          "}";
+      return "TalonFactory$Wrapper{" + "id=" + super.getDeviceID() + "}";
     }
   }
-
-
 }

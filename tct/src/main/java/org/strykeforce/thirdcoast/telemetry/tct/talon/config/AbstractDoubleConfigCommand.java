@@ -54,5 +54,4 @@ public abstract class AbstractDoubleConfigCommand extends AbstractTalonConfigCom
     }
     return value;
   }
-
 }

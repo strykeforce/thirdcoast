@@ -10,8 +10,7 @@ public class DioMenu extends Menu {
 
   private final DioSet dioSet;
 
-  public DioMenu(CommandAdapter commandsAdapter, LineReader reader,
-      DioSet dioSet) {
+  public DioMenu(CommandAdapter commandsAdapter, LineReader reader, DioSet dioSet) {
     super(commandsAdapter, reader);
     this.dioSet = dioSet;
   }
@@ -20,6 +19,6 @@ public class DioMenu extends Menu {
   protected String header() {
     DigitalOutput digitalOutput = dioSet.getDigitalOutput();
     String id = digitalOutput != null ? String.valueOf(digitalOutput.getChannel()) : "";
-    return Messages.boldGreen("Digital Output: " + id + "\n");
+    return Messages.boldGreen("\nDigital Output: " + id + "\n");
   }
 }

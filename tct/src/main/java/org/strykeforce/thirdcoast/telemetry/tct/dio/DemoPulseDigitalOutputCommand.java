@@ -8,7 +8,7 @@ import org.strykeforce.thirdcoast.telemetry.tct.Messages;
 
 public class DemoPulseDigitalOutputCommand extends AbstractCommand {
 
-  public final static String NAME = "Demo Pulse Chain";
+  public static final String NAME = "Demo Pulse Chain";
   private final DioSet dioSet;
 
   @Inject
@@ -19,6 +19,7 @@ public class DemoPulseDigitalOutputCommand extends AbstractCommand {
 
   @Override
   public void perform() {
+    terminal.writer().println();
     terminal.writer().println(Messages.bold(NAME));
     terminal.writer().println("pulseLength = 0.25, pulse width = 144 µsec");
     terminal.writer().println("pulseLength = 0.50, pulse width =  32 µsec");
@@ -32,18 +33,18 @@ public class DemoPulseDigitalOutputCommand extends AbstractCommand {
       terminal.writer().println(Messages.boldRed("no digital output selected selected"));
       return;
     }
-    pulse(digitalOutput,0.25);
-    pulse(digitalOutput,0.5);
-    pulse(digitalOutput,1);
-    pulse(digitalOutput,2);
-    pulse(digitalOutput,4);
-    pulse(digitalOutput,8);
+    pulse(digitalOutput, 0.25);
+    pulse(digitalOutput, 0.5);
+    pulse(digitalOutput, 1);
+    pulse(digitalOutput, 2);
+    pulse(digitalOutput, 4);
+    pulse(digitalOutput, 8);
   }
 
   private static void pulse(DigitalOutput digitalOutput, double length) {
     while (digitalOutput.isPulsing()) {
       try {
-        Thread.sleep(0,500_000);
+        Thread.sleep(0, 500_000);
       } catch (InterruptedException e) {
         e.printStackTrace();
       }

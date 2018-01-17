@@ -11,19 +11,16 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.strykeforce.thirdcoast.talon.StatusFrameRate;
 import org.strykeforce.thirdcoast.talon.TalonConfiguration;
 import org.strykeforce.thirdcoast.talon.TalonConfigurationBuilder;
 import org.strykeforce.thirdcoast.telemetry.TelemetryService;
 
-/**
- * Holds Talons being worked on. Talons that have been instantiated are cached.
- */
+/** Holds Talons being worked on. Talons that have been instantiated are cached. */
 @Singleton
 @ParametersAreNonnullByDefault
 public class TalonSet {
 
-  private final static Logger logger = LoggerFactory.getLogger(TalonSet.class);
+  private static final Logger logger = LoggerFactory.getLogger(TalonSet.class);
   private final Set<CANTalon> selected = new HashSet<>();
   private final TelemetryService telemetryService;
   private TalonConfigurationBuilder talonConfigurationBuilder;
@@ -47,7 +44,6 @@ public class TalonSet {
   }
 
   void clearSelected() {
-    selected.forEach(StatusFrameRate.DEFAULT::configure);
     selected.clear();
   }
 
@@ -67,7 +63,6 @@ public class TalonSet {
     logger.info("restarting TelemetryService");
     telemetryService.stop();
     selected.forEach(telemetryService::register);
-    selected.forEach(StatusFrameRate.GRAPHER::configure);
     telemetryService.start();
   }
 

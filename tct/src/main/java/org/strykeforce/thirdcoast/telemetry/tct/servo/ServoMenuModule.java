@@ -22,8 +22,8 @@ public abstract class ServoMenuModule {
 
   @Provides
   @Named("SERVO")
-  static Menu servoMenu(@Named("SERVO") CommandAdapter commandAdapter, LineReader reader,
-      ServoSet servoSet) {
+  static Menu servoMenu(
+      @Named("SERVO") CommandAdapter commandAdapter, LineReader reader, ServoSet servoSet) {
     return new ServoMenu(commandAdapter, reader, servoSet);
   }
 
@@ -36,6 +36,4 @@ public abstract class ServoMenuModule {
   @IntoSet
   @Named("SERVO")
   public abstract Command runServoCommand(RunServoCommand command);
-
-
 }

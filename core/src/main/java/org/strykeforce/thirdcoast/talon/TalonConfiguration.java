@@ -18,11 +18,12 @@ import org.jetbrains.annotations.NotNull;
 public abstract class TalonConfiguration {
 
   // required
-  @NotNull
-  private final String name;
+  @NotNull private final String name;
+
   @SuppressWarnings({"FieldCanBeLocal", "unused"})
   @NotNull
   private final CANTalon.TalonControlMode mode;
+
   private final double setpointMax;
   // optional
   private final Encoder encoder;
@@ -38,7 +39,8 @@ public abstract class TalonConfiguration {
   private final Double voltageRampRate;
   private Set<Integer> talonIds;
 
-  TalonConfiguration(@NotNull String name,
+  TalonConfiguration(
+      @NotNull String name,
       @NotNull CANTalon.TalonControlMode mode,
       double setpointMax,
       Encoder encoder,
@@ -247,19 +249,32 @@ public abstract class TalonConfiguration {
   @Override
   @NotNull
   public String toString() {
-    return "TalonParameters{" +
-        "name='" + name + '\'' +
-        ", setpointMax=" + setpointMax +
-        ", encoder=" + encoder +
-        ", brakeInNeutral=" + brakeInNeutral +
-        ", outputReversed=" + outputReversed +
-        ", velocityMeasurementPeriod=" + velocityMeasurementPeriod +
-        ", velocityMeasurementWindow=" + velocityMeasurementWindow +
-        ", forwardLimitSwitch=" + forwardLimitSwitch +
-        ", reverseLimitSwitch=" + reverseLimitSwitch +
-        ", forwardSoftLimit=" + forwardSoftLimit +
-        ", reverseSoftLimit=" + reverseSoftLimit +
-        ", currentLimit=" + currentLimit +
-        '}';
+    return "TalonParameters{"
+        + "name='"
+        + name
+        + '\''
+        + ", setpointMax="
+        + setpointMax
+        + ", encoder="
+        + encoder
+        + ", brakeInNeutral="
+        + brakeInNeutral
+        + ", outputReversed="
+        + outputReversed
+        + ", velocityMeasurementPeriod="
+        + velocityMeasurementPeriod
+        + ", velocityMeasurementWindow="
+        + velocityMeasurementWindow
+        + ", forwardLimitSwitch="
+        + forwardLimitSwitch
+        + ", reverseLimitSwitch="
+        + reverseLimitSwitch
+        + ", forwardSoftLimit="
+        + forwardSoftLimit
+        + ", reverseSoftLimit="
+        + reverseSoftLimit
+        + ", currentLimit="
+        + currentLimit
+        + '}';
   }
 }

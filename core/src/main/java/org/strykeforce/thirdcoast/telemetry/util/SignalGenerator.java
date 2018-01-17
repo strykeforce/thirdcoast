@@ -1,12 +1,10 @@
 package org.strykeforce.thirdcoast.telemetry.util;
 
-/**
- * Generate a signal used for simulation.
- */
+/** Generate a signal used for simulation. */
 public abstract class SignalGenerator {
 
   // for System.nanoTime() resolution
-  private final static double TICKS_PER_SECOND = 1e9;
+  private static final double TICKS_PER_SECOND = 1e9;
 
   protected final double frequency;
   protected final double amplitude;
@@ -16,8 +14,7 @@ public abstract class SignalGenerator {
   private long startTime = System.nanoTime();
   private double time;
 
-  SignalGenerator(double frequency, double phase, double amplitude, double offset,
-      double invert) {
+  SignalGenerator(double frequency, double phase, double amplitude, double offset, double invert) {
     this.frequency = frequency;
     this.phase = phase;
     this.amplitude = amplitude;
@@ -46,22 +43,20 @@ public abstract class SignalGenerator {
 
   @Override
   public String toString() {
-    return String
-        .format("%.2f hz with amplitude %.2f, phase %.2f, offset %.2f%s", frequency, amplitude,
-            phase, offset, isInverted() ? ", inverted" : "");
-
+    return String.format(
+        "%.2f hz with amplitude %.2f, phase %.2f, offset %.2f%s",
+        frequency, amplitude, phase, offset, isInverted() ? ", inverted" : "");
   }
 
-  /**
-   * Available signal types.
-   */
+  /** Available signal types. */
   public enum SignalType {
-    SINE, SQUARE, TRIANGLE, SAWTOOTH
+    SINE,
+    SQUARE,
+    TRIANGLE,
+    SAWTOOTH
   }
 
-  /**
-   * Builder for {@link SignalGenerator}.
-   */
+  /** Builder for {@link SignalGenerator}. */
   public static class Builder {
 
     private final SignalType type;
@@ -102,7 +97,6 @@ public abstract class SignalGenerator {
 
     public SignalGenerator build() {
       switch (type) {
-
         case SINE:
           return new SineSignalGenerator(frequency, phase, amplitude, offset, invert);
         case SQUARE:

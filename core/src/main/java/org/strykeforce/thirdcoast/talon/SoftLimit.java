@@ -7,8 +7,7 @@ import org.jetbrains.annotations.NotNull;
 @ParametersAreNonnullByDefault
 public final class SoftLimit {
 
-  @NotNull
-  public final static SoftLimit DEFAULT = new SoftLimit();
+  @NotNull public static final SoftLimit DEFAULT = new SoftLimit();
   private final boolean enabled;
   private final double position;
 
@@ -44,9 +43,6 @@ public final class SoftLimit {
   @Override
   @NotNull
   public String toString() {
-    return "SoftLimit{" +
-        "enabled=" + enabled +
-        ", position=" + position +
-        '}';
+    return "SoftLimit{" + "enabled=" + enabled + ", position=" + position + '}';
   }
 }

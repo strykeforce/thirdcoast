@@ -9,7 +9,7 @@ import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractIntConfigCo
 
 public class AnalogTempVbatFrameRateCommand extends AbstractIntConfigCommand {
 
-  public final static String NAME = "AnalogTempVbat Status Frame Rate";
+  public static final String NAME = "AnalogTempVbat Status Frame Rate";
 
   @Inject
   public AnalogTempVbatFrameRateCommand(LineReader reader, TalonSet talonSet) {

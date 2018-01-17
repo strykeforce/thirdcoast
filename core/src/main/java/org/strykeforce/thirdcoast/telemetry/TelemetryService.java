@@ -22,7 +22,7 @@ import org.strykeforce.thirdcoast.telemetry.item.TalonItem;
 @Singleton
 public class TelemetryService {
 
-  final static Logger logger = LoggerFactory.getLogger(TelemetryService.class);
+  static final Logger logger = LoggerFactory.getLogger(TelemetryService.class);
 
   // current implementation passes this list to the inventory as a collection via component binding
   // when start is called. The inventory copies this collection into a List, using its index in
@@ -32,17 +32,13 @@ public class TelemetryService {
   TelemetryController telemetryController;
   boolean running = false;
 
-  /**
-   * Default constructor.
-   */
+  /** Default constructor. */
   @Inject
   public TelemetryService() {
     logger.debug("Telemetry service created");
   }
 
-  /**
-   * Start the Telemetry service and listen for client connections.
-   */
+  /** Start the Telemetry service and listen for client connections. */
   public void start() {
     if (running) {
       logger.info("already started");
@@ -55,9 +51,7 @@ public class TelemetryService {
     running = true;
   }
 
-  /**
-   * Stop the Telemetry service.
-   */
+  /** Stop the Telemetry service. */
   public void stop() {
     if (!running) {
       logger.info("already stopped");
@@ -91,11 +85,11 @@ public class TelemetryService {
   public void register(CANTalon talon) {
     checkNotStarted();
     if (items.add(new TalonItem(talon))) {
-      StatusFrameRate.DEFAULT.configure(talon);
-      logger.info("registered talon {} with {}", talon.getDeviceID(), StatusFrameRate.DEFAULT);
+      logger.info("registered talon {}", talon.getDeviceID());
       return;
     }
-    logger.info("talon {} was already registered, did not reconfigure status frame rate",
+    logger.info(
+        "talon {} was already registered, did not reconfigure status frame rate",
         talon.getDeviceID());
   }
 
@@ -112,7 +106,6 @@ public class TelemetryService {
       return;
     }
     logger.info("item {} was already registered", item.description());
-
   }
 
   /**
@@ -140,17 +133,22 @@ public class TelemetryService {
       logger.warn("setting status frame rates while telemetry service is running");
     }
 
-    Optional<Item> item = items.stream()
-        .filter(it -> it instanceof TalonItem && it.deviceId() == talonId)
-        .findFirst();
+    Optional<Item> item =
+        items
+            .stream()
+            .filter(it -> it instanceof TalonItem && it.deviceId() == talonId)
+            .findFirst();
 
     if (!item.isPresent()) {
       throw new IllegalArgumentException("talon with id " + talonId + " not found");
     }
 
     TalonItem talonItem = (TalonItem) item.get();
-    logger.info("setting talon {} ({}) to {}", talonItem.description(),
-        talonItem.getTalon().getDeviceID(), rates);
+    logger.info(
+        "setting talon {} ({}) to {}",
+        talonItem.description(),
+        talonItem.getTalon().getDeviceID(),
+        rates);
     rates.configure(talonItem.getTalon());
   }
 
@@ -183,5 +181,4 @@ public class TelemetryService {
       throw new IllegalStateException("TelemetryService must be stopped.");
     }
   }
-
 }

@@ -13,8 +13,8 @@ import org.strykeforce.thirdcoast.telemetry.tct.Messages;
 
 public class SelectDigitalOutputCommand extends AbstractCommand {
 
-  public final static String NAME = "Select Digital Output";
-  private final static Logger logger = LoggerFactory.getLogger(SelectDigitalOutputCommand.class);
+  public static final String NAME = "Select Digital Output";
+  private static final Logger logger = LoggerFactory.getLogger(SelectDigitalOutputCommand.class);
   private final DioSet dioSet;
 
   @Inject
@@ -26,9 +26,9 @@ public class SelectDigitalOutputCommand extends AbstractCommand {
   protected static String prompt() {
     return new AttributedStringBuilder()
         .style(AttributedStyle.BOLD.foreground(AttributedStyle.YELLOW))
-        .append("digital output channel or <enter> to return> ").toAnsi();
+        .append("digital output channel or <enter> to return> ")
+        .toAnsi();
   }
-
 
   @Override
   public void perform() {
@@ -52,7 +52,9 @@ public class SelectDigitalOutputCommand extends AbstractCommand {
       try {
         id = Integer.valueOf(line);
       } catch (NumberFormatException e) {
-        terminal.writer().print(Messages.boldRed(String.format("%s is not a number, ignoring%n", line)));
+        terminal
+            .writer()
+            .print(Messages.boldRed(String.format("%s is not a number, ignoring%n", line)));
         continue;
       }
       dioSet.selectDigitalOutput(id);

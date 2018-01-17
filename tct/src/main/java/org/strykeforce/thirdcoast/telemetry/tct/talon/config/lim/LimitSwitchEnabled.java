@@ -10,7 +10,7 @@ import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractFwdRevBoole
 
 public class LimitSwitchEnabled extends AbstractFwdRevBooleanConfigCommand {
 
-  public final static String NAME = "Enable Limit Switches";
+  public static final String NAME = "Enable Limit Switches";
 
   @Inject
   public LimitSwitchEnabled(LineReader reader, TalonSet talonSet) {

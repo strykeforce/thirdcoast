@@ -6,12 +6,10 @@ import org.jline.reader.LineReader;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractDoubleConfigCommand;
 
-/**
- * Configure Motion Magic Cruise Velocity.
- */
+/** Configure Motion Magic Cruise Velocity. */
 public class MotionMagicCruiseVelocityCommand extends AbstractDoubleConfigCommand {
 
-  public final static String NAME = "Motion Magic Cruise Velocity";
+  public static final String NAME = "Motion Magic Cruise Velocity";
 
   @Inject
   public MotionMagicCruiseVelocityCommand(LineReader reader, TalonSet talonSet) {

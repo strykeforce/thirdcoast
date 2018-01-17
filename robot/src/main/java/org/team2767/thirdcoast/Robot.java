@@ -1,4 +1,4 @@
-package org.strykeforce.thirdcoast.robot;
+package org.team2767.thirdcoast;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.IterativeRobot;
@@ -8,41 +8,40 @@ import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.swerve.SwerveDrive;
 import org.strykeforce.thirdcoast.telemetry.TelemetryService;
 
-/**
- * Third Coast swerve drive demo robot.
- */
-
+/** Third Coast swerve drive demo robot. */
 public class Robot extends IterativeRobot {
 
-  final static Logger logger = LoggerFactory.getLogger(Robot.class);
-  final static File CONFIG_FILE = new File("/home/lvuser/thirdcoast.toml");
+  static final Logger logger = LoggerFactory.getLogger(Robot.class);
+  static final File CONFIG_FILE = new File("/home/lvuser/thirdcoast.toml");
 
   private RobotComponent component;
   private TelemetryService telemetryService;
   private SwerveDrive swerve;
   private Controls controls;
-  private final Trigger gyroResetButton = new Trigger() {
-    @Override
-    public boolean get() {
-      return controls.getResetButton();
-    }
+  private final Trigger gyroResetButton =
+      new Trigger() {
+        @Override
+        public boolean get() {
+          return controls.getResetButton();
+        }
 
-    @Override
-    public String toString() {
-      return "gyro reset button";
-    }
-  };
-  private final Trigger alignWheelsButton = new Trigger() {
-    @Override
-    public boolean get() {
-      return controls.getGamepadBackButton() && controls.getGamepadStartButton();
-    }
+        @Override
+        public String toString() {
+          return "gyro reset button";
+        }
+      };
+  private final Trigger alignWheelsButton =
+      new Trigger() {
+        @Override
+        public boolean get() {
+          return controls.getGamepadBackButton() && controls.getGamepadStartButton();
+        }
 
-    @Override
-    public String toString() {
-      return "wheel alignment button combination";
-    }
-  };
+        @Override
+        public String toString() {
+          return "wheel alignment button combination";
+        }
+      };
 
   @Override
   public void robotInit() {
@@ -106,5 +105,4 @@ public class Robot extends IterativeRobot {
     }
     return component;
   }
-
 }

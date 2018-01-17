@@ -21,21 +21,19 @@ import org.strykeforce.thirdcoast.telemetry.tct.AbstractCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.Command;
 import org.strykeforce.thirdcoast.telemetry.tct.Messages;
 
-/**
- * Select Talons to work with.
- */
+/** Select Talons to work with. */
 @ParametersAreNonnullByDefault
 public class SelectCommand extends AbstractCommand {
 
-  public final static String NAME = "Select Talons to Work With";
-  private final static Logger logger = LoggerFactory.getLogger(SelectCommand.class);
+  public static final String NAME = "Select Talons to Work With";
+  private static final Logger logger = LoggerFactory.getLogger(SelectCommand.class);
   private final TalonFactory talonFactory;
   private final TalonSet talonSet;
   private final Command listCommand;
 
   @Inject
-  SelectCommand(TalonSet talonSet, TalonFactory talonFactory, LineReader reader,
-      ListCommand listCommand) {
+  SelectCommand(
+      TalonSet talonSet, TalonFactory talonFactory, LineReader reader, ListCommand listCommand) {
     super(NAME, reader);
     this.talonSet = talonSet;
     this.talonFactory = talonFactory;
@@ -45,12 +43,13 @@ public class SelectCommand extends AbstractCommand {
   protected static String prompt() {
     return new AttributedStringBuilder()
         .style(AttributedStyle.BOLD.foreground(AttributedStyle.YELLOW))
-        .append("talon IDs or <enter> to return> ").toAnsi();
+        .append("talon IDs or <enter> to return> ")
+        .toAnsi();
   }
 
   @Override
   public void perform() {
-    terminal.writer().println(Messages.bold("enter comma-separated list of Talon IDs"));
+    terminal.writer().println(Messages.bold("\nenter comma-separated list of Talon IDs"));
 
     String line;
     try {
@@ -75,7 +74,9 @@ public class SelectCommand extends AbstractCommand {
       try {
         id = Integer.valueOf(s);
       } catch (NumberFormatException e) {
-        terminal.writer().print(Messages.boldRed(String.format("%s is not a number, ignoring%n", s)));
+        terminal
+            .writer()
+            .print(Messages.boldRed(String.format("%s is not a number, ignoring%n", s)));
         continue;
       }
       CANTalon talon = talonFactory.getTalon(id);

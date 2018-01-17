@@ -12,13 +12,15 @@ import org.strykeforce.thirdcoast.telemetry.tct.servo.ServoMenuModule;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonMenuModule;
 
 @Singleton
-@Component(modules = {
+@Component(
+  modules = {
     TerminalModule.class,
     MenuModule.class,
     ServoMenuModule.class,
     DioMenuModule.class,
     TalonMenuModule.class,
-})
+  }
+)
 public interface MainComponent {
 
   @Named("MAIN")
@@ -34,5 +36,4 @@ public interface MainComponent {
 
     MainComponent build();
   }
-
 }

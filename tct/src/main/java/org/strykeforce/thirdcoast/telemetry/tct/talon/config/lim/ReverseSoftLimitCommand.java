@@ -9,7 +9,7 @@ import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractDoubleConfi
 
 public class ReverseSoftLimitCommand extends AbstractDoubleConfigCommand {
 
-  public final static String NAME = "Reverse Soft Limit";
+  public static final String NAME = "Reverse Soft Limit";
 
   @Inject
   public ReverseSoftLimitCommand(LineReader reader, TalonSet talonSet) {

@@ -7,13 +7,11 @@ import org.jline.reader.LineReader;
 import org.jline.reader.UserInterruptException;
 import org.jline.terminal.Terminal;
 
-/**
- * Displays a menu of {@link Command} choices and performs action for selected choice.
- */
+/** Displays a menu of {@link Command} choices and performs action for selected choice. */
 public class Menu {
 
-  private final static String ENABLED = Messages.boldGreen("[enabled]");
-  private final static String DISABLED = Messages.boldRed("[disabled]");
+  private static final String ENABLED = Messages.boldGreen("[enabled]");
+  private static final String DISABLED = Messages.boldRed("[disabled]");
 
   private final Terminal terminal;
   private final LineReader reader;
@@ -30,7 +28,6 @@ public class Menu {
   private static String rightPrompt() {
     return DriverStation.getInstance().isEnabled() ? ENABLED : DISABLED;
   }
-
 
   protected String header() {
     return "";
@@ -51,8 +48,10 @@ public class Menu {
       }
       String line = null;
       try {
-        line = reader.readLine(Messages.prompt("select> "), rightPrompt(), (Character) null, null)
-            .trim();
+        line =
+            reader
+                .readLine(Messages.prompt("select> "), rightPrompt(), (Character) null, null)
+                .trim();
       } catch (EndOfFileException | UserInterruptException e) {
         if (!mainMenu) {
           return; // go up a menu level
@@ -86,8 +85,10 @@ public class Menu {
   }
 
   private void help() {
-    String msg = String.format("please enter a number between 1-%d%s%n", commandsAdapter.getCount(),
-        mainMenu ? "" : " or <b> for back");
+    String msg =
+        String.format(
+            "please enter a number between 1-%d%s%n",
+            commandsAdapter.getCount(), mainMenu ? "" : " or <b> for back");
     terminal.writer().print(Messages.boldRed(msg));
   }
 }

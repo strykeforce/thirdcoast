@@ -1,4 +1,4 @@
-package org.strykeforce.thirdcoast.robot;
+package org.team2767.thirdcoast;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;

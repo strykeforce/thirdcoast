@@ -30,7 +30,6 @@ public abstract class AbstractBooleanConfigCommand extends AbstractTalonConfigCo
     }
   }
 
-
   protected Boolean getBooleanValue() {
     Boolean value = null;
 
@@ -60,4 +59,3 @@ public abstract class AbstractBooleanConfigCommand extends AbstractTalonConfigCo
     return value;
   }
 }
-

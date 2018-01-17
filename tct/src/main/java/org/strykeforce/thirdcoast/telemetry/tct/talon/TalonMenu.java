@@ -24,6 +24,6 @@ public class TalonMenu extends Menu {
     for (CANTalon talon : talonSet.selected()) {
       joiner.add(String.valueOf(talon.getDeviceID()));
     }
-    return Messages.boldGreen("Talons: " + joiner.toString() + "\n");
+    return Messages.boldGreen("\nTalons: " + joiner.toString() + "\n");
   }
 }

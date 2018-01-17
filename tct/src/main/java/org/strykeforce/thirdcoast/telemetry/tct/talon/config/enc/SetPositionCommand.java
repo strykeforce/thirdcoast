@@ -8,7 +8,7 @@ import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractDoubleConfi
 
 public class SetPositionCommand extends AbstractDoubleConfigCommand {
 
-  public final static String NAME = "Set Encoder Position";
+  public static final String NAME = "Set Encoder Position";
 
   @Inject
   public SetPositionCommand(LineReader reader, TalonSet talonSet) {

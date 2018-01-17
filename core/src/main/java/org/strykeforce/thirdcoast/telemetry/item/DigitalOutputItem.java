@@ -8,16 +8,12 @@ import java.util.Set;
 import java.util.function.DoubleSupplier;
 import org.strykeforce.thirdcoast.telemetry.grapher.Measure;
 
-/**
- * Represents a {@link DigitalInput} telemetry-enable Item.
- */
-
+/** Represents a {@link DigitalInput} telemetry-enable Item. */
 public class DigitalOutputItem extends AbstractItem {
 
-  public final static String TYPE = "digitalOutput";
-  public final static Set<Measure> MEASURES = Collections.unmodifiableSet(EnumSet.of(
-      Measure.VALUE
-  ));
+  public static final String TYPE = "digitalOutput";
+  public static final Set<Measure> MEASURES =
+      Collections.unmodifiableSet(EnumSet.of(Measure.VALUE));
 
   private final DigitalOutput digitalOutput;
 
@@ -72,11 +68,8 @@ public class DigitalOutputItem extends AbstractItem {
     return digitalOutput.getChannel();
   }
 
-
   @Override
   public String toString() {
-    return "DigitalInputItem{" +
-        "digitalOutput=" + digitalOutput +
-        "} " + super.toString();
+    return "DigitalInputItem{" + "digitalOutput=" + digitalOutput + "} " + super.toString();
   }
 }

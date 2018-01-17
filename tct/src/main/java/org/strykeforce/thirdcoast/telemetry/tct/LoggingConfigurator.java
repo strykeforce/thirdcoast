@@ -42,12 +42,12 @@ public class LoggingConfigurator extends ContextAwareBase implements Configurato
     encoder.setLayout(layout);
 
     ca.setEncoder(encoder);
-//    ca.start();
+    //    ca.start();
     fa.setEncoder(encoder);
     fa.start();
 
     Logger rootLogger = lc.getLogger(Logger.ROOT_LOGGER_NAME);
-//    rootLogger.addAppender(ca);
+    //    rootLogger.addAppender(ca);
     rootLogger.addAppender(fa);
     rootLogger.setLevel(Level.WARN);
   }

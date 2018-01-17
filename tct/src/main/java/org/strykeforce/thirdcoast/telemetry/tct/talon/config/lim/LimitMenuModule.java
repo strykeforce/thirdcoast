@@ -25,8 +25,10 @@ public abstract class LimitMenuModule {
 
   @Provides
   @Named("TALON_CONFIG_LIM")
-  public static Menu configMenu(@Named("TALON_CONFIG_LIM") CommandAdapter commandAdapter,
-      LineReader reader, TalonSet talonSet) {
+  public static Menu configMenu(
+      @Named("TALON_CONFIG_LIM") CommandAdapter commandAdapter,
+      LineReader reader,
+      TalonSet talonSet) {
     return new TalonMenu(commandAdapter, reader, talonSet);
   }
 

@@ -9,7 +9,7 @@ import org.strykeforce.thirdcoast.telemetry.tct.Messages;
 
 public class RunDigitalOutputCommand extends AbstractCommand {
 
-  public final static String NAME = "Set Selected Digital Output";
+  public static final String NAME = "Set Selected Digital Output";
   private final DioSet dioSet;
 
   @Inject
@@ -24,16 +24,18 @@ public class RunDigitalOutputCommand extends AbstractCommand {
       terminal.writer().println(Messages.boldRed("no digital output selected selected"));
       return;
     }
-    terminal.writer().println(Messages.bold("Enter 0 for off or 1 for on, press <enter> to go back"));
+    terminal
+        .writer()
+        .println(Messages.bold("Enter 0 for off or 1 for on, press <enter> to go back"));
     while (true) {
       String line;
       try {
-        line = reader.readLine(Messages.prompt("0/1 or <return> to exit> ")).trim();
+        line = reader.readLine(Messages.prompt("0/1 or <return> or b/B to exit> ")).trim();
       } catch (EndOfFileException | UserInterruptException e) {
         continue;
       }
 
-      if (line.isEmpty()) {
+      if (line.isEmpty() || line.equalsIgnoreCase("b")) {
         return;
       }
       int setpoint;
@@ -56,4 +58,3 @@ public class RunDigitalOutputCommand extends AbstractCommand {
     terminal.writer().println(Messages.boldRed("please enter 0 or 1"));
   }
 }
-

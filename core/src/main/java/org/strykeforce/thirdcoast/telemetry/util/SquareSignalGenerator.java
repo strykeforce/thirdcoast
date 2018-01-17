@@ -2,8 +2,8 @@ package org.strykeforce.thirdcoast.telemetry.util;
 
 class SquareSignalGenerator extends SignalGenerator {
 
-  public SquareSignalGenerator(double frequency, double phase, double amplitude, double offset,
-      double invert) {
+  public SquareSignalGenerator(
+      double frequency, double phase, double amplitude, double offset, double invert) {
     super(frequency, phase, amplitude, offset, invert);
   }
 

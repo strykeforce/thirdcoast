@@ -13,5 +13,4 @@ public abstract class SimulatedInventoryModule {
   static Inventory inventory() {
     return SimulatedInventory.create();
   }
-
 }

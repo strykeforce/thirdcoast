@@ -10,39 +10,39 @@ import java.util.Set;
 import java.util.function.DoubleSupplier;
 import org.strykeforce.thirdcoast.telemetry.grapher.Measure;
 
-/**
- * Represents a {@link CANTalon} telemetry-enable Item.
- */
+/** Represents a {@link CANTalon} telemetry-enable Item. */
 public class TalonItem extends AbstractItem {
 
-  public final static String TYPE = "talon";
-  public final static Set<Measure> MEASURES = Collections.unmodifiableSet(EnumSet.of(
-      Measure.SETPOINT,
-      Measure.OUTPUT_CURRENT,
-      Measure.OUTPUT_VOLTAGE,
-      Measure.ENCODER_POSITION,
-      Measure.ENCODER_VELOCITY,
-      Measure.ABSOLUTE_ENCODER_POSITION,
-      Measure.ANALOG_RAW,
-      Measure.CONTROL_LOOP_ERROR,
-      Measure.INTEGRATOR_ACCUMULATOR,
-      Measure.BUS_VOLTAGE,
-      Measure.FORWARD_HARD_LIMIT_CLOSED,
-      Measure.REVERSE_HARD_LIMIT_CLOSED,
-      Measure.FORWARD_SOFT_LIMIT_OK,
-      Measure.REVERSE_SOFT_LIMIT_OK,
-      Measure.POSITION,
-      Measure.SPEED,
-      Measure.FEEDBACK
-  ));
+  public static final String TYPE = "talon";
+  public static final Set<Measure> MEASURES =
+      Collections.unmodifiableSet(
+          EnumSet.of(
+              Measure.SETPOINT,
+              Measure.OUTPUT_CURRENT,
+              Measure.OUTPUT_VOLTAGE,
+              Measure.ENCODER_POSITION,
+              Measure.ENCODER_VELOCITY,
+              Measure.ABSOLUTE_ENCODER_POSITION,
+              Measure.ANALOG_RAW,
+              Measure.CONTROL_LOOP_ERROR,
+              Measure.INTEGRATOR_ACCUMULATOR,
+              Measure.BUS_VOLTAGE,
+              Measure.FORWARD_HARD_LIMIT_CLOSED,
+              Measure.REVERSE_HARD_LIMIT_CLOSED,
+              Measure.FORWARD_SOFT_LIMIT_OK,
+              Measure.REVERSE_SOFT_LIMIT_OK,
+              Measure.POSITION,
+              Measure.SPEED,
+              Measure.FEEDBACK,
+              Measure.MOMAGIC_ACCL,
+              Measure.MOMAGIC_A_TRAJ_POS,
+              Measure.MOMAGIC_A_TRAJ_VEL,
+              Measure.MOMAGIC_CRUISE_VEL));
   // TODO: getMotionProfileStatus
-  private final static String NA = "not available in API";
+  private static final String NA = "not available in API";
   private final CANTalon talon;
-  private final Set<TalonControlMode> CLOSED_LOOP = EnumSet.of(
-      TalonControlMode.Current,
-      TalonControlMode.Position,
-      TalonControlMode.Speed
-  );
+  private final Set<TalonControlMode> CLOSED_LOOP =
+      EnumSet.of(TalonControlMode.Current, TalonControlMode.Position, TalonControlMode.Speed);
 
   public TalonItem(final CANTalon talon) {
     super(TYPE, talon.getDescription(), MEASURES);
@@ -100,6 +100,14 @@ public class TalonItem extends AbstractItem {
         return talon::getPosition;
       case ANALOG_RAW:
         return talon::getAnalogInRaw;
+      case MOMAGIC_ACCL:
+        return talon::getMotionMagicAcceleration;
+      case MOMAGIC_A_TRAJ_POS:
+        return talon::getMotionMagicActTrajPosition;
+      case MOMAGIC_A_TRAJ_VEL:
+        return talon::getMotionMagicActTrajVelocity;
+      case MOMAGIC_CRUISE_VEL:
+        return talon::getMotionMagicCruiseVelocity;
       default:
         throw new AssertionError(measure);
     }
@@ -107,9 +115,7 @@ public class TalonItem extends AbstractItem {
 
   @Override
   public String toString() {
-    return "TalonItem{" +
-        "talon=" + talon +
-        "} " + super.toString();
+    return "TalonItem{" + "talon=" + talon + "} " + super.toString();
   }
 
   @Override

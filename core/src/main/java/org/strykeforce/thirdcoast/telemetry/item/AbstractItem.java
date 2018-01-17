@@ -51,10 +51,15 @@ public abstract class AbstractItem implements Item {
 
   @Override
   public String toString() {
-    return "AbstractItem{" +
-        "type='" + type + '\'' +
-        ", description='" + description + '\'' +
-        ", measures=" + measures +
-        '}';
+    return "AbstractItem{"
+        + "type='"
+        + type
+        + '\''
+        + ", description='"
+        + description
+        + '\''
+        + ", measures="
+        + measures
+        + '}';
   }
 }

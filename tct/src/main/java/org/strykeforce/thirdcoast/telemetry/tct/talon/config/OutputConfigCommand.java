@@ -8,18 +8,16 @@ import org.strykeforce.thirdcoast.telemetry.tct.Menu;
 import org.strykeforce.thirdcoast.telemetry.tct.Messages;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 
-/**
- * Configure selected Talons.
- */
+/** Configure selected Talons. */
 public class OutputConfigCommand extends AbstractCommand {
 
-  public final static String NAME = "Output Limits and Ramp Rates";
+  public static final String NAME = "Output Limits and Ramp Rates";
   private final Menu outputMenu;
   private final TalonSet talonSet;
 
   @Inject
-  public OutputConfigCommand(TalonSet talonSet, @Named("TALON_CONFIG_OUT") Menu outputMenu,
-      LineReader reader) {
+  public OutputConfigCommand(
+      TalonSet talonSet, @Named("TALON_CONFIG_OUT") Menu outputMenu, LineReader reader) {
     super(NAME, reader);
     this.outputMenu = outputMenu;
     this.talonSet = talonSet;

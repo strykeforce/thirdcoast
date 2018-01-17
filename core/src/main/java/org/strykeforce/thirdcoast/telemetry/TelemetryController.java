@@ -27,91 +27,94 @@ import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.telemetry.grapher.ClientHandler;
 import org.strykeforce.thirdcoast.telemetry.grapher.Subscription;
 
-/**
- * Provides a web service to control telemetry.
- */
+/** Provides a web service to control telemetry. */
 @ParametersAreNonnullByDefault
 public class TelemetryController extends NanoHTTPD {
 
-  final static Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-  private final static String JSON = "application/json";
+  static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+  private static final String JSON = "application/json";
 
   private final ClientHandler clientHandler;
   private final int port;
 
   @Inject
-  public TelemetryController(final Inventory inventory, final ClientHandler clientHandler,
+  public TelemetryController(
+      final Inventory inventory,
+      final ClientHandler clientHandler,
       final @Named("server") int port) {
     super(port);
     this.clientHandler = clientHandler;
     this.port = port;
 
-    addHTTPInterceptor(session -> {
-      if (session.getMethod() == Method.GET && session.getUri()
-          .equalsIgnoreCase("/v1/grapher/inventory")) {
-        Buffer buffer = new Buffer();
-        try {
-          inventory.writeInventory(buffer);
-        } catch (IOException e) {
-          logger.error("Exception creating grapher inventory JSON", e);
-          return errorResponseFor(e);
-        }
-        logger.debug("Inventory requested from {}", session.getRemoteIpAddress());
-        return Response.newFixedLengthResponse(Status.OK, JSON, buffer.readByteArray());
-      }
-      return null;
-    });
+    addHTTPInterceptor(
+        session -> {
+          if (session.getMethod() == Method.GET
+              && session.getUri().equalsIgnoreCase("/v1/grapher/inventory")) {
+            Buffer buffer = new Buffer();
+            try {
+              inventory.writeInventory(buffer);
+            } catch (IOException e) {
+              logger.error("Exception creating grapher inventory JSON", e);
+              return errorResponseFor(e);
+            }
+            logger.debug("Inventory requested from {}", session.getRemoteIpAddress());
+            return Response.newFixedLengthResponse(Status.OK, JSON, buffer.readByteArray());
+          }
+          return null;
+        });
 
-    addHTTPInterceptor(session -> {
-      if (session.getMethod() == Method.POST && session.getUri()
-          .equalsIgnoreCase("/v1/grapher/subscription")) {
-        Map<String, String> body = new HashMap<>();
-        try {
-          session.parseBody(body);
-          Subscription sub = new Subscription(inventory, session.getRemoteIpAddress(),
-              body.get("postData"));
-          clientHandler.start(sub);
-          Buffer buffer = new Buffer();
-          sub.toJson(buffer);
-          return Response.newFixedLengthResponse(Status.OK, JSON, buffer.readByteArray());
-        } catch (Throwable t) {
-          logger.error("Exception starting grapher", t);
-          return errorResponseFor(t);
-        }
-      }
-      return null;
-    });
+    addHTTPInterceptor(
+        session -> {
+          if (session.getMethod() == Method.POST
+              && session.getUri().equalsIgnoreCase("/v1/grapher/subscription")) {
+            Map<String, String> body = new HashMap<>();
+            try {
+              session.parseBody(body);
+              Subscription sub =
+                  new Subscription(inventory, session.getRemoteIpAddress(), body.get("postData"));
+              clientHandler.start(sub);
+              Buffer buffer = new Buffer();
+              sub.toJson(buffer);
+              return Response.newFixedLengthResponse(Status.OK, JSON, buffer.readByteArray());
+            } catch (Throwable t) {
+              logger.error("Exception starting grapher", t);
+              return errorResponseFor(t);
+            }
+          }
+          return null;
+        });
 
-    addHTTPInterceptor(session -> {
-      if (session.getMethod() == Method.DELETE && session.getUri()
-          .equalsIgnoreCase("/v1/grapher/subscription")) {
-        try {
-          clientHandler.shutdown();
-          Buffer buffer = new Buffer();
-          return Response.newFixedLengthResponse(Status.NO_CONTENT, JSON, "");
-        } catch (Throwable t) {
-          logger.error("Exception stopping grapher", t);
-          return errorResponseFor(t);
-        }
-      }
-      return null;
-    });
+    addHTTPInterceptor(
+        session -> {
+          if (session.getMethod() == Method.DELETE
+              && session.getUri().equalsIgnoreCase("/v1/grapher/subscription")) {
+            try {
+              clientHandler.shutdown();
+              Buffer buffer = new Buffer();
+              return Response.newFixedLengthResponse(Status.NO_CONTENT, JSON, "");
+            } catch (Throwable t) {
+              logger.error("Exception stopping grapher", t);
+              return errorResponseFor(t);
+            }
+          }
+          return null;
+        });
 
-    addHTTPInterceptor(session -> {
-      if (session.getMethod() == Method.GET && session.getUri()
-          .equalsIgnoreCase("/v1/inventory")) {
-        Buffer buffer = new Buffer();
-        try {
-          inventory.toJson(buffer);
-          return Response.newFixedLengthResponse(Status.OK, JSON, buffer.readByteArray());
-        } catch (Throwable t) {
-          logger.error("Exception creating detail inventory JSON", t);
-          return errorResponseFor(t);
-        }
-      }
-      return null;
-    });
-
+    addHTTPInterceptor(
+        session -> {
+          if (session.getMethod() == Method.GET
+              && session.getUri().equalsIgnoreCase("/v1/inventory")) {
+            Buffer buffer = new Buffer();
+            try {
+              inventory.toJson(buffer);
+              return Response.newFixedLengthResponse(Status.OK, JSON, buffer.readByteArray());
+            } catch (Throwable t) {
+              logger.error("Exception creating detail inventory JSON", t);
+              return errorResponseFor(t);
+            }
+          }
+          return null;
+        });
   }
 
   @Override
@@ -166,5 +169,4 @@ public class TelemetryController extends NanoHTTPD {
     }
     return endpoints;
   }
-
 }

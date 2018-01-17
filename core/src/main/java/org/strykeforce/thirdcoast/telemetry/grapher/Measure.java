@@ -1,8 +1,6 @@
 package org.strykeforce.thirdcoast.telemetry.grapher;
 
-/**
- * Available measurement types.
- */
+/** Available measurement types. */
 public enum Measure {
   SETPOINT("Setpoint"),
   OUTPUT_CURRENT("Output Current"),
@@ -22,28 +20,33 @@ public enum Measure {
   SPEED("Speed"),
   FEEDBACK("Feedback"),
   VALUE("Value"),
-  ANALOG_RAW("Analog Raw");
+  ANALOG_RAW("Analog Raw"),
+  MOMAGIC_ACCL("Motion Magic Acceleration"),
+  MOMAGIC_A_TRAJ_POS("Motion Magic Trajectory Point Target Position"),
+  MOMAGIC_A_TRAJ_VEL("Motion Magic Trajectory Point Target Velocity"),
+  MOMAGIC_CRUISE_VEL("Motion Magic Cruise Velocity"),
+  GYRO_YAW("Gyro Yaw");
 
-//  private final static Map<Item.Type, Set<Measure>> byType = new HashMap<>();
-//
-//  static {
-//    byType.put(Type.DIGITAL_INPUT, EnumSet.of(VALUE));
-//    byType.put(Type.SERVO, EnumSet.of(POSITION, ANGLE));
-//
-//    byType.put(Type.TALON, EnumSet.allOf(Measure.class));
-//    byType.get(Type.TALON).removeAll(byType.get(Type.DIGITAL_INPUT));
-//    byType.get(Type.TALON).removeAll(byType.get(Type.SERVO));
-//  }
-//
+  //  private final static Map<Item.Type, Set<Measure>> byType = new HashMap<>();
+  //
+  //  static {
+  //    byType.put(Type.DIGITAL_INPUT, EnumSet.of(VALUE));
+  //    byType.put(Type.SERVO, EnumSet.of(POSITION, ANGLE));
+  //
+  //    byType.put(Type.TALON, EnumSet.allOf(Measure.class));
+  //    byType.get(Type.TALON).removeAll(byType.get(Type.DIGITAL_INPUT));
+  //    byType.get(Type.TALON).removeAll(byType.get(Type.SERVO));
+  //  }
+  //
   private final String description;
 
   Measure(String description) {
     this.description = description;
   }
 
-//  public static Set<Measure> measuresByType(String type) {
-//    return byType.getOrDefault(Type.valueOf(type), EnumSet.noneOf(Measure.class));
-//  }
+  //  public static Set<Measure> measuresByType(String type) {
+  //    return byType.getOrDefault(Type.valueOf(type), EnumSet.noneOf(Measure.class));
+  //  }
 
   public String getDescription() {
     return description;

@@ -25,7 +25,7 @@ import org.strykeforce.thirdcoast.talon.TalonProvisioner;
  */
 public class Wheel {
 
-  final static Logger logger = LoggerFactory.getLogger(Wheel.class);
+  static final Logger logger = LoggerFactory.getLogger(Wheel.class);
 
   private final TalonProvisioner talonProvisioner;
   private final CANTalon azimuthTalon;
@@ -63,7 +63,9 @@ public class Wheel {
    * @param index the wheel number
    */
   public Wheel(TalonFactory talonFactory, int index) {
-    this(talonFactory.getProvisioner(), talonFactory.getTalon(index),
+    this(
+        talonFactory.getProvisioner(),
+        talonFactory.getTalon(index),
         talonFactory.getTalon(index + 10));
   }
 
@@ -75,7 +77,7 @@ public class Wheel {
    * a drive setpoint of 1.0 would result in the drive Talon being set to 12.0.
    *
    * @param azimuth -0.5 to 0.5 rotations, measured clockwise with zero being the wheel's zeroed
-   * position
+   *     position
    * @param drive 0 to 1.0 in the direction of the wheel azimuth
    */
   public void set(double azimuth, double drive) {
@@ -109,7 +111,6 @@ public class Wheel {
     azimuthTalon.set(azimuthSetpoint);
     driveTalon.set(0);
   }
-
 
   void setAzimuthParameters(String name) {
     try {
@@ -202,10 +203,13 @@ public class Wheel {
 
   @Override
   public String toString() {
-    return "Wheel{" +
-        "azimuthTalon=" + azimuthTalon +
-        ", driveTalon=" + driveTalon +
-        ", driveSetpointMax=" + driveSetpointMax +
-        '}';
+    return "Wheel{"
+        + "azimuthTalon="
+        + azimuthTalon
+        + ", driveTalon="
+        + driveTalon
+        + ", driveSetpointMax="
+        + driveSetpointMax
+        + '}';
   }
 }

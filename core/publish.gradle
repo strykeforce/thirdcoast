@@ -1,0 +1,63 @@
+bintray {
+    user = System.getenv('BINTRAY_USER')
+    key = System.getenv('BINTRAY_API_KEY')
+    dryRun = false
+
+    pkg {
+        name = 'thirdcoast'
+        desc = specificationTitle
+        websiteUrl = 'https://github.com/strykeforce/thirdcoast'
+        issueTrackerUrl = 'https://github.com/strykeforce/thirdcoast/issues'
+        vcsUrl = 'https://github.com/strykeforce/thirdcoast.git'
+        githubRepo = 'strykeforce/thirdcoast'
+        githubReleaseNotesFile = 'README.md'
+        userOrg = 'strykeforce'
+        repo = 'maven'
+        licenses = ['MIT']
+        configurations = ['archives']
+
+        version {
+            name = specificationVersion
+            desc = specificationTitle + ' ' + specificationVersion
+            released = new Date()
+        }
+    }
+}
+
+def pomConfig = {
+    licenses {
+        license {
+            name 'MIT License'
+            url 'https://opensource.org/licenses/MIT'
+            distribution 'repo'
+        }
+    }
+
+    organization {
+        name 'Stryke Force FRC 2767'
+        url 'https://strykeforce.github.io'
+    }
+
+    scm {
+        url 'https://github.com/strykeforce/thirdcoast'
+    }
+}
+
+install {
+    repositories.mavenInstaller {
+        pom.withXml {
+            def root = asNode()
+            root.appendNode('description', specificationVersion)
+            root.appendNode('name', specificationTitle)
+            root.appendNode('url', 'https://strykeforce.github.io/tags/thirdcoast/')
+            root.children().last() + pomConfig
+        }
+        pom.whenConfigured {
+            p -> p.dependencies = p.dependencies.findAll {
+                dep -> !(dep.groupId.startsWith('edu.wpi') ||
+                        dep.groupId.startsWith('thirdparty') ||
+                        dep.groupId == 'org.opencv')
+            }
+        }
+    }
+}

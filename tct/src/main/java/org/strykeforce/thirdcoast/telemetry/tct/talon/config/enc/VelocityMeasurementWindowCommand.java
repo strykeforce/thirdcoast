@@ -11,7 +11,7 @@ import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractTalonConfig
 
 public class VelocityMeasurementWindowCommand extends AbstractTalonConfigCommand {
 
-  public final static String NAME = "Velocity Measurement Window";
+  public static final String NAME = "Velocity Measurement Window";
 
   @Inject
   public VelocityMeasurementWindowCommand(LineReader reader, TalonSet talonSet) {
@@ -21,6 +21,7 @@ public class VelocityMeasurementWindowCommand extends AbstractTalonConfigCommand
   @Override
   public void perform() {
     int[] windows = {1, 2, 4, 8, 16, 32, 64};
+    terminal.writer().println();
     for (int i = 0; i < windows.length; i++) {
       terminal.writer().printf("%2d - %3d ms%n", i + 1, windows[i]);
     }
@@ -47,8 +48,7 @@ public class VelocityMeasurementWindowCommand extends AbstractTalonConfigCommand
       }
 
       if (choice < 1 || choice > windows.length) {
-        terminal.writer()
-            .printf(Messages.menuHelp(windows.length));
+        terminal.writer().printf(Messages.menuHelp(windows.length));
         continue;
       }
 

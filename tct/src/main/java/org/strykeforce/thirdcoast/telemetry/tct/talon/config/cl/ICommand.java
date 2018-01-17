@@ -6,12 +6,10 @@ import org.jline.reader.LineReader;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractDoubleConfigCommand;
 
-/**
- * Configure I.
- */
+/** Configure I. */
 public class ICommand extends AbstractDoubleConfigCommand {
 
-  public final static String NAME = "I";
+  public static final String NAME = "I";
 
   @Inject
   public ICommand(LineReader reader, TalonSet talonSet) {

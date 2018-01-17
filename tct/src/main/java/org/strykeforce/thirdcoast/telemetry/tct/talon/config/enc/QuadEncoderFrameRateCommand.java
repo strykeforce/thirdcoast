@@ -9,7 +9,7 @@ import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractIntConfigCo
 
 public class QuadEncoderFrameRateCommand extends AbstractIntConfigCommand {
 
-  public final static String NAME = "QuadEncoder Status Frame Rate";
+  public static final String NAME = "QuadEncoder Status Frame Rate";
 
   @Inject
   public QuadEncoderFrameRateCommand(LineReader reader, TalonSet talonSet) {
@@ -23,5 +23,4 @@ public class QuadEncoderFrameRateCommand extends AbstractIntConfigCommand {
 
   @Override
   protected void saveConfig(int value) {}
-
 }

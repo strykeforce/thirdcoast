@@ -49,7 +49,6 @@ public class PwmDigitalOutputCommand extends AbstractCommand {
       digitalOutput.disablePWM();
       digitalOutput.enablePWM(setpoint);
     }
-
   }
 
   private void help() {

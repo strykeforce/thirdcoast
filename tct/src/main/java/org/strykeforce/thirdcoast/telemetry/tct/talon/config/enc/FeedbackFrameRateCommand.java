@@ -9,7 +9,7 @@ import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractIntConfigCo
 
 public class FeedbackFrameRateCommand extends AbstractIntConfigCommand {
 
-  public final static String NAME = "Feedback Status Frame Rate";
+  public static final String NAME = "Feedback Status Frame Rate";
 
   @Inject
   public FeedbackFrameRateCommand(LineReader reader, TalonSet talonSet) {
