@@ -31,6 +31,8 @@ import org.slf4j.LoggerFactory;
 @ParametersAreNonnullByDefault
 public class TalonProvisioner {
 
+  static final int TIMEOUT_MS = 10;
+
   @NotNull public static final String TALON_TABLE = "TALON";
   @NotNull private static final String DEFAULT_CONFIG = "/org/strykeforce/thirdcoast/defaults.toml";
 
@@ -133,6 +135,16 @@ public class TalonProvisioner {
   @NotNull
   public Collection<TalonConfiguration> getConfigurations() {
     return Collections.unmodifiableCollection(settings.values());
+  }
+
+  /**
+   * TalonSRX configuration timeout should be enabled at robot initialization.
+   *
+   * @param timeoutEnabled true to enable.
+   */
+  public void enableTimeout(boolean timeoutEnabled) {
+    logger.info("configuration timeout enabled = {}", timeoutEnabled);
+    settings.values().forEach(it -> it.setTimeout(timeoutEnabled ? TIMEOUT_MS : 0));
   }
 
   @Override

@@ -1,7 +1,5 @@
 package org.strykeforce.thirdcoast.talon;
 
-import static org.strykeforce.thirdcoast.talon.TalonConfiguration.TIMEOUT_MS;
-
 import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
@@ -48,9 +46,9 @@ public final class Encoder {
     return new Encoder(feedbackDevice, reversed);
   }
 
-  public void configure(TalonSRX talon) {
-    ErrorCode error = talon.configSelectedFeedbackSensor(getDevice(), 0, TIMEOUT_MS);
-    Errors.check(error, logger);
+  public void configure(TalonSRX talon, int timeout) {
+    ErrorCode err = talon.configSelectedFeedbackSensor(getDevice(), 0, timeout);
+    Errors.check(talon, "configSelectedFeedbackSensor", err, logger);
     talon.setSensorPhase(reversed);
     logger.info(
         "{}: encoder {} {} reversed",

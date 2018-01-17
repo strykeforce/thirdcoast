@@ -1,5 +1,6 @@
 package org.strykeforce.thirdcoast.talon;
 
+import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
@@ -85,24 +86,39 @@ public class PIDTalonConfiguration extends TalonConfiguration {
 
   @Override
   public void configure(@NotNull TalonSRX talon) {
-    talon.configClosedloopRamp(closedLoopRampRate != null ? closedLoopRampRate : 0, TIMEOUT_MS);
+    super.configure(talon);
+    ErrorCode err;
+    err = talon.configClosedloopRamp(closedLoopRampRate != null ? closedLoopRampRate : 0, timeout);
+    Errors.check(talon, "configClosedloopRamp", err, logger);
 
     // TODO: remove voltage from names
-    talon.configPeakOutputForward(valueOrElseZero(forwardOutputVoltagePeak, 1), TIMEOUT_MS);
-    talon.configPeakOutputReverse(valueOrElseZero(reverseOutputVoltagePeak, -1), TIMEOUT_MS);
+    err = talon.configPeakOutputForward(valueOrElseZero(forwardOutputVoltagePeak, 1), timeout);
+    Errors.check(talon, "configPeakOutputForward", err, logger);
+    err = talon.configPeakOutputReverse(valueOrElseZero(reverseOutputVoltagePeak, -1), timeout);
+    Errors.check(talon, "configPeakOutputReverse", err, logger);
 
-    talon.configNominalOutputForward(valueOrElseZero(forwardOutputVoltageNominal, 0), TIMEOUT_MS);
-    talon.configNominalOutputReverse(valueOrElseZero(reverseOutputVoltageNominal, 0), TIMEOUT_MS);
+    err =
+        talon.configNominalOutputForward(valueOrElseZero(forwardOutputVoltageNominal, 0), timeout);
+    Errors.check(talon, "configNominalOutputForward", err, logger);
+    err =
+        talon.configNominalOutputReverse(valueOrElseZero(reverseOutputVoltageNominal, 0), timeout);
+    Errors.check(talon, "configNominalOutputReverse", err, logger);
 
-    talon.configAllowableClosedloopError(0, valueOrElseZero(allowableClosedLoopError), TIMEOUT_MS);
+    err =
+        talon.configAllowableClosedloopError(0, valueOrElseZero(allowableClosedLoopError), timeout);
+    Errors.check(talon, "configAllowableClosedloopError", err, logger);
 
-    talon.config_kP(0, valueOrElseZero(pGain, 0), TIMEOUT_MS);
-    talon.config_kI(0, valueOrElseZero(iGain, 0), TIMEOUT_MS);
-    talon.config_kD(0, valueOrElseZero(dGain, 0), TIMEOUT_MS);
-    talon.config_kF(0, valueOrElseZero(fGain, 0), TIMEOUT_MS);
+    err = talon.config_kP(0, valueOrElseZero(pGain, 0), timeout);
+    Errors.check(talon, "config_kP", err, logger);
+    err = talon.config_kI(0, valueOrElseZero(iGain, 0), timeout);
+    Errors.check(talon, "config_kI", err, logger);
+    err = talon.config_kD(0, valueOrElseZero(dGain, 0), timeout);
+    Errors.check(talon, "config_kD", err, logger);
+    err = talon.config_kF(0, valueOrElseZero(fGain, 0), timeout);
+    Errors.check(talon, "config_kF", err, logger);
 
-    talon.config_IntegralZone(0, valueOrElseZero(iZone), TIMEOUT_MS);
-    super.configure(talon);
+    err = talon.config_IntegralZone(0, valueOrElseZero(iZone), timeout);
+    Errors.check(talon, "config_IntegralZone", err, logger);
   }
 
   public Double getClosedLoopRampRate() {

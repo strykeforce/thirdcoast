@@ -6,19 +6,20 @@ import com.moandjiezana.toml.TomlWriter
 import spock.lang.Specification
 
 import static com.ctre.phoenix.motorcontrol.FeedbackDevice.*
-import static org.strykeforce.thirdcoast.talon.TalonConfiguration.TIMEOUT_MS
 
 class EncoderTest extends Specification {
+
+    static TIMEOUT = 0
 
     def "has a default configuration"() {
         given:
         def talon = Mock(WPI_TalonSRX)
 
         when:
-        Encoder.DEFAULT.configure(talon)
+        Encoder.DEFAULT.configure(talon, TIMEOUT)
 
         then:
-        1 * talon.configSelectedFeedbackSensor(QuadEncoder, 0, TIMEOUT_MS)
+        1 * talon.configSelectedFeedbackSensor(QuadEncoder, 0, TIMEOUT)
         1 * talon.setSensorPhase(false)
         1 * talon.getDescription()
         0 * talon._
@@ -30,10 +31,10 @@ class EncoderTest extends Specification {
         def talon = Mock(WPI_TalonSRX)
 
         when:
-        encoder.configure(talon)
+        encoder.configure(talon, TIMEOUT)
 
         then:
-        1 * talon.configSelectedFeedbackSensor(CTRE_MagEncoder_Absolute, 0, TIMEOUT_MS)
+        1 * talon.configSelectedFeedbackSensor(CTRE_MagEncoder_Absolute, 0, TIMEOUT)
         1 * talon.setSensorPhase(true)
     }
 

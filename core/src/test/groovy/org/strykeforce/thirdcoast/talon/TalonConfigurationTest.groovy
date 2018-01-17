@@ -5,7 +5,6 @@ import com.ctre.phoenix.motorcontrol.NeutralMode
 import static com.ctre.phoenix.motorcontrol.ControlMode.PercentOutput
 import static com.ctre.phoenix.motorcontrol.FeedbackDevice.QuadEncoder
 import static com.ctre.phoenix.motorcontrol.VelocityMeasPeriod.Period_5Ms
-import static org.strykeforce.thirdcoast.talon.TalonConfiguration.TIMEOUT_MS
 
 class TalonConfigurationTest extends TalonConfigurationInteractions {
 
@@ -13,6 +12,9 @@ class TalonConfigurationTest extends TalonConfigurationInteractions {
     def tcb = new TalonConfigurationBuilder()
 
     def "sets defaults"() {
+        given:
+        def TIMEOUT = 11
+
         when:
         def tc = tcb.build()
         tc.configure(talon)
@@ -114,6 +116,6 @@ class TalonConfigurationTest extends TalonConfigurationInteractions {
 
         then:
         tc.openLoopRampTime == 27.67
-        1 * talon.configOpenloopRamp(27.67d, TIMEOUT_MS)
+        1 * talon.configOpenloopRamp(27.67d, TIMEOUT)
     }
 }

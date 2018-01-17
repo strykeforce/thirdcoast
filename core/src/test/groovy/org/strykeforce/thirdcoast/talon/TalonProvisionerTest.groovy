@@ -56,6 +56,28 @@ class TalonProvisionerTest extends Specification {
         config.IZone == 0
     }
 
+    def "configuration timeout is updated"() {
+        given:
+        File temp = File.createTempFile("thirdcoast_", ".toml")
+        temp.delete()
+        temp.deleteOnExit()
+        def provisioner = new TalonProvisioner(temp)
+
+        when:
+        provisioner.enableTimeout(true)
+        def config = provisioner.configurationFor("drive")
+
+        then:
+        config.getTimeout() == TalonProvisioner.TIMEOUT_MS
+
+        when:
+        provisioner.enableTimeout(false)
+
+        then:
+        config.getTimeout() == 0
+
+    }
+
     def "empty config file"() {
         given:
         File temp = File.createTempFile("thirdcoast_", ".toml")

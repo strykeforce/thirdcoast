@@ -1,12 +1,7 @@
 package org.strykeforce.thirdcoast.talon
 
-import com.ctre.phoenix.motorcontrol.SensorCollection
 import edu.wpi.first.wpilibj.MotorSafety
 import spock.lang.Specification
-
-import static com.ctre.phoenix.motorcontrol.ControlMode.PercentOutput
-import static com.ctre.phoenix.motorcontrol.StatusFrame.*
-import static org.strykeforce.thirdcoast.talon.TalonConfiguration.TIMEOUT_MS
 
 class TalonFactoryTest extends Specification {
 

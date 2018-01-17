@@ -19,7 +19,7 @@ public class LimitSwitchEnabled extends AbstractFwdRevBooleanConfigCommand {
 
   @Override
   protected void config(ThirdCoastTalon talon, boolean forward, boolean reverse) {
-    //    talon.overrideLimitSwitchesEnable(forward, TIMEOUT_MS);
+    //    talon.overrideLimitSwitchesEnable(forward, timeout);
   }
 
   @Override

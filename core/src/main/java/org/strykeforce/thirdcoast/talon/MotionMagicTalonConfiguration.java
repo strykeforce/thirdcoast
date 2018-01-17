@@ -1,5 +1,6 @@
 package org.strykeforce.thirdcoast.talon;
 
+import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
@@ -82,9 +83,11 @@ public class MotionMagicTalonConfiguration extends PIDTalonConfiguration {
     if (talon instanceof ThirdCoastTalon) {
       ((ThirdCoastTalon) talon).changeControlMode(ControlMode.MotionMagic);
     }
-
-    talon.configMotionAcceleration(valueOrElseZero(motionMagicAcceleration), TIMEOUT_MS);
-    talon.configMotionCruiseVelocity(valueOrElseZero(motionMagicCruiseVelocity), TIMEOUT_MS);
+    ErrorCode err;
+    err = talon.configMotionAcceleration(valueOrElseZero(motionMagicAcceleration), timeout);
+    Errors.check(talon, "configMotionAcceleration", err, logger);
+    err = talon.configMotionCruiseVelocity(valueOrElseZero(motionMagicCruiseVelocity), timeout);
+    Errors.check(talon, "configMotionCruiseVelocity", err, logger);
   }
 
   public Integer getMotionMagicAcceleration() {

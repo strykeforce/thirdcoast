@@ -4,9 +4,10 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import spock.lang.Specification
 
 import static com.ctre.phoenix.motorcontrol.StatusFrame.*
-import static org.strykeforce.thirdcoast.talon.TalonConfiguration.TIMEOUT_MS
 
 class StatusFrameRateTest extends Specification {
+
+    static TIMEOUT = 10
 
     def "builds a StatusFrameRate"() {
         given:
@@ -18,9 +19,9 @@ class StatusFrameRateTest extends Specification {
         sfr.configure(talon)
 
         then:
-        1 * talon.setStatusFramePeriod(Status_4_AinTempVbat, 1, TIMEOUT_MS)
-        1 * talon.setStatusFramePeriod(Status_2_Feedback0, 2, TIMEOUT_MS)
-        1 * talon.setStatusFramePeriod(Status_1_General, 3, TIMEOUT_MS)
+        1 * talon.setStatusFramePeriod(Status_4_AinTempVbat, 1, TIMEOUT)
+        1 * talon.setStatusFramePeriod(Status_2_Feedback0, 2, TIMEOUT)
+        1 * talon.setStatusFramePeriod(Status_1_General, 3, TIMEOUT)
 //        1 * talon.setStatusFramePeriod(TalonSRX.StatusFrameRate.PulseWidth, 5)
 //        1 * talon.setStatusFramePeriod(TalonSRX.StatusFrameRate.QuadEncoder, 6)
     }
@@ -34,9 +35,9 @@ class StatusFrameRateTest extends Specification {
         sfr.configure(talon)
 
         then:
-        1 * talon.setStatusFramePeriod(Status_4_AinTempVbat, 100, TIMEOUT_MS)
-        1 * talon.setStatusFramePeriod(Status_2_Feedback0, 20, TIMEOUT_MS)
-        1 * talon.setStatusFramePeriod(Status_1_General, 10, TIMEOUT_MS)
+        1 * talon.setStatusFramePeriod(Status_4_AinTempVbat, 100, TIMEOUT)
+        1 * talon.setStatusFramePeriod(Status_2_Feedback0, 20, TIMEOUT)
+        1 * talon.setStatusFramePeriod(Status_1_General, 10, TIMEOUT)
 //        1 * talon.setStatusFrameRateMs(TalonSRX.StatusFrameRate.PulseWidth, 100)
 //        1 * talon.setStatusFrameRateMs(TalonSRX.StatusFrameRate.QuadEncoder, 100)
     }

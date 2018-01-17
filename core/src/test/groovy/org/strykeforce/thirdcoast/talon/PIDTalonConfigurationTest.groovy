@@ -5,7 +5,6 @@ import spock.lang.Shared
 
 import static com.ctre.phoenix.motorcontrol.ControlMode.Velocity
 import static com.ctre.phoenix.motorcontrol.FeedbackDevice.CTRE_MagEncoder_Relative
-import static org.strykeforce.thirdcoast.talon.TalonConfiguration.TIMEOUT_MS
 
 class PIDTalonConfigurationTest extends TalonConfigurationInteractions {
 
@@ -102,17 +101,17 @@ class PIDTalonConfigurationTest extends TalonConfigurationInteractions {
         interaction {
             defaultTalonInteraction(talon)
             1 * talon.changeControlMode(Velocity)
-            1 * talon.configAllowableClosedloopError(0, 0, TIMEOUT_MS)
-            1 * talon.config_kP(0, 0d, TIMEOUT_MS)
-            1 * talon.config_kI(0, 0d, TIMEOUT_MS)
-            1 * talon.config_kD(0, 0d, TIMEOUT_MS)
-            1 * talon.config_kF(0, 0d, TIMEOUT_MS)
-            1 * talon.config_IntegralZone(0, 0, TIMEOUT_MS)
-            1 * talon.configClosedloopRamp(0, TIMEOUT_MS)
-            1 * talon.configPeakOutputForward(1d, TIMEOUT_MS)
-            1 * talon.configPeakOutputReverse(-1d, TIMEOUT_MS)
-            1 * talon.configNominalOutputForward(0d, TIMEOUT_MS)
-            1 * talon.configNominalOutputReverse(0d, TIMEOUT_MS)
+            1 * talon.configAllowableClosedloopError(0, 0, TIMEOUT)
+            1 * talon.config_kP(0, 0d, TIMEOUT)
+            1 * talon.config_kI(0, 0d, TIMEOUT)
+            1 * talon.config_kD(0, 0d, TIMEOUT)
+            1 * talon.config_kF(0, 0d, TIMEOUT)
+            1 * talon.config_IntegralZone(0, 0, TIMEOUT)
+            1 * talon.configClosedloopRamp(0, TIMEOUT)
+            1 * talon.configPeakOutputForward(1d, TIMEOUT)
+            1 * talon.configPeakOutputReverse(-1d, TIMEOUT)
+            1 * talon.configNominalOutputForward(0d, TIMEOUT)
+            1 * talon.configNominalOutputReverse(0d, TIMEOUT)
 
             0 * talon._
         }
@@ -135,18 +134,18 @@ class PIDTalonConfigurationTest extends TalonConfigurationInteractions {
             defaultVelocityMeasurementInteractions(talon)
 
             selectedFeedbackSensorInteraction(talon, CTRE_MagEncoder_Relative, false)
-            1 * talon.configVoltageCompSaturation(11.0d, TIMEOUT_MS)
-            1 * talon.configClosedloopRamp(27.67d, TIMEOUT_MS)
-            1 * talon.configPeakOutputForward(0.5d, TIMEOUT_MS)
-            1 * talon.configPeakOutputReverse(-0.3d, TIMEOUT_MS)
-            1 * talon.configNominalOutputForward(0.1d, TIMEOUT_MS)
-            1 * talon.configNominalOutputReverse(-0.2d, TIMEOUT_MS)
-            1 * talon.configAllowableClosedloopError(0, 10, TIMEOUT_MS)
-            1 * talon.config_kP(0, 0.1d, TIMEOUT_MS)
-            1 * talon.config_kI(0, 0.2d, TIMEOUT_MS)
-            1 * talon.config_kD(0, 0.3d, TIMEOUT_MS)
-            1 * talon.config_kF(0, 0.4d, TIMEOUT_MS)
-            1 * talon.config_IntegralZone(0, 50, TIMEOUT_MS)
+            1 * talon.configVoltageCompSaturation(11.0d, TIMEOUT)
+            1 * talon.configClosedloopRamp(27.67d, TIMEOUT)
+            1 * talon.configPeakOutputForward(0.5d, TIMEOUT)
+            1 * talon.configPeakOutputReverse(-0.3d, TIMEOUT)
+            1 * talon.configNominalOutputForward(0.1d, TIMEOUT)
+            1 * talon.configNominalOutputReverse(-0.2d, TIMEOUT)
+            1 * talon.configAllowableClosedloopError(0, 10, TIMEOUT)
+            1 * talon.config_kP(0, 0.1d, TIMEOUT)
+            1 * talon.config_kI(0, 0.2d, TIMEOUT)
+            1 * talon.config_kD(0, 0.3d, TIMEOUT)
+            1 * talon.config_kF(0, 0.4d, TIMEOUT)
+            1 * talon.config_IntegralZone(0, 50, TIMEOUT)
         }
     }
 
@@ -169,8 +168,8 @@ class PIDTalonConfigurationTest extends TalonConfigurationInteractions {
         t.class == MotionMagicTalonConfiguration
 
         and:
-        1 * talon.configMotionAcceleration(27, TIMEOUT_MS)
-        1 * talon.configMotionCruiseVelocity(67, TIMEOUT_MS)
+        1 * talon.configMotionAcceleration(27, TIMEOUT)
+        1 * talon.configMotionCruiseVelocity(67, TIMEOUT)
     }
 
 }
