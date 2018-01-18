@@ -78,9 +78,8 @@ public class TalonItem extends AbstractItem {
     }
 
     switch (measure) {
-        // TODO: should be coming in CTRE update
-        //      case SETPOINT:
-        //        return talon::getSetpoint;
+      case SETPOINT:
+        return () -> talon.getClosedLoopTarget(0);
       case OUTPUT_CURRENT:
         return talon::getOutputCurrent;
       case OUTPUT_VOLTAGE:
