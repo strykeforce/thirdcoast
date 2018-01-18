@@ -116,7 +116,7 @@ public class Wheel {
     driveTalon.set(0);
   }
 
-  void setAzimuthParameters(String name) {
+  public void setAzimuthParameters(String name) {
     try {
       TalonConfiguration talonConfiguration = talonProvisioner.configurationFor(name);
       talonConfiguration.configure(azimuthTalon);
@@ -126,7 +126,7 @@ public class Wheel {
     }
   }
 
-  private void setDriveParameters(String name) {
+  public void setDriveParameters(String name) {
     try {
       TalonConfiguration talonConfiguration = talonProvisioner.configurationFor(name);
       talonConfiguration.configure(driveTalon);
