@@ -48,8 +48,6 @@ public class ThirdCoastTalon extends WPI_TalonSRX {
     }
     this.setpoint = setpoint;
     set(controlMode, setpoint);
-    logger.trace(
-        "ID {} set with controlMode={} and setpoint={}", getDeviceID(), controlMode, setpoint);
   }
 
   /**
