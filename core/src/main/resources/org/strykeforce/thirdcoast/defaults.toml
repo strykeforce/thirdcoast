@@ -6,17 +6,17 @@
 
 [[TALON]]
   name = "drive"
-  mode = "Voltage"
+  mode = "PercentOutput"
   setpointMax    = 12.0
   currentLimit   = 50
   [TALON.encoder]
-    device = "QuadEncoder"
+    device = "CTRE_MagEncoder_Relative"
     reversed = false
 
 [[TALON]]
   name = "azimuth"
   mode = "Position"
-  setpointMax     = 4095.0
+  setpointMax     = 4095
   brakeInNeutral = false
   forwardOutputVoltagePeak =  6.0
   reverseOutputVoltagePeak = -6.0
@@ -27,5 +27,5 @@
   fGain =   0.0
   iZone =   0
   [TALON.encoder]
-    device  = "CtreMagEncoder_Relative"
+    device  = "CTRE_MagEncoder_Relative"
     reversed = false

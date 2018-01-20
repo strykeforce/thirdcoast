@@ -1,64 +1,78 @@
 package org.strykeforce.thirdcoast.talon;
 
-import com.ctre.CANTalon;
-import com.ctre.CANTalon.TalonControlMode;
-import com.ctre.CANTalon.VelocityMeasurementPeriod;
-import edu.wpi.first.wpilibj.MotorSafety;
+import static com.ctre.phoenix.motorcontrol.LimitSwitchNormal.Disabled;
+import static com.ctre.phoenix.motorcontrol.LimitSwitchNormal.NormallyClosed;
+import static com.ctre.phoenix.motorcontrol.LimitSwitchNormal.NormallyOpen;
+import static com.ctre.phoenix.motorcontrol.LimitSwitchSource.Deactivated;
+import static com.ctre.phoenix.motorcontrol.LimitSwitchSource.FeedbackConnector;
+
+import com.ctre.phoenix.ErrorCode;
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import javax.annotation.Nullable;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Represents a Talon configuration.
  *
- * @see com.ctre.CANTalon
+ * @see com.ctre.phoenix.motorcontrol.can.TalonSRX
  */
 public abstract class TalonConfiguration {
+  protected static final Logger logger = LoggerFactory.getLogger(TalonConfiguration.class);
 
   // required
   @NotNull private final String name;
-
-  @SuppressWarnings({"FieldCanBeLocal", "unused"})
-  @NotNull
-  private final CANTalon.TalonControlMode mode;
-
-  private final double setpointMax;
+  @NotNull private final ControlMode mode;
   // optional
   private final Encoder encoder;
-  private final Boolean brakeInNeutral;
+  private final double setpointMax;
+  private final NeutralMode neutralMode;
   private final Boolean outputReversed;
-  private final VelocityMeasurementPeriod velocityMeasurementPeriod;
+  private final VelocityMeasPeriod velocityMeasurementPeriod;
   private final Integer velocityMeasurementWindow;
   private final LimitSwitch forwardLimitSwitch;
   private final LimitSwitch reverseLimitSwitch;
   private final SoftLimit forwardSoftLimit;
   private final SoftLimit reverseSoftLimit;
-  private final Integer currentLimit;
-  private final Double voltageRampRate;
+  private final Integer continuousCurrentLimit;
+  private final Integer peakCurrentLimit;
+  private final Integer peakCurrentLimitDuration;
+  private final Double openLoopRampTime;
+  private final Double voltageCompSaturation;
+  protected int timeout = 0;
   private Set<Integer> talonIds;
 
   TalonConfiguration(
       @NotNull String name,
-      @NotNull CANTalon.TalonControlMode mode,
+      @NotNull ControlMode mode,
       double setpointMax,
       Encoder encoder,
-      Boolean brakeInNeutral,
+      NeutralMode neutralMode,
       Boolean outputReversed,
-      VelocityMeasurementPeriod velocityMeasurementPeriod,
+      VelocityMeasPeriod velocityMeasurementPeriod,
       Integer velocityMeasurementWindow,
       LimitSwitch forwardLimitSwitch,
       LimitSwitch reverseLimitSwitch,
       SoftLimit forwardSoftLimit,
       SoftLimit reverseSoftLimit,
-      Integer currentLimit,
-      Double voltageRampRate) {
+      Integer continuousCurrentLimit,
+      Integer peakCurrentLimit,
+      Integer peakCurrentLimitDuration,
+      Double openLoopRampTime,
+      Double voltageCompSaturation) {
     this.name = name;
     this.mode = mode;
     this.setpointMax = setpointMax;
     this.encoder = encoder;
-    this.brakeInNeutral = brakeInNeutral;
+    this.neutralMode = neutralMode;
     this.outputReversed = outputReversed;
     this.velocityMeasurementPeriod = velocityMeasurementPeriod;
     this.velocityMeasurementWindow = velocityMeasurementWindow;
@@ -66,8 +80,11 @@ public abstract class TalonConfiguration {
     this.reverseLimitSwitch = reverseLimitSwitch;
     this.forwardSoftLimit = forwardSoftLimit;
     this.reverseSoftLimit = reverseSoftLimit;
-    this.currentLimit = currentLimit;
-    this.voltageRampRate = voltageRampRate;
+    this.continuousCurrentLimit = continuousCurrentLimit;
+    this.peakCurrentLimit = peakCurrentLimit;
+    this.peakCurrentLimitDuration = peakCurrentLimitDuration;
+    this.openLoopRampTime = openLoopRampTime;
+    this.voltageCompSaturation = voltageCompSaturation;
   }
 
   /**
@@ -75,56 +92,101 @@ public abstract class TalonConfiguration {
    *
    * @param talon the Talon to registerWith
    */
-  public void configure(@NotNull CANTalon talon) {
-    talon.setSafetyEnabled(false);
-    talon.setProfile(0);
-    talon.setExpiration(MotorSafety.DEFAULT_SAFETY_EXPIRATION);
-    Encoder enc = encoder != null ? encoder : Encoder.DEFAULT;
-    enc.configure(talon);
+  public void configure(@NotNull TalonSRX talon) {
+    logger.info("configuring Talon {} with timeout = {}", talon.getDeviceID(), timeout);
 
-    talon.enableBrakeMode(brakeInNeutral != null ? brakeInNeutral : true);
-    talon.reverseOutput(outputReversed != null ? outputReversed : false);
+    ErrorCode err;
+    talon.selectProfileSlot(0, 0);
+
+    talon.enableVoltageCompensation(true);
+    err = talon.configOpenloopRamp(openLoopRampTime != null ? openLoopRampTime : 0, timeout);
+    Errors.check(talon, "configOpenloopRamp", err, logger);
+    err = talon.configVoltageCompSaturation(valueOrElseZero(voltageCompSaturation, 12), timeout);
+    Errors.check(talon, "configVoltageCompSaturation", err, logger);
+
+    Encoder enc = encoder != null ? encoder : Encoder.DEFAULT;
+    enc.configure(talon, timeout);
+
+    talon.setNeutralMode(neutralMode != null ? neutralMode : NeutralMode.Coast);
+    talon.setInverted(outputReversed != null ? outputReversed : false);
 
     if (velocityMeasurementPeriod != null) {
-      talon.SetVelocityMeasurementPeriod(velocityMeasurementPeriod);
+      err = talon.configVelocityMeasurementPeriod(velocityMeasurementPeriod, timeout);
     } else {
-      talon.SetVelocityMeasurementPeriod(VelocityMeasurementPeriod.Period_100Ms);
+      err = talon.configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_100Ms, timeout);
     }
+    Errors.check(talon, "configVelocityMeasurementPeriod", err, logger);
 
     if (velocityMeasurementWindow != null) {
-      talon.SetVelocityMeasurementWindow(velocityMeasurementWindow);
+      err = talon.configVelocityMeasurementWindow(velocityMeasurementWindow, timeout);
     } else {
-      talon.SetVelocityMeasurementWindow(64);
+      err = talon.configVelocityMeasurementWindow(64, timeout);
     }
+    Errors.check(talon, "configVelocityMeasurementWindow", err, logger);
 
-    LimitSwitch fls = forwardLimitSwitch != null ? forwardLimitSwitch : LimitSwitch.DEFAULT;
-    LimitSwitch rls = reverseLimitSwitch != null ? reverseLimitSwitch : LimitSwitch.DEFAULT;
-    talon.enableLimitSwitch(fls.isEnabled(), rls.isEnabled());
-    if (fls.isEnabled()) {
-      talon.ConfigFwdLimitSwitchNormallyOpen(fls.isNormallyOpen());
-    }
-    if (rls.isEnabled()) {
-      talon.ConfigRevLimitSwitchNormallyOpen(rls.isNormallyOpen());
-    }
+    LimitSwitch hardLimit = forwardLimitSwitch != null ? forwardLimitSwitch : LimitSwitch.DEFAULT;
+    boolean enabled = hardLimit.isEnabled();
+    err =
+        talon.configForwardLimitSwitchSource(
+            hardLimit.isEnabled() ? FeedbackConnector : Deactivated,
+            hardLimit.isEnabled()
+                ? (hardLimit.isNormallyOpen() ? NormallyOpen : NormallyClosed)
+                : Disabled,
+            timeout);
+    Errors.check(talon, "configForwardLimitSwitchSource", err, logger);
 
-    SoftLimit sl = forwardSoftLimit != null ? forwardSoftLimit : SoftLimit.DEFAULT;
-    talon.enableForwardSoftLimit(sl.isEnabled());
-    if (sl.isEnabled()) {
-      talon.setForwardSoftLimit(sl.getPosition());
-    }
-    sl = reverseSoftLimit != null ? reverseSoftLimit : SoftLimit.DEFAULT;
-    talon.enableReverseSoftLimit(sl.isEnabled());
-    if (sl.isEnabled()) {
-      talon.setReverseSoftLimit(sl.getPosition());
-    }
-    if (currentLimit != null && currentLimit > 0) {
-      talon.setCurrentLimit(currentLimit);
-      talon.EnableCurrentLimit(true);
-    } else {
-      talon.EnableCurrentLimit(false);
-    }
-    talon.setVoltageRampRate(voltageRampRate != null ? voltageRampRate : 0);
+    hardLimit = reverseLimitSwitch != null ? reverseLimitSwitch : LimitSwitch.DEFAULT;
+    enabled |= hardLimit.isEnabled();
+    err =
+        talon.configReverseLimitSwitchSource(
+            hardLimit.isEnabled() ? FeedbackConnector : Deactivated,
+            hardLimit.isEnabled()
+                ? (hardLimit.isNormallyOpen() ? NormallyOpen : NormallyClosed)
+                : Disabled,
+            timeout);
+    Errors.check(talon, "configReverseLimitSwitchSource", err, logger);
+    talon.overrideLimitSwitchesEnable(enabled);
+
+    SoftLimit softLimit = forwardSoftLimit != null ? forwardSoftLimit : SoftLimit.DEFAULT;
+    enabled = softLimit.isEnabled();
+    err = talon.configForwardSoftLimitEnable(softLimit.isEnabled(), timeout);
+    Errors.check(talon, "configForwardSoftLimitEnable", err, logger);
+    err = talon.configForwardSoftLimitThreshold(softLimit.getPosition(), timeout);
+    Errors.check(talon, "configForwardSoftLimitThreshold", err, logger);
+
+    softLimit = reverseSoftLimit != null ? reverseSoftLimit : SoftLimit.DEFAULT;
+    enabled |= softLimit.isEnabled();
+    err = talon.configReverseSoftLimitEnable(softLimit.isEnabled(), timeout);
+    Errors.check(talon, "configReverseSoftLimitEnable", err, logger);
+    err = talon.configReverseSoftLimitThreshold(softLimit.getPosition(), timeout);
+    Errors.check(talon, "configReverseSoftLimitThreshold", err, logger);
+    talon.overrideSoftLimitsEnable(enabled);
+
+    configCurrentLimits(talon);
+
     addTalonId(talon.getDeviceID());
+  }
+
+  private void configCurrentLimits(TalonSRX talon) {
+    ErrorCode err;
+    boolean contEnabled = continuousCurrentLimit != null && continuousCurrentLimit > 0;
+    err = talon.configContinuousCurrentLimit(contEnabled ? continuousCurrentLimit : 0, timeout);
+    Errors.check(talon, "configContinuousCurrentLimit", err, logger);
+
+    boolean peakEnabled = peakCurrentLimit != null && peakCurrentLimit > 0;
+    err = talon.configPeakCurrentLimit(peakEnabled ? peakCurrentLimit : 0, timeout);
+    Errors.check(talon, "configPeakCurrentLimit", err, logger);
+
+    if (peakEnabled) {
+      if (peakCurrentLimitDuration == null) {
+        throw new IllegalArgumentException(
+            "peakCurrentLimitDuration must be specified for peakCurrentLimit = "
+                + peakCurrentLimit);
+      }
+      err = talon.configPeakCurrentDuration(peakCurrentLimitDuration, timeout);
+      Errors.check(talon, "configPeakCurrentDuration", err, logger);
+    }
+    talon.enableCurrentLimit(contEnabled || peakEnabled);
   }
 
   /**
@@ -178,15 +240,16 @@ public abstract class TalonConfiguration {
     return encoder;
   }
 
-  Boolean isBrakeInNeutral() {
-    return brakeInNeutral;
+  // FIXME: duplicated below?
+  NeutralMode isBrakeInNeutral() {
+    return neutralMode;
   }
 
   Boolean isOutputReversed() {
     return outputReversed;
   }
 
-  public VelocityMeasurementPeriod getVelocityMeasurementPeriod() {
+  public VelocityMeasPeriod getVelocityMeasurementPeriod() {
     return velocityMeasurementPeriod;
   }
 
@@ -215,25 +278,37 @@ public abstract class TalonConfiguration {
    *
    * @return the current limit, or null if not enabled.
    */
-  public Integer getCurrentLimit() {
-    return currentLimit;
+  public Integer getContinuousCurrentLimit() {
+    return continuousCurrentLimit;
+  }
+
+  public Integer getPeakCurrentLimit() {
+    return peakCurrentLimit;
+  }
+
+  public Integer getPeakCurrentLimitDuration() {
+    return peakCurrentLimitDuration;
   }
 
   @NotNull
-  public TalonControlMode getMode() {
+  public ControlMode getMode() {
     return mode;
   }
 
-  public Boolean getBrakeInNeutral() {
-    return brakeInNeutral;
+  public NeutralMode getBrakeInNeutral() {
+    return neutralMode;
   }
 
   public Boolean getOutputReversed() {
     return outputReversed;
   }
 
-  public Double getVoltageRampRate() {
-    return voltageRampRate;
+  public Double getOpenLoopRampTime() {
+    return openLoopRampTime;
+  }
+
+  public Double getVoltageCompSaturation() {
+    return voltageCompSaturation;
   }
 
   /**
@@ -246,19 +321,42 @@ public abstract class TalonConfiguration {
     return setpointMax;
   }
 
+  int getTimeout() {
+    return timeout;
+  }
+
+  void setTimeout(int timeout) {
+    this.timeout = timeout;
+  }
+
+  double valueOrElseZero(@Nullable Double value, double def) {
+    if (value != null) {
+      return value;
+    }
+    return def;
+  }
+
+  int valueOrElseZero(@Nullable Integer value) {
+    if (value != null) {
+      return value;
+    }
+    return 0;
+  }
+
   @Override
-  @NotNull
   public String toString() {
-    return "TalonParameters{"
+    return "TalonConfiguration{"
         + "name='"
         + name
         + '\''
-        + ", setpointMax="
-        + setpointMax
+        + ", mode="
+        + mode
         + ", encoder="
         + encoder
-        + ", brakeInNeutral="
-        + brakeInNeutral
+        + ", setpointMax="
+        + setpointMax
+        + ", neutralMode="
+        + neutralMode
         + ", outputReversed="
         + outputReversed
         + ", velocityMeasurementPeriod="
@@ -273,8 +371,12 @@ public abstract class TalonConfiguration {
         + forwardSoftLimit
         + ", reverseSoftLimit="
         + reverseSoftLimit
-        + ", currentLimit="
-        + currentLimit
+        + ", continuousCurrentLimit="
+        + continuousCurrentLimit
+        + ", openLoopRampTime="
+        + openLoopRampTime
+        + ", voltageCompSaturation="
+        + voltageCompSaturation
         + '}';
   }
 }

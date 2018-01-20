@@ -20,21 +20,23 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A service for provisioning Talons. This class will read CANTalon configurations located in TOML
+ * A service for provisioning Talons. This class will read TalonSRX configurations located in TOML
  * configuration objects registered using the {@link #addConfigurations(Toml)} class method.
  *
  * <p>Multiple configurations can be registered by calling the {@code register} method repeatedly.
  *
- * @see com.ctre.CANTalon
+ * @see com.ctre.phoenix.motorcontrol.can.TalonSRX
  */
 @Singleton
 @ParametersAreNonnullByDefault
 public class TalonProvisioner {
 
+  static final int TIMEOUT_MS = 10;
+
   @NotNull public static final String TALON_TABLE = "TALON";
   @NotNull private static final String DEFAULT_CONFIG = "/org/strykeforce/thirdcoast/defaults.toml";
 
-  static final Logger logger = LoggerFactory.getLogger(TalonProvisioner.class);
+  private static final Logger logger = LoggerFactory.getLogger(TalonProvisioner.class);
 
   @NotNull private final Map<String, TalonConfiguration> settings = new HashMap<>();
 
@@ -50,6 +52,19 @@ public class TalonProvisioner {
     Toml toml = new Toml().read(file);
     logger.info("adding configurations from {}", file);
     addConfigurations(toml);
+  }
+
+  static void checkFileExists(File file) {
+    Path path = file.toPath();
+    if (Files.notExists(path)) {
+      logger.info("{} missing, copying default", file);
+      InputStream is = TalonProvisioner.class.getResourceAsStream(DEFAULT_CONFIG);
+      try {
+        Files.copy(is, path);
+      } catch (IOException e) {
+        logger.error("unable to copy default config to " + path, e);
+      }
+    }
   }
 
   /**
@@ -122,17 +137,14 @@ public class TalonProvisioner {
     return Collections.unmodifiableCollection(settings.values());
   }
 
-  static void checkFileExists(File file) {
-    Path path = file.toPath();
-    if (Files.notExists(path)) {
-      logger.info("{} missing, copying default", file);
-      InputStream is = TalonProvisioner.class.getResourceAsStream(DEFAULT_CONFIG);
-      try {
-        Files.copy(is, path);
-      } catch (IOException e) {
-        logger.error("unable to copy default config to " + path, e);
-      }
-    }
+  /**
+   * TalonSRX configuration timeout should be enabled at robot initialization.
+   *
+   * @param timeoutEnabled true to enable.
+   */
+  public void enableTimeout(boolean timeoutEnabled) {
+    logger.info("configuration timeout enabled = {}", timeoutEnabled);
+    settings.values().forEach(it -> it.setTimeout(timeoutEnabled ? TIMEOUT_MS : 0));
   }
 
   @Override

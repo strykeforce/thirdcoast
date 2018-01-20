@@ -1,15 +1,14 @@
 package org.strykeforce.thirdcoast.telemetry.tct.talon;
 
-import com.ctre.CANTalon.TalonControlMode;
-import com.ctre.CANTalon.VelocityMeasurementPeriod;
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
 import java.io.PrintWriter;
 import java.util.Formatter;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.inject.Inject;
 import org.jline.reader.LineReader;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.talon.Encoder;
 import org.strykeforce.thirdcoast.talon.LimitSwitch;
 import org.strykeforce.thirdcoast.talon.MotionMagicTalonConfiguration;
@@ -27,7 +26,6 @@ public class InspectCommand extends AbstractCommand {
   private static final String FORMAT_STRING = "%12s";
   private static final String FORMAT_INTEGER = "%12d";
   private static final String FORMAT_DOUBLE = "%12.3f";
-  private static final Logger logger = LoggerFactory.getLogger(InspectCommand.class);
   private final TalonSet talonSet;
 
   @Inject
@@ -49,16 +47,15 @@ public class InspectCommand extends AbstractCommand {
       writer.println();
       stringLine("Encoder:", encoder.getDevice().name());
       booleanLine("  Reversed:", encoder.isReversed());
-      booleanLine("  Unit Scaling Enabled:", encoder.isUnitScalingEnabled());
-      intLine("  Ticks per Rev:", encoder.getTicksPerRevolution());
       writer.println();
     } else {
       stringLine("Encoder:", "DEFAULT");
     }
 
-    booleanLine("Brake in Neutral:", config.getBrakeInNeutral());
+    NeutralMode neutralMode = config.getBrakeInNeutral();
+    stringLine("Neutral Mode:", neutralMode != null ? neutralMode.name() : "DEFAULT");
     booleanLine("Output Reversed:", config.getOutputReversed());
-    VelocityMeasurementPeriod period = config.getVelocityMeasurementPeriod();
+    VelocityMeasPeriod period = config.getVelocityMeasurementPeriod();
     stringLine("Vel. Meas. Period:", period != null ? period.name() : "DEFAULT");
     intLine("Vel. Meas. Window:", config.getVelocityMeasurementWindow());
 
@@ -85,7 +82,7 @@ public class InspectCommand extends AbstractCommand {
     if (soft != null) {
       writer.println();
       booleanLine("Fwd Soft Limit:", soft.isEnabled());
-      doubleLine("  Position:", soft.getPosition());
+      intLine("  Position:", soft.getPosition());
       writer.println();
     } else {
       stringLine("Fwd Soft Limit:", "DEFAULT");
@@ -95,16 +92,16 @@ public class InspectCommand extends AbstractCommand {
     if (soft != null) {
       writer.println();
       booleanLine("Rev Soft Limit:", soft.isEnabled());
-      doubleLine("  Position:", soft.getPosition());
+      intLine("  Position:", soft.getPosition());
       writer.println();
     } else {
       stringLine("Rev Soft Limit:", "DEFAULT");
     }
 
-    intLine("Current Limit:", config.getCurrentLimit());
-    doubleLine("Voltage Ramp Rate:", config.getVoltageRampRate());
+    intLine("Current Limit:", config.getContinuousCurrentLimit());
+    doubleLine("Voltage Ramp Rate:", config.getOpenLoopRampTime());
 
-    if (config.getMode() == TalonControlMode.Voltage) {
+    if (config.getMode() == ControlMode.PercentOutput) {
       return;
     }
     PIDTalonConfiguration pid = (PIDTalonConfiguration) config;
@@ -114,16 +111,16 @@ public class InspectCommand extends AbstractCommand {
     doubleLine("D:", pid.getDGain());
     doubleLine("F:", pid.getFGain());
     intLine("I-zone:", pid.getIZone());
-    if (config.getMode() == TalonControlMode.MotionMagic) {
+    if (config.getMode() == ControlMode.MotionMagic) {
       writer.println();
       MotionMagicTalonConfiguration mmtc = (MotionMagicTalonConfiguration) pid;
-      doubleLine("MM Cruise Velocity:", mmtc.getMotionMagicCruiseVelocity());
-      doubleLine("MM Acceleration:", mmtc.getMotionMagicAcceleration());
+      intLine("MM Cruise Velocity:", mmtc.getMotionMagicCruiseVelocity());
+      intLine("MM Acceleration:", mmtc.getMotionMagicAcceleration());
     }
     writer.println();
     intLine("Allowable CL Error:", pid.getAllowableClosedLoopError());
     doubleLine("Nominal CL Voltage:", pid.getNominalClosedLoopVoltage());
-    doubleLine("Output Voltage Max:", pid.getOutputVoltageMax());
+    doubleLine("Output Voltage Max:", pid.getVoltageCompSaturation());
     doubleLine("Fwd Peak Output Voltage:", pid.getForwardOutputVoltagePeak());
     doubleLine("Rev Peak Output Voltage:", pid.getReverseOutputVoltagePeak());
     doubleLine("Fwd Nom. Output Voltage:", pid.getForwardOutputVoltageNominal());

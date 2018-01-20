@@ -1,8 +1,8 @@
 package org.strykeforce.thirdcoast.telemetry.tct.talon.config.cl;
 
-import com.ctre.CANTalon;
 import javax.inject.Inject;
 import org.jline.reader.LineReader;
+import org.strykeforce.thirdcoast.talon.ThirdCoastTalon;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractDoubleConfigCommand;
 
@@ -22,7 +22,7 @@ public class PCommand extends AbstractDoubleConfigCommand {
   }
 
   @Override
-  protected void config(CANTalon talon, double value) {
-    talon.setP(value);
+  protected void config(ThirdCoastTalon talon, double value) {
+    talon.config_kP(0, value, TIMEOUT_MS);
   }
 }

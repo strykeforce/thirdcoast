@@ -1,8 +1,9 @@
 package org.strykeforce.thirdcoast.telemetry.tct.talon;
 
-import com.ctre.CANTalon;
-import com.ctre.CANTalon.TalonControlMode;
-import com.ctre.CANTalon.VelocityMeasurementPeriod;
+import static org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractTalonConfigCommand.VERIFY;
+
+import com.ctre.phoenix.ParamEnum;
+import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
 import java.util.Formatter;
 import java.util.List;
 import java.util.Set;
@@ -11,6 +12,7 @@ import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.inject.Inject;
 import org.jline.reader.LineReader;
+import org.strykeforce.thirdcoast.talon.ThirdCoastTalon;
 import org.strykeforce.thirdcoast.telemetry.tct.AbstractCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.Messages;
 
@@ -18,7 +20,7 @@ import org.strykeforce.thirdcoast.telemetry.tct.Messages;
 @ParametersAreNonnullByDefault
 public class ListCommand extends AbstractCommand {
 
-  public static final String NAME = "List Selected Talons with Current Register Values";
+  public static final String NAME = VERIFY + "List Selected Talons with Current Register Values";
   private static final String FORMAT_DESCRIPTION = "%12s";
   private static final String FORMAT_DOUBLE = "%12.3f";
   private static final String FORMAT_INTEGER = "%12d";
@@ -32,7 +34,7 @@ public class ListCommand extends AbstractCommand {
     this.talonSet = talonSet;
   }
 
-  private static int intValue(@Nullable VelocityMeasurementPeriod period) {
+  private static int intValue(@Nullable VelocityMeasPeriod period) {
     if (period == null) {
       return 0;
     }
@@ -60,68 +62,82 @@ public class ListCommand extends AbstractCommand {
 
   @Override
   public void perform() {
-    Set<CANTalon> talons = talonSet.selected();
+    Set<ThirdCoastTalon> talons = talonSet.selected();
     terminal.writer().println();
     if (talons.size() == 0) {
       terminal.writer().println(Messages.NO_TALONS);
       return;
     }
     terminal.writer().print(header());
-    stringLine(
+    outputString(
         "Mode:",
         talons
             .stream()
-            .map(CANTalon::getControlMode)
-            .map(TalonControlMode::name)
+            .map(ThirdCoastTalon::getControlMode)
+            .map(Enum::name)
             .collect(Collectors.toList()));
-    doubleLine(
-        "Setpoint:", talons.stream().map(CANTalon::getSetpoint).collect(Collectors.toList()));
-    doubleLine("P:", talons.stream().map(CANTalon::getP).collect(Collectors.toList()));
-    doubleLine("I:", talons.stream().map(CANTalon::getI).collect(Collectors.toList()));
-    doubleLine("D:", talons.stream().map(CANTalon::getD).collect(Collectors.toList()));
-    doubleLine("F:", talons.stream().map(CANTalon::getF).collect(Collectors.toList()));
-    doubleLine("I-zone:", talons.stream().map(CANTalon::getIZone).collect(Collectors.toList()));
+    outputParameter("P:", ParamEnum.eProfileParamSlot_P);
+    outputParameter("I:", ParamEnum.eProfileParamSlot_I);
+    outputParameter("D:", ParamEnum.eProfileParamSlot_D);
+    outputParameter("F:", ParamEnum.eProfileParamSlot_F);
+    outputParameter("IZone:", ParamEnum.eProfileParamSlot_IZone);
+    outputParameter("Max I Accum:", ParamEnum.eProfileParamSlot_MaxIAccum);
+    outputParameter("Allowed Err:", ParamEnum.eProfileParamSlot_AllowableErr);
 
-    doubleLine(
-        "Position:", talons.stream().map(CANTalon::getPosition).collect(Collectors.toList()));
-    intLine(
-        "Abs Enc:",
+    outputInteger(
+        "Position:",
+        talons.stream().map(t -> t.getSelectedSensorPosition(0)).collect(Collectors.toList()));
+    outputInteger(
+        "Pulse Width:",
         talons
             .stream()
-            .map(CANTalon::getPulseWidthPosition)
+            .map(t -> t.getSensorCollection().getPulseWidthPosition())
             .map(pos -> pos & 0xFFF)
             .collect(Collectors.toList()));
 
-    intLine(
-        "Fwd Soft:",
-        talons.stream().map(CANTalon::getForwardSoftLimit).collect(Collectors.toList()));
-    intLine(
-        "Rev Soft:",
-        talons.stream().map(CANTalon::getReverseSoftLimit).collect(Collectors.toList()));
+    outputParameter("Fwd Soft:", ParamEnum.eForwardSoftLimitThreshold);
+    outputParameter("Rev Soft:", ParamEnum.eReverseSoftLimitThreshold);
 
-    booleanLine(
+    outputBoolean(
         "Fwd LS Clsd:",
-        talons.stream().map(CANTalon::isFwdLimitSwitchClosed).collect(Collectors.toList()));
-    booleanLine(
-        "Rev LS Clsd:",
-        talons.stream().map(CANTalon::isRevLimitSwitchClosed).collect(Collectors.toList()));
-
-    intLine("Analog:", talons.stream().map(CANTalon::getAnalogInRaw).collect(Collectors.toList()));
-
-    intLine(
-        "VM Period:",
         talons
             .stream()
-            .map(CANTalon::GetVelocityMeasurementPeriod)
-            .map(ListCommand::intValue)
+            .map(t -> t.getSensorCollection().isFwdLimitSwitchClosed())
             .collect(Collectors.toList()));
-    intLine(
-        "VM Window:",
-        talons.stream().map(CANTalon::GetVelocityMeasurementWindow).collect(Collectors.toList()));
+    outputBoolean(
+        "Rev LS Clsd:",
+        talons
+            .stream()
+            .map(t -> t.getSensorCollection().isRevLimitSwitchClosed())
+            .collect(Collectors.toList()));
+
+    outputInteger(
+        "Analog:",
+        talons
+            .stream()
+            .map(t -> t.getSensorCollection().getAnalogInRaw())
+            .collect(Collectors.toList()));
+
+    outputParameter("VM Period:", ParamEnum.eSampleVelocityPeriod);
+    outputParameter("VM Window:", ParamEnum.eSampleVelocityWindow);
     terminal.writer().println();
   }
 
-  private void stringLine(
+  private void outputParameter(String description, ParamEnum param) {
+    StringBuilder sb = new StringBuilder();
+    Formatter formatter = new Formatter(sb);
+    sb.append(Messages.bold(String.format(FORMAT_DESCRIPTION, description)));
+
+    talonSet
+        .selected()
+        .stream()
+        .mapToDouble(t -> t.configGetParameter(param, 0, 0))
+        .forEach(d -> formatter.format(FORMAT_DOUBLE, d));
+
+    terminal.writer().println(sb.toString());
+  }
+
+  private void outputString(
       @SuppressWarnings("SameParameterValue") String description, List<String> values) {
     StringBuilder sb = new StringBuilder();
     Formatter formatter = new Formatter(sb);
@@ -132,7 +148,7 @@ public class ListCommand extends AbstractCommand {
     terminal.writer().println(sb.toString());
   }
 
-  private void booleanLine(String description, List<Boolean> values) {
+  private void outputBoolean(String description, List<Boolean> values) {
     StringBuilder sb = new StringBuilder();
     Formatter formatter = new Formatter(sb);
     sb.append(Messages.bold(String.format(FORMAT_DESCRIPTION, description)));
@@ -142,7 +158,7 @@ public class ListCommand extends AbstractCommand {
     terminal.writer().println(sb.toString());
   }
 
-  private void intLine(String description, List<Integer> values) {
+  private void outputInteger(String description, List<Integer> values) {
     StringBuilder sb = new StringBuilder();
     Formatter formatter = new Formatter(sb);
     sb.append(Messages.bold(String.format(FORMAT_DESCRIPTION, description)));
@@ -152,7 +168,7 @@ public class ListCommand extends AbstractCommand {
     terminal.writer().println(sb.toString());
   }
 
-  private void doubleLine(String description, List<Double> values) {
+  private void outputDouble(String description, List<Double> values) {
     StringBuilder sb = new StringBuilder();
     Formatter formatter = new Formatter(sb);
     sb.append(Messages.bold(String.format(FORMAT_DESCRIPTION, description)));
@@ -167,7 +183,7 @@ public class ListCommand extends AbstractCommand {
     StringBuilder sb = new StringBuilder();
     Formatter formatter = new Formatter(sb);
     formatter.format(FORMAT_DESCRIPTION, "Talon:");
-    for (CANTalon talon : talonSet.selected()) {
+    for (ThirdCoastTalon talon : talonSet.selected()) {
       formatter.format(FORMAT_INTEGER, talon.getDeviceID());
     }
     sb.append("\n");

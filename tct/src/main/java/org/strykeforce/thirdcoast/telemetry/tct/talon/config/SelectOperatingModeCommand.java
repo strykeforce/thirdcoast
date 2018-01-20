@@ -1,11 +1,11 @@
 package org.strykeforce.thirdcoast.telemetry.tct.talon.config;
 
-import com.ctre.CANTalon;
-import com.ctre.CANTalon.TalonControlMode;
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import javax.inject.Inject;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
 import org.jline.reader.UserInterruptException;
+import org.strykeforce.thirdcoast.talon.ThirdCoastTalon;
 import org.strykeforce.thirdcoast.telemetry.tct.Messages;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 
@@ -14,7 +14,7 @@ public class SelectOperatingModeCommand extends AbstractTalonConfigCommand {
   public static final String NAME = "Control Mode";
 
   @Inject
-  public SelectOperatingModeCommand(TalonSet talonSet, LineReader reader) {
+  SelectOperatingModeCommand(TalonSet talonSet, LineReader reader) {
     super(NAME, reader, talonSet);
   }
 
@@ -25,7 +25,6 @@ public class SelectOperatingModeCommand extends AbstractTalonConfigCommand {
       "Speed",
       "Position",
       "Current",
-      "Percent Vbus",
       "Motion Magic",
       "Motion Profile",
       "Follower",
@@ -56,40 +55,37 @@ public class SelectOperatingModeCommand extends AbstractTalonConfigCommand {
         help(types.length);
         continue;
       }
-      CANTalon.TalonControlMode mode;
+      ControlMode mode;
       done = true;
       switch (choice) {
         case 1:
-          mode = TalonControlMode.Voltage;
+          mode = ControlMode.PercentOutput;
           break;
         case 2:
-          mode = TalonControlMode.Speed;
+          mode = ControlMode.Velocity;
           break;
         case 3:
-          mode = TalonControlMode.Position;
+          mode = ControlMode.Position;
           break;
         case 4:
-          mode = TalonControlMode.Current;
-          break;
-        case 5:
-          mode = TalonControlMode.PercentVbus;
+          mode = ControlMode.Current;
           break;
         case 6:
-          mode = TalonControlMode.MotionMagic;
+          mode = ControlMode.MotionMagic;
           break;
         case 7:
-          mode = TalonControlMode.MotionProfile;
+          mode = ControlMode.MotionProfile;
           break;
         case 8:
-          mode = TalonControlMode.Follower;
+          mode = ControlMode.Follower;
           break;
         case 9:
-          mode = TalonControlMode.Disabled;
+          mode = ControlMode.Disabled;
           break;
         default:
           continue;
       }
-      for (CANTalon talon : talonSet.selected()) {
+      for (ThirdCoastTalon talon : talonSet.selected()) {
         talon.changeControlMode(mode);
         logger.info("set {} for {} to {}", name(), talon.getDescription(), mode);
       }

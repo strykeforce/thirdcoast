@@ -1,7 +1,9 @@
 package org.strykeforce.thirdcoast.telemetry.tct.talon.config.lim
 
 import org.strykeforce.thirdcoast.telemetry.tct.Command
+import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractDoubleConfigCommand
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractTalonConfigCommandTest
+import spock.lang.Ignore
 
 class ForwardSoftLimitCommandTest extends AbstractTalonConfigCommandTest {
 
@@ -26,9 +28,9 @@ class ForwardSoftLimitCommandTest extends AbstractTalonConfigCommandTest {
         command.perform()
 
         then:
-        1 * reader.readLine(_) >>> ["27.67"]
+        1 * reader.readLine(_) >>> ["27"]
 
-        1 * talon.setForwardSoftLimit(27.67) // 27.67
+        1 * talon.configForwardSoftLimitThreshold(27, AbstractDoubleConfigCommand.TIMEOUT_MS) // 27
         1 * talon.getDescription()
         0 * talon._
     }

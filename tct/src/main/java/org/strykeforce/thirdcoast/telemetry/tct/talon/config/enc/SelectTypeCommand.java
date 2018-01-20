@@ -1,11 +1,24 @@
 package org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc;
 
-import com.ctre.CANTalon;
-import com.ctre.CANTalon.FeedbackDevice;
+import static com.ctre.phoenix.motorcontrol.FeedbackDevice.Analog;
+import static com.ctre.phoenix.motorcontrol.FeedbackDevice.CTRE_MagEncoder_Absolute;
+import static com.ctre.phoenix.motorcontrol.FeedbackDevice.CTRE_MagEncoder_Relative;
+import static com.ctre.phoenix.motorcontrol.FeedbackDevice.None;
+import static com.ctre.phoenix.motorcontrol.FeedbackDevice.PulseWidthEncodedPosition;
+import static com.ctre.phoenix.motorcontrol.FeedbackDevice.QuadEncoder;
+import static com.ctre.phoenix.motorcontrol.FeedbackDevice.RemoteSensor0;
+import static com.ctre.phoenix.motorcontrol.FeedbackDevice.RemoteSensor1;
+import static com.ctre.phoenix.motorcontrol.FeedbackDevice.SensorDifference;
+import static com.ctre.phoenix.motorcontrol.FeedbackDevice.SensorSum;
+import static com.ctre.phoenix.motorcontrol.FeedbackDevice.SoftwareEmulatedSensor;
+import static com.ctre.phoenix.motorcontrol.FeedbackDevice.Tachometer;
+
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import javax.inject.Inject;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
 import org.jline.reader.UserInterruptException;
+import org.strykeforce.thirdcoast.talon.ThirdCoastTalon;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractTalonConfigCommand;
 
@@ -21,14 +34,18 @@ public class SelectTypeCommand extends AbstractTalonConfigCommand {
   @Override
   public void perform() {
     String[] types = {
-      "Analog",
-      "Analog Potentiometer",
-      "CTRE Magnetic Absolute",
-      "CTRE Magnetic Relative",
-      "Falling Edge",
-      "Rising Edge",
-      "Pulse Width",
-      "Quadrature"
+      Analog.name(),
+      CTRE_MagEncoder_Absolute.name(),
+      CTRE_MagEncoder_Relative.name(),
+      None.name(),
+      PulseWidthEncodedPosition.name(),
+      QuadEncoder.name(),
+      RemoteSensor0.name(),
+      RemoteSensor1.name(),
+      SensorDifference.name(),
+      SensorSum.name(),
+      SoftwareEmulatedSensor.name(),
+      Tachometer.name()
     };
     terminal.writer().println();
     for (int i = 0; i < types.length; i++) {
@@ -55,39 +72,51 @@ public class SelectTypeCommand extends AbstractTalonConfigCommand {
         terminal.writer().println("please enter an integer");
         continue;
       }
-      CANTalon.FeedbackDevice device;
+      FeedbackDevice device;
       done = true;
       switch (choice) {
         case 1:
-          device = FeedbackDevice.AnalogEncoder;
+          device = Analog;
           break;
         case 2:
-          device = FeedbackDevice.AnalogPot;
+          device = CTRE_MagEncoder_Absolute;
           break;
         case 3:
-          device = FeedbackDevice.CtreMagEncoder_Absolute;
+          device = CTRE_MagEncoder_Relative;
           break;
         case 4:
-          device = FeedbackDevice.CtreMagEncoder_Relative;
+          device = None;
           break;
         case 5:
-          device = FeedbackDevice.EncFalling;
+          device = PulseWidthEncodedPosition;
           break;
         case 6:
-          device = FeedbackDevice.EncRising;
+          device = QuadEncoder;
           break;
         case 7:
-          device = FeedbackDevice.PulseWidth;
+          device = RemoteSensor0;
           break;
         case 8:
-          device = FeedbackDevice.QuadEncoder;
+          device = RemoteSensor1;
+          break;
+        case 9:
+          device = SensorDifference;
+          break;
+        case 10:
+          device = SensorSum;
+          break;
+        case 11:
+          device = SoftwareEmulatedSensor;
+          break;
+        case 12:
+          device = Tachometer;
           break;
         default:
           continue;
       }
       talonSet.talonConfigurationBuilder().encoder(device);
-      for (CANTalon talon : talonSet.selected()) {
-        talon.setFeedbackDevice(device);
+      for (ThirdCoastTalon talon : talonSet.selected()) {
+        talon.configSelectedFeedbackSensor(device, 0, TIMEOUT_MS);
         logger.info("set {} for {} to {}", name(), talon.getDescription(), device);
       }
     }

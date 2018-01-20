@@ -1,15 +1,17 @@
 package org.strykeforce.thirdcoast.telemetry.tct.talon.config.out
 
 import org.strykeforce.thirdcoast.telemetry.tct.Command
+import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractDoubleConfigCommand
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractTalonConfigCommandTest
+import spock.lang.Ignore
 
-class VoltageRampRateCommandTest extends AbstractTalonConfigCommandTest {
+class OpenLoopRampRateCommandTest extends AbstractTalonConfigCommandTest {
 
     Command command
 
     @Override
     void setup() {
-        command = new VoltageRampRateCommand(reader, talonSet)
+        command = new OpenLoopRampRateCommand(reader, talonSet)
     }
 
     def "invalid or no input"() {
@@ -29,7 +31,7 @@ class VoltageRampRateCommandTest extends AbstractTalonConfigCommandTest {
         then:
         1 * reader.readLine(_) >> "27.67"
 
-        1 * talon.setVoltageRampRate(27.67)
+        1 * talon.configOpenloopRamp(27.67, AbstractDoubleConfigCommand.TIMEOUT_MS)
         1 * talon.getDescription()
         0 * talon._
     }

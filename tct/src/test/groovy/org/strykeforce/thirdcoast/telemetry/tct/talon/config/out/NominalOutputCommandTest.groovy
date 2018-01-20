@@ -1,15 +1,16 @@
 package org.strykeforce.thirdcoast.telemetry.tct.talon.config.out
 
 import org.strykeforce.thirdcoast.telemetry.tct.Command
+import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractTalonConfigCommand
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractTalonConfigCommandTest
+import spock.lang.Ignore
 
-class PeakOutputVoltageCommandTest extends AbstractTalonConfigCommandTest {
+class NominalOutputCommandTest extends AbstractTalonConfigCommandTest {
 
     Command command
 
-    @Override
     void setup() {
-        command = new PeakOutputVoltageCommand(reader, talonSet)
+        command = new NominalOutputCommand(reader, talonSet)
     }
 
     def "invalid or no input"() {
@@ -28,7 +29,8 @@ class PeakOutputVoltageCommandTest extends AbstractTalonConfigCommandTest {
         then:
         1 * reader.readLine(_) >> "27.67"
 
-        1 * talon.configPeakOutputVoltage(27.67, -27.67)
+        1 * talon.configNominalOutputForward(27.67, AbstractTalonConfigCommand.TIMEOUT_MS)
+        1 * talon.configNominalOutputReverse(-27.67, AbstractTalonConfigCommand.TIMEOUT_MS)
         1 * talon.getDescription()
         0 * talon._
     }
@@ -40,9 +42,10 @@ class PeakOutputVoltageCommandTest extends AbstractTalonConfigCommandTest {
         then:
         1 * reader.readLine(_) >> "27,67"
 
-        1 * talon.configPeakOutputVoltage(27.0, 67.0)
+        //1 * talon.configNominalOutputVoltage(27.0, 67.0)
+        1 * talon.configNominalOutputForward(27.0, AbstractTalonConfigCommand.TIMEOUT_MS)
+        1 * talon.configNominalOutputReverse(67.0, AbstractTalonConfigCommand.TIMEOUT_MS)
         1 * talon.getDescription()
         0 * talon._
     }
-
 }

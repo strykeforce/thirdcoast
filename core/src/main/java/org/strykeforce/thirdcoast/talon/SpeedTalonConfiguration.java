@@ -1,8 +1,9 @@
 package org.strykeforce.thirdcoast.talon;
 
-import com.ctre.CANTalon;
-import com.ctre.CANTalon.TalonControlMode;
-import com.ctre.CANTalon.VelocityMeasurementPeriod;
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import org.jetbrains.annotations.NotNull;
 
 class SpeedTalonConfiguration extends PIDTalonConfiguration {
@@ -11,17 +12,19 @@ class SpeedTalonConfiguration extends PIDTalonConfiguration {
       @NotNull String name,
       double setpointMax,
       Encoder encoder,
-      Boolean isBrakeInNeutral,
+      NeutralMode neutralMode,
       Boolean isOutputReversed,
-      VelocityMeasurementPeriod velocityMeasurementPeriod,
+      VelocityMeasPeriod velocityMeasurementPeriod,
       Integer velocityMeasurementWindow,
       LimitSwitch forwardLimitSwitch,
       LimitSwitch reverseLimitSwitch,
       SoftLimit forwardSoftLimit,
       SoftLimit reverseSoftLimit,
-      Integer currentLimit,
+      Integer continuousCurrentLimit,
+      Integer peakCurrentLimit,
+      Integer peakCurrentLimitDuration,
       Double voltageRampRate,
-      Double outputVoltageMax,
+      Double voltageCompSaturation,
       Double closedLoopRampRate,
       Double forwardOutputVoltagePeak,
       Double reverseOutputVoltagePeak,
@@ -36,10 +39,10 @@ class SpeedTalonConfiguration extends PIDTalonConfiguration {
       Integer iZone) {
     super(
         name,
-        TalonControlMode.Position,
+        ControlMode.Position,
         setpointMax,
         encoder,
-        isBrakeInNeutral,
+        neutralMode,
         isOutputReversed,
         velocityMeasurementPeriod,
         velocityMeasurementWindow,
@@ -47,9 +50,11 @@ class SpeedTalonConfiguration extends PIDTalonConfiguration {
         reverseLimitSwitch,
         forwardSoftLimit,
         reverseSoftLimit,
-        currentLimit,
+        continuousCurrentLimit,
+        peakCurrentLimit,
+        peakCurrentLimitDuration,
         voltageRampRate,
-        outputVoltageMax,
+        voltageCompSaturation,
         closedLoopRampRate,
         forwardOutputVoltagePeak,
         reverseOutputVoltagePeak,
@@ -65,13 +70,14 @@ class SpeedTalonConfiguration extends PIDTalonConfiguration {
   }
 
   @Override
-  public void configure(@NotNull CANTalon talon) {
+  public void configure(@NotNull TalonSRX talon) {
     super.configure(talon);
-    talon.changeControlMode(TalonControlMode.Speed);
+    if (talon instanceof ThirdCoastTalon) {
+      ((ThirdCoastTalon) talon).changeControlMode(ControlMode.Velocity);
+    }
   }
 
   @Override
-  @NotNull
   public String toString() {
     return "SpeedTalonConfiguration{} " + super.toString();
   }

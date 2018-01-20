@@ -22,8 +22,10 @@ dependencies {
     compile libs.slf4j
     compileOnly libs.jetbrainsAnnotations
     compileOnly libs.jsr305
+    compileOnly libs.autoFactory
 
     apt libs.daggerCompiler
+    apt libs.autoFactory
 
     testCompile libs.spock
     testRuntime libs.logback

@@ -1,28 +1,38 @@
 package org.strykeforce.thirdcoast.talon
 
-import com.ctre.CANTalon
-import com.moandjiezana.toml.Toml
-import spock.lang.Shared
-import spock.lang.Specification
+import com.ctre.phoenix.motorcontrol.NeutralMode
 
-import static com.ctre.CANTalon.FeedbackDevice.QuadEncoder
-import static com.ctre.CANTalon.TalonControlMode.Voltage
-import static com.ctre.CANTalon.VelocityMeasurementPeriod.Period_100Ms
-import static com.ctre.CANTalon.VelocityMeasurementPeriod.Period_1Ms
-import static com.ctre.CANTalon.VelocityMeasurementPeriod.Period_5Ms
+import static com.ctre.phoenix.motorcontrol.ControlMode.PercentOutput
+import static com.ctre.phoenix.motorcontrol.FeedbackDevice.QuadEncoder
+import static com.ctre.phoenix.motorcontrol.VelocityMeasPeriod.Period_5Ms
 
-class TalonConfigurationTest extends Specification {
+class TalonConfigurationTest extends TalonConfigurationInteractions {
 
-    def talon = Mock(CANTalon)
+    def talon = Mock(ThirdCoastTalon)
     def tcb = new TalonConfigurationBuilder()
 
+    def "sets defaults"() {
+        given:
+        def TIMEOUT = 11
+
+        when:
+        def tc = tcb.build()
+        tc.configure(talon)
+
+        then:
+        interaction {
+            defaultControlModeInteractions(talon)
+            defaultTalonInteraction(talon)
+            0 * talon._
+        }
+    }
 
     def "configures voltage mode talon"() {
         when:
         def tc = tcb.name("test")
-                .mode(Voltage)
+                .mode(PercentOutput)
                 .setpointMax(12)
-                .encoder(QuadEncoder, true, 360)
+                .encoder(QuadEncoder, true)
                 .brakeInNeutral(true)
                 .forwardLimitSwitch(true)
                 .forwardSoftLimit(10000)
@@ -35,32 +45,18 @@ class TalonConfigurationTest extends Specification {
         tc.configure(talon)
 
         then:
-        with(talon) {
-            1 * changeControlMode(Voltage)
-            1 * setFeedbackDevice(QuadEncoder)
-            1 * enableBrakeMode(true)
-            1 * reverseSensor(true)
-            1 * reverseOutput(true)
-            1 * SetVelocityMeasurementPeriod(Period_5Ms)
-            1 * SetVelocityMeasurementWindow(16)
-            1 * enableLimitSwitch(true, false)
-            1 * ConfigFwdLimitSwitchNormallyOpen(true)
-            0 * ConfigRevLimitSwitchNormallyOpen(true)
-            0 * ConfigRevLimitSwitchNormallyOpen(false)
-            1 * enableForwardSoftLimit(true)
-            1 * setForwardSoftLimit(10_000.0)
-            1 * enableReverseSoftLimit(true)
-            1 * setReverseSoftLimit(12_000.0)
-            1 * EnableCurrentLimit(true)
-            1 * talon.setVoltageRampRate(0.0)
-            1 * setCurrentLimit(50)
-            1 * setSafetyEnabled(false)
-            1 * setProfile(0)
-            1 * talon.setExpiration(0.1)
-            1 * talon.configEncoderCodesPerRev(360)
-            1 * talon.isSensorPresent(QuadEncoder)
-            1 * talon.getDeviceID()
-            2 * talon.getDescription()
+        interaction {
+            defaultProfileSlotInteractions(talon)
+            defaultVoltageCompensationInteractions(talon)
+            defaultOpenLoopRampInteractions(talon)
+            selectedFeedbackSensorInteraction(talon, QuadEncoder, true)
+            velocityMeasurementInteractions(talon, Period_5Ms, 16)
+            currentLimitInteractions(talon, 50, 0)
+            limitSwitchInteractions(talon, true, null)
+            softLimitInteractions(talon, 10_000, 12_000)
+            1 * talon.setNeutralMode(NeutralMode.Brake)
+            1 * talon.setInverted(true)
+            1 * talon.changeControlMode(PercentOutput)
             0 * talon._
         }
     }
@@ -71,8 +67,9 @@ class TalonConfigurationTest extends Specification {
         tc.configure(talon)
 
         then:
-        1 * talon.EnableCurrentLimit(false)
-        0 * talon.setCurrentLimit(_)
+        1 * talon.enableCurrentLimit(false)
+        0 * talon.configContinuousCurrentLimit(_)
+        0 * talon.configPeakCurrentLimit(_)
     }
 
     def "brake in neutral is default"() {
@@ -81,7 +78,7 @@ class TalonConfigurationTest extends Specification {
         tc.configure(talon)
 
         then:
-        1 * talon.enableBrakeMode(true)
+        1 * talon.setNeutralMode(NeutralMode.Coast)
     }
 
     def "don't brake in neutral set"() {
@@ -90,7 +87,7 @@ class TalonConfigurationTest extends Specification {
         tc.configure(talon)
 
         then:
-        1 * talon.enableBrakeMode(false)
+        1 * talon.setNeutralMode(NeutralMode.Coast)
     }
 
     def "reverse output is default"() {
@@ -99,7 +96,7 @@ class TalonConfigurationTest extends Specification {
         tc.configure(talon)
 
         then:
-        1 * talon.reverseOutput(false)
+        1 * talon.setInverted(false)
     }
 
     def "reverse output set"() {
@@ -109,46 +106,16 @@ class TalonConfigurationTest extends Specification {
 
         then:
         tc.outputReversed
-        1 * talon.reverseOutput(true)
+        1 * talon.setInverted(true)
     }
 
     def "voltage ramp rate set"() {
         when:
-        def tc = tcb.voltageRampRate(27.67).build()
+        def tc = tcb.voltageRampRate(27.67d).build()
         tc.configure(talon)
 
         then:
-        tc.voltageRampRate == 27.67
-        1 * talon.setVoltageRampRate(27.67)
-    }
-
-    def "sets defaults"() {
-        when:
-        def tc = tcb.build()
-        tc.configure(talon)
-
-        then:
-        with(talon) {
-            1 * changeControlMode(Voltage)
-            1 * setFeedbackDevice(QuadEncoder)
-            1 * enableBrakeMode(true)
-            1 * reverseSensor(false)
-            1 * reverseOutput(false)
-            1 * setVoltageRampRate(0.0)
-            1 * SetVelocityMeasurementPeriod(Period_100Ms)
-            1 * SetVelocityMeasurementWindow(64)
-            1 * enableLimitSwitch(false, false)
-            1 * enableForwardSoftLimit(false)
-            1 * enableReverseSoftLimit(false)
-            1 * EnableCurrentLimit(false)
-            1 * setSafetyEnabled(false)
-            1 * setProfile(0)
-            1 * talon.setExpiration(0.1)
-            1 * talon.isSensorPresent(QuadEncoder)
-            1 * talon.getDeviceID()
-            1 * talon.getDescription()
-            0 * talon._
-        }
-
+        tc.openLoopRampTime == 27.67
+        1 * talon.configOpenloopRamp(27.67d, TIMEOUT)
     }
 }

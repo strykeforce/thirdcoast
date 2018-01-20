@@ -1,11 +1,17 @@
 package org.strykeforce.thirdcoast.talon;
 
-import com.ctre.CANTalon;
+import static org.strykeforce.thirdcoast.talon.TalonProvisioner.TIMEOUT_MS;
+
+import com.ctre.phoenix.ErrorCode;
+import com.ctre.phoenix.motorcontrol.StatusFrame;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import javax.annotation.ParametersAreNonnullByDefault;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Represents a set of frame update rates for a {@link com.ctre.CANTalon}.
+ * Represents a set of frame update rates for a {@link com.ctre.phoenix.motorcontrol.can.TalonSRX}.
  *
  * <p>If not modified, default status frame update rates are:
  *
@@ -25,6 +31,8 @@ public final class StatusFrameRate {
   public static final StatusFrameRate DEFAULT = StatusFrameRate.builder().build();
   /** Sets Talon to 5 ms rate for all frames. */
   public static final StatusFrameRate GRAPHER;
+
+  private static final Logger logger = LoggerFactory.getLogger(StatusFrameRate.class);
 
   static {
     GRAPHER =
@@ -52,16 +60,30 @@ public final class StatusFrameRate {
   }
 
   /**
+   * Builder for StatusFrameRate with default values.
+   *
+   * @return the builder for StatusFrameRate
+   */
+  @ParametersAreNonnullByDefault
+  public static Builder builder() {
+    return new Builder();
+  }
+
+  /**
    * Configures the Talon with status frame update rates.
    *
    * @param talon the Talon to registerWith
    */
-  public void configure(CANTalon talon) {
-    talon.setStatusFrameRateMs(CANTalon.StatusFrameRate.AnalogTempVbat, analogTempVbat);
-    talon.setStatusFrameRateMs(CANTalon.StatusFrameRate.Feedback, feedback);
-    talon.setStatusFrameRateMs(CANTalon.StatusFrameRate.General, general);
-    talon.setStatusFrameRateMs(CANTalon.StatusFrameRate.PulseWidth, pulseWidth);
-    talon.setStatusFrameRateMs(CANTalon.StatusFrameRate.QuadEncoder, quadEncoder);
+  public void configure(TalonSRX talon) {
+    ErrorCode err =
+        talon.setStatusFramePeriod(StatusFrame.Status_4_AinTempVbat, analogTempVbat, TIMEOUT_MS);
+    Errors.check(err, logger);
+    err = talon.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, feedback, TIMEOUT_MS);
+    Errors.check(err, logger);
+    err = talon.setStatusFramePeriod(StatusFrame.Status_1_General, general, TIMEOUT_MS);
+    Errors.check(err, logger);
+    //    talon.setStatusFramePeriod(StatusFrame, pulseWidth);
+    //    talon.setStatusFramePeriod(TalonSRX.StatusFrameRate.QuadEncoder, quadEncoder);
   }
 
   @Override
@@ -79,16 +101,6 @@ public final class StatusFrameRate {
         + ", quadEncoder="
         + quadEncoder
         + '}';
-  }
-
-  /**
-   * Builder for StatusFrameRate with default values.
-   *
-   * @return the builder for StatusFrameRate
-   */
-  @ParametersAreNonnullByDefault
-  public static Builder builder() {
-    return new Builder();
   }
 
   /** Builder for StatusFrameRate with default values. */

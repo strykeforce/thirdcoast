@@ -1,7 +1,9 @@
 package org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc
 
 import org.strykeforce.thirdcoast.telemetry.tct.Command
+import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractDoubleConfigCommand
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractTalonConfigCommandTest
+import spock.lang.Ignore
 
 class VelocityMeasurementWindowCommandTest extends AbstractTalonConfigCommandTest {
 
@@ -28,7 +30,7 @@ class VelocityMeasurementWindowCommandTest extends AbstractTalonConfigCommandTes
         then:
         1 * reader.readLine(_) >>> ["1"]
 
-        1 * talon.SetVelocityMeasurementWindow(1)
+        1 * talon.configVelocityMeasurementWindow(1, AbstractDoubleConfigCommand.TIMEOUT_MS)
         1 * talon.getDescription()
         0 * talon._
     }
@@ -40,7 +42,7 @@ class VelocityMeasurementWindowCommandTest extends AbstractTalonConfigCommandTes
         then:
         1 * reader.readLine(_) >>> ["3"]
 
-        1 * talon.SetVelocityMeasurementWindow(4)
+        1 * talon.configVelocityMeasurementWindow(4, AbstractDoubleConfigCommand.TIMEOUT_MS)
         1 * talon.getDescription()
         0 * talon._
     }
@@ -52,7 +54,7 @@ class VelocityMeasurementWindowCommandTest extends AbstractTalonConfigCommandTes
         then:
         1 * reader.readLine(_) >>> ["7"]
 
-        1 * talon.SetVelocityMeasurementWindow(64)
+        1 * talon.configVelocityMeasurementWindow(64, AbstractDoubleConfigCommand.TIMEOUT_MS)
         1 * talon.getDescription()
         0 * talon._
     }

@@ -1,9 +1,9 @@
 package org.strykeforce.thirdcoast.telemetry.tct.talon.config.lim;
 
-import com.ctre.CANTalon;
 import javax.inject.Inject;
 import org.jline.reader.LineReader;
 import org.strykeforce.thirdcoast.talon.SoftLimit;
+import org.strykeforce.thirdcoast.talon.ThirdCoastTalon;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractBooleanConfigCommand;
 
@@ -12,13 +12,13 @@ public class EnableForwardSoftLimitCommand extends AbstractBooleanConfigCommand 
   public static final String NAME = "Enable Forward Soft Limit";
 
   @Inject
-  public EnableForwardSoftLimitCommand(LineReader reader, TalonSet talonSet) {
+  EnableForwardSoftLimitCommand(LineReader reader, TalonSet talonSet) {
     super(NAME, reader, talonSet);
   }
 
   @Override
-  protected void config(CANTalon talon, boolean value) {
-    talon.enableForwardSoftLimit(value);
+  protected void config(ThirdCoastTalon talon, boolean value) {
+    talon.configForwardSoftLimitEnable(value, TIMEOUT_MS);
   }
 
   @Override

@@ -1,30 +1,34 @@
 package org.strykeforce.thirdcoast.talon;
 
-import com.ctre.CANTalon;
-import com.ctre.CANTalon.TalonControlMode;
-import com.ctre.CANTalon.VelocityMeasurementPeriod;
+import com.ctre.phoenix.ErrorCode;
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import org.jetbrains.annotations.NotNull;
 
 public class MotionMagicTalonConfiguration extends PIDTalonConfiguration {
 
-  private final Double motionMagicAcceleration;
-  private final Double motionMagicCruiseVelocity;
+  private final Integer motionMagicAcceleration;
+  private final Integer motionMagicCruiseVelocity;
 
   MotionMagicTalonConfiguration(
       @NotNull String name,
       double setpointMax,
       Encoder encoder,
-      Boolean isBrakeInNeutral,
+      NeutralMode neutralMode,
       Boolean isOutputReversed,
-      VelocityMeasurementPeriod velocityMeasurementPeriod,
+      VelocityMeasPeriod velocityMeasurementPeriod,
       Integer velocityMeasurementWindow,
       LimitSwitch forwardLimitSwitch,
       LimitSwitch reverseLimitSwitch,
       SoftLimit forwardSoftLimit,
       SoftLimit reverseSoftLimit,
-      Integer currentLimit,
+      Integer continuousCurrentLimit,
+      Integer peakCurrentLimit,
+      Integer peakCurrentLimitDuration,
       Double voltageRampRate,
-      Double outputVoltageMax,
+      Double voltageCompSaturation,
       Double closedLoopRampRate,
       Double forwardOutputVoltagePeak,
       Double reverseOutputVoltagePeak,
@@ -37,14 +41,14 @@ public class MotionMagicTalonConfiguration extends PIDTalonConfiguration {
       Double dGain,
       Double fGain,
       Integer iZone,
-      Double motionMagicAcceleration,
-      Double motionMagicCruiseVelocity) {
+      Integer motionMagicAcceleration,
+      Integer motionMagicCruiseVelocity) {
     super(
         name,
-        TalonControlMode.MotionMagic,
+        ControlMode.MotionMagic,
         setpointMax,
         encoder,
-        isBrakeInNeutral,
+        neutralMode,
         isOutputReversed,
         velocityMeasurementPeriod,
         velocityMeasurementWindow,
@@ -52,9 +56,11 @@ public class MotionMagicTalonConfiguration extends PIDTalonConfiguration {
         reverseLimitSwitch,
         forwardSoftLimit,
         reverseSoftLimit,
-        currentLimit,
+        continuousCurrentLimit,
+        peakCurrentLimit,
+        peakCurrentLimitDuration,
         voltageRampRate,
-        outputVoltageMax,
+        voltageCompSaturation,
         closedLoopRampRate,
         forwardOutputVoltagePeak,
         reverseOutputVoltagePeak,
@@ -72,18 +78,23 @@ public class MotionMagicTalonConfiguration extends PIDTalonConfiguration {
   }
 
   @Override
-  public void configure(@NotNull CANTalon talon) {
+  public void configure(@NotNull TalonSRX talon) {
     super.configure(talon);
-    talon.changeControlMode(TalonControlMode.MotionMagic);
-    talon.setMotionMagicAcceleration(valueOrElse(motionMagicAcceleration, 0));
-    talon.setMotionMagicCruiseVelocity(valueOrElse(motionMagicCruiseVelocity, 0));
+    if (talon instanceof ThirdCoastTalon) {
+      ((ThirdCoastTalon) talon).changeControlMode(ControlMode.MotionMagic);
+    }
+    ErrorCode err;
+    err = talon.configMotionAcceleration(valueOrElseZero(motionMagicAcceleration), timeout);
+    Errors.check(talon, "configMotionAcceleration", err, logger);
+    err = talon.configMotionCruiseVelocity(valueOrElseZero(motionMagicCruiseVelocity), timeout);
+    Errors.check(talon, "configMotionCruiseVelocity", err, logger);
   }
 
-  public Double getMotionMagicAcceleration() {
+  public Integer getMotionMagicAcceleration() {
     return motionMagicAcceleration;
   }
 
-  public Double getMotionMagicCruiseVelocity() {
+  public Integer getMotionMagicCruiseVelocity() {
     return motionMagicCruiseVelocity;
   }
 

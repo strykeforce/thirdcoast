@@ -1,11 +1,11 @@
 package org.strykeforce.thirdcoast.telemetry.tct.talon.config;
 
-import com.ctre.CANTalon;
 import java.util.Arrays;
 import java.util.List;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
 import org.jline.reader.UserInterruptException;
+import org.strykeforce.thirdcoast.talon.ThirdCoastTalon;
 import org.strykeforce.thirdcoast.telemetry.tct.Messages;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 
@@ -19,11 +19,12 @@ public abstract class AbstractFwdRevDoubleConfigCommand extends AbstractTalonCon
     this.flipReverse = flipReverse;
   }
 
-  public AbstractFwdRevDoubleConfigCommand(String name, LineReader reader, TalonSet talonSet) {
-    this(name, reader, talonSet, false);
-  }
+  // FIXME
+  //  public AbstractFwdRevDoubleConfigCommand(String name, LineReader reader, TalonSet talonSet) {
+  //    this(name, reader, talonSet, false);
+  //  }
 
-  protected abstract void config(CANTalon talon, double foward, double reverse);
+  protected abstract void config(ThirdCoastTalon talon, double foward, double reverse);
 
   protected abstract void saveConfig(double forward, double reverse);
 
@@ -34,13 +35,13 @@ public abstract class AbstractFwdRevDoubleConfigCommand extends AbstractTalonCon
       return;
     }
     saveConfig(values[0], values[1]);
-    for (CANTalon talon : talonSet.selected()) {
+    for (ThirdCoastTalon talon : talonSet.selected()) {
       config(talon, values[0], values[1]);
       logger.info("set {} for {} to {}/{}", name(), talon.getDescription(), values[0], values[1]);
     }
   }
 
-  protected double[] getFwdRevDoubles() {
+  private double[] getFwdRevDoubles() {
     terminal
         .writer()
         .println(Messages.bold("\nenter <forward>,<reverse> or a single number for both"));
@@ -81,7 +82,7 @@ public abstract class AbstractFwdRevDoubleConfigCommand extends AbstractTalonCon
     return values;
   }
 
-  protected void help() {
+  private void help() {
     terminal
         .writer()
         .println(Messages.boldRed("please enter a number or two numbers separated by a commma"));

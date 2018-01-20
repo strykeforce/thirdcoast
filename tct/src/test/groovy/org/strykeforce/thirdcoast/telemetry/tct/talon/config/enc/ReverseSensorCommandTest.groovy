@@ -2,6 +2,7 @@ package org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc
 
 import org.strykeforce.thirdcoast.telemetry.tct.Command
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractTalonConfigCommandTest
+import spock.lang.Ignore
 
 class ReverseSensorCommandTest extends AbstractTalonConfigCommandTest {
 
@@ -23,7 +24,6 @@ class ReverseSensorCommandTest extends AbstractTalonConfigCommandTest {
         0 * talon._
     }
 
-
     def "yes selected"() {
         given:
         reader.readLine(_) >> "Y"
@@ -32,7 +32,7 @@ class ReverseSensorCommandTest extends AbstractTalonConfigCommandTest {
         command.perform()
 
         then:
-        1 * talon.reverseSensor(true)
+        1 * talon.setSensorPhase(true)
         1 * talon.getDescription()
         0 * talon._
     }
@@ -45,7 +45,7 @@ class ReverseSensorCommandTest extends AbstractTalonConfigCommandTest {
         command.perform()
 
         then:
-        1 * talon.reverseSensor(false)
+        1 * talon.setSensorPhase(false)
         1 * talon.getDescription()
         0 * talon._
     }

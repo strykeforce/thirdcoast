@@ -1,6 +1,6 @@
 package org.strykeforce.thirdcoast.talon
 
-import com.ctre.CANTalon
+import com.ctre.phoenix.motorcontrol.FeedbackDevice
 import spock.lang.Specification
 
 import java.nio.file.Files
@@ -18,7 +18,7 @@ class TalonProvisionerTest extends Specification {
 
         then:
         Files.isReadable(temp.toPath())
-        Files.size(temp.toPath()) == 775
+        Files.size(temp.toPath()) == 793
     }
 
     def "default TALON config"() {
@@ -34,10 +34,9 @@ class TalonProvisionerTest extends Specification {
         then:
         config.name == "drive"
         config instanceof VoltageTalonConfiguration
-        config.setpointMax == 12.0
-        config.encoder.device == CANTalon.FeedbackDevice.QuadEncoder
+        config.setpointMax == 12.0d
+        config.encoder.device == FeedbackDevice.CTRE_MagEncoder_Relative
         !config.encoder.isReversed()
-        !config.encoder.unitScalingEnabled
 
         when:
         config = (PositionTalonConfiguration) provisioner.configurationFor("azimuth")
@@ -45,10 +44,9 @@ class TalonProvisionerTest extends Specification {
         then:
         config.name == "azimuth"
         config instanceof PositionTalonConfiguration
-        config.setpointMax == 4095.0
-        config.encoder.device == CANTalon.FeedbackDevice.CtreMagEncoder_Relative
+        config.setpointMax == 0xFFF
+        config.encoder.device == FeedbackDevice.CTRE_MagEncoder_Relative
         !config.encoder.isReversed()
-        !config.encoder.unitScalingEnabled
         !config.brakeInNeutral
         !config.outputReversed
         config.PGain == 0.0
@@ -58,6 +56,28 @@ class TalonProvisionerTest extends Specification {
         config.IZone == 0
     }
 
+    def "configuration timeout is updated"() {
+        given:
+        File temp = File.createTempFile("thirdcoast_", ".toml")
+        temp.delete()
+        temp.deleteOnExit()
+        def provisioner = new TalonProvisioner(temp)
+
+        when:
+        provisioner.enableTimeout(true)
+        def config = provisioner.configurationFor("drive")
+
+        then:
+        config.getTimeout() == TalonProvisioner.TIMEOUT_MS
+
+        when:
+        provisioner.enableTimeout(false)
+
+        then:
+        config.getTimeout() == 0
+
+    }
+
     def "empty config file"() {
         given:
         File temp = File.createTempFile("thirdcoast_", ".toml")
@@ -65,7 +85,7 @@ class TalonProvisionerTest extends Specification {
 
 
         when:
-        def provisioner = new TalonProvisioner(temp)
+        new TalonProvisioner(temp)
 
         then:
         noExceptionThrown()

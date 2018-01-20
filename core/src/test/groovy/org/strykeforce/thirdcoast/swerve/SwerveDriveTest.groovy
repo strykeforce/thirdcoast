@@ -9,9 +9,9 @@ class SwerveDriveTest extends spock.lang.Specification {
     static tomlString = '''
     [[TALON]]
     name = "drive"
-    mode = "Voltage"
-    setpointMax    = 12.0
-    currentLimit   = 50
+    mode = "PercentOutput"
+    setpointMax    = 1.0
+    continuousCurrentLimit   = 50
     [TALON.encoder]
     device = "QuadEncoder"
 
@@ -19,7 +19,7 @@ class SwerveDriveTest extends spock.lang.Specification {
     name = "azimuth"
     mode = "Position"
     setpointMax     = 4095.0
-    brakeInNeutral = false
+    neutralMode = "Coast"
     pGain =   1.0
     iGain =   2.0
     dGain =   3.0
@@ -32,7 +32,7 @@ class SwerveDriveTest extends spock.lang.Specification {
     
     [[TALON]]
     name = "speed"
-    mode = "Speed"
+    mode = "Velocity"
     setpointMax = 1.0
 '''
 

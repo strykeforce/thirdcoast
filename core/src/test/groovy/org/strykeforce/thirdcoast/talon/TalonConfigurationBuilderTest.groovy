@@ -1,14 +1,20 @@
 package org.strykeforce.thirdcoast.talon
 
+import com.ctre.phoenix.motorcontrol.NeutralMode
 import com.moandjiezana.toml.Toml
 import spock.lang.Specification
 
-import static com.ctre.CANTalon.FeedbackDevice.EncRising
-import static com.ctre.CANTalon.FeedbackDevice.QuadEncoder
-import static com.ctre.CANTalon.TalonControlMode.*
-import static com.ctre.CANTalon.VelocityMeasurementPeriod.Period_25Ms
-import static com.ctre.CANTalon.VelocityMeasurementPeriod.Period_5Ms
+import static com.ctre.phoenix.motorcontrol.ControlMode.Disabled
+import static com.ctre.phoenix.motorcontrol.ControlMode.MotionMagic
+import static com.ctre.phoenix.motorcontrol.ControlMode.PercentOutput
+import static com.ctre.phoenix.motorcontrol.ControlMode.Position
+import static com.ctre.phoenix.motorcontrol.ControlMode.Velocity
+import static com.ctre.phoenix.motorcontrol.FeedbackDevice.CTRE_MagEncoder_Absolute
+import static com.ctre.phoenix.motorcontrol.FeedbackDevice.QuadEncoder
+import static com.ctre.phoenix.motorcontrol.VelocityMeasPeriod.Period_25Ms
+import static com.ctre.phoenix.motorcontrol.VelocityMeasPeriod.Period_5Ms
 
+// TODO: test voltageCompSaturation
 class TalonConfigurationBuilderTest extends Specification {
 
     TalonConfigurationBuilder tcb = new TalonConfigurationBuilder()
@@ -16,7 +22,7 @@ class TalonConfigurationBuilderTest extends Specification {
     def "creates VoltageTalonConfiguration from TOML config"() {
         def input = '''
 name = "foo"
-mode = "Voltage"
+mode = "PercentOutput"
 setpointMax = 12.0
 '''
         when:
@@ -25,13 +31,13 @@ setpointMax = 12.0
         then:
         vtc instanceof VoltageTalonConfiguration
         vtc.name == 'foo'
-        vtc.setpointMax == 12.0
+        vtc.setpointMax == 12.0d
     }
 
     def "creates SpeedTalonConfiguration from TOML config"() {
         def input = '''
 name = "bar"
-mode = "Speed"
+mode = "Velocity"
 setpointMax = 120.0
 pGain = 1.2
 '''
@@ -40,7 +46,7 @@ pGain = 1.2
 
         then:
         stc.name == 'bar'
-        stc.setpointMax == 120.0
+        stc.setpointMax == 120.0d
         stc.PGain == 1.2
     }
 
@@ -51,8 +57,9 @@ pGain = 1.2
         then:
         tc instanceof VoltageTalonConfiguration
         tc.name == TalonConfigurationBuilder.DEFAULT_NAME
-        tc.setpointMax == 12.0
-        tc.currentLimit == null
+        tc.setpointMax == 12.0d
+        tc.voltageCompSaturation == null
+        tc.continuousCurrentLimit == null
         tc.encoder == null
         tc.brakeInNeutral == null
         tc.outputReversed == null
@@ -67,9 +74,9 @@ pGain = 1.2
     def "reads talon parameters"() {
         when:
         def tc = tcb.name("test")
-                .mode(Voltage)
+                .mode(PercentOutput)
                 .setpointMax(12)
-                .encoder(QuadEncoder, true, 360)
+                .encoder(QuadEncoder, true)
                 .brakeInNeutral(true)
                 .forwardLimitSwitch(true)
                 .forwardSoftLimit(10000)
@@ -84,9 +91,7 @@ pGain = 1.2
         tc.name == "test"
         tc.encoder.device == QuadEncoder
         tc.encoder.reversed
-        tc.encoder.unitScalingEnabled
-        tc.encoder.ticksPerRevolution == 360
-        tc.brakeInNeutral
+        tc.brakeInNeutral == NeutralMode.Brake
         tc.forwardLimitSwitch.enabled
         tc.forwardLimitSwitch.normallyOpen
         tc.forwardSoftLimit.enabled
@@ -96,13 +101,12 @@ pGain = 1.2
         tc.outputReversed
         tc.velocityMeasurementPeriod == Period_5Ms
         tc.velocityMeasurementWindow == 16
-        tc.currentLimit == 50
+        tc.continuousCurrentLimit == 50
     }
-
 
     def "creates TOML for SpeedTalonConfiguration"() {
         when:
-        def toml = new Toml().read(tcb.mode(Speed).P(27.67).getToml())
+        def toml = new Toml().read(tcb.mode(Velocity).P(27.67d).getToml())
 
         then:
         toml.getString("name") == TalonConfigurationBuilder.DEFAULT_NAME
@@ -120,7 +124,7 @@ pGain = 1.2
 
     def "builds Speed with defaults"() {
         when:
-        def tc = tcb.mode(Speed).build()
+        def tc = tcb.mode(Velocity).build()
 
         then:
         tc instanceof SpeedTalonConfiguration
@@ -136,20 +140,19 @@ pGain = 1.2
 
     def "configures max setpoint"() {
         when:
-        def tc = tcb.setpointMax(27.67).build()
+        def tc = tcb.setpointMax(27.67d).build()
 
         then:
-        tc.setpointMax == 27.67
+        tc.setpointMax == 27.67d
     }
 
     def "configures encoder"() {
         when:
-        def tc = tcb.encoder(EncRising, true, 2767).build()
+        def tc = tcb.encoder(CTRE_MagEncoder_Absolute, true).build()
 
         then:
-        tc.encoder.device == EncRising
+        tc.encoder.device == CTRE_MagEncoder_Absolute
         tc.encoder.reversed
-        tc.encoder.ticksPerRevolution == 2767
     }
 
     def "configures only encoder reversed"() {
@@ -159,15 +162,22 @@ pGain = 1.2
         then:
         tc.encoder.device == QuadEncoder
         tc.encoder.reversed
-        !tc.encoder.unitScalingEnabled
     }
 
-    def "configure brake in neutral"() {
+    def "configure coast in neutral"() {
         when:
         def tc = tcb.brakeInNeutral(false).build()
 
         then:
-        !tc.brakeInNeutral
+        tc.brakeInNeutral == NeutralMode.Coast
+    }
+
+    def "configure brake in neutral"() {
+        when:
+        def tc = tcb.brakeInNeutral(true).build()
+
+        then:
+        tc.brakeInNeutral == NeutralMode.Brake
     }
 
     def "configure velocity measurement period"() {
@@ -206,20 +216,20 @@ pGain = 1.2
 
     def "configure foward soft limit"() {
         when:
-        def tc = tcb.forwardSoftLimit(27.67).build()
+        def tc = tcb.forwardSoftLimit(2767).build()
 
         then:
         tc.forwardSoftLimit.enabled
-        tc.forwardSoftLimit.position == 27.67
+        tc.forwardSoftLimit.position == 2767
     }
 
     def "configure reverse soft limit"() {
         when:
-        def tc = tcb.reverseSoftLimit(27.67).build()
+        def tc = tcb.reverseSoftLimit(2767).build()
 
         then:
         tc.reverseSoftLimit.enabled
-        tc.reverseSoftLimit.position == 27.67
+        tc.reverseSoftLimit.position == 2767
     }
 
     def "configure current limit"() {
@@ -227,55 +237,60 @@ pGain = 1.2
         def tc = tcb.currentLimit(2767).build()
 
         then:
-        tc.currentLimit == 2767
+        tc.continuousCurrentLimit == 2767
     }
 
     def "configure voltage ramp rate"() {
         when:
-        def tc = tcb.voltageRampRate(27.67).build()
+        def tc = tcb.voltageRampRate(27.67d).build()
 
         then:
-        tc.voltageRampRate == 27.67
+        tc.openLoopRampTime == 27.67d
     }
 
     // PIDTalonConfig
-    def "configure max output voltage limit"() {
+    def "configure max output voltage"() {
         when:
-        PIDTalonConfiguration tc = tcb.mode(Speed).outputVoltageMax(27.67).build()
+        PIDTalonConfiguration tc = (PIDTalonConfiguration) tcb.mode(Velocity)
+                .voltageCompSaturation(27.67d).build()
 
         then:
-        tc.outputVoltageMax == 27.67
+        tc.voltageCompSaturation == 27.67d
     }
 
     def "configure closed loop ramp rate limit"() {
         when:
-        PIDTalonConfiguration tc = tcb.mode(Speed).closedLoopRampRate(27.67).build()
+        PIDTalonConfiguration tc = (PIDTalonConfiguration) tcb.mode(Velocity)
+                .closedLoopRampRate(27.67d).build()
 
         then:
-        tc.closedLoopRampRate == 27.67
+        tc.closedLoopRampRate == 27.67d
     }
 
     def "configure peak output voltage limit"() {
         when:
-        PIDTalonConfiguration tc = tcb.mode(Speed).outputVoltagePeak(2.7, 6.7).build()
+        PIDTalonConfiguration tc = (PIDTalonConfiguration) tcb.mode(Velocity)
+                .outputVoltagePeak(2.7d, 6.7d).build()
 
         then:
-        tc.forwardOutputVoltagePeak == 2.7
-        tc.reverseOutputVoltagePeak == 6.7
+        tc.forwardOutputVoltagePeak == 2.7d
+        tc.reverseOutputVoltagePeak == 6.7d
     }
 
     def "configure nominal output voltage limit"() {
         when:
-        PIDTalonConfiguration tc = tcb.mode(Speed).outputVoltageNominal(2.7, 6.7).build()
+        PIDTalonConfiguration tc = (PIDTalonConfiguration) tcb.mode(Velocity)
+                .outputVoltageNominal(2.7d, 6.7d).build()
 
         then:
-        tc.forwardOutputVoltageNominal == 2.7
-        tc.reverseOutputVoltageNominal == 6.7
+        tc.forwardOutputVoltageNominal == 2.7d
+        tc.reverseOutputVoltageNominal == 6.7d
     }
 
     def "configure allowable closed loop error"() {
         when:
-        PIDTalonConfiguration tc = tcb.mode(Speed).allowableClosedLoopError(2767).build()
+        PIDTalonConfiguration tc = (PIDTalonConfiguration) tcb.mode(Velocity)
+                .allowableClosedLoopError(2767).build()
 
         then:
         tc.allowableClosedLoopError == 2767
@@ -283,15 +298,16 @@ pGain = 1.2
 
     def "configure nominal closed-loop voltage"() {
         when:
-        PIDTalonConfiguration tc = tcb.mode(Speed).nominalClosedLoopVoltage(27.67).build()
+        PIDTalonConfiguration tc = (PIDTalonConfiguration) tcb.mode(Velocity)
+                .nominalClosedLoopVoltage(27.67d).build()
 
         then:
-        tc.nominalClosedLoopVoltage == 27.67
+        tc.nominalClosedLoopVoltage == 27.67d
     }
 
     def "configure P"() {
         when:
-        PIDTalonConfiguration tc = tcb.mode(Speed).P(27.67).build()
+        PIDTalonConfiguration tc = (PIDTalonConfiguration) tcb.mode(Velocity).P(27.67d).build()
 
         then:
         tc.PGain == 27.67
@@ -299,7 +315,7 @@ pGain = 1.2
 
     def "configure I"() {
         when:
-        PIDTalonConfiguration tc = tcb.mode(Speed).I(27.67).build()
+        PIDTalonConfiguration tc = (PIDTalonConfiguration) tcb.mode(Velocity).I(27.67d).build()
 
         then:
         tc.IGain == 27.67
@@ -307,7 +323,7 @@ pGain = 1.2
 
     def "configure D"() {
         when:
-        PIDTalonConfiguration tc = tcb.mode(Speed).D(27.67).build()
+        PIDTalonConfiguration tc = (PIDTalonConfiguration) tcb.mode(Velocity).D(27.67d).build()
 
         then:
         tc.DGain == 27.67
@@ -315,7 +331,7 @@ pGain = 1.2
 
     def "configure F"() {
         when:
-        PIDTalonConfiguration tc = tcb.mode(Speed).F(27.67).build()
+        PIDTalonConfiguration tc = (PIDTalonConfiguration) tcb.mode(Velocity).F(27.67d).build()
 
         then:
         tc.FGain == 27.67
@@ -323,7 +339,7 @@ pGain = 1.2
 
     def "configure I-zone"() {
         when:
-        PIDTalonConfiguration tc = tcb.mode(Speed).iZone(2767).build()
+        PIDTalonConfiguration tc = (PIDTalonConfiguration) tcb.mode(Velocity).iZone(2767).build()
 
         then:
         tc.IZone == 2767
@@ -331,18 +347,20 @@ pGain = 1.2
 
     def "configure motionMagicAcceleration"() {
         when:
-        MotionMagicTalonConfiguration tc = tcb.mode(MotionMagic).motionMagicAcceleration(27.67).build()
+        MotionMagicTalonConfiguration tc = (MotionMagicTalonConfiguration) tcb.mode(MotionMagic)
+                .motionMagicAcceleration(27).build()
 
         then:
-        tc.motionMagicAcceleration == 27.67
+        tc.motionMagicAcceleration == 27
     }
 
     def "configure motionMagicCruiseVelocity"() {
         when:
-        MotionMagicTalonConfiguration tc = tcb.mode(MotionMagic).motionMagicCruiseVelocity(27.67).build()
+        MotionMagicTalonConfiguration tc = (MotionMagicTalonConfiguration) tcb.mode(MotionMagic)
+                .motionMagicCruiseVelocity(67).build()
 
         then:
-        tc.motionMagicCruiseVelocity == 27.67
+        tc.motionMagicCruiseVelocity == 67
     }
 
     def "checks config for proper operating mode"() {
@@ -367,16 +385,16 @@ pGain = 1.2
         where:
         input                                 | message
         ''                                    | 'mode missing from configuration'
-        "mode = \"Bogus\"\nsetpointMax = 0.0" | 'No enum constant com.ctre.CANTalon.TalonControlMode.Bogus'
+        "mode = \"Bogus\"\nsetpointMax = 0.0" | 'No enum constant com.ctre.phoenix.motorcontrol.ControlMode.Bogus'
     }
 
     // https://github.com/strykeforce/thirdcoast/issues/19
     def "reads voltageRampRate from VoltageTalonConfiguration"() {
         def input = '''
 name = "foo"
-mode = "Voltage"
+mode = "PercentOutput"
 setpointMax = 12.0
-voltageRampRate = 4.0
+openLoopRampTime = 4.0
 '''
         when:
         def vtc = new TalonConfigurationBuilder(TalonConfigurationBuilder.create(new Toml().read(input))).build()
@@ -384,8 +402,8 @@ voltageRampRate = 4.0
         then:
         vtc instanceof VoltageTalonConfiguration
         vtc.name == 'foo'
-        vtc.setpointMax == 12.0
-        vtc.voltageRampRate == 4.0
+        vtc.setpointMax == 12.0d
+        vtc.openLoopRampTime == 4.0
     }
 
     def "reads motion magic params from MotionMagicTalonConfiguration"() {
@@ -393,18 +411,19 @@ voltageRampRate = 4.0
 name = "foo"
 mode = "MotionMagic"
 setpointMax = 0.0
-motionMagicAcceleration = 2.7
-motionMagicCruiseVelocity = 6.7
+motionMagicAcceleration = 27
+motionMagicCruiseVelocity = 67
 '''
         when:
-        def mmtc = (MotionMagicTalonConfiguration) new TalonConfigurationBuilder(TalonConfigurationBuilder.create(new Toml().read(input))).build()
+        def mmtc = (MotionMagicTalonConfiguration) new TalonConfigurationBuilder(TalonConfigurationBuilder
+                .create(new Toml().read(input))).build()
 
         then:
         mmtc instanceof MotionMagicTalonConfiguration
         mmtc.name == 'foo'
-        mmtc.setpointMax == 0.0
-        mmtc.motionMagicAcceleration == 2.7
-        mmtc.motionMagicCruiseVelocity == 6.7
+        mmtc.setpointMax == 0.0d
+        mmtc.motionMagicAcceleration == 27
+        mmtc.motionMagicCruiseVelocity == 67
     }
 
 }

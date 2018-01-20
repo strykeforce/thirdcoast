@@ -1,7 +1,12 @@
 package org.strykeforce.thirdcoast.telemetry.item;
 
-import com.ctre.CANTalon;
-import com.ctre.CANTalon.TalonControlMode;
+import com.ctre.phoenix.ParamEnum;
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.Faults;
+import com.ctre.phoenix.motorcontrol.SensorCollection;
+import com.ctre.phoenix.motorcontrol.StickyFaults;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.squareup.moshi.JsonWriter;
 import java.io.IOException;
 import java.util.Collections;
@@ -10,7 +15,7 @@ import java.util.Set;
 import java.util.function.DoubleSupplier;
 import org.strykeforce.thirdcoast.telemetry.grapher.Measure;
 
-/** Represents a {@link CANTalon} telemetry-enable Item. */
+/** Represents a {@link TalonSRX} telemetry-enable Item. */
 public class TalonItem extends AbstractItem {
 
   public static final String TYPE = "talon";
@@ -20,36 +25,44 @@ public class TalonItem extends AbstractItem {
               Measure.SETPOINT,
               Measure.OUTPUT_CURRENT,
               Measure.OUTPUT_VOLTAGE,
-              Measure.ENCODER_POSITION,
-              Measure.ENCODER_VELOCITY,
-              Measure.ABSOLUTE_ENCODER_POSITION,
-              Measure.ANALOG_RAW,
-              Measure.CONTROL_LOOP_ERROR,
-              Measure.INTEGRATOR_ACCUMULATOR,
+              Measure.OUTPUT_PERCENT,
+              Measure.SELECTED_SENSOR_POSITION,
+              Measure.SELECTED_SENSOR_VELOCITY,
+              Measure.ACTIVE_TRAJECTORY_POSITION,
+              Measure.ACTIVE_TRAJECTORY_VELOCITY,
+              Measure.CLOSED_LOOP_ERROR,
               Measure.BUS_VOLTAGE,
-              Measure.FORWARD_HARD_LIMIT_CLOSED,
-              Measure.REVERSE_HARD_LIMIT_CLOSED,
-              Measure.FORWARD_SOFT_LIMIT_OK,
-              Measure.REVERSE_SOFT_LIMIT_OK,
-              Measure.POSITION,
-              Measure.SPEED,
-              Measure.FEEDBACK,
-              Measure.MOMAGIC_ACCL,
-              Measure.MOMAGIC_A_TRAJ_POS,
-              Measure.MOMAGIC_A_TRAJ_VEL,
-              Measure.MOMAGIC_CRUISE_VEL));
+              Measure.ERROR_DERIVATIVE,
+              Measure.INTEGRAL_ACCUMULATOR,
+              Measure.ANALOG_IN,
+              Measure.ANALOG_RAW,
+              Measure.ANALOG_POSITION,
+              Measure.ANALOG_VELOCITY,
+              Measure.QUAD_POSITION,
+              Measure.QUAD_VELOCITY,
+              Measure.QUAD_A_PIN,
+              Measure.QUAD_B_PIN,
+              Measure.QUAD_IDX_PIN,
+              Measure.PULSE_WIDTH_POSITION,
+              Measure.PULSE_WIDTH_VELOCITY,
+              Measure.PULSE_WIDTH_RISE_TO_FALL,
+              Measure.PULSE_WIDTH_RISE_TO_RISE,
+              Measure.FORWARD_LIMIT_SWITCH_CLOSED,
+              Measure.REVERSE_LIMIT_SWITCH_CLOSED));
   // TODO: getMotionProfileStatus
   private static final String NA = "not available in API";
-  private final CANTalon talon;
-  private final Set<TalonControlMode> CLOSED_LOOP =
-      EnumSet.of(TalonControlMode.Current, TalonControlMode.Position, TalonControlMode.Speed);
+  private static final double TRUE = 1;
+  private static final double FALSE = 0;
+  private final TalonSRX talon;
+  private final SensorCollection sensorCollection;
 
-  public TalonItem(final CANTalon talon) {
-    super(TYPE, talon.getDescription(), MEASURES);
+  public TalonItem(final TalonSRX talon) {
+    super(TYPE, ((WPI_TalonSRX) talon).getDescription(), MEASURES);
     this.talon = talon;
+    sensorCollection = talon.getSensorCollection();
   }
 
-  public CANTalon getTalon() {
+  public TalonSRX getTalon() {
     return talon;
   }
 
@@ -66,48 +79,59 @@ public class TalonItem extends AbstractItem {
 
     switch (measure) {
       case SETPOINT:
-        return talon::getSetpoint;
+        return () -> talon.getClosedLoopTarget(0);
       case OUTPUT_CURRENT:
         return talon::getOutputCurrent;
       case OUTPUT_VOLTAGE:
-        return talon::getOutputVoltage;
-      case ENCODER_POSITION:
-        return talon::getEncPosition;
-      case ENCODER_VELOCITY:
-        return talon::getEncVelocity;
-      case ABSOLUTE_ENCODER_POSITION:
-        return () -> talon.getPulseWidthPosition() & 0xFFF;
-      case CONTROL_LOOP_ERROR:
-        return talon::getClosedLoopError;
-      case INTEGRATOR_ACCUMULATOR:
-        return talon::GetIaccum;
+        return talon::getMotorOutputVoltage;
+      case OUTPUT_PERCENT:
+        return talon::getMotorOutputPercent;
+      case SELECTED_SENSOR_POSITION:
+        return () -> talon.getSelectedSensorPosition(0);
+      case SELECTED_SENSOR_VELOCITY:
+        return () -> talon.getSelectedSensorVelocity(0);
+      case ACTIVE_TRAJECTORY_POSITION:
+        return talon::getActiveTrajectoryPosition;
+      case ACTIVE_TRAJECTORY_VELOCITY:
+        return talon::getActiveTrajectoryVelocity;
+      case CLOSED_LOOP_ERROR:
+        return () -> talon.getClosedLoopError(0);
       case BUS_VOLTAGE:
         return talon::getBusVoltage;
-      case FORWARD_HARD_LIMIT_CLOSED:
-        return () -> talon.isFwdLimitSwitchClosed() ? 1.0 : 0.0;
-      case REVERSE_HARD_LIMIT_CLOSED:
-        return () -> talon.isRevLimitSwitchClosed() ? 1.0 : 0.0;
-      case FORWARD_SOFT_LIMIT_OK:
-        // TODO: verify soft limit
-        return talon::getForwardSoftLimit;
-      case REVERSE_SOFT_LIMIT_OK:
-        return talon::getReverseSoftLimit;
-      case SPEED:
-        return talon::getSpeed;
-      case FEEDBACK:
-        return talon::get;
-      case POSITION:
-        return talon::getPosition;
+      case ERROR_DERIVATIVE:
+        return () -> talon.getErrorDerivative(0);
+      case INTEGRAL_ACCUMULATOR:
+        return () -> talon.getIntegralAccumulator(0);
+      case ANALOG_IN:
+        return sensorCollection::getAnalogIn;
       case ANALOG_RAW:
-        return talon::getAnalogInRaw;
-      case MOMAGIC_ACCL:
-        return talon::getMotionMagicAcceleration;
-      case MOMAGIC_A_TRAJ_POS:
-        return talon::getMotionMagicActTrajPosition;
-      case MOMAGIC_A_TRAJ_VEL:
-        return talon::getMotionMagicActTrajVelocity;
-      case MOMAGIC_CRUISE_VEL:
-        return talon::getMotionMagicCruiseVelocity;
+        return sensorCollection::getAnalogInRaw;
+        //      case ANALOG_POSITION:
+        //        return () -> 0;
+      case ANALOG_VELOCITY:
+        return sensorCollection::getAnalogInVel;
+      case QUAD_POSITION:
+        return sensorCollection::getQuadraturePosition;
+      case QUAD_VELOCITY:
+        return sensorCollection::getQuadratureVelocity;
+      case QUAD_A_PIN:
+        return () -> sensorCollection.getPinStateQuadA() ? TRUE : FALSE;
+      case QUAD_B_PIN:
+        return () -> sensorCollection.getPinStateQuadB() ? TRUE : FALSE;
+      case QUAD_IDX_PIN:
+        return () -> sensorCollection.getPinStateQuadIdx() ? TRUE : FALSE;
+      case PULSE_WIDTH_POSITION:
+        return sensorCollection::getPulseWidthPosition;
+      case PULSE_WIDTH_VELOCITY:
+        return sensorCollection::getPulseWidthVelocity;
+      case PULSE_WIDTH_RISE_TO_FALL:
+        return sensorCollection::getPulseWidthRiseToFallUs;
+      case PULSE_WIDTH_RISE_TO_RISE:
+        return sensorCollection::getPulseWidthRiseToRiseUs;
+      case FORWARD_LIMIT_SWITCH_CLOSED:
+        return () -> sensorCollection.isFwdLimitSwitchClosed() ? TRUE : FALSE;
+      case REVERSE_LIMIT_SWITCH_CLOSED:
+        return () -> sensorCollection.isRevLimitSwitchClosed() ? TRUE : FALSE;
       default:
         throw new AssertionError(measure);
     }
@@ -119,63 +143,93 @@ public class TalonItem extends AbstractItem {
   }
 
   @Override
-  public void toJson(JsonWriter writer) throws IOException {
+  public void toJson(JsonWriter writer) throws IOException { // FIXME: finish 2018 conversion
     writer.beginObject();
     writer.name("type").value(TYPE);
+    writer.name("baseId").value(talon.getBaseID());
     writer.name("deviceId").value(talon.getDeviceID());
-    writer.name("description").value(talon.getDescription());
-    writer.name("firmwareVersion").value(talon.GetFirmwareVersion());
+    writer.name("description").value(((WPI_TalonSRX) talon).getDescription());
+    writer.name("firmwareVersion").value(talon.getFirmwareVersion());
     writer.name("controlMode").value(talon.getControlMode().toString());
-    writer.name("brakeEnabledDuringNeutral").value(talon.getBrakeEnableDuringNeutral());
+    //writer.name("brakeEnabledDuringNeutral").value(talon.getBrakeEnableDuringNeutral());
+    writer
+        .name("onBootBrakeMode")
+        .value(talon.configGetParameter(ParamEnum.eOnBoot_BrakeMode, 0, 0));
     writer.name("busVoltage").value(talon.getBusVoltage());
-    writer.name("feedbackDevice").value(NA);
-    writer.name("currentLimit").value(NA);
-    writer.name("encoderCodesPerRef").value(NA);
+    writer
+        .name("feedbackSensorType")
+        .value(talon.configGetParameter(ParamEnum.eFeedbackSensorType, 0, 0));
+    writer
+        .name("peakCurrentLimitMs")
+        .value(talon.configGetParameter(ParamEnum.ePeakCurrentLimitMs, 0, 0));
+    writer
+        .name("peakCurrentLimitAmps")
+        .value(talon.configGetParameter(ParamEnum.ePeakCurrentLimitAmps, 0, 0));
+
+    //writer.name("encoderCodesPerRef").value(NA);
     writer.name("inverted").value(talon.getInverted());
-    writer.name("numberOfQuadIdxRises").value(talon.getNumberOfQuadIdxRises());
-    writer.name("outputVoltage").value(talon.getOutputVoltage());
+    //writer.name("numberOfQuadIdxRises").value(talon.getNumberOfQuadIdxRises());
+    writer
+        .name("eQuadIdxPolarity")
+        .value(talon.configGetParameter(ParamEnum.eQuadIdxPolarity, 0, 0));
+    writer.name("outputVoltage").value(talon.getMotorOutputVoltage());
     writer.name("outputCurrent").value(talon.getOutputCurrent());
 
     writer.name("analogInput");
     writer.beginObject();
-    writer.name("position").value(talon.getAnalogInPosition());
-    writer.name("velocity").value(talon.getAnalogInVelocity());
-    writer.name("raw").value(talon.getAnalogInRaw());
+    writer.name("position").value(talon.getSensorCollection().getAnalogIn());
+    writer.name("velocity").value(talon.getSensorCollection().getAnalogInVel());
+    writer.name("raw").value(talon.getSensorCollection().getAnalogInRaw());
     writer.endObject();
 
     writer.name("encoder");
     writer.beginObject();
-    writer.name("position").value(talon.getEncPosition());
-    writer.name("velocity").value(talon.getEncVelocity());
+    writer.name("position").value(talon.getSelectedSensorPosition(0));
+    writer.name("velocity").value(talon.getSelectedSensorVelocity(0));
+    writer.endObject();
+
+    writer.name("quadrature");
+    writer.beginObject();
+    writer.name("position").value(talon.getSensorCollection().getQuadraturePosition());
+    writer.name("velocity").value(talon.getSensorCollection().getQuadratureVelocity());
+    writer.endObject();
+
+    writer.name("pulseWidth");
+    writer.beginObject();
+    writer.name("position").value(talon.getSensorCollection().getPulseWidthPosition());
+    writer.name("velocity").value(talon.getSensorCollection().getPulseWidthVelocity());
+    writer.name("riseToFallUs").value(talon.getSensorCollection().getPulseWidthRiseToFallUs());
+    writer.name("riseToRiseUs").value(talon.getSensorCollection().getPulseWidthRiseToRiseUs());
     writer.endObject();
 
     writer.name("closedLoop");
     writer.beginObject();
-    if (CLOSED_LOOP.contains(talon.getControlMode())) {
-      writer.name("enabled").value(true);
-      writer.name("p").value(talon.getP());
-      writer.name("i").value(talon.getI());
-      writer.name("d").value(talon.getD());
-      writer.name("f").value(talon.getF());
-      writer.name("iAccum").value(talon.GetIaccum());
-      writer.name("iZone").value(talon.getIZone());
-      writer.name("errorInt").value(talon.getClosedLoopError());
-      writer.name("errorDouble").value(talon.getError());
-      writer.name("rampRate").value(talon.getCloseLoopRampRate());
-      writer.name("nominalVoltage").value(talon.GetNominalClosedLoopVoltage());
-    } else {
-      writer.name("enabled").value(false);
-    }
+
+    writer.name("enabled").value(true);
+    writer.name("p").value(talon.configGetParameter(ParamEnum.eProfileParamSlot_P, 0, 0));
+    writer.name("i").value(talon.configGetParameter(ParamEnum.eProfileParamSlot_I, 0, 0));
+    writer.name("d").value(talon.configGetParameter(ParamEnum.eProfileParamSlot_D, 0, 0));
+    writer.name("f").value(talon.configGetParameter(ParamEnum.eProfileParamSlot_F, 0, 0));
+    writer
+        .name("iAccum")
+        .value(talon.configGetParameter(ParamEnum.eProfileParamSlot_MaxIAccum, 0, 0));
+    writer.name("iZone").value(talon.configGetParameter(ParamEnum.eProfileParamSlot_IZone, 0, 0));
+    writer.name("errorInt").value(talon.getClosedLoopError(0));
+    writer.name("errorDouble").value(talon.getErrorDerivative(0));
+    writer.name("rampRate").value(talon.configGetParameter(ParamEnum.eOpenloopRamp, 0, 0));
+    writer.name("nominalVoltage").value(talon.configGetParameter(ParamEnum.eClosedloopRamp, 0, 0));
     writer.endObject();
 
     writer.name("motionMagic");
     writer.beginObject();
-    if (talon.getControlMode() == TalonControlMode.MotionMagic) {
+    if (talon.getControlMode() == ControlMode.MotionMagic) {
       writer.name("enabled").value(true);
-      writer.name("acceleration").value(talon.getMotionMagicAcceleration());
-      writer.name("actTrajPosition").value(talon.getMotionMagicActTrajPosition());
-      writer.name("actTrajVelocity").value(talon.getMotionMagicActTrajVelocity());
-      writer.name("cruiseVelocity").value(talon.getMotionMagicCruiseVelocity());
+      writer.name("acceleration").value(talon.configGetParameter(ParamEnum.eMotMag_Accel, 0, 0));
+      //writer.name("actTrajPosition").value(talon.getMotionMagicActTrajPosition());
+      //writer.name("actTrajVelocity").value(talon.getMotionMagicActTrajVelocity());
+      writer
+          .name("cruiseVelocity")
+          .value(talon.configGetParameter(ParamEnum.eMotMag_VelCruise, 0, 0));
     } else {
       writer.name("enabled").value(false);
     }
@@ -183,7 +237,7 @@ public class TalonItem extends AbstractItem {
 
     writer.name("motionProfile");
     writer.beginObject();
-    if (talon.getControlMode() == TalonControlMode.MotionProfile) {
+    if (talon.getControlMode() == ControlMode.MotionProfile) {
       writer.name("enabled").value(true);
       writer.name("topLevelBufferCount").value(talon.getMotionProfileTopLevelBufferCount());
     } else {
@@ -193,36 +247,40 @@ public class TalonItem extends AbstractItem {
 
     writer.name("forwardSoftLimit");
     writer.beginObject();
-    writer.name("enabled").value(talon.isForwardSoftLimitEnabled());
-    if (talon.isForwardSoftLimitEnabled()) {
-      writer.name("limit").value(talon.getForwardSoftLimit());
-    }
+    writer.name("enabled").value(talon.configGetParameter(ParamEnum.eForwardSoftLimitEnable, 0, 0));
+    writer
+        .name("limit")
+        .value(talon.configGetParameter(ParamEnum.eForwardSoftLimitThreshold, 0, 0));
     writer.endObject();
 
     writer.name("reverseSoftLimit");
     writer.beginObject();
-    writer.name("enabled").value(talon.isReverseSoftLimitEnabled());
-    if (talon.isReverseSoftLimitEnabled()) {
-      writer.name("limit").value(talon.getReverseSoftLimit());
-    }
+    writer.name("enabled").value(talon.configGetParameter(ParamEnum.eReverseSoftLimitEnable, 0, 0));
+    writer
+        .name("limit")
+        .value(talon.configGetParameter(ParamEnum.eReverseSoftLimitThreshold, 0, 0));
     writer.endObject();
 
-    writer.name("lastError").value(talon.getLastError());
+    writer.name("lastError").value(talon.getLastError().toString());
     writer.name("faults");
     writer.beginObject();
-    writer.name("lim").value(talon.getFaultForLim());
-    writer.name("stickyLim").value(talon.getStickyFaultForLim());
-    writer.name("softLim").value(talon.getFaultForSoftLim());
-    writer.name("stickySoftLim").value(talon.getStickyFaultForSoftLim());
-    writer.name("hardwareFailure").value(talon.getFaultHardwareFailure());
-    writer.name("overTemp").value(talon.getFaultOverTemp());
-    writer.name("stickyOverTemp").value(talon.getStickyFaultOverTemp());
-    writer.name("revLim").value(talon.getFaultRevLim());
-    writer.name("stickyRevLim").value(talon.getStickyFaultRevLim());
-    writer.name("revSoftLim").value(talon.getFaultRevSoftLim());
-    writer.name("stickyRevSoftLim").value(talon.getStickyFaultRevSoftLim());
-    writer.name("underVoltage").value(talon.getFaultUnderVoltage());
-    writer.name("stickyUnderVoltage").value(talon.getStickyFaultUnderVoltage());
+    StickyFaults stickyfaults = new StickyFaults();
+    Faults faults = new Faults();
+    talon.getStickyFaults(stickyfaults);
+    talon.getFaults(faults);
+    writer.name("lim").value(faults.ForwardLimitSwitch);
+    writer.name("stickyLim").value(stickyfaults.ForwardLimitSwitch);
+    writer.name("softLim").value(faults.ForwardSoftLimit);
+    writer.name("stickySoftLim").value(stickyfaults.ForwardSoftLimit);
+    writer.name("hardwareFailure").value(faults.HardwareFailure);
+    writer.name("overTemp").value(faults.SensorOverflow);
+    writer.name("stickyOverTemp").value(stickyfaults.SensorOverflow);
+    writer.name("revLim").value(faults.ReverseLimitSwitch);
+    writer.name("stickyRevLim").value(stickyfaults.ReverseLimitSwitch);
+    writer.name("revSoftLim").value(faults.ReverseSoftLimit);
+    writer.name("stickyRevSoftLim").value(stickyfaults.ReverseSoftLimit);
+    writer.name("underVoltage").value(faults.UnderVoltage);
+    writer.name("stickyUnderVoltage").value(stickyfaults.UnderVoltage);
     writer.endObject();
 
     writer.endObject();
@@ -232,7 +290,7 @@ public class TalonItem extends AbstractItem {
    * Indicates if some other {@code TalonItem} has the same underlying Talon as this one.
    *
    * @param obj the reference object with which to compare.
-   * @return true if this CANTalon has the same device ID, false otherwise.
+   * @return true if this TalonSRX has the same device ID, false otherwise.
    */
   @Override
   public boolean equals(Object obj) {

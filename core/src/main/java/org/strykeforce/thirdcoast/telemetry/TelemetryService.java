@@ -1,6 +1,6 @@
 package org.strykeforce.thirdcoast.telemetry;
 
-import com.ctre.CANTalon;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -78,19 +78,17 @@ public class TelemetryService {
    * Register a Talon for telemetry sending and set its CAN bus frame rates to default values. If
    * this Talon is already registered the frame rates are not updated.
    *
-   * @param talon the CANTalon to register for data collection
+   * @param talon the TalonSRX to register for data collection
    * @throws IllegalStateException if TelemetryService is running.
    * @see org.strykeforce.thirdcoast.talon.StatusFrameRate
    */
-  public void register(CANTalon talon) {
+  public void register(TalonSRX talon) {
     checkNotStarted();
     if (items.add(new TalonItem(talon))) {
       logger.info("registered talon {}", talon.getDeviceID());
       return;
     }
-    logger.info(
-        "talon {} was already registered, did not reconfigure status frame rate",
-        talon.getDeviceID());
+    logger.info("talon {} was already registered", talon.getDeviceID());
   }
 
   /**
@@ -126,6 +124,7 @@ public class TelemetryService {
    * @param talonId the Talon to registerWith
    * @param rates the status frame rates
    */
+  @Deprecated
   public void configureStatusFrameRates(int talonId, StatusFrameRate rates) {
     assert rates != null;
 

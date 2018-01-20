@@ -1,8 +1,9 @@
 package org.strykeforce.thirdcoast.talon;
 
-import com.ctre.CANTalon;
-import com.ctre.CANTalon.TalonControlMode;
-import com.ctre.CANTalon.VelocityMeasurementPeriod;
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
 import com.moandjiezana.toml.Toml;
 import com.moandjiezana.toml.TomlWriter;
 import javax.annotation.Nullable;
@@ -18,26 +19,28 @@ public class TalonConfigurationBuilder {
 
   // TalonConfiguration
   @NotNull public static final String NAME = "name";
-  @NotNull public static final String MODE = "mode";
+  @NotNull private static final String MODE = "mode";
 
   // TalonConfiguration
   @NotNull private String name = DEFAULT_NAME;
-  @NotNull private CANTalon.TalonControlMode mode = TalonControlMode.Voltage;
+  @NotNull private ControlMode mode = ControlMode.PercentOutput;
   private double setpointMax = 12;
   @Nullable private Encoder encoder;
-  @Nullable private Boolean brakeInNeutral;
+  @Nullable private NeutralMode neutralMode;
   @Nullable private Boolean outputReversed;
-  @Nullable private VelocityMeasurementPeriod velocityMeasurementPeriod;
+  @Nullable private VelocityMeasPeriod velocityMeasurementPeriod;
   @Nullable private Integer velocityMeasurementWindow;
   @Nullable private LimitSwitch forwardLimitSwitch;
   @Nullable private LimitSwitch reverseLimitSwitch;
   @Nullable private SoftLimit forwardSoftLimit;
   @Nullable private SoftLimit reverseSoftLimit;
-  @Nullable private Integer currentLimit;
-  @Nullable private Double voltageRampRate;
+  @Nullable private Integer continuousCurrentLimit;
+  @Nullable private Integer peakCurrentLimit;
+  @Nullable private Integer peakCurrentLimitDuration;
+  @Nullable private Double openLoopRampTime;
+  @Nullable private Double voltageCompSaturation;
 
   // PIDTalonConfiguration
-  @Nullable private Double outputVoltageMax;
   @Nullable private Double closedLoopRampRate;
   @Nullable private Double forwardOutputVoltagePeak;
   @Nullable private Double reverseOutputVoltagePeak;
@@ -52,8 +55,8 @@ public class TalonConfigurationBuilder {
   @Nullable private Integer iZone;
 
   // MotionMagicTalonConfiguration
-  @Nullable private Double motionMagicAcceleration;
-  @Nullable private Double motionMagicCruiseVelocity;
+  @Nullable private Integer motionMagicAcceleration;
+  @Nullable private Integer motionMagicCruiseVelocity;
 
   /** Create a builder with defaults. */
   @Inject
@@ -63,7 +66,7 @@ public class TalonConfigurationBuilder {
     name = config.getName();
     setpointMax = config.getSetpointMax();
     encoder = config.getEncoder();
-    brakeInNeutral = config.isBrakeInNeutral();
+    neutralMode = config.isBrakeInNeutral();
     outputReversed = config.isOutputReversed();
     velocityMeasurementPeriod = config.getVelocityMeasurementPeriod();
     velocityMeasurementWindow = config.getVelocityMeasurementWindow();
@@ -71,18 +74,21 @@ public class TalonConfigurationBuilder {
     reverseLimitSwitch = config.getReverseLimitSwitch();
     forwardSoftLimit = config.getForwardSoftLimit();
     reverseSoftLimit = config.getReverseSoftLimit();
-    currentLimit = config.getCurrentLimit();
-    voltageRampRate = config.getVoltageRampRate();
+    continuousCurrentLimit = config.getContinuousCurrentLimit();
+    peakCurrentLimit = config.getPeakCurrentLimit();
+    peakCurrentLimitDuration = config.getPeakCurrentLimitDuration();
+    openLoopRampTime = config.getOpenLoopRampTime();
+    voltageCompSaturation = config.getVoltageCompSaturation();
 
     if (config instanceof VoltageTalonConfiguration) {
-      mode = TalonControlMode.Voltage;
+      mode = ControlMode.PercentOutput;
       return;
     } else if (config instanceof SpeedTalonConfiguration) {
-      mode = TalonControlMode.Speed;
+      mode = ControlMode.Velocity;
     } else if (config instanceof PositionTalonConfiguration) {
-      mode = TalonControlMode.Position;
+      mode = ControlMode.Position;
     } else if (config instanceof MotionMagicTalonConfiguration) {
-      mode = TalonControlMode.MotionMagic;
+      mode = ControlMode.MotionMagic;
       MotionMagicTalonConfiguration mm = (MotionMagicTalonConfiguration) config;
       motionMagicAcceleration = mm.getMotionMagicAcceleration();
       motionMagicCruiseVelocity = mm.getMotionMagicCruiseVelocity();
@@ -90,7 +96,7 @@ public class TalonConfigurationBuilder {
       throw new AssertionError(config.getClass().getCanonicalName());
     }
     PIDTalonConfiguration pid = (PIDTalonConfiguration) config;
-    outputVoltageMax = pid.getOutputVoltageMax();
+    voltageCompSaturation = pid.getVoltageCompSaturation();
     forwardOutputVoltagePeak = pid.getForwardOutputVoltagePeak();
     reverseOutputVoltagePeak = pid.getReverseOutputVoltagePeak();
     forwardOutputVoltageNominal = pid.getForwardOutputVoltageNominal();
@@ -114,21 +120,22 @@ public class TalonConfigurationBuilder {
   @NotNull
   public static TalonConfiguration create(Toml config) {
     TalonConfiguration talonConfiguration = null;
-    CANTalon.TalonControlMode mode = getMode(config);
+    ControlMode mode = getMode(config);
     switch (mode) {
-      case Voltage:
+      case PercentOutput:
         talonConfiguration = config.to(VoltageTalonConfiguration.class);
         break;
       case Position:
         talonConfiguration = config.to(PositionTalonConfiguration.class);
         break;
-      case Speed:
+      case Velocity:
         talonConfiguration = config.to(SpeedTalonConfiguration.class);
         break;
       case MotionMagic:
         talonConfiguration = config.to(MotionMagicTalonConfiguration.class);
         break;
-      case PercentVbus:
+      case MotionMagicArc:
+      case MotionProfileArc:
       case Current:
       case Follower:
       case MotionProfile:
@@ -138,12 +145,12 @@ public class TalonConfigurationBuilder {
     return talonConfiguration;
   }
 
-  static CANTalon.TalonControlMode getMode(Toml config) {
+  static ControlMode getMode(Toml config) {
     String mode = config.getString(MODE);
     if (mode == null) {
       throw new IllegalArgumentException("mode missing from configuration");
     }
-    return CANTalon.TalonControlMode.valueOf(mode);
+    return ControlMode.valueOf(mode);
   }
 
   /**
@@ -167,13 +174,13 @@ public class TalonConfigurationBuilder {
   public TalonConfiguration build() {
     TalonConfiguration tc = null;
     switch (mode) {
-      case Voltage:
+      case PercentOutput:
         tc =
             new VoltageTalonConfiguration(
                 name,
                 setpointMax,
                 encoder,
-                brakeInNeutral,
+                neutralMode,
                 outputReversed,
                 velocityMeasurementPeriod,
                 velocityMeasurementWindow,
@@ -181,8 +188,11 @@ public class TalonConfigurationBuilder {
                 reverseLimitSwitch,
                 forwardSoftLimit,
                 reverseSoftLimit,
-                currentLimit,
-                voltageRampRate);
+                continuousCurrentLimit,
+                peakCurrentLimit,
+                peakCurrentLimitDuration,
+                openLoopRampTime,
+                voltageCompSaturation);
         break;
       case Position:
         tc =
@@ -190,7 +200,7 @@ public class TalonConfigurationBuilder {
                 name,
                 setpointMax,
                 encoder,
-                brakeInNeutral,
+                neutralMode,
                 outputReversed,
                 velocityMeasurementPeriod,
                 velocityMeasurementWindow,
@@ -198,9 +208,11 @@ public class TalonConfigurationBuilder {
                 reverseLimitSwitch,
                 forwardSoftLimit,
                 reverseSoftLimit,
-                currentLimit,
-                voltageRampRate,
-                outputVoltageMax,
+                continuousCurrentLimit,
+                peakCurrentLimit,
+                peakCurrentLimitDuration,
+                openLoopRampTime,
+                voltageCompSaturation,
                 closedLoopRampRate,
                 forwardOutputVoltagePeak,
                 reverseOutputVoltagePeak,
@@ -214,13 +226,13 @@ public class TalonConfigurationBuilder {
                 fGain,
                 iZone);
         break;
-      case Speed:
+      case Velocity:
         tc =
             new SpeedTalonConfiguration(
                 name,
                 setpointMax,
                 encoder,
-                brakeInNeutral,
+                neutralMode,
                 outputReversed,
                 velocityMeasurementPeriod,
                 velocityMeasurementWindow,
@@ -228,9 +240,11 @@ public class TalonConfigurationBuilder {
                 reverseLimitSwitch,
                 forwardSoftLimit,
                 reverseSoftLimit,
-                currentLimit,
-                voltageRampRate,
-                outputVoltageMax,
+                continuousCurrentLimit,
+                peakCurrentLimit,
+                peakCurrentLimitDuration,
+                openLoopRampTime,
+                voltageCompSaturation,
                 closedLoopRampRate,
                 forwardOutputVoltagePeak,
                 reverseOutputVoltagePeak,
@@ -250,7 +264,7 @@ public class TalonConfigurationBuilder {
                 name,
                 setpointMax,
                 encoder,
-                brakeInNeutral,
+                neutralMode,
                 outputReversed,
                 velocityMeasurementPeriod,
                 velocityMeasurementWindow,
@@ -258,9 +272,11 @@ public class TalonConfigurationBuilder {
                 reverseLimitSwitch,
                 forwardSoftLimit,
                 reverseSoftLimit,
-                currentLimit,
-                voltageRampRate,
-                outputVoltageMax,
+                continuousCurrentLimit,
+                peakCurrentLimit,
+                peakCurrentLimitDuration,
+                openLoopRampTime,
+                voltageCompSaturation,
                 closedLoopRampRate,
                 forwardOutputVoltagePeak,
                 reverseOutputVoltagePeak,
@@ -276,11 +292,12 @@ public class TalonConfigurationBuilder {
                 motionMagicAcceleration,
                 motionMagicCruiseVelocity);
         break;
+      case MotionMagicArc:
+      case MotionProfileArc:
       case Follower:
       case MotionProfile:
       case Current:
       case Disabled:
-      case PercentVbus:
         throw new UnsupportedOperationException(mode.name());
     }
     return tc;
@@ -307,7 +324,7 @@ public class TalonConfigurationBuilder {
    * @throws IllegalArgumentException if mode is null
    */
   @NotNull
-  public TalonConfigurationBuilder mode(CANTalon.TalonControlMode mode) {
+  public TalonConfigurationBuilder mode(ControlMode mode) {
     this.mode = mode;
     return this;
   }
@@ -329,16 +346,12 @@ public class TalonConfigurationBuilder {
    *
    * @param feedbackDevice the encoder type, must not be null.
    * @param isReversed encoder phase is reversed with respect to motor output.
-   * @param ticksPerRevolution encoder ticks per motor revolution, null to disable.
    * @return this builder.
    * @throws IllegalArgumentException if feedbackDevice is null
    */
   @NotNull
-  public TalonConfigurationBuilder encoder(
-      CANTalon.FeedbackDevice feedbackDevice,
-      boolean isReversed,
-      @Nullable Integer ticksPerRevolution) {
-    this.encoder = new Encoder(feedbackDevice, isReversed, ticksPerRevolution);
+  public TalonConfigurationBuilder encoder(FeedbackDevice feedbackDevice, boolean isReversed) {
+    this.encoder = new Encoder(feedbackDevice, isReversed);
     return this;
   }
 
@@ -349,7 +362,7 @@ public class TalonConfigurationBuilder {
    * @return this builder.
    */
   @NotNull
-  public TalonConfigurationBuilder encoder(CANTalon.FeedbackDevice feedbackDevice) {
+  public TalonConfigurationBuilder encoder(FeedbackDevice feedbackDevice) {
     if (encoder == null) {
       encoder = new Encoder(feedbackDevice);
     } else {
@@ -382,7 +395,7 @@ public class TalonConfigurationBuilder {
    */
   @NotNull
   public TalonConfigurationBuilder brakeInNeutral(boolean brakeInNeutral) {
-    this.brakeInNeutral = brakeInNeutral;
+    this.neutralMode = brakeInNeutral ? NeutralMode.Brake : NeutralMode.Coast;
     return this;
   }
 
@@ -406,7 +419,7 @@ public class TalonConfigurationBuilder {
    */
   @NotNull
   public TalonConfigurationBuilder velocityMeasurementPeriod(
-      VelocityMeasurementPeriod velocityMeasurementPeriod) {
+      VelocityMeasPeriod velocityMeasurementPeriod) {
     this.velocityMeasurementPeriod = velocityMeasurementPeriod;
     return this;
   }
@@ -462,7 +475,7 @@ public class TalonConfigurationBuilder {
    * @return this builder.
    */
   @NotNull
-  public TalonConfigurationBuilder forwardSoftLimit(@Nullable Double forwardSoftLimit) {
+  public TalonConfigurationBuilder forwardSoftLimit(@Nullable Integer forwardSoftLimit) {
     this.forwardSoftLimit = new SoftLimit(forwardSoftLimit);
     return this;
   }
@@ -474,7 +487,7 @@ public class TalonConfigurationBuilder {
    * @return this builder.
    */
   @NotNull
-  public TalonConfigurationBuilder reverseSoftLimit(@Nullable Double reverseSoftLimit) {
+  public TalonConfigurationBuilder reverseSoftLimit(@Nullable Integer reverseSoftLimit) {
     this.reverseSoftLimit = new SoftLimit(reverseSoftLimit);
     return this;
   }
@@ -487,7 +500,7 @@ public class TalonConfigurationBuilder {
    */
   @NotNull
   public TalonConfigurationBuilder currentLimit(int currentLimit) {
-    this.currentLimit = currentLimit;
+    this.continuousCurrentLimit = currentLimit;
     return this;
   }
 
@@ -500,19 +513,19 @@ public class TalonConfigurationBuilder {
    */
   @NotNull
   public TalonConfigurationBuilder voltageRampRate(double voltageRampRate) {
-    this.voltageRampRate = voltageRampRate;
+    this.openLoopRampTime = voltageRampRate;
     return this;
   }
 
   /**
-   * Configure the maximum output voltage in closed-loop modes.
+   * Configure the maximum output voltage for 100% output.
    *
-   * @param outputVoltageMax the maximum output voltage.
+   * @param voltageCompSaturation the maximum output voltage.
    * @return this builder.
    */
   @NotNull
-  public TalonConfigurationBuilder outputVoltageMax(double outputVoltageMax) {
-    this.outputVoltageMax = outputVoltageMax;
+  public TalonConfigurationBuilder voltageCompSaturation(double voltageCompSaturation) {
+    this.voltageCompSaturation = voltageCompSaturation;
     return this;
   }
 
@@ -648,7 +661,7 @@ public class TalonConfigurationBuilder {
    * @return this builder.
    */
   @NotNull
-  public TalonConfigurationBuilder motionMagicAcceleration(double accel) {
+  public TalonConfigurationBuilder motionMagicAcceleration(int accel) {
     this.motionMagicAcceleration = accel;
     return this;
   }
@@ -660,7 +673,7 @@ public class TalonConfigurationBuilder {
    * @return this builder.
    */
   @NotNull
-  public TalonConfigurationBuilder motionMagicCruiseVelocity(double vel) {
+  public TalonConfigurationBuilder motionMagicCruiseVelocity(int vel) {
     this.motionMagicCruiseVelocity = vel;
     return this;
   }

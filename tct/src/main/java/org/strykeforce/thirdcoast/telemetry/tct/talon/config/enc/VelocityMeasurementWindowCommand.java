@@ -1,10 +1,10 @@
 package org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc;
 
-import com.ctre.CANTalon;
 import javax.inject.Inject;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
 import org.jline.reader.UserInterruptException;
+import org.strykeforce.thirdcoast.talon.ThirdCoastTalon;
 import org.strykeforce.thirdcoast.telemetry.tct.Messages;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractTalonConfigCommand;
@@ -55,8 +55,8 @@ public class VelocityMeasurementWindowCommand extends AbstractTalonConfigCommand
       int setpoint = 1 << (choice - 1);
       done = true;
       talonSet.talonConfigurationBuilder().velocityMeasurementWindow(setpoint);
-      for (CANTalon talon : talonSet.selected()) {
-        talon.SetVelocityMeasurementWindow(setpoint);
+      for (ThirdCoastTalon talon : talonSet.selected()) {
+        talon.configVelocityMeasurementWindow(setpoint, TIMEOUT_MS);
         logger.info("set {} for {} to {}", name(), talon.getDescription(), setpoint);
       }
     }

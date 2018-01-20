@@ -1,2 +1,5 @@
 rootProject.name = 'thirdcoast'
-include 'core', 'tct', 'sim', 'robot'
+include 'core'
+include 'robot'
+include 'tct'
+// include 'sim'

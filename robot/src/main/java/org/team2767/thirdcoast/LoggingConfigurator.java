@@ -38,6 +38,6 @@ public class LoggingConfigurator extends ContextAwareBase implements Configurato
 
     Logger rootLogger = lc.getLogger(Logger.ROOT_LOGGER_NAME);
     rootLogger.addAppender(ca);
-    rootLogger.setLevel(Level.DEBUG);
+    rootLogger.setLevel(Level.TRACE);
   }
 }

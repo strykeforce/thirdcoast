@@ -1,20 +1,23 @@
 package org.strykeforce.thirdcoast.telemetry
 
-import com.ctre.CANTalon
+import com.ctre.phoenix.motorcontrol.can.TalonSRX
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX
 import groovy.json.JsonSlurper
 import okio.Buffer
 import org.strykeforce.thirdcoast.telemetry.grapher.Measure
 import org.strykeforce.thirdcoast.telemetry.item.Item
 import org.strykeforce.thirdcoast.telemetry.item.TalonItem
+import spock.lang.Ignore
 import spock.lang.Specification
 
 import static org.strykeforce.thirdcoast.telemetry.grapher.Measure.ABSOLUTE_ENCODER_POSITION
+import static org.strykeforce.thirdcoast.telemetry.grapher.Measure.SELECTED_SENSOR_VELOCITY
 import static org.strykeforce.thirdcoast.telemetry.grapher.Measure.SETPOINT
 
 class InventoryTest extends Specification {
 
-    CANTalon talonStub(int id, String description) {
-        def stub = Stub(CANTalon)
+    TalonSRX talonStub(int id, String description) {
+        def stub = Stub(WPI_TalonSRX)
         stub.getDeviceID() >> id
         stub.getDescription() >> description
         return stub
@@ -60,8 +63,8 @@ class InventoryTest extends Specification {
                 deviceMeasures.size == TalonItem.MEASURES.size()
                 Measure.valueOf(deviceMeasures[0].id) == SETPOINT
                 deviceMeasures[0].description == SETPOINT.description
-                Measure.valueOf(deviceMeasures[5].id) == ABSOLUTE_ENCODER_POSITION
-                deviceMeasures[5].description == ABSOLUTE_ENCODER_POSITION.description
+                Measure.valueOf(deviceMeasures[5].id) == SELECTED_SENSOR_VELOCITY
+                deviceMeasures[5].description == SELECTED_SENSOR_VELOCITY.description
             }
             items[1].id == 1
             items[1].description == "talon11"

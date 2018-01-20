@@ -1,18 +1,17 @@
 package org.strykeforce.thirdcoast.telemetry.tct.talon.config.out;
 
-import com.ctre.CANTalon;
 import javax.inject.Inject;
 import org.jline.reader.LineReader;
+import org.strykeforce.thirdcoast.talon.ThirdCoastTalon;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractDoubleConfigCommand;
 
-/** Configure P. */
-public class VoltageRampRateCommand extends AbstractDoubleConfigCommand {
+public class OpenLoopRampRateCommand extends AbstractDoubleConfigCommand {
 
-  public static final String NAME = "Voltage Ramp Rate";
+  public static final String NAME = VERIFY + "Open Loop Ramp Rate";
 
   @Inject
-  public VoltageRampRateCommand(LineReader reader, TalonSet talonSet) {
+  public OpenLoopRampRateCommand(LineReader reader, TalonSet talonSet) {
     super(NAME, reader, talonSet);
   }
 
@@ -22,7 +21,7 @@ public class VoltageRampRateCommand extends AbstractDoubleConfigCommand {
   }
 
   @Override
-  protected void config(CANTalon talon, double value) {
-    talon.setVoltageRampRate(value);
+  protected void config(ThirdCoastTalon talon, double value) {
+    talon.configOpenloopRamp(value, TIMEOUT_MS);
   }
 }

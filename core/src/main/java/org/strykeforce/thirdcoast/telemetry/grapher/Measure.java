@@ -1,52 +1,54 @@
 package org.strykeforce.thirdcoast.telemetry.grapher;
 
-/** Available measurement types. */
+/** Available telemetry measurement types. */
 public enum Measure {
   SETPOINT("Setpoint"),
+
+  // BaseMotorController
   OUTPUT_CURRENT("Output Current"),
   OUTPUT_VOLTAGE("Output Voltage"),
-  ENCODER_POSITION("Encoder Position"),
-  ENCODER_VELOCITY("Encoder Velocity"),
-  ABSOLUTE_ENCODER_POSITION("Absolute Encoder Position"),
-  CONTROL_LOOP_ERROR("Control Loop Error"),
-  INTEGRATOR_ACCUMULATOR("Integrator Accumulator"),
+  OUTPUT_PERCENT("Output Percentage"),
+  SELECTED_SENSOR_POSITION("Selected Sensor Position"),
+  SELECTED_SENSOR_VELOCITY("Selected Sensor Velocity"),
+  ACTIVE_TRAJECTORY_POSITION("Active Trajectory Position"),
+  ACTIVE_TRAJECTORY_VELOCITY("Active Trajectory Velocity"),
+  //  ACTIVE_TRAJECTORY_HEADING("Active Trajectory Heading"),
+  CLOSED_LOOP_ERROR("Closed Loop Error"),
   BUS_VOLTAGE("Bus Voltage"),
-  FORWARD_HARD_LIMIT_CLOSED("Forward Hard Limit Closed"),
-  REVERSE_HARD_LIMIT_CLOSED("Reverse Hard Limit Closed"),
-  FORWARD_SOFT_LIMIT_OK("Forward Soft Limit OK"),
-  REVERSE_SOFT_LIMIT_OK("Reverse Soft Limit OK"),
+  ERROR_DERIVATIVE("Error Derivative"),
+  INTEGRAL_ACCUMULATOR("Integral Accumulator"),
+  // TODO: add motion profile
+
+  // TalonSRX SensorCollection
+  ANALOG_IN("Analog Input"),
+  ANALOG_RAW("Analog Raw Input"),
+  ANALOG_POSITION("Analog Position"),
+  ANALOG_VELOCITY("Analog Velocity"),
+  QUAD_POSITION("Quadrature Position"),
+  QUAD_VELOCITY("Quadrature Velocity"),
+  QUAD_A_PIN("Quadrature A State"),
+  QUAD_B_PIN("Quadrature B State"),
+  QUAD_IDX_PIN("Quadrature Index State"),
+  PULSE_WIDTH_POSITION("Pulse Width Position"),
+  PULSE_WIDTH_VELOCITY("Pulse Width Velocity"),
+  PULSE_WIDTH_RISE_TO_FALL("Pulse Width Rise-Fall"),
+  PULSE_WIDTH_RISE_TO_RISE("Pulse Width Rise-Rise"),
+  FORWARD_LIMIT_SWITCH_CLOSED("Forward Limit Switch Closed"),
+  REVERSE_LIMIT_SWITCH_CLOSED("Reverse Limit Switch Closed"),
+  //  FORWARD_SOFT_LIMIT("Forward Soft Limit"),
+  //  REVERSE_SOFT_LIMIT("Reverse Soft Limit"),
+
   ANGLE("Angle"),
   POSITION("Position"),
-  SPEED("Speed"),
-  FEEDBACK("Feedback"),
+  //  SPEED("Speed"),
   VALUE("Value"),
-  ANALOG_RAW("Analog Raw"),
-  MOMAGIC_ACCL("Motion Magic Acceleration"),
-  MOMAGIC_A_TRAJ_POS("Motion Magic Trajectory Point Target Position"),
-  MOMAGIC_A_TRAJ_VEL("Motion Magic Trajectory Point Target Velocity"),
-  MOMAGIC_CRUISE_VEL("Motion Magic Cruise Velocity"),
   GYRO_YAW("Gyro Yaw");
 
-  //  private final static Map<Item.Type, Set<Measure>> byType = new HashMap<>();
-  //
-  //  static {
-  //    byType.put(Type.DIGITAL_INPUT, EnumSet.of(VALUE));
-  //    byType.put(Type.SERVO, EnumSet.of(POSITION, ANGLE));
-  //
-  //    byType.put(Type.TALON, EnumSet.allOf(Measure.class));
-  //    byType.get(Type.TALON).removeAll(byType.get(Type.DIGITAL_INPUT));
-  //    byType.get(Type.TALON).removeAll(byType.get(Type.SERVO));
-  //  }
-  //
   private final String description;
 
   Measure(String description) {
     this.description = description;
   }
-
-  //  public static Set<Measure> measuresByType(String type) {
-  //    return byType.getOrDefault(Type.valueOf(type), EnumSet.noneOf(Measure.class));
-  //  }
 
   public String getDescription() {
     return description;

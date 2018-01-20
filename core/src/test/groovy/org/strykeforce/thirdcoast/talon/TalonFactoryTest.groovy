@@ -1,12 +1,12 @@
 package org.strykeforce.thirdcoast.talon
 
-import com.ctre.CANTalon
+import edu.wpi.first.wpilibj.MotorSafety
 import spock.lang.Specification
 
 class TalonFactoryTest extends Specification {
 
-    def wrapperFactory = Mock(TalonFactory.WrapperFactory)
-    def wrapper = Mock(TalonFactory.Wrapper)
+    def wrapperFactory = Mock(ThirdCoastTalonFactory)
+    def wrapper = Mock(ThirdCoastTalon)
 
 
     def "creation of wrapped talon with defaults"() {
@@ -17,27 +17,10 @@ class TalonFactoryTest extends Specification {
         factory.getTalon(27)
 
         then:
-        1 * wrapperFactory.createWrapper(27, TalonFactory.CONTROL_FRAME_MS) >> wrapper
-        1 * wrapper.setStatusFrameRateMs(CANTalon.StatusFrameRate.AnalogTempVbat, 100)
-        1 * wrapper.changeControlMode(CANTalon.TalonControlMode.Voltage)
-        1 * wrapper.setStatusFrameRateMs(CANTalon.StatusFrameRate.Feedback, 20)
-        1 * wrapper.setStatusFrameRateMs(CANTalon.StatusFrameRate.General, 10)
-        1 * wrapper.setStatusFrameRateMs(CANTalon.StatusFrameRate.PulseWidth, 100)
-        1 * wrapper.setStatusFrameRateMs(CANTalon.StatusFrameRate.QuadEncoder, 100)
-        1 * wrapper.clearIAccum()
-        1 * wrapper.ClearIaccum()
-        1 * wrapper.clearMotionProfileHasUnderrun()
-        1 * wrapper.clearMotionProfileTrajectories()
-        1 * wrapper.clearStickyFaults()
-        1 * wrapper.enableZeroSensorPositionOnForwardLimit(false)
-        1 * wrapper.enableZeroSensorPositionOnIndex(false, false)
-        1 * wrapper.enableZeroSensorPositionOnReverseLimit(false)
-        1 * wrapper.reverseOutput(false)
-        1 * wrapper.reverseSensor(false)
-        1 * wrapper.setAnalogPosition(0)
-        1 * wrapper.setPosition(0)
-        1 * wrapper.setProfile(0)
-        1 * wrapper.setPulseWidthPosition(0)
+        1 * wrapperFactory.create(27) >> wrapper
+        1 * wrapper.setSafetyEnabled(false)
+        1 * wrapper.setExpiration(MotorSafety.DEFAULT_SAFETY_EXPIRATION)
+        1 * wrapper.clearStickyFaults(TalonFactory.TIMEOUT_MS)
         0 * wrapper._
     }
 
@@ -53,7 +36,7 @@ class TalonFactoryTest extends Specification {
         factory.getTalonWithConfiguration(67, "test-config")
 
         then:
-        1 * wrapperFactory.createWrapper(67, TalonFactory.CONTROL_FRAME_MS) >> wrapper
+        1 * wrapperFactory.create(67) >> wrapper
         1 * provisioner.configurationFor("test-config") >> config
         1 * config.configure(wrapper)
     }
@@ -67,7 +50,7 @@ class TalonFactoryTest extends Specification {
         def talon = factory.getTalon(27)
 
         then:
-        1 * wrapperFactory.createWrapper(27, TalonFactory.CONTROL_FRAME_MS) >> wrapper
+        1 * wrapperFactory.create(27) >> wrapper
 
         and:
         factory.hasSeen(27)

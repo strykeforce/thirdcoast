@@ -1,26 +1,30 @@
 package org.strykeforce.thirdcoast.swerve
 
-import com.ctre.CANTalon
+import com.ctre.phoenix.motorcontrol.SensorCollection
 import com.moandjiezana.toml.Toml
 import org.strykeforce.thirdcoast.talon.TalonProvisioner
+import org.strykeforce.thirdcoast.talon.ThirdCoastTalon
 import spock.lang.Shared
 import spock.lang.Specification
 
+import static com.ctre.phoenix.motorcontrol.ControlMode.*
+
 class WheelTest extends Specification {
 
-    static final EPSILON = 1e-15
+    static final EPSILON = 1e-12
+    static final ROT = Wheel.TICKS_PER_ROTATION
 
-    def azimuth = Mock(CANTalon)
-    def drive = Mock(CANTalon)
+    def azimuth = Mock(ThirdCoastTalon)
+    def drive = Mock(ThirdCoastTalon)
     @Shared
     TalonProvisioner provisioner
 
     static tomlString = '''
     [[TALON]]
     name = "drive"
-    mode = "Voltage"
+    mode = "PercentOutput"
     setpointMax    = 12.0
-    currentLimit   = 50
+    continuousCurrentLimit   = 50
     [TALON.encoder]
     device = "QuadEncoder"
 
@@ -28,7 +32,7 @@ class WheelTest extends Specification {
     name = "azimuth"
     mode = "Position"
     setpointMax     = 4095.0
-    brakeInNeutral = false
+    neutralMode = "Coast"
     pGain =   1.0
     iGain =   2.0
     dGain =   3.0
@@ -41,7 +45,7 @@ class WheelTest extends Specification {
     
     [[TALON]]
     name = "speed"
-    mode = "Speed"
+    mode = "Velocity"
     setpointMax = 1.0
 '''
 
@@ -59,72 +63,45 @@ class WheelTest extends Specification {
         def wheel = new Wheel(provisioner, azimuth, drive)
 
         then:
-        1 * drive.SetVelocityMeasurementPeriod(CANTalon.VelocityMeasurementPeriod.Period_100Ms)
-        1 * drive.reverseOutput(false)
-        1 * drive.changeControlMode(CANTalon.TalonControlMode.Voltage)
-        1 * drive.setFeedbackDevice(CANTalon.FeedbackDevice.QuadEncoder)
-        1 * drive.enableLimitSwitch(false, false)
-        1 * drive.setSafetyEnabled(false)
-        1 * drive.isSensorPresent(CANTalon.FeedbackDevice.QuadEncoder)
-        1 * drive.reverseSensor(false)
-        1 * drive.enableBrakeMode(true)
-        1 * drive.SetVelocityMeasurementWindow(64)
-        1 * drive.getDeviceID() >> 1
-        1 * azimuth.setSafetyEnabled(false)
-        1 * azimuth.SetVelocityMeasurementWindow(64)
-        // FIXME: need to implement peakOutputVoltage
-//        1 * azimuth.configPeakOutputVoltage(6.0, -6.0)
-        1 * azimuth.setPID(1.0, 2.0, 3.0)
-        1 * azimuth.setF(4.0)
-        1 * azimuth.setAllowableClosedLoopErr(0)
-        1 * azimuth.setNominalClosedLoopVoltage(0.0)
-        1 * azimuth.reverseSensor(false)
-        1 * azimuth.enableBrakeMode(false)
-        1 * azimuth.isSensorPresent(CANTalon.FeedbackDevice.CtreMagEncoder_Relative)
-        1 * azimuth.reverseOutput(false)
-        1 * azimuth.changeControlMode(CANTalon.TalonControlMode.Position)
-        1 * azimuth.setIZone(0)
-        1 * azimuth.configNominalOutputVoltage(0.0, 0.0)
-        1 * azimuth.enableLimitSwitch(false, false)
-        1 * azimuth.setFeedbackDevice(CANTalon.FeedbackDevice.CtreMagEncoder_Relative)
-        1 * azimuth.SetVelocityMeasurementPeriod(CANTalon.VelocityMeasurementPeriod.Period_100Ms)
-        1 * azimuth.getDeviceID() >> 2
+        1 * drive.changeControlMode(PercentOutput)
+        1 * azimuth.changeControlMode(Position)
 
         when:
         wheel.azimuthParameters = "speed"
 
         then:
-        1 * azimuth.changeControlMode(CANTalon.TalonControlMode.Speed)
+        1 * azimuth.changeControlMode(Velocity)
         0 * azimuth.changeControlMode(_)
         0 * drive.changeControlMode(_)
     }
 
     def "gets azimuth absolution position"() {
         setup:
-        azimuth.getPulseWidthPosition() >> 0x1000
+        def sensorCollection = Mock(SensorCollection)
+        azimuth.getSensorCollection() >> sensorCollection
+        sensorCollection.getPulseWidthPosition() >> 0x1000
 
         when:
         def wheel = new Wheel(provisioner, azimuth, drive)
-        def zeroPosition = 2767
 
         then:
         wheel.azimuthAbsolutePosition == 0
 
         when:
-        wheel.setAzimuthZero(zeroPosition)
+        wheel.setAzimuthZero(2767)
 
         then:
-        1 * azimuth.setPosition((double) -zeroPosition / 0xFFF)
+        1 * azimuth.setSelectedSensorPosition(-2767, 0, 10)
     }
 
     def "azimuth changes are optimized"() {
         when:
-        azimuth.getPosition() >> start_position
+        azimuth.getSelectedSensorPosition(0) >> start_position * ROT
         def wheel = new Wheel(provisioner, azimuth, drive)
-        wheel.set(setpoint, 1)
+        wheel.set(setpoint, 1d)
 
         then:
-        Math.abs(wheel.azimuthSetpoint - end_position) < EPSILON
+        Math.abs(wheel.azimuthSetpoint - end_position * ROT) < EPSILON
         wheel.isDriveReversed() == is_reversed
 
         where:
@@ -148,7 +125,7 @@ class WheelTest extends Specification {
         0.1            | -0.1     || 0.1          | false
 
         -0.4           | 0.4      || -0.4         | false
-        -0.6           | 0.3      || -0.8         | true
+        -0.6           | 0.3      || -0.8         | true  // true -> 1024
         -0.7           | 0.25     || -0.75        | true
         -0.75          | 0.1      || -0.6         | true
         -0.9           | -0.1     || -0.9         | false
@@ -182,9 +159,8 @@ class WheelTest extends Specification {
 
     // check some wheel-related math
     def "calculates error between current azimuth and setpoint"() {
-
         expect:
-        Math.abs(Math.IEEEremainder(setpoint - position, 1.0) - error) < EPSILON
+        Math.abs(Math.IEEEremainder(setpoint * ROT - position * ROT, ROT) - error * ROT) < EPSILON
 
         where:
         position | setpoint || error
@@ -203,17 +179,17 @@ class WheelTest extends Specification {
 
     def "calculate minimal azimuth error with drive direction"() {
         when:
-        def error = Math.IEEEremainder(setpoint - position, 1.0)
+        def error = Math.IEEEremainder(setpoint * ROT - position * ROT, ROT)
         def isReversed = false
-        if (Math.abs(error) > 0.25) {
-            error -= Math.copySign(0.5, error)
+        if (Math.abs(error) > 0.25 * ROT) {
+            error -= Math.copySign(0.5 * ROT, error)
             isReversed = true
         }
 
         then:
-        Math.abs(error - expected_error) < EPSILON
+        Math.abs(error - expected_error * ROT) < EPSILON
         isReversed == expected_reverse
-        Math.abs(position + error - expected_position) < EPSILON
+        Math.abs(position * ROT + error - expected_position * ROT) < EPSILON
 
         where:
         setpoint | position || expected_error | expected_position | expected_reverse

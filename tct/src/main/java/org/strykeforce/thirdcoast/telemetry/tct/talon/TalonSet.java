@@ -1,6 +1,5 @@
 package org.strykeforce.thirdcoast.telemetry.tct.talon;
 
-import com.ctre.CANTalon;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
@@ -13,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.talon.TalonConfiguration;
 import org.strykeforce.thirdcoast.talon.TalonConfigurationBuilder;
+import org.strykeforce.thirdcoast.talon.ThirdCoastTalon;
 import org.strykeforce.thirdcoast.telemetry.TelemetryService;
 
 /** Holds Talons being worked on. Talons that have been instantiated are cached. */
@@ -21,7 +21,7 @@ import org.strykeforce.thirdcoast.telemetry.TelemetryService;
 public class TalonSet {
 
   private static final Logger logger = LoggerFactory.getLogger(TalonSet.class);
-  private final Set<CANTalon> selected = new HashSet<>();
+  private final Set<ThirdCoastTalon> selected = new HashSet<>();
   private final TelemetryService telemetryService;
   private TalonConfigurationBuilder talonConfigurationBuilder;
 
@@ -39,7 +39,7 @@ public class TalonSet {
     talonConfigurationBuilder = new TalonConfigurationBuilder(activeTalonConfiguration);
   }
 
-  public void selectTalon(CANTalon talon) {
+  public void selectTalon(ThirdCoastTalon talon) {
     selected.add(talon);
   }
 
@@ -47,15 +47,15 @@ public class TalonSet {
     selected.clear();
   }
 
-  public Set<CANTalon> selected() {
+  public Set<ThirdCoastTalon> selected() {
     return Collections.unmodifiableSet(selected);
   }
 
   Set<Integer> getSelectedTalonIds() {
-    return selected.stream().map(CANTalon::getDeviceID).collect(Collectors.toSet());
+    return selected.stream().map(ThirdCoastTalon::getDeviceID).collect(Collectors.toSet());
   }
 
-  public Optional<CANTalon> get(int id) {
+  public Optional<ThirdCoastTalon> get(int id) {
     return selected.stream().filter(it -> it.getDeviceID() == id).findFirst();
   }
 
