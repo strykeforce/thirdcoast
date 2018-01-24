@@ -1,6 +1,6 @@
 package org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc;
 
-import com.ctre.phoenix.motorcontrol.StatusFrame;
+import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import javax.inject.Inject;
 import org.jline.reader.LineReader;
 import org.strykeforce.thirdcoast.talon.ThirdCoastTalon;
@@ -9,7 +9,7 @@ import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractIntConfigCo
 
 public class GeneralFrameRateCommand extends AbstractIntConfigCommand {
 
-  public static final String NAME = VERIFY + "General Status Frame Rate";
+  public static final String NAME = "General Status Frame Rate";
 
   @Inject
   GeneralFrameRateCommand(LineReader reader, TalonSet talonSet) {
@@ -18,7 +18,7 @@ public class GeneralFrameRateCommand extends AbstractIntConfigCommand {
 
   @Override
   protected void config(ThirdCoastTalon talon, int value) {
-    talon.setStatusFramePeriod(StatusFrame.Status_1_General, value, TIMEOUT_MS);
+    talon.setStatusFramePeriod(StatusFrameEnhanced.Status_1_General, value, TIMEOUT_MS);
   }
 
   @Override
