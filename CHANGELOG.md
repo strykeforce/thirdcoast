@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Calendar Versioning](http://calver.org/).
 
+## [18.0.5] - 2018-01-24
+
+### Changed
+
+- Updated TalonSRX status frame rates for 2018.
+
 ## [18.0.4] - 2018-01-20
 
 This version upgrades the library to be compatible with the 2018 Phoenix TalonSRX and WPI control system releases.
