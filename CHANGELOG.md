@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Calendar Versioning](http://calver.org/).
 
+## [18.0.4] - 2018-01-20
+
+This version upgrades the library to be compatible with the 2018 Phoenix TalonSRX and WPI control system releases.
+
 ## [17.2.0] - 2018-01-05
 
 ### Added
@@ -78,4 +82,5 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 [17.1.3]: https://github.com/strykeforce/thirdcoast/compare/v17.1.2...v17.1.3
 [17.1.4]: https://github.com/strykeforce/thirdcoast/compare/v17.1.3...v17.1.4
 [17.2.0]: https://github.com/strykeforce/thirdcoast/compare/v17.1.4...v17.2.0
+[18.0.4]: https://github.com/strykeforce/thirdcoast/compare/v17.2.0...v18.0.4
 [unreleased]: https://github.com/strykeforce/thirdcoast/compare/v17.2.0...develop
