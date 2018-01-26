@@ -1,7 +1,11 @@
 package org.strykeforce.thirdcoast.swerve;
 
 import com.kauailabs.navx.frc.AHRS;
+import com.moandjiezana.toml.Toml;
 import edu.wpi.first.wpilibj.Preferences;
+import java.io.File;
+import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.Arrays;
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -28,23 +32,51 @@ import org.strykeforce.thirdcoast.telemetry.TelemetryService;
 @Singleton
 public class SwerveDrive {
 
-  static final Logger logger = LoggerFactory.getLogger(SwerveDrive.class);
+  private static final Logger logger = LoggerFactory.getLogger(SwerveDrive.class);
+  private static final String DEFAULTS = "/META-INF/thirdcoast/defaults.toml";
+  private static final String TABLE = "SWERVE";
   private static final int WHEEL_COUNT = 4;
-  private final Wheel[] wheels;
   final AHRS gyro;
+  private final Wheel[] wheels;
+  private final double length;
+  private final double width;
 
   @Inject
-  SwerveDrive(AHRS gyro, Wheel[] wheels) {
+  SwerveDrive(AHRS gyro, Wheel[] wheels, File config) {
     if (gyro != null) {
       gyro.enableLogging(true);
     }
     this.gyro = gyro;
     this.wheels = wheels;
-    logger.info("initialized with gyro = {}, wheels = {}", gyro, Arrays.toString(wheels));
+
+    Toml toml;
+    if (Files.notExists(config.toPath())) {
+      logger.warn("{} is missing, using defaults in " + DEFAULTS, config);
+      toml = defaults();
+    } else {
+      toml = new Toml(defaults()).read(config);
+      logger.info("reading configuration from {}", config);
+    }
+
+    toml = toml.getTable(TABLE);
+    length = toml.getDouble("length");
+    width = toml.getDouble("width");
+
+    logger.info(
+        "initialized with gyro = {} wheels = {} length = {} width = {}",
+        gyro,
+        Arrays.toString(wheels),
+        length,
+        width);
   }
 
   static String getPreferenceKeyForWheel(int i) {
     return String.format("%s/wheel.%d", SwerveDrive.class.getSimpleName(), i);
+  }
+
+  private Toml defaults() {
+    InputStream in = this.getClass().getResourceAsStream(DEFAULTS);
+    return new Toml().read(in);
   }
 
   /**
@@ -77,14 +109,12 @@ public class SwerveDrive {
       forward = temp;
     }
 
-    final double LENGTH = 1.0;
-    final double WIDTH = 1.0;
-    final double RADIUS = Math.hypot(LENGTH, WIDTH);
+    final double radius = Math.hypot(length, width);
 
-    final double a = strafe - azimuth * (LENGTH / RADIUS);
-    final double b = strafe + azimuth * (LENGTH / RADIUS);
-    final double c = forward - azimuth * (WIDTH / RADIUS);
-    final double d = forward + azimuth * (WIDTH / RADIUS);
+    final double a = strafe - azimuth * (length / radius);
+    final double b = strafe + azimuth * (length / radius);
+    final double c = forward - azimuth * (width / radius);
+    final double d = forward + azimuth * (width / radius);
 
     // wheel speed
     double[] ws = new double[4];

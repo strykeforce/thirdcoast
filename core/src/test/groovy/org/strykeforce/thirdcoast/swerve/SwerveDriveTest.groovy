@@ -51,7 +51,8 @@ class SwerveDriveTest extends spock.lang.Specification {
 
     def "calculates inverse kinematics"() {
         Wheel[] wheels = [Mock(Wheel), Mock(Wheel), Mock(Wheel), Mock(Wheel)]
-        SwerveDrive swerve = new SwerveDrive(null, wheels)
+        def config = new File("/bogus")
+        SwerveDrive swerve = new SwerveDrive(null, wheels, config)
 
         when:
         for (Wheel w : wheels) {

@@ -5,6 +5,7 @@ import static org.strykeforce.thirdcoast.telemetry.grapher.Measure.GYRO_YAW;
 
 import com.kauailabs.navx.frc.AHRS;
 import com.squareup.moshi.JsonWriter;
+import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -25,8 +26,8 @@ public class GraphableSwerveDrive extends SwerveDrive implements Item {
       Collections.unmodifiableSet(EnumSet.of(ANGLE, GYRO_YAW));
 
   @Inject
-  public GraphableSwerveDrive(AHRS gyro, Wheel[] wheels) {
-    super(gyro, wheels);
+  public GraphableSwerveDrive(AHRS gyro, Wheel[] wheels, File config) {
+    super(gyro, wheels, config);
   }
 
   @Override

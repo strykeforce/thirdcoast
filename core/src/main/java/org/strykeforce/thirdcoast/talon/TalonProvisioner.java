@@ -2,10 +2,8 @@ package org.strykeforce.thirdcoast.talon;
 
 import com.moandjiezana.toml.Toml;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -31,10 +29,9 @@ import org.slf4j.LoggerFactory;
 @ParametersAreNonnullByDefault
 public class TalonProvisioner {
 
+  public static final String TALON_TABLE = "TALON";
   static final int TIMEOUT_MS = 10;
-
-  @NotNull public static final String TALON_TABLE = "TALON";
-  @NotNull private static final String DEFAULT_CONFIG = "/org/strykeforce/thirdcoast/defaults.toml";
+  private static final String DEFAULTS = "/META-INF/thirdcoast/defaults.toml";
 
   private static final Logger logger = LoggerFactory.getLogger(TalonProvisioner.class);
 
@@ -43,28 +40,25 @@ public class TalonProvisioner {
   /**
    * Construct the TalonProvisioner with base talon configurations that include swerve drive motors.
    *
-   * @param file base configuration that should include swerve azimuth and drive configs
+   * @param config base configuration that should include swerve azimuth and drive configs
    * @throws IllegalStateException if file contains invalid TOML
    */
   @Inject
-  public TalonProvisioner(File file) {
-    checkFileExists(file);
-    Toml toml = new Toml().read(file);
-    logger.info("adding configurations from {}", file);
+  public TalonProvisioner(File config) {
+    Toml toml;
+    if (Files.notExists(config.toPath())) {
+      logger.warn("{} is missing, using defaults in " + DEFAULTS, config);
+      toml = defaults();
+    } else {
+      toml = new Toml(defaults()).read(config);
+      logger.info("adding configurations from {}", config);
+    }
     addConfigurations(toml);
   }
 
-  static void checkFileExists(File file) {
-    Path path = file.toPath();
-    if (Files.notExists(path)) {
-      logger.info("{} missing, copying default", file);
-      InputStream is = TalonProvisioner.class.getResourceAsStream(DEFAULT_CONFIG);
-      try {
-        Files.copy(is, path);
-      } catch (IOException e) {
-        logger.error("unable to copy default config to " + path, e);
-      }
-    }
+  private Toml defaults() {
+    InputStream in = this.getClass().getResourceAsStream(DEFAULTS);
+    return new Toml().read(in);
   }
 
   /**
