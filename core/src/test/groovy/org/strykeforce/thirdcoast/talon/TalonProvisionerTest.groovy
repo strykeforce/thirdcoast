@@ -1,18 +1,14 @@
 package org.strykeforce.thirdcoast.talon
 
 import com.ctre.phoenix.motorcontrol.FeedbackDevice
+import org.strykeforce.thirdcoast.util.Settings
 import spock.lang.Specification
-
-import java.nio.file.Files
 
 class TalonProvisionerTest extends Specification {
 
     def "default TALON config"() {
         given:
-        File temp = File.createTempFile("thirdcoast_", ".toml")
-        temp.delete()
-        temp.deleteOnExit()
-        def provisioner = new TalonProvisioner(temp)
+        def provisioner = new TalonProvisioner(new Settings())
 
         when:
         def config = provisioner.configurationFor("drive")
@@ -44,10 +40,7 @@ class TalonProvisionerTest extends Specification {
 
     def "configuration timeout is updated"() {
         given:
-        File temp = File.createTempFile("thirdcoast_", ".toml")
-        temp.delete()
-        temp.deleteOnExit()
-        def provisioner = new TalonProvisioner(temp)
+        def provisioner = new TalonProvisioner(new Settings())
 
         when:
         provisioner.enableTimeout(true)
@@ -62,18 +55,5 @@ class TalonProvisionerTest extends Specification {
         then:
         config.getTimeout() == 0
 
-    }
-
-    def "empty config file"() {
-        given:
-        File temp = File.createTempFile("thirdcoast_", ".toml")
-        temp.deleteOnExit()
-
-
-        when:
-        new TalonProvisioner(temp)
-
-        then:
-        noExceptionThrown()
     }
 }

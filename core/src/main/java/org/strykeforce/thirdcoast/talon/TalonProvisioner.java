@@ -1,9 +1,6 @@
 package org.strykeforce.thirdcoast.talon;
 
 import com.moandjiezana.toml.Toml;
-import java.io.File;
-import java.io.InputStream;
-import java.nio.file.Files;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -16,10 +13,11 @@ import javax.inject.Singleton;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.strykeforce.thirdcoast.util.Settings;
 
 /**
  * A service for provisioning Talons. This class will read TalonSRX configurations located in TOML
- * configuration objects registered using the {@link #addConfigurations(Toml)} class method.
+ * configuration objects registered using the {@link #addConfigurations(Settings)} class method.
  *
  * <p>Multiple configurations can be registered by calling the {@code register} method repeatedly.
  *
@@ -31,34 +29,20 @@ public class TalonProvisioner {
 
   public static final String TALON_TABLE = "TALON";
   static final int TIMEOUT_MS = 10;
-  private static final String DEFAULTS = "/META-INF/thirdcoast/defaults.toml";
 
   private static final Logger logger = LoggerFactory.getLogger(TalonProvisioner.class);
 
-  @NotNull private final Map<String, TalonConfiguration> settings = new HashMap<>();
+  @NotNull private final Map<String, TalonConfiguration> configs = new HashMap<>();
 
   /**
    * Construct the TalonProvisioner with base talon configurations that include swerve drive motors.
    *
-   * @param config base configuration that should include swerve azimuth and drive configs
+   * @param settings base configuration that should include swerve azimuth and drive configs
    * @throws IllegalStateException if file contains invalid TOML
    */
   @Inject
-  public TalonProvisioner(File config) {
-    Toml toml;
-    if (Files.notExists(config.toPath())) {
-      logger.warn("{} is missing, using defaults in " + DEFAULTS, config);
-      toml = defaults();
-    } else {
-      toml = new Toml(defaults()).read(config);
-      logger.info("adding configurations from {}", config);
-    }
-    addConfigurations(toml);
-  }
-
-  private Toml defaults() {
-    InputStream in = this.getClass().getResourceAsStream(DEFAULTS);
-    return new Toml().read(in);
+  public TalonProvisioner(Settings settings) {
+    addConfigurations(settings);
   }
 
   /**
@@ -66,10 +50,10 @@ public class TalonProvisioner {
    * merged with existing parameter objects. If a new parameter object has the same name as an
    * existing object, the old object will be overwritten.
    *
-   * @param configs a parsed config collection
+   * @param settings a parsed config collection
    */
-  public void addConfigurations(Toml configs) {
-    List<Toml> configList = configs.getTables(TALON_TABLE);
+  public void addConfigurations(Settings settings) {
+    List<Toml> configList = settings.getTables(TALON_TABLE);
     if (configList == null) {
       logger.error("no " + TALON_TABLE + " tables in config");
       return;
@@ -80,7 +64,7 @@ public class TalonProvisioner {
       if (name == null) {
         throw new IllegalArgumentException(TALON_TABLE + " configuration name parameter missing");
       }
-      settings.put(name, TalonConfigurationBuilder.create(config));
+      configs.put(name, TalonConfigurationBuilder.create(config));
       logger.info("added configuration: {}", name);
     }
   }
@@ -92,7 +76,7 @@ public class TalonProvisioner {
    */
   public void addConfiguration(TalonConfiguration config) {
     String name = config.getName();
-    settings.put(name, config);
+    configs.put(name, config);
     logger.info("added configuration: {}", name);
   }
 
@@ -104,7 +88,7 @@ public class TalonProvisioner {
    */
   @NotNull
   public TalonConfiguration configurationFor(String name) {
-    TalonConfiguration config = settings.get(name);
+    TalonConfiguration config = configs.get(name);
     if (config == null) {
       throw new IllegalArgumentException("Talon configuration not found: " + name);
     }
@@ -118,7 +102,7 @@ public class TalonProvisioner {
    */
   @NotNull
   public Set<String> getConfigurationNames() {
-    return Collections.unmodifiableSet(settings.keySet());
+    return Collections.unmodifiableSet(configs.keySet());
   }
 
   /**
@@ -128,7 +112,7 @@ public class TalonProvisioner {
    */
   @NotNull
   public Collection<TalonConfiguration> getConfigurations() {
-    return Collections.unmodifiableCollection(settings.values());
+    return Collections.unmodifiableCollection(configs.values());
   }
 
   /**
@@ -138,12 +122,12 @@ public class TalonProvisioner {
    */
   public void enableTimeout(boolean timeoutEnabled) {
     logger.info("configuration timeout enabled = {}", timeoutEnabled);
-    settings.values().forEach(it -> it.setTimeout(timeoutEnabled ? TIMEOUT_MS : 0));
+    configs.values().forEach(it -> it.setTimeout(timeoutEnabled ? TIMEOUT_MS : 0));
   }
 
   @Override
   @NotNull
   public String toString() {
-    return "TalonProvisioner{" + "settings=" + settings + '}';
+    return "TalonProvisioner{" + "configs=" + configs + '}';
   }
 }

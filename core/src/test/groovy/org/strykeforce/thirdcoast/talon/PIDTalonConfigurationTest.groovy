@@ -1,6 +1,7 @@
 package org.strykeforce.thirdcoast.talon
 
 import com.moandjiezana.toml.Toml
+import org.strykeforce.thirdcoast.util.Settings
 import spock.lang.Shared
 
 import static com.ctre.phoenix.motorcontrol.ControlMode.Velocity
@@ -51,12 +52,7 @@ class PIDTalonConfigurationTest extends TalonConfigurationInteractions {
     TalonProvisioner provisioner
 
     void setupSpec() {
-        File temp = File.createTempFile("thirdcoast_", ".toml")
-        temp.delete()
-        temp.deleteOnExit()
-        def toml = new Toml().read(tomlString)
-        provisioner = new TalonProvisioner(temp)
-        provisioner.addConfigurations(toml)
+        provisioner = new TalonProvisioner(new Settings(tomlString))
     }
 
     def "reads talon parameters"() {

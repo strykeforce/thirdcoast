@@ -2,6 +2,7 @@ package org.strykeforce.thirdcoast.swerve
 
 import com.moandjiezana.toml.Toml
 import org.strykeforce.thirdcoast.talon.TalonProvisioner
+import org.strykeforce.thirdcoast.util.Settings
 import spock.lang.Shared
 
 class SwerveDriveTest extends spock.lang.Specification {
@@ -41,17 +42,12 @@ class SwerveDriveTest extends spock.lang.Specification {
     TalonProvisioner provisioner
 
     void setupSpec() {
-        File temp = File.createTempFile("thirdcoast_", ".toml")
-        temp.delete()
-        temp.deleteOnExit()
-        def toml = new Toml().read(tomlString)
-        provisioner = new TalonProvisioner(temp)
-        provisioner.addConfigurations(toml)
+        provisioner = new TalonProvisioner(new Settings(tomlString))
     }
 
     def "calculates inverse kinematics"() {
         Wheel[] wheels = [Mock(Wheel), Mock(Wheel), Mock(Wheel), Mock(Wheel)]
-        def config = new File("/bogus")
+        def config = new Settings( new File("/bogus"))
         SwerveDrive swerve = new SwerveDrive(null, wheels, config)
 
         when:

@@ -4,6 +4,7 @@ import com.ctre.phoenix.motorcontrol.SensorCollection
 import com.moandjiezana.toml.Toml
 import org.strykeforce.thirdcoast.talon.TalonProvisioner
 import org.strykeforce.thirdcoast.talon.ThirdCoastTalon
+import org.strykeforce.thirdcoast.util.Settings
 import spock.lang.Shared
 import spock.lang.Specification
 
@@ -50,12 +51,7 @@ class WheelTest extends Specification {
 '''
 
     void setupSpec() {
-        File temp = File.createTempFile("thirdcoast_", ".toml")
-        temp.delete()
-        temp.deleteOnExit()
-        def toml = new Toml().read(tomlString)
-        provisioner = new TalonProvisioner(temp)
-        provisioner.addConfigurations(toml)
+        provisioner = new TalonProvisioner(new Settings(tomlString))
     }
 
     def "configures azimuth and drive talons"() {
