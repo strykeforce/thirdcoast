@@ -10,8 +10,6 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.strykeforce.thirdcoast.di.DaggerSingletonComponent;
-import org.strykeforce.thirdcoast.di.SingletonComponent;
 import org.strykeforce.thirdcoast.talon.StatusFrameRate;
 import org.strykeforce.thirdcoast.telemetry.item.Item;
 import org.strykeforce.thirdcoast.telemetry.item.TalonItem;
@@ -30,13 +28,19 @@ public class TelemetryService {
   // when start is called. The inventory copies this collection into a List, using its index in
   // this list as the inventory id.
 
-  final Set<Item> items = new LinkedHashSet<>();
-  TelemetryController telemetryController;
-  boolean running = false;
+  private final Set<Item> items = new LinkedHashSet<>();
+  private final TelemetryControllerFactory telemetryControllerFactory;
+  private TelemetryController telemetryController;
+  private boolean running = false;
 
-  /** Default constructor. */
+  /**
+   * Default constructor.
+   *
+   * @param telemetryControllerFactory telemetry controller factory
+   */
   @Inject
-  public TelemetryService() {
+  public TelemetryService(TelemetryControllerFactory telemetryControllerFactory) {
+    this.telemetryControllerFactory = telemetryControllerFactory;
     logger.debug("Telemetry service created");
   }
 
@@ -46,8 +50,7 @@ public class TelemetryService {
       logger.info("already started");
       return;
     }
-    SingletonComponent component = DaggerSingletonComponent.builder().items(items).build();
-    telemetryController = component.telemetryController();
+    telemetryController = telemetryControllerFactory.create(new RobotInventory(items));
     telemetryController.start();
     logger.info("started");
     running = true;

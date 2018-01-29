@@ -6,6 +6,7 @@ import java.io.File;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import org.jline.terminal.Terminal;
+import org.strykeforce.thirdcoast.telemetry.NetworkModule;
 import org.strykeforce.thirdcoast.telemetry.tct.Menu;
 import org.strykeforce.thirdcoast.telemetry.tct.dio.DioMenuModule;
 import org.strykeforce.thirdcoast.telemetry.tct.servo.ServoMenuModule;
@@ -14,6 +15,7 @@ import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonMenuModule;
 @Singleton
 @Component(
   modules = {
+    NetworkModule.class,
     TerminalModule.class,
     MenuModule.class,
     ServoMenuModule.class,

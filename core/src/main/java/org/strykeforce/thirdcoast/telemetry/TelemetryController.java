@@ -1,5 +1,7 @@
 package org.strykeforce.thirdcoast.telemetry;
 
+import com.google.auto.factory.AutoFactory;
+import com.google.auto.factory.Provided;
 import com.squareup.moshi.JsonWriter;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
@@ -29,6 +31,7 @@ import org.strykeforce.thirdcoast.telemetry.grapher.Subscription;
 
 /** Provides a web service to control telemetry. */
 @ParametersAreNonnullByDefault
+@AutoFactory
 public class TelemetryController extends NanoHTTPD {
 
   static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -40,8 +43,8 @@ public class TelemetryController extends NanoHTTPD {
   @Inject
   public TelemetryController(
       final Inventory inventory,
-      final ClientHandler clientHandler,
-      final @Named("server") int port) {
+      @Provided final ClientHandler clientHandler,
+      @Provided final @Named("server") int port) {
     super(port);
     this.clientHandler = clientHandler;
     this.port = port;
