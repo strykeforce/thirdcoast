@@ -28,10 +28,9 @@ import org.strykeforce.thirdcoast.util.Settings;
 public class TalonProvisioner {
 
   public static final String TALON_TABLE = "TALON";
-  static final int TIMEOUT_MS = 10;
-
+  static final String TABLE = "THIRDCOAST.TALON";
   private static final Logger logger = LoggerFactory.getLogger(TalonProvisioner.class);
-
+  private final int timeout;
   @NotNull private final Map<String, TalonConfiguration> configs = new HashMap<>();
 
   /**
@@ -42,6 +41,9 @@ public class TalonProvisioner {
    */
   @Inject
   public TalonProvisioner(Settings settings) {
+    Toml toml = settings.getTable(TABLE);
+    timeout = toml.getLong("timeout", 0L).intValue();
+    logger.info("using config timeout = {} ms", timeout);
     addConfigurations(settings);
   }
 
@@ -52,7 +54,7 @@ public class TalonProvisioner {
    *
    * @param settings a parsed config collection
    */
-  public void addConfigurations(Settings settings) {
+  private void addConfigurations(Settings settings) {
     List<Toml> configList = settings.getTables(TALON_TABLE);
     if (configList == null) {
       logger.error("no " + TALON_TABLE + " tables in config");
@@ -122,7 +124,16 @@ public class TalonProvisioner {
    */
   public void enableTimeout(boolean timeoutEnabled) {
     logger.info("configuration timeout enabled = {}", timeoutEnabled);
-    configs.values().forEach(it -> it.setTimeout(timeoutEnabled ? TIMEOUT_MS : 0));
+    configs.values().forEach(it -> it.setTimeout(timeoutEnabled ? timeout : 0));
+  }
+
+  /**
+   * Get the current CAN bus configuration timeout.
+   *
+   * @return the timeout
+   */
+  public int getTimeout() {
+    return timeout;
   }
 
   @Override

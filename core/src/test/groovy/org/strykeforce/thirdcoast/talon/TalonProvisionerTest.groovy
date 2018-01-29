@@ -47,7 +47,7 @@ class TalonProvisionerTest extends Specification {
         def config = provisioner.configurationFor("drive")
 
         then:
-        config.getTimeout() == TalonProvisioner.TIMEOUT_MS
+        config.getTimeout() == provisioner.getTimeout()
 
         when:
         provisioner.enableTimeout(false)

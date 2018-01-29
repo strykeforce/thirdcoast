@@ -1,9 +1,12 @@
-package org.strykeforce.thirdcoast.telemetry;
+package org.strykeforce.thirdcoast.di;
 
 import dagger.BindsInstance;
 import dagger.Component;
 import java.util.Collection;
 import javax.inject.Singleton;
+import org.strykeforce.thirdcoast.telemetry.InventoryModule;
+import org.strykeforce.thirdcoast.telemetry.NetworkModule;
+import org.strykeforce.thirdcoast.telemetry.TelemetryController;
 import org.strykeforce.thirdcoast.telemetry.item.Item;
 
 /**
@@ -23,9 +26,9 @@ import org.strykeforce.thirdcoast.telemetry.item.Item;
     NetworkModule.class,
   }
 )
-interface TelemetryComponent {
+public interface SingletonComponent {
 
-  Inventory inventory();
+  //  Inventory inventory();
 
   TelemetryController telemetryController();
 
@@ -35,6 +38,6 @@ interface TelemetryComponent {
     @BindsInstance
     Builder items(Collection<Item> items);
 
-    TelemetryComponent build();
+    SingletonComponent build();
   }
 }

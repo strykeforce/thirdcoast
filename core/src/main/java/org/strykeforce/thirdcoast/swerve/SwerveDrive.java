@@ -32,7 +32,7 @@ import org.strykeforce.thirdcoast.util.Settings;
 public class SwerveDrive {
 
   private static final Logger logger = LoggerFactory.getLogger(SwerveDrive.class);
-  private static final String TABLE = "SWERVE";
+  private static final String TABLE = "THIRDCOAST.SWERVE";
   private static final int WHEEL_COUNT = 4;
   final AHRS gyro;
   private final Wheel[] wheels;

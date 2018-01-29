@@ -7,7 +7,6 @@ import static com.ctre.phoenix.motorcontrol.StatusFrameEnhanced.Status_2_Feedbac
 import static com.ctre.phoenix.motorcontrol.StatusFrameEnhanced.Status_3_Quadrature;
 import static com.ctre.phoenix.motorcontrol.StatusFrameEnhanced.Status_4_AinTempVbat;
 import static com.ctre.phoenix.motorcontrol.StatusFrameEnhanced.Status_8_PulseWidth;
-import static org.strykeforce.thirdcoast.talon.TalonProvisioner.TIMEOUT_MS;
 
 import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
@@ -65,6 +64,7 @@ public final class StatusFrameRate {
   private final int pulseWidth;
   private final int motion;
   private final int pidf0;
+  private final int timeout;
 
   StatusFrameRate(
       int analogTempVbat,
@@ -73,7 +73,8 @@ public final class StatusFrameRate {
       int pulseWidth,
       int quadEncoder,
       int motion,
-      int pidf0) {
+      int pidf0,
+      int timeout) {
     this.analogTempVbat = analogTempVbat;
     this.feedback = feedback;
     this.general = general;
@@ -81,6 +82,7 @@ public final class StatusFrameRate {
     this.quadEncoder = quadEncoder;
     this.motion = motion;
     this.pidf0 = pidf0;
+    this.timeout = timeout;
   }
 
   /**
@@ -99,19 +101,19 @@ public final class StatusFrameRate {
    * @param talon the Talon to registerWith
    */
   public void configure(TalonSRX talon) {
-    ErrorCode err = talon.setStatusFramePeriod(Status_1_General, general, TIMEOUT_MS);
+    ErrorCode err = talon.setStatusFramePeriod(Status_1_General, general, timeout);
     Errors.check(err, logger);
-    err = talon.setStatusFramePeriod(Status_2_Feedback0, feedback, TIMEOUT_MS);
+    err = talon.setStatusFramePeriod(Status_2_Feedback0, feedback, timeout);
     Errors.check(err, logger);
-    err = talon.setStatusFramePeriod(Status_3_Quadrature, quadEncoder, TIMEOUT_MS);
+    err = talon.setStatusFramePeriod(Status_3_Quadrature, quadEncoder, timeout);
     Errors.check(err, logger);
-    err = talon.setStatusFramePeriod(Status_4_AinTempVbat, analogTempVbat, TIMEOUT_MS);
+    err = talon.setStatusFramePeriod(Status_4_AinTempVbat, analogTempVbat, timeout);
     Errors.check(err, logger);
-    err = talon.setStatusFramePeriod(Status_8_PulseWidth, pulseWidth, TIMEOUT_MS);
+    err = talon.setStatusFramePeriod(Status_8_PulseWidth, pulseWidth, timeout);
     Errors.check(err, logger);
-    err = talon.setStatusFramePeriod(Status_10_MotionMagic, motion, TIMEOUT_MS);
+    err = talon.setStatusFramePeriod(Status_10_MotionMagic, motion, timeout);
     Errors.check(err, logger);
-    err = talon.setStatusFramePeriod(Status_13_Base_PIDF0, pidf0, TIMEOUT_MS);
+    err = talon.setStatusFramePeriod(Status_13_Base_PIDF0, pidf0, timeout);
     Errors.check(err, logger);
   }
 
@@ -145,13 +147,14 @@ public final class StatusFrameRate {
     private int pulseWidth = 160;
     private int motion = 160;
     private int pidf0 = 160;
+    private int timeout = 10;
 
     Builder() {}
 
     @NotNull
     public StatusFrameRate build() {
       return new StatusFrameRate(
-          analogTempVbat, feedback, general, pulseWidth, quadEncoder, motion, pidf0);
+          analogTempVbat, feedback, general, pulseWidth, quadEncoder, motion, pidf0, timeout);
     }
 
     @NotNull
@@ -193,6 +196,12 @@ public final class StatusFrameRate {
     @NotNull
     public Builder pidf0(int ms) {
       pidf0 = ms;
+      return this;
+    }
+
+    @NotNull
+    public Builder timeout(int ms) {
+      timeout = ms;
       return this;
     }
   }

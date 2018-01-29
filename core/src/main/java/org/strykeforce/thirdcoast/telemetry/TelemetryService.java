@@ -10,6 +10,8 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.strykeforce.thirdcoast.di.DaggerSingletonComponent;
+import org.strykeforce.thirdcoast.di.SingletonComponent;
 import org.strykeforce.thirdcoast.talon.StatusFrameRate;
 import org.strykeforce.thirdcoast.telemetry.item.Item;
 import org.strykeforce.thirdcoast.telemetry.item.TalonItem;
@@ -44,7 +46,7 @@ public class TelemetryService {
       logger.info("already started");
       return;
     }
-    TelemetryComponent component = DaggerTelemetryComponent.builder().items(items).build();
+    SingletonComponent component = DaggerSingletonComponent.builder().items(items).build();
     telemetryController = component.telemetryController();
     telemetryController.start();
     logger.info("started");
