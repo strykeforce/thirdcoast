@@ -66,7 +66,7 @@ public class TalonConfigurationBuilder {
     name = config.getName();
     setpointMax = config.getSetpointMax();
     encoder = config.getEncoder();
-    neutralMode = config.isBrakeInNeutral();
+    neutralMode = config.getBrakeInNeutral();
     outputReversed = config.isOutputReversed();
     velocityMeasurementPeriod = config.getVelocityMeasurementPeriod();
     velocityMeasurementWindow = config.getVelocityMeasurementWindow();

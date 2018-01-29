@@ -240,11 +240,6 @@ public abstract class TalonConfiguration {
     return encoder;
   }
 
-  // FIXME: duplicated below?
-  NeutralMode isBrakeInNeutral() {
-    return neutralMode;
-  }
-
   Boolean isOutputReversed() {
     return outputReversed;
   }
