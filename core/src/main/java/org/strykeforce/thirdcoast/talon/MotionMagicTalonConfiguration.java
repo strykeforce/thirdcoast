@@ -41,6 +41,7 @@ public class MotionMagicTalonConfiguration extends PIDTalonConfiguration {
       Double dGain,
       Double fGain,
       Integer iZone,
+      Integer profileSlot,
       Integer motionMagicAcceleration,
       Integer motionMagicCruiseVelocity) {
     super(
@@ -72,7 +73,8 @@ public class MotionMagicTalonConfiguration extends PIDTalonConfiguration {
         iGain,
         dGain,
         fGain,
-        iZone);
+        iZone,
+        profileSlot);
     this.motionMagicAcceleration = motionMagicAcceleration;
     this.motionMagicCruiseVelocity = motionMagicCruiseVelocity;
   }

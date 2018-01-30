@@ -53,6 +53,7 @@ public class TalonConfigurationBuilder {
   @Nullable private Double dGain;
   @Nullable private Double fGain;
   @Nullable private Integer iZone;
+  @Nullable private Integer profileSlot;
 
   // MotionMagicTalonConfiguration
   @Nullable private Integer motionMagicAcceleration;
@@ -107,6 +108,7 @@ public class TalonConfigurationBuilder {
     dGain = pid.getDGain();
     fGain = pid.getFGain();
     iZone = pid.getIZone();
+    profileSlot = pid.getProfileSlot();
   }
 
   /**
@@ -224,7 +226,8 @@ public class TalonConfigurationBuilder {
                 iGain,
                 dGain,
                 fGain,
-                iZone);
+                iZone,
+                profileSlot);
         break;
       case Velocity:
         tc =
@@ -256,7 +259,8 @@ public class TalonConfigurationBuilder {
                 iGain,
                 dGain,
                 fGain,
-                iZone);
+                iZone,
+                profileSlot);
         break;
       case MotionMagic:
         tc =
@@ -289,6 +293,7 @@ public class TalonConfigurationBuilder {
                 dGain,
                 fGain,
                 iZone,
+                profileSlot,
                 motionMagicAcceleration,
                 motionMagicCruiseVelocity);
         break;
@@ -653,6 +658,20 @@ public class TalonConfigurationBuilder {
     this.iZone = iZone;
     return this;
   }
+
+  /**
+   * Set the profile slot of the current closed-loop profile.
+   *
+   * @param profileSlot value for profile slot.
+   * @return this builder.
+   */
+  @NotNull
+  public TalonConfigurationBuilder profileSlot(int profileSlot) {
+    assert(profileSlot >=0 && profileSlot < 4);
+    this.profileSlot = profileSlot;
+    return this;
+  }
+
 
   /**
    * Set the motion-magic acceleration.

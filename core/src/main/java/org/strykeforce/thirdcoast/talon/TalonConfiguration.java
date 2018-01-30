@@ -31,6 +31,7 @@ public abstract class TalonConfiguration {
   // required
   @NotNull private final String name;
   @NotNull private final ControlMode mode;
+
   // optional
   private final Encoder encoder;
   private final double setpointMax;
@@ -47,8 +48,9 @@ public abstract class TalonConfiguration {
   private final Integer peakCurrentLimitDuration;
   private final Double openLoopRampTime;
   private final Double voltageCompSaturation;
+
   protected int timeout = 0;
-  private Set<Integer> talonIds;
+  private Set<Integer> talonIds; // used by tct utility
 
   TalonConfiguration(
       @NotNull String name,

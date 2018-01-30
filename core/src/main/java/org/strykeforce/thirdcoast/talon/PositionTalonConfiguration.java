@@ -36,7 +36,8 @@ class PositionTalonConfiguration extends PIDTalonConfiguration {
       Double iGain,
       Double dGain,
       Double fGain,
-      Integer iZone) {
+      Integer iZone,
+      Integer profileSlot) {
     super(
         name,
         ControlMode.Position,
@@ -66,7 +67,8 @@ class PositionTalonConfiguration extends PIDTalonConfiguration {
         iGain,
         dGain,
         fGain,
-        iZone);
+        iZone,
+        profileSlot);
   }
 
   @Override

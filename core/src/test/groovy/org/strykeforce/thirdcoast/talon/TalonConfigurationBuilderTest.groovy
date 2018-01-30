@@ -345,6 +345,14 @@ pGain = 1.2
         tc.IZone == 2767
     }
 
+    def "configure profile slot"() {
+        when:
+        PIDTalonConfiguration tc = (PIDTalonConfiguration) tcb.mode(Velocity).profileSlot(3).build()
+
+        then:
+        tc.profileSlot == 3
+    }
+
     def "configure motionMagicAcceleration"() {
         when:
         MotionMagicTalonConfiguration tc = (MotionMagicTalonConfiguration) tcb.mode(MotionMagic)

@@ -1,6 +1,5 @@
 package org.strykeforce.thirdcoast.talon
 
-import com.moandjiezana.toml.Toml
 import org.strykeforce.thirdcoast.util.Settings
 import spock.lang.Shared
 
@@ -27,6 +26,8 @@ class PIDTalonConfigurationTest extends TalonConfigurationInteractions {
     dGain = 0.3
     fGain = 0.4
     iZone = 50
+    profileSlot = 1
+
     [TALON.encoder]
     device = "CTRE_MagEncoder_Relative"
 
@@ -76,6 +77,7 @@ class PIDTalonConfigurationTest extends TalonConfigurationInteractions {
         t.DGain == 0.3
         t.FGain == 0.4
         t.IZone == 50
+        t.profileSlot == 1
     }
 
     def "configures default parameters"() {
@@ -136,12 +138,12 @@ class PIDTalonConfigurationTest extends TalonConfigurationInteractions {
             1 * talon.configPeakOutputReverse(-0.3d, TIMEOUT)
             1 * talon.configNominalOutputForward(0.1d, TIMEOUT)
             1 * talon.configNominalOutputReverse(-0.2d, TIMEOUT)
-            1 * talon.configAllowableClosedloopError(0, 10, TIMEOUT)
-            1 * talon.config_kP(0, 0.1d, TIMEOUT)
-            1 * talon.config_kI(0, 0.2d, TIMEOUT)
-            1 * talon.config_kD(0, 0.3d, TIMEOUT)
-            1 * talon.config_kF(0, 0.4d, TIMEOUT)
-            1 * talon.config_IntegralZone(0, 50, TIMEOUT)
+            1 * talon.configAllowableClosedloopError(1, 10, TIMEOUT)
+            1 * talon.config_kP(1, 0.1d, TIMEOUT)
+            1 * talon.config_kI(1, 0.2d, TIMEOUT)
+            1 * talon.config_kD(1, 0.3d, TIMEOUT)
+            1 * talon.config_kF(1, 0.4d, TIMEOUT)
+            1 * talon.config_IntegralZone(1, 50, TIMEOUT)
         }
     }
 

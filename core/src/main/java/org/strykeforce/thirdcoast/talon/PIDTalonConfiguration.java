@@ -8,7 +8,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import org.jetbrains.annotations.NotNull;
 
 public class PIDTalonConfiguration extends TalonConfiguration {
-
+  // TODO: add maxIntegralAccumulator
   private final Double closedLoopRampRate;
   private final Double forwardOutputVoltagePeak; // FIXME: these are no longer voltage
   private final Double reverseOutputVoltagePeak;
@@ -21,6 +21,7 @@ public class PIDTalonConfiguration extends TalonConfiguration {
   private final Double dGain;
   private final Double fGain;
   private final Integer iZone;
+  private final Integer profileSlot;
 
   PIDTalonConfiguration(
       @NotNull String name,
@@ -51,7 +52,8 @@ public class PIDTalonConfiguration extends TalonConfiguration {
       Double iGain,
       Double dGain,
       Double fGain,
-      Integer iZone) {
+      Integer iZone,
+      Integer profileSlot) {
     super(
         name,
         mode,
@@ -82,6 +84,7 @@ public class PIDTalonConfiguration extends TalonConfiguration {
     this.dGain = dGain;
     this.fGain = fGain;
     this.iZone = iZone;
+    this.profileSlot = profileSlot;
   }
 
   @Override
@@ -91,7 +94,6 @@ public class PIDTalonConfiguration extends TalonConfiguration {
     err = talon.configClosedloopRamp(closedLoopRampRate != null ? closedLoopRampRate : 0, timeout);
     Errors.check(talon, "configClosedloopRamp", err, logger);
 
-    // TODO: remove voltage from names
     err = talon.configPeakOutputForward(valueOrElseZero(forwardOutputVoltagePeak, 1), timeout);
     Errors.check(talon, "configPeakOutputForward", err, logger);
     err = talon.configPeakOutputReverse(valueOrElseZero(reverseOutputVoltagePeak, -1), timeout);
@@ -104,20 +106,23 @@ public class PIDTalonConfiguration extends TalonConfiguration {
         talon.configNominalOutputReverse(valueOrElseZero(reverseOutputVoltageNominal, 0), timeout);
     Errors.check(talon, "configNominalOutputReverse", err, logger);
 
+    int slotIdx = profileSlot != null ? profileSlot : 0;
+
     err =
-        talon.configAllowableClosedloopError(0, valueOrElseZero(allowableClosedLoopError), timeout);
+        talon.configAllowableClosedloopError(
+            slotIdx, valueOrElseZero(allowableClosedLoopError), timeout);
     Errors.check(talon, "configAllowableClosedloopError", err, logger);
 
-    err = talon.config_kP(0, valueOrElseZero(pGain, 0), timeout);
+    err = talon.config_kP(slotIdx, valueOrElseZero(pGain, 0), timeout);
     Errors.check(talon, "config_kP", err, logger);
-    err = talon.config_kI(0, valueOrElseZero(iGain, 0), timeout);
+    err = talon.config_kI(slotIdx, valueOrElseZero(iGain, 0), timeout);
     Errors.check(talon, "config_kI", err, logger);
-    err = talon.config_kD(0, valueOrElseZero(dGain, 0), timeout);
+    err = talon.config_kD(slotIdx, valueOrElseZero(dGain, 0), timeout);
     Errors.check(talon, "config_kD", err, logger);
-    err = talon.config_kF(0, valueOrElseZero(fGain, 0), timeout);
+    err = talon.config_kF(slotIdx, valueOrElseZero(fGain, 0), timeout);
     Errors.check(talon, "config_kF", err, logger);
 
-    err = talon.config_IntegralZone(0, valueOrElseZero(iZone), timeout);
+    err = talon.config_IntegralZone(slotIdx, valueOrElseZero(iZone), timeout);
     Errors.check(talon, "config_IntegralZone", err, logger);
   }
 
@@ -169,6 +174,10 @@ public class PIDTalonConfiguration extends TalonConfiguration {
     return iZone;
   }
 
+  public Integer getProfileSlot() {
+    return profileSlot;
+  }
+
   @Override
   public String toString() {
     return "PIDTalonConfiguration{"
@@ -196,6 +205,8 @@ public class PIDTalonConfiguration extends TalonConfiguration {
         + fGain
         + ", iZone="
         + iZone
+        + ", profileSlot="
+        + profileSlot
         + "} "
         + super.toString();
   }
