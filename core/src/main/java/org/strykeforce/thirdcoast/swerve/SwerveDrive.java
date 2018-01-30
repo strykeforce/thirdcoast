@@ -35,9 +35,11 @@ public class SwerveDrive {
   private static final String TABLE = "THIRDCOAST.SWERVE";
   private static final int WHEEL_COUNT = 4;
   final AHRS gyro;
+  private final double kLengthComponent;
+  private final double kWidthComponent;
   private final Wheel[] wheels;
-  private final double length;
-  private final double width;
+  private final double[] ws = new double[WHEEL_COUNT];
+  private final double[] wa = new double[WHEEL_COUNT];
 
   @Inject
   SwerveDrive(AHRS gyro, Wheel[] wheels, Settings settings) {
@@ -46,12 +48,16 @@ public class SwerveDrive {
     }
     this.gyro = gyro;
     this.wheels = wheels;
+    logger.info("field orientation driving is {}", gyro == null ? "DISABLED" : "ENABLED");
 
     Toml toml = settings.getTable(TABLE);
-    length = toml.getDouble("length");
-    width = toml.getDouble("width");
+    double length = toml.getDouble("length");
+    double width = toml.getDouble("width");
+    double radius = Math.hypot(length, width);
+    kLengthComponent = length / radius;
+    kWidthComponent = width / radius;
 
-    logger.info(
+    logger.debug(
         "initialized with gyro = {} wheels = {} length = {} width = {}",
         gyro,
         Arrays.toString(wheels),
@@ -93,22 +99,18 @@ public class SwerveDrive {
       forward = temp;
     }
 
-    final double radius = Math.hypot(length, width);
-
-    final double a = strafe - azimuth * (length / radius);
-    final double b = strafe + azimuth * (length / radius);
-    final double c = forward - azimuth * (width / radius);
-    final double d = forward + azimuth * (width / radius);
+    final double a = strafe - azimuth * kLengthComponent;
+    final double b = strafe + azimuth * kLengthComponent;
+    final double c = forward - azimuth * kWidthComponent;
+    final double d = forward + azimuth * kWidthComponent;
 
     // wheel speed
-    double[] ws = new double[4];
     ws[0] = Math.hypot(b, d);
     ws[1] = Math.hypot(b, c);
     ws[2] = Math.hypot(a, d);
     ws[3] = Math.hypot(a, c);
 
     // wheel azimuth
-    double[] wa = new double[4];
     wa[0] = Math.atan2(b, d) * 0.5 / Math.PI;
     wa[1] = Math.atan2(b, c) * 0.5 / Math.PI;
     wa[2] = Math.atan2(a, d) * 0.5 / Math.PI;

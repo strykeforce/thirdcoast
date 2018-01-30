@@ -1,7 +1,6 @@
 package org.strykeforce.thirdcoast.swerve
 
 import com.ctre.phoenix.motorcontrol.SensorCollection
-import com.moandjiezana.toml.Toml
 import org.strykeforce.thirdcoast.talon.TalonProvisioner
 import org.strykeforce.thirdcoast.talon.ThirdCoastTalon
 import org.strykeforce.thirdcoast.util.Settings
@@ -13,14 +12,19 @@ import static com.ctre.phoenix.motorcontrol.ControlMode.*
 class WheelTest extends Specification {
 
     static final EPSILON = 1e-12
-    static final ROT = Wheel.TICKS_PER_ROTATION
+    static final ROT = 4096
 
     def azimuth = Mock(ThirdCoastTalon)
     def drive = Mock(ThirdCoastTalon)
     @Shared
     TalonProvisioner provisioner
+    @Shared
+    Settings settings
 
     static tomlString = '''
+    [THIRDCOAST.WHEEL]
+    ticks_per_rev = 4096
+
     [[TALON]]
     name = "drive"
     mode = "PercentOutput"
@@ -51,19 +55,20 @@ class WheelTest extends Specification {
 '''
 
     void setupSpec() {
-        provisioner = new TalonProvisioner(new Settings(tomlString))
+        settings = new Settings(tomlString)
+        provisioner = new TalonProvisioner(settings)
     }
 
     def "configures azimuth and drive talons"() {
         when:
-        def wheel = new Wheel(provisioner, azimuth, drive)
+        def wheel = new Wheel(provisioner, settings, azimuth, drive)
 
         then:
         1 * drive.changeControlMode(PercentOutput)
         1 * azimuth.changeControlMode(Position)
 
         when:
-        wheel.azimuthParameters = "speed"
+        wheel.configAzimuth("speed")
 
         then:
         1 * azimuth.changeControlMode(Velocity)
@@ -78,7 +83,7 @@ class WheelTest extends Specification {
         sensorCollection.getPulseWidthPosition() >> 0x1000
 
         when:
-        def wheel = new Wheel(provisioner, azimuth, drive)
+        def wheel = new Wheel(provisioner, settings, azimuth, drive)
 
         then:
         wheel.azimuthAbsolutePosition == 0
@@ -93,7 +98,7 @@ class WheelTest extends Specification {
     def "azimuth changes are optimized"() {
         when:
         azimuth.getSelectedSensorPosition(0) >> start_position * ROT
-        def wheel = new Wheel(provisioner, azimuth, drive)
+        def wheel = new Wheel(provisioner, settings, azimuth, drive)
         wheel.set(setpoint, 1d)
 
         then:
@@ -145,7 +150,7 @@ class WheelTest extends Specification {
 
     def "drive output is scaled"() {
         when:
-        def wheel = new Wheel(provisioner, azimuth, drive)
+        def wheel = new Wheel(provisioner, settings, azimuth, drive)
         wheel.set(0, 1)
 
         then:

@@ -2,6 +2,7 @@ package org.strykeforce.thirdcoast.swerve;
 
 import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.moandjiezana.toml.Toml;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.talon.Errors;
@@ -9,6 +10,7 @@ import org.strykeforce.thirdcoast.talon.TalonConfiguration;
 import org.strykeforce.thirdcoast.talon.TalonFactory;
 import org.strykeforce.thirdcoast.talon.TalonProvisioner;
 import org.strykeforce.thirdcoast.talon.ThirdCoastTalon;
+import org.strykeforce.thirdcoast.util.Settings;
 
 /**
  * Controls a swerve drive wheel azimuth and drive motors. The azimuth and drive Talons are
@@ -28,8 +30,11 @@ import org.strykeforce.thirdcoast.talon.ThirdCoastTalon;
  */
 public class Wheel {
 
-  public static final double TICKS_PER_ROTATION = 4096;
+  private static final String TABLE = "THIRDCOAST.WHEEL";
   private static final Logger logger = LoggerFactory.getLogger(Wheel.class);
+
+  public final double kTicksPerRevolution;
+
   private final TalonProvisioner talonProvisioner;
   private final ThirdCoastTalon azimuthTalon;
   private final ThirdCoastTalon driveTalon;
@@ -47,16 +52,27 @@ public class Wheel {
    * @param azimuth the azimuthTalon TalonSRX
    * @param drive the driveTalon TalonSRX
    */
-  public Wheel(TalonProvisioner talonProvisioner, ThirdCoastTalon azimuth, ThirdCoastTalon drive) {
-    final String AZIMUTH_PARAMETERS = "azimuth";
-    final String DRIVE_PARAMETERS = "drive";
+  public Wheel(
+      TalonProvisioner talonProvisioner,
+      Settings settings,
+      ThirdCoastTalon azimuth,
+      ThirdCoastTalon drive) {
+    Toml toml = settings.getTable(TABLE);
+    kTicksPerRevolution = (double) toml.getLong("ticksPerRevolution", 4096L);
+    final String kAzimuthConfig = toml.getString("azimuthConfig", "azimuth");
+    final String kDriveConfig = toml.getString("driveConfig", "drive");
 
     this.talonProvisioner = talonProvisioner;
     azimuthTalon = azimuth;
     driveTalon = drive;
-    setAzimuthParameters(AZIMUTH_PARAMETERS);
-    setDriveParameters(DRIVE_PARAMETERS);
-    logger.info("initialized azimuth = {}, drive = {}", azimuthTalon, driveTalon);
+    configAzimuth(kAzimuthConfig);
+    configDrive(kDriveConfig);
+    logger.info(
+        "initialized azimuth {} with {}, drive {} with {}",
+        azimuthTalon,
+        kAzimuthConfig,
+        driveTalon,
+        kDriveConfig);
   }
 
   /**
@@ -65,9 +81,10 @@ public class Wheel {
    * @param talonFactory the TalonFactory used to create Talons
    * @param index the wheel number
    */
-  public Wheel(TalonFactory talonFactory, int index) {
+  public Wheel(TalonFactory talonFactory, Settings settings, int index) {
     this(
         talonFactory.getProvisioner(),
+        settings,
         (ThirdCoastTalon) talonFactory.getTalon(index),
         (ThirdCoastTalon) talonFactory.getTalon(index + 10));
   }
@@ -95,9 +112,9 @@ public class Wheel {
 
     double azimuthPosition = azimuthTalon.getSelectedSensorPosition(0);
     double azimuthError =
-        Math.IEEEremainder(azimuth * TICKS_PER_ROTATION - azimuthPosition, TICKS_PER_ROTATION);
-    if (Math.abs(azimuthError) > 0.25 * TICKS_PER_ROTATION) {
-      azimuthError -= Math.copySign(0.5 * TICKS_PER_ROTATION, azimuthError);
+        Math.IEEEremainder(azimuth * kTicksPerRevolution - azimuthPosition, kTicksPerRevolution);
+    if (Math.abs(azimuthError) > 0.25 * kTicksPerRevolution) {
+      azimuthError -= Math.copySign(0.5 * kTicksPerRevolution, azimuthError);
       driveSetpoint = -driveSetpoint;
     }
     azimuthSetpoint = azimuthPosition + azimuthError;
@@ -116,7 +133,7 @@ public class Wheel {
     driveTalon.set(0);
   }
 
-  public void setAzimuthParameters(String name) {
+  public void configAzimuth(String name) {
     try {
       TalonConfiguration talonConfiguration = talonProvisioner.configurationFor(name);
       talonConfiguration.configure(azimuthTalon);
@@ -126,7 +143,7 @@ public class Wheel {
     }
   }
 
-  public void setDriveParameters(String name) {
+  public void configDrive(String name) {
     try {
       TalonConfiguration talonConfiguration = talonProvisioner.configurationFor(name);
       talonConfiguration.configure(driveTalon);

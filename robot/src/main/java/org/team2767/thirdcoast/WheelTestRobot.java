@@ -58,7 +58,7 @@ public class WheelTestRobot extends IterativeRobot {
   private void logTestCase(double[] tc) {
     System.out.printf(
         "azimuth = %f, speed = %f, actual azimuth = %f, reversed = %b%n",
-        tc[0] * Wheel.TICKS_PER_ROTATION,
+        tc[0] * Wheel.kTicksPerRevolution,
         tc[1],
         wheel.getAzimuthSetpoint(),
         wheel.isDriveReversed());

@@ -1,10 +1,15 @@
 ##
-## Defaults
+## Third Coast Defaults
 ##
 
 [THIRDCOAST.SWERVE]
   length = 1.0
   width = 1.0
+
+[THIRDCOAST.WHEEL]
+  ticksPerRevolution = 4096
+  azimuthConfig = "azimuth"
+  driveConfig = "drive"
 
 [THIRDCOAST.TALON]
   timeout = 10
