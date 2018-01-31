@@ -14,7 +14,7 @@ public class Errors {
 
   public static void check(TalonSRX talon, String method, ErrorCode error, Logger logger) {
     if (error != null && error != ErrorCode.OK) {
-      logger.error("Talon {} - {} error {}", talon.getDeviceID(), method, error);
+      logger.error("Talon {}: {} error {}", talon.getDeviceID(), method, error);
     }
   }
 }
