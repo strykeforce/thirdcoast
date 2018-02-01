@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.telemetry.grapher.ClientHandler;
 import org.strykeforce.thirdcoast.telemetry.grapher.Subscription;
 
-/** Provides a web service to control telemetry. */
+/** Provides a web service to config telemetry. */
 @ParametersAreNonnullByDefault
 @AutoFactory
 public class TelemetryController extends NanoHTTPD {

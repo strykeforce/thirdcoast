@@ -2,8 +2,7 @@ package org.strykeforce.thirdcoast.telemetry.tct.talon.config.lim;
 
 import javax.inject.Inject;
 import org.jline.reader.LineReader;
-import org.strykeforce.thirdcoast.talon.SoftLimit;
-import org.strykeforce.thirdcoast.talon.ThirdCoastTalon;
+import org.strykeforce.thirdcoast.talon.config.SoftLimits;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractBooleanConfigCommand;
 
@@ -23,9 +22,9 @@ public class EnableForwardSoftLimitCommand extends AbstractBooleanConfigCommand 
 
   @Override
   protected void saveConfig(boolean value) {
-    SoftLimit limit = talonSet.talonConfigurationBuilder().getForwardSoftLimit();
+    SoftLimits limit = talonSet.talonConfigurationBuilder().getForwardSoftLimit();
     if (limit == null) {
-      limit = SoftLimit.DEFAULT;
+      limit = SoftLimits.DEFAULT;
     }
     talonSet.talonConfigurationBuilder().setForwardSoftLimit(limit.copyWithEnabled(value));
   }

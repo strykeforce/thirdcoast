@@ -1,4 +1,4 @@
-package org.strykeforce.thirdcoast.talon
+package org.strykeforce.thirdcoast.talon.config
 
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import spock.lang.Specification

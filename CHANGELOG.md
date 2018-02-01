@@ -58,7 +58,7 @@ This version upgrades the library to be compatible with the 2018 Phoenix TalonSR
 
 ### Fixed
 
-- `tct` utility was not saving configuration for settings that had forward and reverse double values, for example **peak voltage**.
+- `tct` utility was not saving configuration for settings that had forwardLimits and reverseLimits double values, for example **peak voltage**.
 
 ## [17.1.1] - 2017-11-27
 

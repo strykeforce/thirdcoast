@@ -2,31 +2,42 @@
 ## Third Coast Defaults
 ##
 
-[THIRDCOAST.SWERVE]
-  length = 1.0
-  width = 1.0
-
 [THIRDCOAST.WHEEL]
-  ticksPerRevolution = 4096
-  azimuthConfig = "azimuth"
-  driveConfig = "drive"
+  # see Wheel Java class  for defaults
+  # ticksPerRevolution = long
+  # driveSetpointMax = long
+  # azimuthControlMode = ControlMode
+  # driveOpenLoopControlMode = ControlMode
+  # driveClosedLoopControlMode = ControlMode
 
-[THIRDCOAST.TALON]
-  timeout = 10
+[THIRDCOAST.SWERVE]
+  # see SwerveDrive Java class  for defaults
+  # length = double
+  # width = double
 
-[[TALON]]
-  name = "drive"
-  mode = "PercentOutput"
-  setpointMax    = 12.0
-  currentLimit   = 50
-  [TALON.encoder]
-    device = "CTRE_MagEncoder_Relative"
-    reversed = false
+[THIRDCOAST.TALONS]
+  # see Talons Java class for defaults
+  # timeout = long
+
+  [[TALON]]
+    name = "drive"
+    mode = "Velocity"
+    setpointMax = 5000.0
+    allowableClosedLoopError = 0
+    pGain = 0.1
+    iGain = 0.0
+    dGain = 1.0
+    fGain = 0.03
+    currentLimit = 40
+    neutralMode = "Coast"
+    [TALON.encoder]
+      device = "CTRE_MagEncoder_Relative"
+      reversed = false
 
 [[TALON]]
   name = "azimuth"
   mode = "Position"
-  setpointMax     = 4095
+  setpointMax     = 4095.0
   brakeInNeutral = false
   forwardOutputVoltagePeak =  6.0
   reverseOutputVoltagePeak = -6.0

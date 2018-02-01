@@ -51,8 +51,8 @@ public class SwerveDrive {
     logger.info("field orientation driving is {}", gyro == null ? "DISABLED" : "ENABLED");
 
     Toml toml = settings.getTable(TABLE);
-    double length = toml.getDouble("length");
-    double width = toml.getDouble("width");
+    double length = toml.getDouble("length", 1d);
+    double width = toml.getDouble("width", 1d);
     double radius = Math.hypot(length, width);
     kLengthComponent = length / radius;
     kWidthComponent = width / radius;
@@ -67,6 +67,18 @@ public class SwerveDrive {
 
   static String getPreferenceKeyForWheel(int i) {
     return String.format("%s/wheel.%d", SwerveDrive.class.getSimpleName(), i);
+  }
+
+  /**
+   * Set the drive mode.
+   *
+   * @param driveMode the drive mode
+   */
+  public void setDriveMode(DriveMode driveMode) {
+    for (Wheel wheel : wheels) {
+      wheel.setDriveMode(driveMode);
+    }
+    logger.info("drive mode = {}", driveMode);
   }
 
   /**
@@ -207,5 +219,11 @@ public class SwerveDrive {
    */
   public AHRS getGyro() {
     return gyro;
+  }
+
+  /** Swerve Drive drive mode */
+  public enum DriveMode {
+    OPEN_LOOP,
+    CLOSED_LOOP
   }
 }

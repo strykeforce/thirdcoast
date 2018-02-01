@@ -1,7 +1,8 @@
-package org.strykeforce.thirdcoast.talon.control
+package org.strykeforce.thirdcoast.talon.config
 
 import com.ctre.phoenix.motorcontrol.FeedbackDevice
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
+import com.moandjiezana.toml.Toml
 import spock.lang.Specification
 
 class FeedbackSensorTest extends Specification {
@@ -19,12 +20,13 @@ class FeedbackSensorTest extends Specification {
 
         then:
         1 * talon.configSelectedFeedbackSensor(FeedbackDevice.None, 0, timeout)
+        1 * talon.setSensorPhase(false)
         0 * talon._
     }
 
     def "configures encoder"() {
         given:
-        def feedback = new FeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 1)
+        def feedback = new FeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 1, true)
         def talon = Mock(TalonSRX)
         def timeout = random.nextInt()
 
@@ -33,8 +35,26 @@ class FeedbackSensorTest extends Specification {
 
         then:
         1 * talon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 1, timeout)
+        1 * talon.setSensorPhase(true)
         0 * talon._
 
     }
 
+    def "overrides default with TOML"() {
+        given:
+        def tomlStr = "feedbackDevice = \"QuadEncoder\""
+        def toml = new Toml().read(tomlStr)
+        def expected = new FeedbackSensor(FeedbackDevice.QuadEncoder, 0, false)
+
+        when:
+        def feedback = FeedbackSensor.create(toml)
+
+        then:
+        feedback == expected
+    }
+
+    def "default values for null TOML"() {
+        expect:
+        FeedbackSensor.create(null) == FeedbackSensor.DEFAULT
+    }
 }

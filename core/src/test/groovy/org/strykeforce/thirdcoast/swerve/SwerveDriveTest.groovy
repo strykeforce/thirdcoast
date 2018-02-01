@@ -1,54 +1,46 @@
 package org.strykeforce.thirdcoast.swerve
 
-import com.moandjiezana.toml.Toml
-import org.strykeforce.thirdcoast.talon.TalonProvisioner
+
 import org.strykeforce.thirdcoast.util.Settings
 import spock.lang.Shared
 
+import static org.strykeforce.thirdcoast.swerve.SwerveDrive.DriveMode.CLOSED_LOOP
+import static org.strykeforce.thirdcoast.swerve.SwerveDrive.DriveMode.OPEN_LOOP
+
 class SwerveDriveTest extends spock.lang.Specification {
 
-    static tomlString = '''
-    [[TALON]]
-    name = "drive"
-    mode = "PercentOutput"
-    setpointMax    = 1.0
-    continuousCurrentLimit   = 50
-    [TALON.encoder]
-    device = "QuadEncoder"
-
-    [[TALON]]
-    name = "azimuth"
-    mode = "Position"
-    setpointMax     = 4095.0
-    neutralMode = "Coast"
-    pGain =   1.0
-    iGain =   2.0
-    dGain =   3.0
-    fGain =   4.0
-    iZone = 0
-    forwardOutputVoltagePeak =  6.0
-    reverseOutputVoltagePeak = -6.0
-    [TALON.encoder]
-    device  = "CtreMagEncoder_Relative"
-    
-    [[TALON]]
-    name = "speed"
-    mode = "Velocity"
-    setpointMax = 1.0
-'''
-
-
     @Shared
-    TalonProvisioner provisioner
+    Settings settings
 
     void setupSpec() {
-        provisioner = new TalonProvisioner(new Settings(tomlString))
+        settings = new Settings()
+    }
+
+    def "sets drive mode"() {
+        given:
+        Wheel[] wheels = [Mock(Wheel), Mock(Wheel), Mock(Wheel), Mock(Wheel)]
+
+        when:
+        def swerve = new SwerveDrive(null, wheels, new Settings())
+        swerve.setDriveMode(OPEN_LOOP)
+
+        then:
+        for (int i = 0; i < 4; i++) {
+            1 * wheels[i].setDriveMode(OPEN_LOOP)
+        }
+
+        when:
+        swerve.setDriveMode(CLOSED_LOOP)
+
+        then:
+        for (int i = 0; i < 4; i++) {
+            1 * wheels[i].setDriveMode(CLOSED_LOOP)
+        }
     }
 
     def "calculates inverse kinematics"() {
         Wheel[] wheels = [Mock(Wheel), Mock(Wheel), Mock(Wheel), Mock(Wheel)]
-        def config = new Settings( new File("/bogus"))
-        SwerveDrive swerve = new SwerveDrive(null, wheels, config)
+        SwerveDrive swerve = new SwerveDrive(null, wheels, settings)
 
         when:
         for (Wheel w : wheels) {

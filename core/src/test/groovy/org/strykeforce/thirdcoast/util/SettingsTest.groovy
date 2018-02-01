@@ -1,6 +1,6 @@
 package org.strykeforce.thirdcoast.util
 
-import org.strykeforce.thirdcoast.talon.TalonProvisioner
+import org.strykeforce.thirdcoast.talon.Talons
 import spock.lang.Specification
 
 class SettingsTest extends Specification {
@@ -8,7 +8,7 @@ class SettingsTest extends Specification {
     def "reads defaults"() {
         when:
         def settings = new Settings(new File("/bogus"))
-        def talons = settings.getTables(TalonProvisioner.TALON_TABLE)
+        def talons = settings.getTables(Talons.TALONS)
 
         then:
         talons.size() == 2
@@ -27,7 +27,7 @@ class SettingsTest extends Specification {
 '''
         when:
         def settings = new Settings(tomlStr)
-        def talons = settings.getTables(TalonProvisioner.TALON_TABLE)
+        def talons = settings.getTables(Talons.TALONS)
 
         then:
         talons.size() == 2

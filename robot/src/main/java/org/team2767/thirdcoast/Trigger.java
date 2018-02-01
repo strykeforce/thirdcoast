@@ -10,7 +10,7 @@ public abstract class Trigger {
   private boolean isActiveLast = false;
 
   /**
-   * Subclasses implement this to signal when a input is active. It usually is polled by a control
+   * Subclasses implement this to signal when a input is active. It usually is polled by a config
    * loop.
    *
    * @return true if the trigger is active

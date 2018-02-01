@@ -1,7 +1,7 @@
-package org.strykeforce.thirdcoast.talon.control
+package org.strykeforce.thirdcoast.talon.config
 
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
-import org.strykeforce.thirdcoast.talon.control.SoftLimits
+import com.moandjiezana.toml.Toml
 import spock.lang.Specification
 
 class SoftLimitsTest extends Specification {
@@ -61,4 +61,21 @@ class SoftLimitsTest extends Specification {
         1 * talon.configReverseSoftLimitEnable(true, timeout)
         0 * talon._
     }
+
+    def "overrides default with TOML"() {
+        given:
+        def tomlStr = "[forward]\nlimit = 2767"
+        def toml = new Toml().read(tomlStr)
+        def expected = new SoftLimits(
+                new SoftLimits.State(2767, false), SoftLimits.State.DEFAULT)
+
+        expect:
+        SoftLimits.create(toml) == expected
+    }
+
+    def "default values for null TOML"() {
+        expect:
+        SoftLimits.create(null) == SoftLimits.DEFAULT
+    }
+
 }

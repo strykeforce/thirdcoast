@@ -1,10 +1,8 @@
 package org.strykeforce.thirdcoast.telemetry.item
 
-import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX
-import org.strykeforce.thirdcoast.talon.ThirdCoastTalon
+
 import org.strykeforce.thirdcoast.telemetry.grapher.Measure
-import spock.lang.Ignore
 import spock.lang.Specification
 
 class TalonItemTest extends Specification {

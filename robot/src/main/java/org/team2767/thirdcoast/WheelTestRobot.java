@@ -2,7 +2,8 @@ package org.team2767.thirdcoast;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
 import org.strykeforce.thirdcoast.swerve.Wheel;
-import org.strykeforce.thirdcoast.talon.TalonFactory;
+import org.strykeforce.thirdcoast.talon.Talons;
+import org.strykeforce.thirdcoast.util.Settings;
 
 /** Third Coast test robot. */
 public class WheelTestRobot extends IterativeRobot {
@@ -47,8 +48,8 @@ public class WheelTestRobot extends IterativeRobot {
   public void robotInit() {
     RobotComponent component = DaggerRobotComponent.builder().config(Robot.CONFIG_FILE).build();
     controls = component.controls();
-    TalonFactory talonFactory = component.talonFactory();
-    wheel = new Wheel(talonFactory, 1);
+    Talons talons = component.talonFactory();
+    wheel = new Wheel(talons, new Settings(), 1);
     wheel.setAzimuthZero(1000);
   }
 
@@ -58,7 +59,7 @@ public class WheelTestRobot extends IterativeRobot {
   private void logTestCase(double[] tc) {
     System.out.printf(
         "azimuth = %f, speed = %f, actual azimuth = %f, reversed = %b%n",
-        tc[0] * Wheel.kTicksPerRevolution,
+        tc[0] * wheel.getTicksPerRevolution(),
         tc[1],
         wheel.getAzimuthSetpoint(),
         wheel.isDriveReversed());

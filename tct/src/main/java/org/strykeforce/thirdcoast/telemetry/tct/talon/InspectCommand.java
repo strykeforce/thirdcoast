@@ -9,11 +9,11 @@ import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.inject.Inject;
 import org.jline.reader.LineReader;
-import org.strykeforce.thirdcoast.talon.Encoder;
-import org.strykeforce.thirdcoast.talon.LimitSwitch;
+import org.strykeforce.thirdcoast.talon.config.FeedbackSensor;
+import org.strykeforce.thirdcoast.talon.config.LimitSwitches;
 import org.strykeforce.thirdcoast.talon.MotionMagicTalonConfiguration;
 import org.strykeforce.thirdcoast.talon.PIDTalonConfiguration;
-import org.strykeforce.thirdcoast.talon.SoftLimit;
+import org.strykeforce.thirdcoast.talon.config.SoftLimits;
 import org.strykeforce.thirdcoast.talon.TalonConfiguration;
 import org.strykeforce.thirdcoast.telemetry.tct.AbstractCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.Messages;
@@ -42,11 +42,11 @@ public class InspectCommand extends AbstractCommand {
 
     stringLine("Mode:", config.getMode().name());
     doubleLine("Max Setpoint:", config.getSetpointMax());
-    Encoder encoder = config.getEncoder();
-    if (encoder != null) {
+    FeedbackSensor selectedFeedbackSensor = config.getSelectedFeedbackSensor();
+    if (selectedFeedbackSensor != null) {
       writer.println();
-      stringLine("Encoder:", encoder.getDevice().name());
-      booleanLine("  Reversed:", encoder.isReversed());
+      stringLine("Encoder:", selectedFeedbackSensor.getDevice().name());
+      booleanLine("  Reversed:", selectedFeedbackSensor.isReversed());
       writer.println();
     } else {
       stringLine("Encoder:", "DEFAULT");
@@ -59,7 +59,7 @@ public class InspectCommand extends AbstractCommand {
     stringLine("Vel. Meas. Period:", period != null ? period.name() : "DEFAULT");
     intLine("Vel. Meas. Window:", config.getVelocityMeasurementWindow());
 
-    LimitSwitch limit = config.getForwardLimitSwitch();
+    LimitSwitches limit = config.getForwardLimitSwitch();
     if (limit != null) {
       writer.println();
       booleanLine("Fwd Limit Switch:", limit.isEnabled());
@@ -78,7 +78,7 @@ public class InspectCommand extends AbstractCommand {
       stringLine("Rev Limit Switch:", "DEFAULT");
     }
 
-    SoftLimit soft = config.getForwardSoftLimit();
+    SoftLimits soft = config.getForwardSoftLimit();
     if (soft != null) {
       writer.println();
       booleanLine("Fwd Soft Limit:", soft.isEnabled());

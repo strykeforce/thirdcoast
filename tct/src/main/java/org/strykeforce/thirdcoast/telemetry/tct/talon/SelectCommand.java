@@ -15,8 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.talon.TalonConfiguration;
 import org.strykeforce.thirdcoast.talon.TalonConfigurationBuilder;
-import org.strykeforce.thirdcoast.talon.TalonFactory;
-import org.strykeforce.thirdcoast.talon.ThirdCoastTalon;
+import org.strykeforce.thirdcoast.talon.Talons;
 import org.strykeforce.thirdcoast.telemetry.tct.AbstractCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.Command;
 import org.strykeforce.thirdcoast.telemetry.tct.Messages;
@@ -27,16 +26,16 @@ public class SelectCommand extends AbstractCommand {
 
   public static final String NAME = "Select Talons to Work With";
   private static final Logger logger = LoggerFactory.getLogger(SelectCommand.class);
-  private final TalonFactory talonFactory;
+  private final Talons talons;
   private final TalonSet talonSet;
   private final Command listCommand;
 
   @Inject
   SelectCommand(
-      TalonSet talonSet, TalonFactory talonFactory, LineReader reader, ListCommand listCommand) {
+      TalonSet talonSet, Talons talons, LineReader reader, ListCommand listCommand) {
     super(NAME, reader);
     this.talonSet = talonSet;
-    this.talonFactory = talonFactory;
+    this.talons = talons;
     this.listCommand = listCommand;
   }
 
@@ -79,7 +78,7 @@ public class SelectCommand extends AbstractCommand {
             .print(Messages.boldRed(String.format("%s is not a number, ignoring%n", s)));
         continue;
       }
-      ThirdCoastTalon talon = (ThirdCoastTalon) talonFactory.getTalon(id);
+      ThirdCoastTalon talon = (ThirdCoastTalon) talons.getTalon(id);
       config.configure(talon);
       talonSet.selectTalon(talon);
       logger.info("selected talon id {} with config {}", id, config.getName());

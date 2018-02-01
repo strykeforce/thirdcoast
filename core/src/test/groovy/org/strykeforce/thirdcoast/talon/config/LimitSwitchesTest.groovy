@@ -1,7 +1,9 @@
-package org.strykeforce.thirdcoast.talon.control
+package org.strykeforce.thirdcoast.talon.config
 
+import com.ctre.phoenix.motorcontrol.LimitSwitchNormal
+import com.ctre.phoenix.motorcontrol.LimitSwitchSource
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
-import org.strykeforce.thirdcoast.talon.control.LimitSwitches
+import com.moandjiezana.toml.Toml
 import spock.lang.Specification
 
 import static com.ctre.phoenix.motorcontrol.LimitSwitchNormal.*
@@ -78,5 +80,21 @@ class LimitSwitchesTest extends Specification {
         1 * talon.configReverseLimitSwitchSource(FeedbackConnector, NormallyClosed, timeout)
         1 * talon.overrideLimitSwitchesEnable(true)
         0 * talon._
+    }
+
+    def "overrides default with TOML"() {
+        given:
+        def tomlStr = "[forward]\nsource = \"FeedbackConnector\"\nnormal = \"NormallyOpen\""
+        def toml = new Toml().read(tomlStr)
+        def expected = new LimitSwitches(
+                new LimitSwitches.State(FeedbackConnector, NormallyOpen), LimitSwitches.State.DEFAULT)
+
+        expect:
+        LimitSwitches.create(toml) == expected
+    }
+
+    def "default values for null TOML"() {
+        expect:
+        LimitSwitches.create(null) == LimitSwitches.DEFAULT
     }
 }

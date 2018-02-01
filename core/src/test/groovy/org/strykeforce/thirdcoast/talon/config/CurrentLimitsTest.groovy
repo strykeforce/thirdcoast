@@ -1,7 +1,7 @@
-package org.strykeforce.thirdcoast.talon.control
+package org.strykeforce.thirdcoast.talon.config
 
-import com.ctre.phoenix.motorcontrol.FeedbackDevice
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
+import com.moandjiezana.toml.Toml
 import spock.lang.Specification
 
 class CurrentLimitsTest extends Specification {
@@ -57,5 +57,20 @@ class CurrentLimitsTest extends Specification {
         1 * talon.configPeakCurrentDuration(67, timeout)
         1 * talon.enableCurrentLimit(true)
         0 * talon._
+    }
+
+    def "overrides default with TOML"() {
+        given:
+        def tomlStr = "continuous = 27"
+        def toml = new Toml().read(tomlStr)
+        def expected = new CurrentLimits(27, 0, 0)
+
+        expect:
+        CurrentLimits.create(toml) == expected
+    }
+
+    def "default values for null TOML"() {
+        expect:
+        CurrentLimits.create(null) == CurrentLimits.DEFAULT
     }
 }

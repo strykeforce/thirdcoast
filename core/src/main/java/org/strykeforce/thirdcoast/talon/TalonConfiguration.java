@@ -1,343 +1,228 @@
 package org.strykeforce.thirdcoast.talon;
 
-import static com.ctre.phoenix.motorcontrol.LimitSwitchNormal.Disabled;
-import static com.ctre.phoenix.motorcontrol.LimitSwitchNormal.NormallyClosed;
-import static com.ctre.phoenix.motorcontrol.LimitSwitchNormal.NormallyOpen;
-import static com.ctre.phoenix.motorcontrol.LimitSwitchSource.Deactivated;
-import static com.ctre.phoenix.motorcontrol.LimitSwitchSource.FeedbackConnector;
-
 import com.ctre.phoenix.ErrorCode;
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import java.util.Collection;
+import com.moandjiezana.toml.Toml;
+import com.moandjiezana.toml.TomlWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.strykeforce.thirdcoast.talon.config.CurrentLimits;
+import org.strykeforce.thirdcoast.talon.config.FeedbackSensor;
+import org.strykeforce.thirdcoast.talon.config.LimitSwitches;
+import org.strykeforce.thirdcoast.talon.config.MotionMagic;
+import org.strykeforce.thirdcoast.talon.config.Output;
+import org.strykeforce.thirdcoast.talon.config.SoftLimits;
+import org.strykeforce.thirdcoast.talon.config.VelocityMeasurement;
 
 /**
  * Represents a Talon configuration.
  *
  * @see com.ctre.phoenix.motorcontrol.can.TalonSRX
  */
-public abstract class TalonConfiguration {
-  protected static final Logger logger = LoggerFactory.getLogger(TalonConfiguration.class);
+@ParametersAreNonnullByDefault
+public class TalonConfiguration {
+  public static final TalonConfiguration DEFAULT =
+      new TalonConfiguration(
+          "DEFAULT",
+          FeedbackSensor.DEFAULT,
+          LimitSwitches.DEFAULT,
+          SoftLimits.DEFAULT,
+          CurrentLimits.DEFAULT,
+          VelocityMeasurement.DEFAULT,
+          Output.DEFAULT,
+          MotionMagic.DEFAULT,
+          Arrays.asList(
+              ClosedLoopProfile.DEFAULT,
+              ClosedLoopProfile.DEFAULT,
+              ClosedLoopProfile.DEFAULT,
+              ClosedLoopProfile.DEFAULT),
+          Collections.emptyList());
+  static final int PROFILE_COUNT = 4;
+  private static final Logger logger = LoggerFactory.getLogger(TalonConfiguration.class);
 
-  // required
-  @NotNull private final String name;
-  @NotNull private final ControlMode mode;
+  private final String name;
+  private final FeedbackSensor selectedFeedbackSensor;
+  private final LimitSwitches limitSwitch;
+  private final SoftLimits softLimit;
+  private final CurrentLimits currentLimit;
+  private final VelocityMeasurement velocityMeasurement;
+  private final Output output;
+  private final MotionMagic motionMagic;
+  private final List<ClosedLoopProfile> closedLoopProfile;
+  private final List<Integer> talonIds;
 
-  // optional
-  private final Encoder encoder;
-  private final double setpointMax;
-  private final NeutralMode neutralMode;
-  private final Boolean outputReversed;
-  private final VelocityMeasPeriod velocityMeasurementPeriod;
-  private final Integer velocityMeasurementWindow;
-  private final LimitSwitch forwardLimitSwitch;
-  private final LimitSwitch reverseLimitSwitch;
-  private final SoftLimit forwardSoftLimit;
-  private final SoftLimit reverseSoftLimit;
-  private final Integer continuousCurrentLimit;
-  private final Integer peakCurrentLimit;
-  private final Integer peakCurrentLimitDuration;
-  private final Double openLoopRampTime;
-  private final Double voltageCompSaturation;
-
-  protected int timeout = 0;
-  private Set<Integer> talonIds; // used by tct utility
-
-  TalonConfiguration(
-      @NotNull String name,
-      @NotNull ControlMode mode,
-      double setpointMax,
-      Encoder encoder,
-      NeutralMode neutralMode,
-      Boolean outputReversed,
-      VelocityMeasPeriod velocityMeasurementPeriod,
-      Integer velocityMeasurementWindow,
-      LimitSwitch forwardLimitSwitch,
-      LimitSwitch reverseLimitSwitch,
-      SoftLimit forwardSoftLimit,
-      SoftLimit reverseSoftLimit,
-      Integer continuousCurrentLimit,
-      Integer peakCurrentLimit,
-      Integer peakCurrentLimitDuration,
-      Double openLoopRampTime,
-      Double voltageCompSaturation) {
+  public TalonConfiguration(
+      String name,
+      FeedbackSensor selectedFeedbackSensor,
+      LimitSwitches limitSwitch,
+      SoftLimits softLimit,
+      CurrentLimits currentLimit,
+      VelocityMeasurement velocityMeasurement,
+      Output output,
+      MotionMagic motionMagic,
+      List<ClosedLoopProfile> closedLoopProfile,
+      List<Integer> talonIds) {
     this.name = name;
-    this.mode = mode;
-    this.setpointMax = setpointMax;
-    this.encoder = encoder;
-    this.neutralMode = neutralMode;
-    this.outputReversed = outputReversed;
-    this.velocityMeasurementPeriod = velocityMeasurementPeriod;
-    this.velocityMeasurementWindow = velocityMeasurementWindow;
-    this.forwardLimitSwitch = forwardLimitSwitch;
-    this.reverseLimitSwitch = reverseLimitSwitch;
-    this.forwardSoftLimit = forwardSoftLimit;
-    this.reverseSoftLimit = reverseSoftLimit;
-    this.continuousCurrentLimit = continuousCurrentLimit;
-    this.peakCurrentLimit = peakCurrentLimit;
-    this.peakCurrentLimitDuration = peakCurrentLimitDuration;
-    this.openLoopRampTime = openLoopRampTime;
-    this.voltageCompSaturation = voltageCompSaturation;
+    this.selectedFeedbackSensor = selectedFeedbackSensor;
+    this.limitSwitch = limitSwitch;
+    this.softLimit = softLimit;
+    this.currentLimit = currentLimit;
+    this.velocityMeasurement = velocityMeasurement;
+    this.output = output;
+    this.motionMagic = motionMagic;
+    this.closedLoopProfile = closedLoopProfile;
+    this.talonIds = talonIds;
   }
 
-  /**
-   * Configure a Talon with stored parameters.
-   *
-   * @param talon the Talon to registerWith
-   */
-  public void configure(@NotNull TalonSRX talon) {
-    logger.info("configuring Talon {} with timeout = {}", talon.getDeviceID(), timeout);
-
-    ErrorCode err;
-    talon.selectProfileSlot(0, 0);
-
-    talon.enableVoltageCompensation(true);
-    err = talon.configOpenloopRamp(openLoopRampTime != null ? openLoopRampTime : 0, timeout);
-    Errors.check(talon, "configOpenloopRamp", err, logger);
-    err = talon.configVoltageCompSaturation(valueOrElseZero(voltageCompSaturation, 12), timeout);
-    Errors.check(talon, "configVoltageCompSaturation", err, logger);
-
-    Encoder enc = encoder != null ? encoder : Encoder.DEFAULT;
-    enc.configure(talon, timeout);
-
-    talon.setNeutralMode(neutralMode != null ? neutralMode : NeutralMode.Coast);
-    talon.setInverted(outputReversed != null ? outputReversed : false);
-
-    if (velocityMeasurementPeriod != null) {
-      err = talon.configVelocityMeasurementPeriod(velocityMeasurementPeriod, timeout);
-    } else {
-      err = talon.configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_100Ms, timeout);
+  public static TalonConfiguration create(@Nullable Toml toml) {
+    if (toml == null) {
+      return DEFAULT;
     }
-    Errors.check(talon, "configVelocityMeasurementPeriod", err, logger);
-
-    if (velocityMeasurementWindow != null) {
-      err = talon.configVelocityMeasurementWindow(velocityMeasurementWindow, timeout);
-    } else {
-      err = talon.configVelocityMeasurementWindow(64, timeout);
+    String name = toml.getString("name", DEFAULT.name);
+    List<Integer> talonIds = new ArrayList<>();
+    for (Long l : toml.getList("talonIds", Collections.<Long>emptyList())) {
+      talonIds.add(l.intValue());
     }
-    Errors.check(talon, "configVelocityMeasurementWindow", err, logger);
 
-    LimitSwitch hardLimit = forwardLimitSwitch != null ? forwardLimitSwitch : LimitSwitch.DEFAULT;
-    boolean enabled = hardLimit.isEnabled();
-    err =
-        talon.configForwardLimitSwitchSource(
-            hardLimit.isEnabled() ? FeedbackConnector : Deactivated,
-            hardLimit.isEnabled()
-                ? (hardLimit.isNormallyOpen() ? NormallyOpen : NormallyClosed)
-                : Disabled,
-            timeout);
-    Errors.check(talon, "configForwardLimitSwitchSource", err, logger);
+    TalonConfiguration configuration =
+        new TalonConfiguration(
+            name,
+            FeedbackSensor.create(toml.getTable("selectedFeedbackSensor")),
+            LimitSwitches.create(toml.getTable("limitSwitch")),
+            SoftLimits.create(toml.getTable("softLimit")),
+            CurrentLimits.create(toml.getTable("currentLimit")),
+            VelocityMeasurement.create(toml.getTable("velocityMeasurement")),
+            Output.create(toml.getTable("output")),
+            MotionMagic.create(toml.getTable("motionMagic")),
+            getClosedLoopProfiles(toml, name),
+            talonIds);
 
-    hardLimit = reverseLimitSwitch != null ? reverseLimitSwitch : LimitSwitch.DEFAULT;
-    enabled |= hardLimit.isEnabled();
-    err =
-        talon.configReverseLimitSwitchSource(
-            hardLimit.isEnabled() ? FeedbackConnector : Deactivated,
-            hardLimit.isEnabled()
-                ? (hardLimit.isNormallyOpen() ? NormallyOpen : NormallyClosed)
-                : Disabled,
-            timeout);
-    Errors.check(talon, "configReverseLimitSwitchSource", err, logger);
-    talon.overrideLimitSwitchesEnable(enabled);
+    assert (configuration.closedLoopProfile.size() == PROFILE_COUNT);
 
-    SoftLimit softLimit = forwardSoftLimit != null ? forwardSoftLimit : SoftLimit.DEFAULT;
-    enabled = softLimit.isEnabled();
-    err = talon.configForwardSoftLimitEnable(softLimit.isEnabled(), timeout);
-    Errors.check(talon, "configForwardSoftLimitEnable", err, logger);
-    err = talon.configForwardSoftLimitThreshold(softLimit.getPosition(), timeout);
-    Errors.check(talon, "configForwardSoftLimitThreshold", err, logger);
-
-    softLimit = reverseSoftLimit != null ? reverseSoftLimit : SoftLimit.DEFAULT;
-    enabled |= softLimit.isEnabled();
-    err = talon.configReverseSoftLimitEnable(softLimit.isEnabled(), timeout);
-    Errors.check(talon, "configReverseSoftLimitEnable", err, logger);
-    err = talon.configReverseSoftLimitThreshold(softLimit.getPosition(), timeout);
-    Errors.check(talon, "configReverseSoftLimitThreshold", err, logger);
-    talon.overrideSoftLimitsEnable(enabled);
-
-    configCurrentLimits(talon);
-
-    addTalonId(talon.getDeviceID());
-  }
-
-  private void configCurrentLimits(TalonSRX talon) {
-    ErrorCode err;
-    boolean contEnabled = continuousCurrentLimit != null && continuousCurrentLimit > 0;
-    err = talon.configContinuousCurrentLimit(contEnabled ? continuousCurrentLimit : 0, timeout);
-    Errors.check(talon, "configContinuousCurrentLimit", err, logger);
-
-    boolean peakEnabled = peakCurrentLimit != null && peakCurrentLimit > 0;
-    err = talon.configPeakCurrentLimit(peakEnabled ? peakCurrentLimit : 0, timeout);
-    Errors.check(talon, "configPeakCurrentLimit", err, logger);
-
-    if (peakEnabled) {
-      if (peakCurrentLimitDuration == null) {
-        throw new IllegalArgumentException(
-            "peakCurrentLimitDuration must be specified for peakCurrentLimit = "
-                + peakCurrentLimit);
-      }
-      err = talon.configPeakCurrentDuration(peakCurrentLimitDuration, timeout);
-      Errors.check(talon, "configPeakCurrentDuration", err, logger);
-    }
-    talon.enableCurrentLimit(contEnabled || peakEnabled);
-  }
-
-  /**
-   * Add Talon ID for tracking in TOML config.
-   *
-   * @param id the Talon ID.
-   */
-  private void addTalonId(int id) {
-    if (talonIds == null) {
-      talonIds = new HashSet<>();
-    }
-    talonIds.add(id);
-  }
-
-  /**
-   * Add optional Talon IDs for tracking in TOML config.
-   *
-   * @param ids the Talon IDs to add.
-   */
-  public void addAllTalonIds(@NotNull Collection<Integer> ids) {
-    if (talonIds == null) {
-      talonIds = new HashSet<>();
-    }
-    talonIds.addAll(ids);
-  }
-
-  /**
-   * If tracking Talon IDs in TOML config, get the set of IDs.
-   *
-   * @return the Set of Talon IDs.
-   */
-  @NotNull
-  public Set<Integer> getTalonIds() {
-    if (talonIds == null) {
-      return Collections.emptySet();
-    }
-    return Collections.unmodifiableSet(talonIds);
-  }
-
-  /**
-   * Get the name used to look up this Talon configuration.
-   *
-   * @return configuration name
-   */
-  @NotNull
-  public String getName() {
-    return name;
-  }
-
-  public Encoder getEncoder() {
-    return encoder;
-  }
-
-  Boolean isOutputReversed() {
-    return outputReversed;
-  }
-
-  public VelocityMeasPeriod getVelocityMeasurementPeriod() {
-    return velocityMeasurementPeriod;
-  }
-
-  public Integer getVelocityMeasurementWindow() {
-    return velocityMeasurementWindow;
-  }
-
-  public LimitSwitch getForwardLimitSwitch() {
-    return forwardLimitSwitch;
-  }
-
-  public LimitSwitch getReverseLimitSwitch() {
-    return reverseLimitSwitch;
-  }
-
-  public SoftLimit getForwardSoftLimit() {
-    return forwardSoftLimit;
-  }
-
-  public SoftLimit getReverseSoftLimit() {
-    return reverseSoftLimit;
-  }
-
-  /**
-   * Get the current limit.
-   *
-   * @return the current limit, or null if not enabled.
-   */
-  public Integer getContinuousCurrentLimit() {
-    return continuousCurrentLimit;
-  }
-
-  public Integer getPeakCurrentLimit() {
-    return peakCurrentLimit;
-  }
-
-  public Integer getPeakCurrentLimitDuration() {
-    return peakCurrentLimitDuration;
+    return configuration;
   }
 
   @NotNull
-  public ControlMode getMode() {
-    return mode;
-  }
+  private static List<ClosedLoopProfile> getClosedLoopProfiles(@NotNull Toml toml, String name) {
+    List<ClosedLoopProfile> closedLoopProfiles = new ArrayList<>(PROFILE_COUNT);
+    final String TABLE = "closedLoopProfile";
+    List<Toml> profileTables =
+        toml.containsTable(TABLE) ? toml.getTables(TABLE) : Collections.emptyList();
+    if (profileTables.size() > PROFILE_COUNT) {
+      logger.error(
+          "{}: truncating closed-loop profiles {} > {}", name, profileTables.size(), PROFILE_COUNT);
+      profileTables = profileTables.subList(0, PROFILE_COUNT);
+    }
 
-  public NeutralMode getBrakeInNeutral() {
-    return neutralMode;
-  }
-
-  public Boolean getOutputReversed() {
-    return outputReversed;
-  }
-
-  public Double getOpenLoopRampTime() {
-    return openLoopRampTime;
-  }
-
-  public Double getVoltageCompSaturation() {
-    return voltageCompSaturation;
+    for (Toml table : profileTables) {
+      closedLoopProfiles.add(ClosedLoopProfile.create(table));
+    }
+    // fill in any remaining with default
+    for (int i = 0; i < PROFILE_COUNT - profileTables.size(); i++) {
+      closedLoopProfiles.add(ClosedLoopProfile.DEFAULT);
+    }
+    return closedLoopProfiles;
   }
 
   /**
-   * Maximum setpoint allowed by this Talon configuration. This is used by the {@link
-   * org.strykeforce.thirdcoast.swerve.Wheel#set} to scale the drive output setpoint.
+   * Configure a Talon with saved settings.
    *
-   * @return the maximum allowed setpoint
+   * @param talon the Talon to configure
+   * @param timeout the configuration CAN bus timeout
    */
-  public double getSetpointMax() {
-    return setpointMax;
-  }
-
-  int getTimeout() {
-    return timeout;
-  }
-
-  void setTimeout(int timeout) {
-    this.timeout = timeout;
-  }
-
-  double valueOrElseZero(@Nullable Double value, double def) {
-    if (value != null) {
-      return value;
+  public void configure(TalonSRX talon, int timeout) {
+    selectedFeedbackSensor.configure(talon, timeout);
+    limitSwitch.configure(talon, timeout);
+    softLimit.configure(talon, timeout);
+    currentLimit.configure(talon, timeout);
+    velocityMeasurement.configure(talon, timeout);
+    output.configure(talon, timeout);
+    motionMagic.configure(talon, timeout);
+    for (int i = 0; i < closedLoopProfile.size(); i++) {
+      closedLoopProfile.get(i).configure(talon, i, timeout);
     }
-    return def;
+    logger.info("Configured Talon {} with {}", talon.getDeviceID(), name);
   }
 
-  int valueOrElseZero(@Nullable Integer value) {
-    if (value != null) {
-      return value;
+  public FeedbackSensor getSelectedFeedbackSensor() {
+    return selectedFeedbackSensor;
+  }
+
+  public LimitSwitches getLimitSwitch() {
+    return limitSwitch;
+  }
+
+  public SoftLimits getSoftLimit() {
+    return softLimit;
+  }
+
+  public CurrentLimits getCurrentLimit() {
+    return currentLimit;
+  }
+
+  public VelocityMeasurement getVelocityMeasurement() {
+    return velocityMeasurement;
+  }
+
+  public Output getOutput() {
+    return output;
+  }
+
+  public MotionMagic getMotionMagic() {
+    return motionMagic;
+  }
+
+  public List<ClosedLoopProfile> getClosedLoopProfiles() {
+    return Collections.unmodifiableList(closedLoopProfile);
+  }
+
+  public List<Integer> getTalonIds() {
+    return Collections.unmodifiableList(talonIds);
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
     }
-    return 0;
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    TalonConfiguration that = (TalonConfiguration) o;
+    return Objects.equals(name, that.name)
+        && Objects.equals(selectedFeedbackSensor, that.selectedFeedbackSensor)
+        && Objects.equals(limitSwitch, that.limitSwitch)
+        && Objects.equals(softLimit, that.softLimit)
+        && Objects.equals(currentLimit, that.currentLimit)
+        && Objects.equals(velocityMeasurement, that.velocityMeasurement)
+        && Objects.equals(output, that.output)
+        && Objects.equals(motionMagic, that.motionMagic)
+        && Objects.equals(closedLoopProfile, that.closedLoopProfile)
+        && Objects.equals(talonIds, that.talonIds);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(
+        name,
+        selectedFeedbackSensor,
+        limitSwitch,
+        softLimit,
+        currentLimit,
+        velocityMeasurement,
+        output,
+        motionMagic,
+        closedLoopProfile,
+        talonIds);
   }
 
   @Override
@@ -346,34 +231,126 @@ public abstract class TalonConfiguration {
         + "name='"
         + name
         + '\''
-        + ", mode="
-        + mode
-        + ", encoder="
-        + encoder
-        + ", setpointMax="
-        + setpointMax
-        + ", neutralMode="
-        + neutralMode
-        + ", outputReversed="
-        + outputReversed
-        + ", velocityMeasurementPeriod="
-        + velocityMeasurementPeriod
-        + ", velocityMeasurementWindow="
-        + velocityMeasurementWindow
-        + ", forwardLimitSwitch="
-        + forwardLimitSwitch
-        + ", reverseLimitSwitch="
-        + reverseLimitSwitch
-        + ", forwardSoftLimit="
-        + forwardSoftLimit
-        + ", reverseSoftLimit="
-        + reverseSoftLimit
-        + ", continuousCurrentLimit="
-        + continuousCurrentLimit
-        + ", openLoopRampTime="
-        + openLoopRampTime
-        + ", voltageCompSaturation="
-        + voltageCompSaturation
+        + ", selectedFeedbackSensor="
+        + selectedFeedbackSensor
+        + ", limitSwitch="
+        + limitSwitch
+        + ", softLimit="
+        + softLimit
+        + ", currentLimit="
+        + currentLimit
+        + ", velocityMeasurement="
+        + velocityMeasurement
+        + ", output="
+        + output
+        + ", motionMagic="
+        + motionMagic
+        + ", closedLoopProfile="
+        + closedLoopProfile
+        + ", talonIds="
+        + talonIds
         + '}';
+  }
+
+  /** Contains Talon closed-loop parameters that are associated with one of the profile slots. */
+  static class ClosedLoopProfile {
+
+    public static final ClosedLoopProfile DEFAULT =
+        new ClosedLoopProfile(0d, 0d, 0d, 0d, 0, Double.MAX_VALUE, 0);
+    private static final Toml DEFAULT_TOML =
+        new Toml().read(new TomlWriter().write(ClosedLoopProfile.DEFAULT));
+
+    private final double pGain;
+    private final double iGain;
+    private final double dGain;
+    private final double fGain;
+    private final int iZone;
+    private final double maxIntegralAccumulator;
+    private final int allowableClosedLoopError;
+
+    ClosedLoopProfile(
+        double pGain,
+        double iGain,
+        double dGain,
+        double fGain,
+        int iZone,
+        double maxIntegralAccumulator,
+        int allowableClosedLoopError) {
+      this.pGain = pGain;
+      this.iGain = iGain;
+      this.dGain = dGain;
+      this.fGain = fGain;
+      this.iZone = iZone;
+      this.maxIntegralAccumulator = maxIntegralAccumulator;
+      this.allowableClosedLoopError = allowableClosedLoopError;
+    }
+
+    public static ClosedLoopProfile create(@Nullable Toml toml) {
+      if (toml == null) {
+        return DEFAULT;
+      }
+      return new Toml(DEFAULT_TOML).read(toml).to(ClosedLoopProfile.class);
+    }
+
+    void configure(TalonSRX talon, int slotIdx, int timeout) {
+      ErrorCode err = talon.config_kP(slotIdx, pGain, timeout);
+      Errors.check(talon, "config_kP", err, logger);
+      err = talon.config_kI(slotIdx, iGain, timeout);
+      Errors.check(talon, "config_kI", err, logger);
+      err = talon.config_kD(slotIdx, dGain, timeout);
+      Errors.check(talon, "config_kD", err, logger);
+      err = talon.config_kF(slotIdx, fGain, timeout);
+      Errors.check(talon, "config_kF", err, logger);
+      err = talon.config_IntegralZone(slotIdx, iZone, timeout);
+      Errors.check(talon, "config_IntegralZone", err, logger);
+      err = talon.configMaxIntegralAccumulator(slotIdx, maxIntegralAccumulator, timeout);
+      Errors.check(talon, "configMaxIntegralAccumulator", err, logger);
+      err = talon.configAllowableClosedloopError(slotIdx, allowableClosedLoopError, timeout);
+      Errors.check(talon, "configAllowableClosedloopError", err, logger);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      ClosedLoopProfile that = (ClosedLoopProfile) o;
+      return Double.compare(that.pGain, pGain) == 0
+          && Double.compare(that.iGain, iGain) == 0
+          && Double.compare(that.dGain, dGain) == 0
+          && Double.compare(that.fGain, fGain) == 0
+          && iZone == that.iZone
+          && Double.compare(that.maxIntegralAccumulator, maxIntegralAccumulator) == 0
+          && allowableClosedLoopError == that.allowableClosedLoopError;
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(
+          pGain, iGain, dGain, fGain, iZone, maxIntegralAccumulator, allowableClosedLoopError);
+    }
+
+    @Override
+    public String toString() {
+      return "ClosedLoopProfile{"
+          + "pGain="
+          + pGain
+          + ", iGain="
+          + iGain
+          + ", dGain="
+          + dGain
+          + ", fGain="
+          + fGain
+          + ", iZone="
+          + iZone
+          + ", maxIntegralAccumulator="
+          + maxIntegralAccumulator
+          + ", allowableClosedLoopError="
+          + allowableClosedLoopError
+          + '}';
+    }
   }
 }

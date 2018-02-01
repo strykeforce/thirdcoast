@@ -8,8 +8,7 @@ import org.strykeforce.thirdcoast.swerve.GraphableSwerveDriveModule;
 import org.strykeforce.thirdcoast.swerve.GyroModule;
 import org.strykeforce.thirdcoast.swerve.SwerveDrive;
 import org.strykeforce.thirdcoast.swerve.WheelModule;
-import org.strykeforce.thirdcoast.talon.TalonFactory;
-import org.strykeforce.thirdcoast.talon.TalonProvisioner;
+import org.strykeforce.thirdcoast.talon.Talons;
 import org.strykeforce.thirdcoast.telemetry.NetworkModule;
 import org.strykeforce.thirdcoast.telemetry.TelemetryService;
 
@@ -33,7 +32,7 @@ interface RobotComponent {
 
   TalonProvisioner talonProvisioner();
 
-  TalonFactory talonFactory();
+  Talons talonFactory();
 
   @Component.Builder
   interface Builder {
