@@ -14,6 +14,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.strykeforce.thirdcoast.talon.config.Configurable;
 import org.strykeforce.thirdcoast.talon.config.CurrentLimits;
 import org.strykeforce.thirdcoast.talon.config.FeedbackSensor;
 import org.strykeforce.thirdcoast.talon.config.LimitSwitches;
@@ -29,55 +30,43 @@ import org.strykeforce.thirdcoast.talon.config.VelocityMeasurement;
  */
 @ParametersAreNonnullByDefault
 public class TalonConfiguration {
-  public static final TalonConfiguration DEFAULT =
-      new TalonConfiguration(
-          "DEFAULT",
-          FeedbackSensor.DEFAULT,
-          LimitSwitches.DEFAULT,
-          SoftLimits.DEFAULT,
-          CurrentLimits.DEFAULT,
-          VelocityMeasurement.DEFAULT,
-          Output.DEFAULT,
-          MotionMagic.DEFAULT,
-          Arrays.asList(
-              ClosedLoopProfile.DEFAULT,
-              ClosedLoopProfile.DEFAULT,
-              ClosedLoopProfile.DEFAULT,
-              ClosedLoopProfile.DEFAULT),
-          Collections.emptyList());
+  public static final TalonConfiguration DEFAULT;
   static final int PROFILE_COUNT = 4;
   private static final Logger logger = LoggerFactory.getLogger(TalonConfiguration.class);
 
+  static {
+    List<Configurable> configurables =
+        Arrays.asList(
+            FeedbackSensor.DEFAULT,
+            LimitSwitches.DEFAULT,
+            SoftLimits.DEFAULT,
+            CurrentLimits.DEFAULT,
+            VelocityMeasurement.DEFAULT,
+            Output.DEFAULT,
+            MotionMagic.DEFAULT);
+    List<ClosedLoopProfile> closedLoopProfiles =
+        Arrays.asList(
+            ClosedLoopProfile.DEFAULT,
+            ClosedLoopProfile.DEFAULT,
+            ClosedLoopProfile.DEFAULT,
+            ClosedLoopProfile.DEFAULT);
+    DEFAULT =
+        new TalonConfiguration(
+            "DEFAULT", configurables, closedLoopProfiles, Collections.emptyList());
+  }
+
   private final String name;
-  private final FeedbackSensor selectedFeedbackSensor;
-  private final LimitSwitches limitSwitch;
-  private final SoftLimits softLimit;
-  private final CurrentLimits currentLimit;
-  private final VelocityMeasurement velocityMeasurement;
-  private final Output output;
-  private final MotionMagic motionMagic;
+  private final List<Configurable> configurables;
   private final List<ClosedLoopProfile> closedLoopProfile;
   private final List<Integer> talonIds;
 
   public TalonConfiguration(
       String name,
-      FeedbackSensor selectedFeedbackSensor,
-      LimitSwitches limitSwitch,
-      SoftLimits softLimit,
-      CurrentLimits currentLimit,
-      VelocityMeasurement velocityMeasurement,
-      Output output,
-      MotionMagic motionMagic,
+      List<Configurable> configurables,
       List<ClosedLoopProfile> closedLoopProfile,
       List<Integer> talonIds) {
     this.name = name;
-    this.selectedFeedbackSensor = selectedFeedbackSensor;
-    this.limitSwitch = limitSwitch;
-    this.softLimit = softLimit;
-    this.currentLimit = currentLimit;
-    this.velocityMeasurement = velocityMeasurement;
-    this.output = output;
-    this.motionMagic = motionMagic;
+    this.configurables = configurables;
     this.closedLoopProfile = closedLoopProfile;
     this.talonIds = talonIds;
   }
@@ -92,36 +81,20 @@ public class TalonConfiguration {
       talonIds.add(l.intValue());
     }
 
-    FeedbackSensor feedbackSensor;
-    LimitSwitches limitSwitches;
-    SoftLimits softLimits;
-    CurrentLimits currentLimits;
-    VelocityMeasurement velocityMeasurement;
-    Output output;
-    MotionMagic motionMagic;
-    List<ClosedLoopProfile> closedLoopProfiles;
+    List<ClosedLoopProfile> closedLoopProfiles = getClosedLoopProfiles(toml, name);
 
-    feedbackSensor = FeedbackSensor.create(toml.getTable("selectedFeedbackSensor"));
-    limitSwitches = LimitSwitches.create(toml.getTable("limitSwitch"));
-    softLimits = SoftLimits.create(toml.getTable("softLimit"));
-    currentLimits = CurrentLimits.create(toml.getTable("currentLimit"));
-    velocityMeasurement = VelocityMeasurement.create(toml.getTable("velocityMeasurement"));
-    output = Output.create(toml.getTable("output"));
-    motionMagic = MotionMagic.create(toml.getTable("motionMagic"));
-    closedLoopProfiles = getClosedLoopProfiles(toml, name);
+    List<Configurable> configurables =
+        Arrays.asList(
+            FeedbackSensor.create(toml.getTable("selectedFeedbackSensor")),
+            LimitSwitches.create(toml.getTable("limitSwitch")),
+            SoftLimits.create(toml.getTable("softLimit")),
+            CurrentLimits.create(toml.getTable("currentLimit")),
+            VelocityMeasurement.create(toml.getTable("velocityMeasurement")),
+            Output.create(toml.getTable("output")),
+            MotionMagic.create(toml.getTable("motionMagic")));
 
     TalonConfiguration configuration =
-        new TalonConfiguration(
-            name,
-            feedbackSensor,
-            limitSwitches,
-            softLimits,
-            currentLimits,
-            velocityMeasurement,
-            output,
-            motionMagic,
-            closedLoopProfiles,
-            talonIds);
+        new TalonConfiguration(name, configurables, closedLoopProfiles, talonIds);
 
     assert (configuration.closedLoopProfile.size() == PROFILE_COUNT);
 
@@ -157,13 +130,9 @@ public class TalonConfiguration {
    * @param timeout the configuration CAN bus timeout
    */
   public void configure(TalonSRX talon, int timeout) {
-    selectedFeedbackSensor.configure(talon, timeout);
-    limitSwitch.configure(talon, timeout);
-    softLimit.configure(talon, timeout);
-    currentLimit.configure(talon, timeout);
-    velocityMeasurement.configure(talon, timeout);
-    output.configure(talon, timeout);
-    motionMagic.configure(talon, timeout);
+    for (Configurable configurable : configurables) {
+      configurable.configure(talon, timeout);
+    }
     for (int i = 0; i < closedLoopProfile.size(); i++) {
       closedLoopProfile.get(i).configure(talon, i, timeout);
     }
@@ -174,32 +143,8 @@ public class TalonConfiguration {
     return name;
   }
 
-  public FeedbackSensor getSelectedFeedbackSensor() {
-    return selectedFeedbackSensor;
-  }
-
-  public LimitSwitches getLimitSwitch() {
-    return limitSwitch;
-  }
-
-  public SoftLimits getSoftLimit() {
-    return softLimit;
-  }
-
-  public CurrentLimits getCurrentLimit() {
-    return currentLimit;
-  }
-
-  public VelocityMeasurement getVelocityMeasurement() {
-    return velocityMeasurement;
-  }
-
-  public Output getOutput() {
-    return output;
-  }
-
-  public MotionMagic getMotionMagic() {
-    return motionMagic;
+  public List<Configurable> getConfigurables() {
+    return Collections.unmodifiableList(configurables);
   }
 
   public List<ClosedLoopProfile> getClosedLoopProfiles() {
@@ -220,30 +165,14 @@ public class TalonConfiguration {
     }
     TalonConfiguration that = (TalonConfiguration) o;
     return Objects.equals(name, that.name)
-        && Objects.equals(selectedFeedbackSensor, that.selectedFeedbackSensor)
-        && Objects.equals(limitSwitch, that.limitSwitch)
-        && Objects.equals(softLimit, that.softLimit)
-        && Objects.equals(currentLimit, that.currentLimit)
-        && Objects.equals(velocityMeasurement, that.velocityMeasurement)
-        && Objects.equals(output, that.output)
-        && Objects.equals(motionMagic, that.motionMagic)
+        && Objects.equals(configurables, that.configurables)
         && Objects.equals(closedLoopProfile, that.closedLoopProfile)
         && Objects.equals(talonIds, that.talonIds);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(
-        name,
-        selectedFeedbackSensor,
-        limitSwitch,
-        softLimit,
-        currentLimit,
-        velocityMeasurement,
-        output,
-        motionMagic,
-        closedLoopProfile,
-        talonIds);
+    return Objects.hash(name, configurables, closedLoopProfile, talonIds);
   }
 
   @Override
@@ -252,20 +181,8 @@ public class TalonConfiguration {
         + "name='"
         + name
         + '\''
-        + ", selectedFeedbackSensor="
-        + selectedFeedbackSensor
-        + ", limitSwitch="
-        + limitSwitch
-        + ", softLimit="
-        + softLimit
-        + ", currentLimit="
-        + currentLimit
-        + ", velocityMeasurement="
-        + velocityMeasurement
-        + ", output="
-        + output
-        + ", motionMagic="
-        + motionMagic
+        + ", configurables="
+        + configurables
         + ", closedLoopProfile="
         + closedLoopProfile
         + ", talonIds="

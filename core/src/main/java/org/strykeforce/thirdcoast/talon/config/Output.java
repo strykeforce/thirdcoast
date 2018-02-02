@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.talon.Errors;
 
 @ParametersAreNonnullByDefault
-public class Output {
+public class Output implements Configurable {
 
   public static final Output DEFAULT =
       new Output(
@@ -66,6 +66,7 @@ public class Output {
         NeutralMode.valueOf(toml.getString("neutralMode", DEFAULT.neutralMode.name())));
   }
 
+  @Override
   public void configure(TalonSRX talon, int timeout) {
     ErrorCode err = talon.configNeutralDeadband(neutralDeadband, timeout);
     Errors.check(talon, "configNeutralDeadband", err, logger);

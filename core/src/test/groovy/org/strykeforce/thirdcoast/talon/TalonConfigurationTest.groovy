@@ -21,10 +21,11 @@ class TalonConfigurationTest extends Specification {
         def velocity = Mock(VelocityMeasurement)
         def output = Mock(Output)
         def motion = Mock(MotionMagic)
+        List<Configurable> configurables = [feedback, switches, limits, currents, velocity, output, motion]
         def profiles = [Mock(TalonConfiguration.ClosedLoopProfile), Mock(TalonConfiguration.ClosedLoopProfile),
                         Mock(TalonConfiguration.ClosedLoopProfile), Mock(TalonConfiguration.ClosedLoopProfile)]
-        def talonConfig = new TalonConfiguration("TEST", feedback, switches, limits,
-                currents, velocity, output, motion, profiles, Collections.<Integer>emptyList())
+        def talonIds = Collections.<Integer> emptyList()
+        def talonConfig = new TalonConfiguration("TEST", configurables, profiles, talonIds)
         def talon = Mock(TalonSRX)
         def timeout = random.nextInt()
 
@@ -51,7 +52,15 @@ class TalonConfigurationTest extends Specification {
         TalonConfiguration.create(new Toml()) == TalonConfiguration.DEFAULT
     }
 
-    def "overrides default with full TOML"() {
+    def "creates default with golden default TOML"() {
+        when:
+        def toml = new Toml().read(this.getClass().getResourceAsStream("/testdata/talon/default.toml"))
+
+        then:
+        TalonConfiguration.create(toml) == TalonConfiguration.DEFAULT
+    }
+
+    def "overrides selected sensor with full default TOML"() {
         given:
         def feedback = new FeedbackSensor(FeedbackDevice.Analog, 1, false)
         def switches = LimitSwitches.DEFAULT
@@ -60,13 +69,14 @@ class TalonConfigurationTest extends Specification {
         def velocity = VelocityMeasurement.DEFAULT
         def output = Output.DEFAULT
         def motion = MotionMagic.DEFAULT
+        List<Configurable> configurables = [feedback, switches, limits, currents, velocity, output, motion]
         def clp = TalonConfiguration.ClosedLoopProfile.DEFAULT
         def profiles = [clp, clp, clp, clp]
-        def talonConfig = new TalonConfiguration("TEST", feedback, switches, limits,
-                currents, velocity, output, motion, profiles, Collections.<Integer>emptyList())
+        def talonIds = Collections.<Integer> emptyList()
+        def talonConfig = new TalonConfiguration("ANALOG", configurables, profiles, talonIds)
 
         when:
-        def toml = new Toml().read(new TomlWriter().write(talonConfig))
+        def toml = new Toml().read(this.getClass().getResourceAsStream("/testdata/talon/analog.toml"))
 
         then:
         TalonConfiguration.create(toml) == talonConfig
@@ -77,6 +87,14 @@ class TalonConfigurationTest extends Specification {
         def tomlStr = "name = \"STRYKE_FORCE\""
         def toml = new Toml().read(tomlStr)
         def clp = TalonConfiguration.ClosedLoopProfile.DEFAULT
+        def feedback = FeedbackSensor.DEFAULT
+        def switches = LimitSwitches.DEFAULT
+        def limits = SoftLimits.DEFAULT
+        def currents = CurrentLimits.DEFAULT
+        def velocity = VelocityMeasurement.DEFAULT
+        def output = Output.DEFAULT
+        def motion = MotionMagic.DEFAULT
+        List<Configurable> configurables = [feedback, switches, limits, currents, velocity, output, motion]
 
         when:
         def talonConfig = TalonConfiguration.create(toml)
@@ -84,26 +102,27 @@ class TalonConfigurationTest extends Specification {
         then:
         with(talonConfig) {
             name == "STRYKE_FORCE"
-            output == Output.DEFAULT
-            currentLimit == CurrentLimits.DEFAULT
-            limitSwitch == LimitSwitches.DEFAULT
-            softLimit == SoftLimits.DEFAULT
-            selectedFeedbackSensor == FeedbackSensor.DEFAULT
-            velocityMeasurement == VelocityMeasurement.DEFAULT
-            motionMagic == MotionMagic.DEFAULT
             closedLoopProfiles == [clp, clp, clp, clp]
             talonIds.empty
         }
+        talonConfig.getConfigurables().equals(configurables)
     }
 
     def "overrides default with output inverted in TOML"() {
         given:
         def tomlStr = "[output]\ninverted=true"
         def toml = new Toml().read(tomlStr)
-        def expected = new Output(Output.Limits.FORWARD_DEFAULT,
+        def feedback = FeedbackSensor.DEFAULT
+        def switches = LimitSwitches.DEFAULT
+        def limits = SoftLimits.DEFAULT
+        def currents = CurrentLimits.DEFAULT
+        def velocity = VelocityMeasurement.DEFAULT
+        def output = new Output(Output.Limits.FORWARD_DEFAULT,
                 Output.Limits.REVERSE_DEFAULT, Output.RampRates.DEFAULT,
                 Output.VoltageCompensation.DEFAULT,
                 0.04d, true, NeutralMode.Coast)
+        def motion = MotionMagic.DEFAULT
+        List<Configurable> expected = [feedback, switches, limits, currents, velocity, output, motion]
 
         when:
         def talonConfig = TalonConfiguration.create(toml)
@@ -111,12 +130,7 @@ class TalonConfigurationTest extends Specification {
         then:
         with(talonConfig) {
             name == "DEFAULT"
-            output == expected
-            currentLimit == CurrentLimits.DEFAULT
-            limitSwitch == LimitSwitches.DEFAULT
-            softLimit == SoftLimits.DEFAULT
-            selectedFeedbackSensor == FeedbackSensor.DEFAULT
-            velocityMeasurement == VelocityMeasurement.DEFAULT
+            configurables == expected
             closedLoopProfiles == TalonConfiguration.DEFAULT.closedLoopProfiles
             talonIds.empty
         }
@@ -127,10 +141,18 @@ class TalonConfigurationTest extends Specification {
         def tomlStr = "[output.forward]\npeak = 0.5"
         def toml = new Toml().read(tomlStr)
         def forward = new Output.Limits(0d, 0.5d)
-        def expected = new Output(forward,
+        def feedback = FeedbackSensor.DEFAULT
+        def switches = LimitSwitches.DEFAULT
+        def limits = SoftLimits.DEFAULT
+        def currents = CurrentLimits.DEFAULT
+        def velocity = VelocityMeasurement.DEFAULT
+        def output = new Output(forward,
                 Output.Limits.REVERSE_DEFAULT, Output.RampRates.DEFAULT,
                 Output.VoltageCompensation.DEFAULT,
                 0.04d, false, NeutralMode.Coast)
+        def motion = MotionMagic.DEFAULT
+        List<Configurable> expected = [feedback, switches, limits, currents, velocity, output, motion]
+
 
         when:
         def talonConfig = TalonConfiguration.create(toml)
@@ -138,12 +160,7 @@ class TalonConfigurationTest extends Specification {
         then:
         with(talonConfig) {
             name == "DEFAULT"
-            output == expected
-            currentLimit == CurrentLimits.DEFAULT
-            limitSwitch == LimitSwitches.DEFAULT
-            softLimit == SoftLimits.DEFAULT
-            selectedFeedbackSensor == FeedbackSensor.DEFAULT
-            velocityMeasurement == VelocityMeasurement.DEFAULT
+            configurables == expected
             closedLoopProfiles == TalonConfiguration.DEFAULT.closedLoopProfiles
             talonIds.empty
         }

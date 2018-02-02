@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.talon.Errors;
 
 @ParametersAreNonnullByDefault
-public class SoftLimits {
+public class SoftLimits implements Configurable {
 
   public static final SoftLimits DEFAULT = new SoftLimits(State.DEFAULT, State.DEFAULT);
   private static final Logger logger = LoggerFactory.getLogger(SoftLimits.class);
@@ -32,6 +32,7 @@ public class SoftLimits {
         State.create(toml.getTable("forward")), State.create(toml.getTable("reverse")));
   }
 
+  @Override
   public void configure(TalonSRX talon, int timeout) {
     ErrorCode err = talon.configForwardSoftLimitThreshold(forward.limit, timeout);
     Errors.check(talon, "configForwardSoftLimitThreshold", err, logger);

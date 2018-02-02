@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.talon.Errors;
 
 @ParametersAreNonnullByDefault
-public class MotionMagic {
+public class MotionMagic implements Configurable {
 
   public static final MotionMagic DEFAULT = new MotionMagic(0, 0);
   private static final Toml DEFAULT_TOML =
@@ -35,6 +35,7 @@ public class MotionMagic {
     return new Toml(DEFAULT_TOML).read(toml).to(MotionMagic.class);
   }
 
+  @Override
   public void configure(TalonSRX talon, int timeout) {
     ErrorCode err = talon.configMotionAcceleration(acceleration, timeout);
     Errors.check(talon, "configMotionAcceleration", err, logger);

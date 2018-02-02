@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.talon.Errors;
 
 @ParametersAreNonnullByDefault
-public class LimitSwitches {
+public class LimitSwitches implements Configurable {
 
   public static final LimitSwitches DEFAULT = new LimitSwitches(State.DEFAULT, State.DEFAULT);
   private static final Logger logger = LoggerFactory.getLogger(LimitSwitches.class);
@@ -37,6 +37,7 @@ public class LimitSwitches {
         State.create(toml.getTable("forward")), State.create(toml.getTable("reverse")));
   }
 
+  @Override
   public void configure(TalonSRX talon, int timeout) {
     ErrorCode err = talon.configForwardLimitSwitchSource(forward.source, forward.normal, timeout);
     Errors.check(talon, "configForwardLimitSwitchSource", err, logger);

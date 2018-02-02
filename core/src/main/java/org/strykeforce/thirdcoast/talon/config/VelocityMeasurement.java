@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.talon.Errors;
 
 @ParametersAreNonnullByDefault
-public class VelocityMeasurement {
+public class VelocityMeasurement implements Configurable {
 
   public static final VelocityMeasurement DEFAULT =
       new VelocityMeasurement(VelocityMeasPeriod.Period_100Ms, 32);
@@ -36,6 +36,7 @@ public class VelocityMeasurement {
     return new Toml(DEFAULT_TOML).read(toml).to(VelocityMeasurement.class);
   }
 
+  @Override
   public void configure(TalonSRX talon, int timeout) {
     ErrorCode err = talon.configVelocityMeasurementPeriod(period, timeout);
     Errors.check(talon, "configVelocityMeasurementPeriod", err, logger);

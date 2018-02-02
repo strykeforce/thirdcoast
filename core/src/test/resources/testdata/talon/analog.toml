@@ -1,0 +1,94 @@
+name = "ANALOG"
+talonIds = []
+
+[selectedFeedbackSensor]
+  feedbackDevice = "Analog" # non-default
+  pidIdx = 1 # non-default
+  phaseSensor = false
+
+[limitSwitch.forward]
+  source = "Deactivated"
+  normal = "Disabled"
+
+[limitSwitch.reverse]
+  source = "Deactivated"
+  normal = "Disabled"
+
+[softLimit.forward]
+  limit = 0
+  enabled = false
+
+[softLimit.reverse]
+  limit = 0
+  enabled = false
+
+[currentLimit]
+  continuous = 0
+  peak = 0
+  peakDuration = 0
+
+[velocityMeasurement]
+  period = "Period_100Ms"
+  window = 32
+
+[output]
+  neutralDeadband = 0.04
+  inverted = false
+  neutralMode = "Coast"
+
+  [output.forward]
+    peak = 1.0
+    nominal = 0.0
+
+  [output.reverse]
+    peak = -1.0
+    nominal = 0.0
+
+  [output.rampRates]
+    openLoop = 0.0
+    closedLoop = 0.0
+
+  [output.voltageCompensation]
+    saturation = 12.0
+    enabled = true
+    measurementFilter = 32
+
+[motionMagic]
+  acceleration = 0
+  cruiseVelocity = 0
+
+[[closedLoopProfile]]
+  pGain = 0.0
+  iGain = 0.0
+  dGain = 0.0
+  fGain = 0.0
+  iZone = 0
+  maxIntegralAccumulator = 1.7976931348623157E308
+  allowableClosedLoopError = 0
+
+[[closedLoopProfile]]
+  pGain = 0.0
+  iGain = 0.0
+  dGain = 0.0
+  fGain = 0.0
+  iZone = 0
+  maxIntegralAccumulator = 1.7976931348623157E308
+  allowableClosedLoopError = 0
+
+[[closedLoopProfile]]
+  pGain = 0.0
+  iGain = 0.0
+  dGain = 0.0
+  fGain = 0.0
+  iZone = 0
+  maxIntegralAccumulator = 1.7976931348623157E308
+  allowableClosedLoopError = 0
+
+[[closedLoopProfile]]
+  pGain = 0.0
+  iGain = 0.0
+  dGain = 0.0
+  fGain = 0.0
+  iZone = 0
+  maxIntegralAccumulator = 1.7976931348623157E308
+  allowableClosedLoopError = 0

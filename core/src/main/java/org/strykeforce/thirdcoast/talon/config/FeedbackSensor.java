@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.talon.Errors;
 
 @ParametersAreNonnullByDefault
-public class FeedbackSensor {
+public class FeedbackSensor implements Configurable {
 
   public static final FeedbackSensor DEFAULT = new FeedbackSensor(FeedbackDevice.None, 0, false);
   private static final Toml DEFAULT_TOML =
@@ -38,6 +38,7 @@ public class FeedbackSensor {
     return new Toml(DEFAULT_TOML).read(toml).to(FeedbackSensor.class);
   }
 
+  @Override
   public void configure(TalonSRX talon, int timeout) {
     ErrorCode err = talon.configSelectedFeedbackSensor(feedbackDevice, pidIdx, timeout);
     Errors.check(talon, "configSelectedFeedbackSensor", err, logger);

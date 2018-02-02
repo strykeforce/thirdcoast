@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.talon.Errors;
 
 @ParametersAreNonnullByDefault
-public class CurrentLimits {
+public class CurrentLimits implements Configurable {
 
   public static final CurrentLimits DEFAULT = new CurrentLimits(0, 0, 0);
   private static final Toml DEFAULT_TOML =
@@ -37,6 +37,7 @@ public class CurrentLimits {
     return new Toml(DEFAULT_TOML).read(toml).to(CurrentLimits.class);
   }
 
+  @Override
   public void configure(TalonSRX talon, int timeout) {
     ErrorCode err;
     err = talon.configContinuousCurrentLimit(continuous, timeout);
