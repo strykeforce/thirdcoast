@@ -46,7 +46,6 @@ public class Robot extends IterativeRobot {
   @Override
   public void robotInit() {
     logger.info("Robot is initializing");
-    getComponent().talonProvisioner().enableTimeout(true);
     controls = getComponent().controls();
     swerve = getComponent().swerveDrive();
     telemetryService = getComponent().telemetryService();
@@ -58,7 +57,6 @@ public class Robot extends IterativeRobot {
   @Override
   public void teleopInit() {
     logger.info("Robot is enabled in tele-op");
-    getComponent().talonProvisioner().enableTimeout(false);
     swerve.stop();
   }
 

@@ -9,12 +9,12 @@ import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.inject.Inject;
 import org.jline.reader.LineReader;
-import org.strykeforce.thirdcoast.talon.config.FeedbackSensor;
-import org.strykeforce.thirdcoast.talon.config.LimitSwitches;
 import org.strykeforce.thirdcoast.talon.MotionMagicTalonConfiguration;
 import org.strykeforce.thirdcoast.talon.PIDTalonConfiguration;
-import org.strykeforce.thirdcoast.talon.config.SoftLimits;
 import org.strykeforce.thirdcoast.talon.TalonConfiguration;
+import org.strykeforce.thirdcoast.talon.config.FeedbackSensor;
+import org.strykeforce.thirdcoast.talon.config.LimitSwitches;
+import org.strykeforce.thirdcoast.talon.config.SoftLimits;
 import org.strykeforce.thirdcoast.telemetry.tct.AbstractCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.Messages;
 

@@ -25,7 +25,7 @@ class OutputTest extends Specification {
         1 * talon.configNominalOutputForward(0d, timeout)
         1 * talon.configPeakOutputForward(1d, timeout)
         1 * talon.configNominalOutputReverse(0d, timeout)
-        1 * talon.configPeakOutputReverse(1d, timeout)
+        1 * talon.configPeakOutputReverse(-1d, timeout)
 
         1 * talon.configOpenloopRamp(0d, timeout)
         1 * talon.configClosedloopRamp(0d, timeout)
@@ -33,6 +33,7 @@ class OutputTest extends Specification {
         1 * talon.configVoltageCompSaturation(12d, timeout)
         1 * talon.enableVoltageCompensation(true)
         1 * talon.setNeutralMode(NeutralMode.Coast)
+        1 * talon.configVoltageMeasurementFilter(32, timeout)
 
         0 * talon._
     }
@@ -43,7 +44,7 @@ class OutputTest extends Specification {
         def toml = new Toml().read(tomlStr)
         def expected = new Output(
                 new Output.Limits(0d, 27d),
-                Output.Limits.DEFAULT,
+                Output.Limits.REVERSE_DEFAULT,
                 Output.RampRates.DEFAULT,
                 Output.VoltageCompensation.DEFAULT,
                 0.04d,
@@ -58,8 +59,8 @@ class OutputTest extends Specification {
         def tomlStr = "[rampRates]\nclosedLoop = 27.0"
         def toml = new Toml().read(tomlStr)
         def expected = new Output(
-                Output.Limits.DEFAULT,
-                Output.Limits.DEFAULT,
+                Output.Limits.FORWARD_DEFAULT,
+                Output.Limits.REVERSE_DEFAULT,
                 new Output.RampRates(0d, 27d),
                 Output.VoltageCompensation.DEFAULT,
                 0.04d,
@@ -74,8 +75,8 @@ class OutputTest extends Specification {
         def tomlStr = "[voltageCompensation]\nsaturation = 27.0"
         def toml = new Toml().read(tomlStr)
         def expected = new Output(
-                Output.Limits.DEFAULT,
-                Output.Limits.DEFAULT,
+                Output.Limits.FORWARD_DEFAULT,
+                Output.Limits.REVERSE_DEFAULT,
                 Output.RampRates.DEFAULT,
                 new Output.VoltageCompensation(27d, true, 32),
                 0.04d,

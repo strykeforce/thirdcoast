@@ -31,8 +31,7 @@ public class SelectCommand extends AbstractCommand {
   private final Command listCommand;
 
   @Inject
-  SelectCommand(
-      TalonSet talonSet, Talons talons, LineReader reader, ListCommand listCommand) {
+  SelectCommand(TalonSet talonSet, Talons talons, LineReader reader, ListCommand listCommand) {
     super(NAME, reader);
     this.talonSet = talonSet;
     this.talons = talons;

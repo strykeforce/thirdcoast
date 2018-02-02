@@ -3,7 +3,6 @@ package org.strykeforce.thirdcoast.swerve;
 import com.kauailabs.navx.frc.AHRS;
 import com.moandjiezana.toml.Toml;
 import edu.wpi.first.wpilibj.Preferences;
-import java.util.Arrays;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import org.slf4j.Logger;
@@ -51,18 +50,14 @@ public class SwerveDrive {
     logger.info("field orientation driving is {}", gyro == null ? "DISABLED" : "ENABLED");
 
     Toml toml = settings.getTable(TABLE);
-    double length = toml.getDouble("length", 1d);
-    double width = toml.getDouble("width", 1d);
+    double length = toml.getDouble("length");
+    double width = toml.getDouble("width");
     double radius = Math.hypot(length, width);
     kLengthComponent = length / radius;
     kWidthComponent = width / radius;
 
-    logger.debug(
-        "initialized with gyro = {} wheels = {} length = {} width = {}",
-        gyro,
-        Arrays.toString(wheels),
-        length,
-        width);
+    logger.debug("length = {}", length);
+    logger.debug("width = {}", width);
   }
 
   static String getPreferenceKeyForWheel(int i) {
@@ -219,6 +214,24 @@ public class SwerveDrive {
    */
   public AHRS getGyro() {
     return gyro;
+  }
+
+  /**
+   * Unit testing
+   *
+   * @return length
+   */
+  double getLengthComponent() {
+    return kLengthComponent;
+  }
+
+  /**
+   * Unit testing
+   *
+   * @return width
+   */
+  double getWidthComponent() {
+    return kWidthComponent;
   }
 
   /** Swerve Drive drive mode */

@@ -28,7 +28,7 @@ dependencies {
     apt libs.autoFactory
 
     testCompile libs.spock
-    testRuntime libs.logback
+    testCompile libs.logback
     testRuntime libs.bytebuddy
     testRuntime libs.objenesis
 }

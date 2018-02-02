@@ -59,13 +59,11 @@ public class Wheel {
   public Wheel(Settings settings, TalonSRX azimuth, TalonSRX drive) {
 
     Toml toml = settings.getTable(TABLE);
-    kTicksPerRevolution = (double) toml.getLong("ticksPerRevolution", 4096L);
-    kDriveSetpointMax = (double) toml.getLong("driveSetpointMax", 0L);
-    kAzimuthControlMode = ControlMode.valueOf(toml.getString("azimuthControlMode", "MotionMagic"));
-    kDriveOpenLoopControlMode =
-        ControlMode.valueOf(toml.getString("driveOpenLoopControlMode", "PercentOutput"));
-    kDriveClosedLoopControlMode =
-        ControlMode.valueOf(toml.getString("driveClosedLoopControlMode", "Velocity"));
+    kTicksPerRevolution = (double) toml.getLong("ticksPerRevolution");
+    kDriveSetpointMax = (double) toml.getLong("driveSetpointMax");
+    kAzimuthControlMode = ControlMode.valueOf(toml.getString("azimuthControlMode"));
+    kDriveOpenLoopControlMode = ControlMode.valueOf(toml.getString("driveOpenLoopControlMode"));
+    kDriveClosedLoopControlMode = ControlMode.valueOf(toml.getString("driveClosedLoopControlMode"));
 
     azimuthTalon = azimuth;
     driveTalon = drive;

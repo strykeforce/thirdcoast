@@ -2,8 +2,8 @@ package org.strykeforce.thirdcoast.telemetry.tct.talon.config.lim;
 
 import javax.inject.Inject;
 import org.jline.reader.LineReader;
-import org.strykeforce.thirdcoast.talon.config.LimitSwitches;
 import org.strykeforce.thirdcoast.talon.TalonConfigurationBuilder;
+import org.strykeforce.thirdcoast.talon.config.LimitSwitches;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractFwdRevBooleanConfigCommand;
 

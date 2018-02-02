@@ -3,50 +3,15 @@
 ##
 
 [THIRDCOAST.WHEEL]
-  # see Wheel Java class  for defaults
-  # ticksPerRevolution = long
-  # driveSetpointMax = long
-  # azimuthControlMode = ControlMode
-  # driveOpenLoopControlMode = ControlMode
-  # driveClosedLoopControlMode = ControlMode
+  ticksPerRevolution         = 4096
+  driveSetpointMax           = 0
+  azimuthControlMode         = "MotionMagic"
+  driveOpenLoopControlMode   = "PercentOutput"
+  driveClosedLoopControlMode = "Velocity"
 
 [THIRDCOAST.SWERVE]
-  # see SwerveDrive Java class  for defaults
-  # length = double
-  # width = double
+  length = 1.0
+  width  = 1.0
 
 [THIRDCOAST.TALONS]
-  # see Talons Java class for defaults
-  # timeout = long
-
-  [[TALON]]
-    name = "drive"
-    mode = "Velocity"
-    setpointMax = 5000.0
-    allowableClosedLoopError = 0
-    pGain = 0.1
-    iGain = 0.0
-    dGain = 1.0
-    fGain = 0.03
-    currentLimit = 40
-    neutralMode = "Coast"
-    [TALON.encoder]
-      device = "CTRE_MagEncoder_Relative"
-      reversed = false
-
-[[TALON]]
-  name = "azimuth"
-  mode = "Position"
-  setpointMax     = 4095.0
-  brakeInNeutral = false
-  forwardOutputVoltagePeak =  6.0
-  reverseOutputVoltagePeak = -6.0
-  # NOTE: you must provide azimuth Talon closed-loop tuning parameters below
-  pGain =   0.0
-  iGain =   0.0
-  dGain =   0.0
-  fGain =   0.0
-  iZone =   0
-  [TALON.encoder]
-    device  = "CTRE_MagEncoder_Relative"
-    reversed = false
+  timeout = 10

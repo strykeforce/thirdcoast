@@ -1,5 +1,5 @@
 def TEAM = 2767
-def ROBOT_CLASS = "org.team2767.thirdcoast.Robot"
+def ROBOT_CLASS = "org.team2767.thirdcoast.TalonTestRobot"
 
 deploy {
     targets {

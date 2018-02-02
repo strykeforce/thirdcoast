@@ -4,14 +4,9 @@ import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.SensorCollection
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import org.strykeforce.thirdcoast.util.Settings
-import spock.lang.Shared
 import spock.lang.Specification
 
-import static com.ctre.phoenix.motorcontrol.ControlMode.Current
-import static com.ctre.phoenix.motorcontrol.ControlMode.MotionMagic
-import static com.ctre.phoenix.motorcontrol.ControlMode.PercentOutput
-import static com.ctre.phoenix.motorcontrol.ControlMode.Position
-import static com.ctre.phoenix.motorcontrol.ControlMode.Velocity
+import static com.ctre.phoenix.motorcontrol.ControlMode.*
 import static org.strykeforce.thirdcoast.swerve.SwerveDrive.DriveMode.CLOSED_LOOP
 
 class WheelTest extends Specification {
@@ -25,49 +20,20 @@ class WheelTest extends Specification {
     //
     // Settings
     //
-    def "ticks per revolution configured"() {
-        given:
-        def toml = "[THIRDCOAST.WHEEL]\nticksPerRevolution = 1234"
-
+    def "defaults are configured"() {
         when:
-        def wheel = new Wheel(new Settings(toml), azimuth, drive)
+        def wheel = new Wheel(new Settings(), azimuth, drive)
 
         then:
-        wheel.ticksPerRevolution == 1234
+        with(wheel) {
+            ticksPerRevolution == 4096
+            driveSetpointMax == 0
+            azimuthControlMode == MotionMagic
+            driveOpenLoopControlMode == PercentOutput
+            driveClosedLoopControlMode == Velocity
+        }
     }
 
-    def "azimuth control mode configured"() {
-        given:
-        def toml = "[THIRDCOAST.WHEEL]\nazimuthControlMode = \"Position\""
-
-        when:
-        def wheel = new Wheel(new Settings(toml), azimuth, drive)
-
-        then:
-        wheel.getAzimuthControlMode() == Position
-    }
-
-    def "drive open-loop control modes configured"() {
-        given:
-        def toml = "[THIRDCOAST.WHEEL]\ndriveOpenLoopControlMode = \"Position\""
-
-        when:
-        def wheel = new Wheel(new Settings(toml), azimuth, drive)
-
-        then:
-        wheel.getDriveOpenLoopControlMode() == Position
-    }
-
-    def "drive closed-loop control modes configured"() {
-        given:
-        def toml = "[THIRDCOAST.WHEEL]\ndriveClosedLoopControlMode = \"Current\""
-
-        when:
-        def wheel = new Wheel(new Settings(toml), azimuth, drive)
-
-        then:
-        wheel.getDriveClosedLoopControlMode() == Current
-    }
 
     def "override drive max setpoint"() {
         given:
@@ -77,7 +43,7 @@ class WheelTest extends Specification {
         def wheel = new Wheel(new Settings(toml), azimuth, drive)
 
         then:
-        with (wheel) {
+        with(wheel) {
             getDriveSetpointMax() == 2767
             // defaults
             getTicksPerRevolution() == 4096

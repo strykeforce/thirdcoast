@@ -17,8 +17,8 @@ public class Output {
 
   public static final Output DEFAULT =
       new Output(
-          Limits.DEFAULT,
-          Limits.DEFAULT,
+          Limits.FORWARD_DEFAULT,
+          Limits.REVERSE_DEFAULT,
           RampRates.DEFAULT,
           VoltageCompensation.DEFAULT,
           0.04,
@@ -57,8 +57,8 @@ public class Output {
       return DEFAULT;
     }
     return new Output(
-        Limits.create(toml.getTable("forward")),
-        Limits.create(toml.getTable("reverse")),
+        Limits.create(toml.getTable("forward"), Limits.FORWARD_DEFAULT),
+        Limits.create(toml.getTable("reverse"), Limits.REVERSE_DEFAULT),
         RampRates.create(toml.getTable("rampRates")),
         VoltageCompensation.create(toml.getTable("voltageCompensation")),
         toml.getDouble("neutralDeadband", 0.04),
@@ -88,10 +88,8 @@ public class Output {
     err = talon.configVoltageCompSaturation(voltageCompensation.saturation, timeout);
     Errors.check(talon, "configVoltageCompSaturation", err, logger);
     talon.enableVoltageCompensation(voltageCompensation.enabled);
-    // TODO: verify measurement filter default below - this is a guess!
-    //    err = talon.configVoltageMeasurementFilter(voltageCompensation.measurementFilter,
-    // timeout);
-    //    Errors.check(talon, "configVoltageMeasurementFilter", err, logger);
+    err = talon.configVoltageMeasurementFilter(voltageCompensation.measurementFilter, timeout);
+    Errors.check(talon, "configVoltageMeasurementFilter", err, logger);
     talon.setNeutralMode(neutralMode);
   }
 
@@ -140,9 +138,8 @@ public class Output {
   }
 
   public static class Limits {
-    public static final Limits DEFAULT = new Limits(0d, 1d);
-    private static final Toml DEFAULT_TOML =
-        new Toml().read(new TomlWriter().write(Limits.DEFAULT));
+    public static final Limits FORWARD_DEFAULT = new Limits(0d, 1d);
+    public static final Limits REVERSE_DEFAULT = new Limits(0d, -1d);
 
     private final double peak;
     private final double nominal;
@@ -152,11 +149,12 @@ public class Output {
       this.nominal = nominal;
     }
 
-    public static Limits create(@Nullable Toml toml) {
+    public static Limits create(@Nullable Toml toml, Limits defaults) {
       if (toml == null) {
-        return DEFAULT;
+        return defaults;
       }
-      return new Toml(DEFAULT_TOML).read(toml).to(Limits.class);
+      Toml defaultToml = new Toml().read(new TomlWriter().write(defaults));
+      return new Toml(defaultToml).read(toml).to(Limits.class);
     }
 
     @Override

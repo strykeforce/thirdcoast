@@ -96,14 +96,41 @@ class TalonConfigurationTest extends Specification {
         }
     }
 
-    def "overrides default with output in TOML"() {
+    def "overrides default with output inverted in TOML"() {
         given:
         def tomlStr = "[output]\ninverted=true"
         def toml = new Toml().read(tomlStr)
-        def expected = new Output(Output.Limits.DEFAULT,
-                Output.Limits.DEFAULT, Output.RampRates.DEFAULT,
+        def expected = new Output(Output.Limits.FORWARD_DEFAULT,
+                Output.Limits.REVERSE_DEFAULT, Output.RampRates.DEFAULT,
                 Output.VoltageCompensation.DEFAULT,
                 0.04d, true, NeutralMode.Coast)
+
+        when:
+        def talonConfig = TalonConfiguration.create(toml)
+
+        then:
+        with(talonConfig) {
+            name == "DEFAULT"
+            output == expected
+            currentLimit == CurrentLimits.DEFAULT
+            limitSwitch == LimitSwitches.DEFAULT
+            softLimit == SoftLimits.DEFAULT
+            selectedFeedbackSensor == FeedbackSensor.DEFAULT
+            velocityMeasurement == VelocityMeasurement.DEFAULT
+            closedLoopProfiles == TalonConfiguration.DEFAULT.closedLoopProfiles
+            talonIds.empty
+        }
+    }
+
+    def "overrides default with output forward peak in TOML"() {
+        given:
+        def tomlStr = "[output.forward]\npeak = 0.5"
+        def toml = new Toml().read(tomlStr)
+        def forward = new Output.Limits(0d, 0.5d)
+        def expected = new Output(forward,
+                Output.Limits.REVERSE_DEFAULT, Output.RampRates.DEFAULT,
+                Output.VoltageCompensation.DEFAULT,
+                0.04d, false, NeutralMode.Coast)
 
         when:
         def talonConfig = TalonConfiguration.create(toml)

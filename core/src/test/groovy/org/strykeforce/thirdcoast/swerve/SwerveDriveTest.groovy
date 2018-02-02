@@ -16,6 +16,28 @@ class SwerveDriveTest extends spock.lang.Specification {
         settings = new Settings()
     }
 
+    //
+    // Settings
+    //
+    def "override length"() {
+        given:
+        double length = 2767.0 // expected, from supplied TOML
+        double width = 1.0     // expected, from defaults
+        def toml = "[THIRDCOAST.SWERVE]\nlength = " + length
+        double radius = Math.hypot(length, width)
+
+        when:
+        def swerve = new SwerveDrive(null, null, new Settings(toml))
+
+        then:
+        with(swerve) {
+            lengthComponent == length / radius
+            // defaults
+            widthComponent == width / radius
+        }
+    }
+
+
     def "sets drive mode"() {
         given:
         Wheel[] wheels = [Mock(Wheel), Mock(Wheel), Mock(Wheel), Mock(Wheel)]

@@ -9,7 +9,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import org.jetbrains.annotations.NotNull;
@@ -93,17 +92,35 @@ public class TalonConfiguration {
       talonIds.add(l.intValue());
     }
 
+    FeedbackSensor feedbackSensor;
+    LimitSwitches limitSwitches;
+    SoftLimits softLimits;
+    CurrentLimits currentLimits;
+    VelocityMeasurement velocityMeasurement;
+    Output output;
+    MotionMagic motionMagic;
+    List<ClosedLoopProfile> closedLoopProfiles;
+
+    feedbackSensor = FeedbackSensor.create(toml.getTable("selectedFeedbackSensor"));
+    limitSwitches = LimitSwitches.create(toml.getTable("limitSwitch"));
+    softLimits = SoftLimits.create(toml.getTable("softLimit"));
+    currentLimits = CurrentLimits.create(toml.getTable("currentLimit"));
+    velocityMeasurement = VelocityMeasurement.create(toml.getTable("velocityMeasurement"));
+    output = Output.create(toml.getTable("output"));
+    motionMagic = MotionMagic.create(toml.getTable("motionMagic"));
+    closedLoopProfiles = getClosedLoopProfiles(toml, name);
+
     TalonConfiguration configuration =
         new TalonConfiguration(
             name,
-            FeedbackSensor.create(toml.getTable("selectedFeedbackSensor")),
-            LimitSwitches.create(toml.getTable("limitSwitch")),
-            SoftLimits.create(toml.getTable("softLimit")),
-            CurrentLimits.create(toml.getTable("currentLimit")),
-            VelocityMeasurement.create(toml.getTable("velocityMeasurement")),
-            Output.create(toml.getTable("output")),
-            MotionMagic.create(toml.getTable("motionMagic")),
-            getClosedLoopProfiles(toml, name),
+            feedbackSensor,
+            limitSwitches,
+            softLimits,
+            currentLimits,
+            velocityMeasurement,
+            output,
+            motionMagic,
+            closedLoopProfiles,
             talonIds);
 
     assert (configuration.closedLoopProfile.size() == PROFILE_COUNT);
@@ -150,7 +167,11 @@ public class TalonConfiguration {
     for (int i = 0; i < closedLoopProfile.size(); i++) {
       closedLoopProfile.get(i).configure(talon, i, timeout);
     }
-    logger.info("Configured Talon {} with {}", talon.getDeviceID(), name);
+    logger.info("Configured Talon {} with '{}'", talon.getDeviceID(), name);
+  }
+
+  public String getName() {
+    return name;
   }
 
   public FeedbackSensor getSelectedFeedbackSensor() {

@@ -30,7 +30,7 @@ interface RobotComponent {
 
   TelemetryService telemetryService();
 
-  TalonProvisioner talonProvisioner();
+  Talons talons();
 
   Talons talonFactory();
 

@@ -99,8 +99,7 @@ public class LoadConfigsCommand extends AbstractCommand {
       talonSet.clearSelected();
 
       for (Integer id : configuration.getTalonIds()) {
-        ThirdCoastTalon talon =
-            (ThirdCoastTalon) talons.getTalonWithConfiguration(id, selected);
+        ThirdCoastTalon talon = (ThirdCoastTalon) talons.getTalonWithConfiguration(id, selected);
         talonSet.selectTalon(talon);
         logger.info("adding talon with id {} and configuration {}", id, selected);
       }
