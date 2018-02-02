@@ -1,5 +1,6 @@
 package org.strykeforce.thirdcoast.talon;
 
+import com.ctre.phoenix.ParamEnum;
 import com.ctre.phoenix.motorcontrol.Faults;
 import com.ctre.phoenix.motorcontrol.SensorCollection;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
@@ -56,6 +57,30 @@ public class Talons {
 
   @SuppressWarnings("unused")
   public static void dump(TalonSRX talon) {
+    int timeout = 10;
+    for (int i = 0; i < 4; i++) {
+      logger.debug(
+          "Slot {} P = {}", i, talon.configGetParameter(ParamEnum.eProfileParamSlot_P, i, timeout));
+      logger.debug(
+          "Slot {} I = {}", i, talon.configGetParameter(ParamEnum.eProfileParamSlot_I, i, timeout));
+      logger.debug(
+          "Slot {} D = {}", i, talon.configGetParameter(ParamEnum.eProfileParamSlot_D, i, timeout));
+      logger.debug(
+          "Slot {} F = {}", i, talon.configGetParameter(ParamEnum.eProfileParamSlot_F, i, timeout));
+      logger.debug(
+          "Slot {} Izone = {}",
+          i,
+          talon.configGetParameter(ParamEnum.eProfileParamSlot_IZone, i, timeout));
+      logger.debug(
+          "Slot {} Max I Accum = {}",
+          i,
+          talon.configGetParameter(ParamEnum.eProfileParamSlot_MaxIAccum, i, timeout));
+      logger.debug(
+          "Slot {} Allowable Error = {}",
+          i,
+          talon.configGetParameter(ParamEnum.eProfileParamSlot_AllowableErr, i, timeout));
+    }
+
     logger.debug("Active Trajectory Heading = {}", talon.getActiveTrajectoryHeading());
     logger.debug("Active Trajectory Position = {}", talon.getActiveTrajectoryPosition());
     logger.debug("Active Trajectory Velocity = {}", talon.getActiveTrajectoryVelocity());
@@ -107,7 +132,6 @@ public class Talons {
     logger.debug("Temperature = {}", talon.getTemperature());
     logger.debug("Reset Has Occurred = {}", talon.hasResetOccurred());
 
-    int timeout = 10;
     for (StatusFrameEnhanced sfe : StatusFrameEnhanced.values()) {
       logger.debug("Status Frame Period {} = {}", sfe, talon.getStatusFramePeriod(sfe, timeout));
     }
