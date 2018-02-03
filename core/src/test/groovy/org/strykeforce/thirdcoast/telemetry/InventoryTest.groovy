@@ -33,9 +33,9 @@ class InventoryTest extends Specification {
         Inventory inventory = new RobotInventory(talons)
 
         then:
-        inventory.itemForId(0).description() == "talon0"
+        inventory.itemForId(0).description() == "Talon 51"
         inventory.itemForId(0).deviceId() == 51
-        inventory.itemForId(1).description() == "talon1"
+        inventory.itemForId(1).description() == "Talon 61"
         inventory.itemForId(1).deviceId() == 61
     }
 
@@ -56,7 +56,7 @@ class InventoryTest extends Specification {
         with(result) {
             items.size == 2
             items[0].id == 0
-            items[0].description == "talon10"
+            items[0].description == "Talon 51"
             measures.size == 1
             with(measures[0]) {
                 deviceType == "talon"
@@ -67,7 +67,7 @@ class InventoryTest extends Specification {
                 deviceMeasures[5].description == SELECTED_SENSOR_VELOCITY.description
             }
             items[1].id == 1
-            items[1].description == "talon11"
+            items[1].description == "Talon 61"
         }
     }
 }

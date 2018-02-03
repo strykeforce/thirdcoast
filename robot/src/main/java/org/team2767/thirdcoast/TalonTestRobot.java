@@ -20,6 +20,7 @@ public class TalonTestRobot extends IterativeRobot {
     RobotComponent component = DaggerRobotComponent.builder().config(CONFIG_FILE).build();
     Talons talons = component.talons();
     talon = talons.getTalon(6);
+    Talons.dump(talon);
   }
 
   @Override

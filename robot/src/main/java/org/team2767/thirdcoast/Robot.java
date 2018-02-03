@@ -6,6 +6,7 @@ import java.io.File;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.swerve.SwerveDrive;
+import org.strykeforce.thirdcoast.talon.Talons;
 import org.strykeforce.thirdcoast.telemetry.TelemetryService;
 
 /** Third Coast swerve drive demo robot. */
@@ -77,7 +78,7 @@ public class Robot extends IterativeRobot {
 
   @Override
   public void disabledInit() {
-    logger.info("Robot is disabled");
+    Talons.dump(swerve.getWheels()[0].getAzimuthTalon());
   }
 
   @Override

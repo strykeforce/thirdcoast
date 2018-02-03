@@ -6,7 +6,6 @@ import com.ctre.phoenix.motorcontrol.Faults;
 import com.ctre.phoenix.motorcontrol.SensorCollection;
 import com.ctre.phoenix.motorcontrol.StickyFaults;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.squareup.moshi.JsonWriter;
 import java.io.IOException;
 import java.util.Collections;
@@ -57,7 +56,7 @@ public class TalonItem extends AbstractItem {
   private final SensorCollection sensorCollection;
 
   public TalonItem(final TalonSRX talon) {
-    super(TYPE, ((WPI_TalonSRX) talon).getDescription(), MEASURES);
+    super(TYPE, "Talon " + talon.getDeviceID(), MEASURES);
     this.talon = talon;
     sensorCollection = talon.getSensorCollection();
   }
@@ -148,10 +147,10 @@ public class TalonItem extends AbstractItem {
     writer.name("type").value(TYPE);
     writer.name("baseId").value(talon.getBaseID());
     writer.name("deviceId").value(talon.getDeviceID());
-    writer.name("description").value(((WPI_TalonSRX) talon).getDescription());
+    writer.name("description").value("Talon " + talon.getDeviceID());
     writer.name("firmwareVersion").value(talon.getFirmwareVersion());
     writer.name("controlMode").value(talon.getControlMode().toString());
-    //writer.name("brakeEnabledDuringNeutral").value(talon.getBrakeEnableDuringNeutral());
+    // writer.name("brakeEnabledDuringNeutral").value(talon.getBrakeEnableDuringNeutral());
     writer
         .name("onBootBrakeMode")
         .value(talon.configGetParameter(ParamEnum.eOnBoot_BrakeMode, 0, 0));
@@ -166,9 +165,9 @@ public class TalonItem extends AbstractItem {
         .name("peakCurrentLimitAmps")
         .value(talon.configGetParameter(ParamEnum.ePeakCurrentLimitAmps, 0, 0));
 
-    //writer.name("encoderCodesPerRef").value(NA);
+    // writer.name("encoderCodesPerRef").value(NA);
     writer.name("inverted").value(talon.getInverted());
-    //writer.name("numberOfQuadIdxRises").value(talon.getNumberOfQuadIdxRises());
+    // writer.name("numberOfQuadIdxRises").value(talon.getNumberOfQuadIdxRises());
     writer
         .name("eQuadIdxPolarity")
         .value(talon.configGetParameter(ParamEnum.eQuadIdxPolarity, 0, 0));
@@ -225,8 +224,8 @@ public class TalonItem extends AbstractItem {
     if (talon.getControlMode() == ControlMode.MotionMagic) {
       writer.name("enabled").value(true);
       writer.name("acceleration").value(talon.configGetParameter(ParamEnum.eMotMag_Accel, 0, 0));
-      //writer.name("actTrajPosition").value(talon.getMotionMagicActTrajPosition());
-      //writer.name("actTrajVelocity").value(talon.getMotionMagicActTrajVelocity());
+      // writer.name("actTrajPosition").value(talon.getMotionMagicActTrajPosition());
+      // writer.name("actTrajVelocity").value(talon.getMotionMagicActTrajVelocity());
       writer
           .name("cruiseVelocity")
           .value(talon.configGetParameter(ParamEnum.eMotMag_VelCruise, 0, 0));

@@ -57,6 +57,7 @@ public class Talons {
 
   @SuppressWarnings("unused")
   public static void dump(TalonSRX talon) {
+    logger.debug("Talon ID = {}", talon.getDeviceID());
     int timeout = 10;
     for (int i = 0; i < 4; i++) {
       logger.debug(
@@ -80,20 +81,30 @@ public class Talons {
           i,
           talon.configGetParameter(ParamEnum.eProfileParamSlot_AllowableErr, i, timeout));
     }
+    logger.debug(
+        "Motion Magic Acceleration = {}",
+        talon.configGetParameter(ParamEnum.eMotMag_Accel, 0, timeout));
+    logger.debug(
+        "Motion Magic Cruise Velocity = {}",
+        talon.configGetParameter(ParamEnum.eMotMag_VelCruise, 0, timeout));
+    logger.debug(
+        "Feedback Sensor Type = {}",
+        talon.configGetParameter(ParamEnum.eFeedbackSensorType, 0, timeout));
+
+    logger.debug("Closed Loop Error 0 = {}", talon.getClosedLoopError(0));
+    logger.debug("Closed Loop Error 1 = {}", talon.getClosedLoopError(1));
+    logger.debug("Closed Loop Target 0 = {}", talon.getClosedLoopTarget(0));
+    logger.debug("Closed Loop Target 1 = {}", talon.getClosedLoopTarget(1));
+    logger.debug("Control Mode = {}", talon.getControlMode());
+
+    logger.debug("Error Derivative 0 = {}", talon.getErrorDerivative(0));
+    logger.debug("Error Derivative 1 = {}", talon.getErrorDerivative(1));
 
     logger.debug("Active Trajectory Heading = {}", talon.getActiveTrajectoryHeading());
     logger.debug("Active Trajectory Position = {}", talon.getActiveTrajectoryPosition());
     logger.debug("Active Trajectory Velocity = {}", talon.getActiveTrajectoryVelocity());
     logger.debug("Base ID = {}", talon.getBaseID());
     logger.debug("Bus Voltage = {}", talon.getBusVoltage());
-    logger.debug("Closed Loop Error 0 = {}", talon.getClosedLoopError(0));
-    logger.debug("Closed Loop Error 1 = {}", talon.getClosedLoopError(1));
-    logger.debug("Closed Loop Target 0 = {}", talon.getClosedLoopTarget(0));
-    logger.debug("Closed Loop Target 1 = {}", talon.getClosedLoopTarget(1));
-    logger.debug("Control Mode = {}", talon.getControlMode());
-    logger.debug("Device ID = {}", talon.getDeviceID());
-    logger.debug("Error Derivative 0 = {}", talon.getErrorDerivative(0));
-    logger.debug("Error Derivative 1 = {}", talon.getErrorDerivative(1));
 
     Faults faults = new Faults();
     talon.getFaults(faults);
@@ -121,8 +132,8 @@ public class Talons {
     logger.debug("Pin State Quad B = {}", sensors.getPinStateQuadB());
     logger.debug("Pin State Quad Index = {}", sensors.getPinStateQuadIdx());
     logger.debug("Pulse Width Position = {}", sensors.getPulseWidthPosition());
-    logger.debug("Pulse Width Rise to Fall µsec = {}", sensors.getPulseWidthRiseToFallUs());
-    logger.debug("Pulse Width Rise to Rise µsec = {}", sensors.getPulseWidthRiseToRiseUs());
+    logger.debug("Pulse Width Rise to Fall usec = {}", sensors.getPulseWidthRiseToFallUs());
+    logger.debug("Pulse Width Rise to Rise usec = {}", sensors.getPulseWidthRiseToRiseUs());
     logger.debug("Pulse Width Position = {}", sensors.getPulseWidthPosition());
     logger.debug("Pulse Width Velocity = {}", sensors.getPulseWidthVelocity());
     logger.debug("Quadrature Position = {}", sensors.getQuadraturePosition());

@@ -104,20 +104,27 @@ public class TalonConfiguration {
   @NotNull
   private static List<ClosedLoopProfile> getClosedLoopProfiles(@NotNull Toml toml, String name) {
     List<ClosedLoopProfile> closedLoopProfiles = new ArrayList<>(PROFILE_COUNT);
-    final String TABLE = "closedLoopProfile";
-    List<Toml> profileTables =
-        toml.containsTable(TABLE) ? toml.getTables(TABLE) : Collections.emptyList();
+    List<Toml> profileTables = toml.getTables("closedLoopProfile");
+    if (profileTables == null) {
+      profileTables = Collections.emptyList();
+    }
     if (profileTables.size() > PROFILE_COUNT) {
       logger.error(
-          "{}: truncating closed-loop profiles {} > {}", name, profileTables.size(), PROFILE_COUNT);
+          "{}: truncating list of closed-loop profiles {} > {}",
+          name,
+          profileTables.size(),
+          PROFILE_COUNT);
       profileTables = profileTables.subList(0, PROFILE_COUNT);
     }
 
-    for (Toml table : profileTables) {
-      closedLoopProfiles.add(ClosedLoopProfile.create(table));
+    for (int i = 0; i < profileTables.size(); i++) {
+      logger.debug("adding closed-loop profile for slot {}", i);
+      closedLoopProfiles.add(ClosedLoopProfile.create(profileTables.get(i)));
     }
+
     // fill in any remaining with default
     for (int i = 0; i < PROFILE_COUNT - profileTables.size(); i++) {
+      logger.debug("adding DEFAULT profile for slot {}", i);
       closedLoopProfiles.add(ClosedLoopProfile.DEFAULT);
     }
     return closedLoopProfiles;
