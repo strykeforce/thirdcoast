@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Calendar Versioning](http://calver.org/).
 
+## [18.2.0] - 2018-02-03
+
+### Changed
+
+- Complete re-write of TalonSRX handling code to incorporate rest of Phoenix update. We now utilize profile slots and selecting the control mode through the Talon's `set()` method. Additionally, all Talon configuration is done at startup as Talon IDs are identified in the config file. Backwards incompatible changes to the config file format and API.
+
 ## [18.0.5] - 2018-01-24
 
 ### Changed
@@ -89,4 +95,6 @@ This version upgrades the library to be compatible with the 2018 Phoenix TalonSR
 [17.1.4]: https://github.com/strykeforce/thirdcoast/compare/v17.1.3...v17.1.4
 [17.2.0]: https://github.com/strykeforce/thirdcoast/compare/v17.1.4...v17.2.0
 [18.0.4]: https://github.com/strykeforce/thirdcoast/compare/v17.2.0...v18.0.4
+[18.0.5]: https://github.com/strykeforce/thirdcoast/compare/v18.0.4...v18.0.5
+[18.2.0]: https://github.com/strykeforce/thirdcoast/compare/v18.0.5...v18.2.0
 [unreleased]: https://github.com/strykeforce/thirdcoast/compare/v17.2.0...develop
