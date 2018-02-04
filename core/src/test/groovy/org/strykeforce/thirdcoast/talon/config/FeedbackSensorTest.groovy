@@ -19,7 +19,7 @@ class FeedbackSensorTest extends Specification {
         feedback.configure(talon, timeout)
 
         then:
-        1 * talon.configSelectedFeedbackSensor(FeedbackDevice.None, 0, timeout)
+        1 * talon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, timeout)
         1 * talon.setSensorPhase(false)
         0 * talon._
     }
