@@ -4,6 +4,7 @@ import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import org.slf4j.Logger;
 
+/** Utility class to check for and display TalonSRX configuration errors. */
 public class Errors {
 
   public static void check(ErrorCode error, Logger logger) {

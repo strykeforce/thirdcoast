@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -33,18 +32,19 @@ public class Talons {
   public Talons(Settings settings, Factory factory) {
     Toml settingsTable = settings.getTable(TABLE);
     final int timeout = settingsTable.getLong("timeout").intValue();
+    logger.debug("TalonSRX configuration timeout = {}", timeout);
 
     List<TalonConfiguration> talonConfigurations = new ArrayList<>();
     for (Toml toml : settings.getTables(TALONS)) {
       TalonConfiguration config = TalonConfiguration.create(toml);
-      logger.debug("added config '{}' for talons {}", config.getName(), config.getTalonIds());
       talonConfigurations.add(config);
+      logger.debug("added '{}' for TalonSRX ids: {}", config.getName(), config.getTalonIds());
     }
 
     for (TalonConfiguration configuration : talonConfigurations) {
       for (Integer id : configuration.getTalonIds()) {
         if (talons.containsKey(id)) {
-          logger.error("Talon {} already configured, skipping", id);
+          logger.error("TalonSRX {} already configured, ignoring", id);
           continue;
         }
         TalonSRX talon = factory.create(id);
@@ -52,7 +52,6 @@ public class Talons {
         talons.put(id, talon);
       }
     }
-    logger.debug("timeout = {}", timeout);
   }
 
   @SuppressWarnings("unused")
@@ -97,14 +96,13 @@ public class Talons {
     logger.debug("Closed Loop Target 1 = {}", talon.getClosedLoopTarget(1));
     logger.debug("Control Mode = {}", talon.getControlMode());
 
-    logger.debug("Error Derivative 0 = {}", talon.getErrorDerivative(0));
-    logger.debug("Error Derivative 1 = {}", talon.getErrorDerivative(1));
-
-    logger.debug("Active Trajectory Heading = {}", talon.getActiveTrajectoryHeading());
-    logger.debug("Active Trajectory Position = {}", talon.getActiveTrajectoryPosition());
-    logger.debug("Active Trajectory Velocity = {}", talon.getActiveTrajectoryVelocity());
-    logger.debug("Base ID = {}", talon.getBaseID());
-    logger.debug("Bus Voltage = {}", talon.getBusVoltage());
+    //    logger.debug("Error Derivative 0 = {}", talon.getErrorDerivative(0));
+    //    logger.debug("Error Derivative 1 = {}", talon.getErrorDerivative(1));
+    //    logger.debug("Active Trajectory Heading = {}", talon.getActiveTrajectoryHeading());
+    //    logger.debug("Active Trajectory Position = {}", talon.getActiveTrajectoryPosition());
+    //    logger.debug("Active Trajectory Velocity = {}", talon.getActiveTrajectoryVelocity());
+    //    logger.debug("Base ID = {}", talon.getBaseID());
+    //    logger.debug("Bus Voltage = {}", talon.getBusVoltage());
 
     Faults faults = new Faults();
     talon.getFaults(faults);
@@ -157,7 +155,7 @@ public class Talons {
   @NotNull
   public TalonSRX getTalon(int id) {
     if (!talons.containsKey(id)) {
-      throw new NoSuchElementException("Talon " + id);
+      logger.error("TalonSRX {} not found", id);
     }
     return talons.get(id);
   }
