@@ -48,7 +48,7 @@ public class WheelTestRobot extends IterativeRobot {
   public void robotInit() {
     RobotComponent component = DaggerRobotComponent.builder().config(Robot.CONFIG_FILE).build();
     controls = component.controls();
-    Talons talons = component.talonFactory();
+    Talons talons = component.talons();
     wheel = new Wheel(talons, new Settings(), 1);
     wheel.setAzimuthZero(1000);
   }

@@ -32,8 +32,6 @@ interface RobotComponent {
 
   Talons talons();
 
-  Talons talonFactory();
-
   @Component.Builder
   interface Builder {
 
