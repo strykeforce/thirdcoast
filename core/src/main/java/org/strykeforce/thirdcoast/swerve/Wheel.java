@@ -1,14 +1,18 @@
 package org.strykeforce.thirdcoast.swerve;
 
+import static org.strykeforce.thirdcoast.swerve.SwerveDrive.DriveMode.OPEN_LOOP;
+
 import com.ctre.phoenix.ErrorCode;
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.moandjiezana.toml.Toml;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.strykeforce.thirdcoast.swerve.SwerveDrive.DriveMode;
 import org.strykeforce.thirdcoast.talon.Errors;
 import org.strykeforce.thirdcoast.talon.TalonConfiguration;
-import org.strykeforce.thirdcoast.talon.TalonFactory;
-import org.strykeforce.thirdcoast.talon.TalonProvisioner;
-import org.strykeforce.thirdcoast.talon.ThirdCoastTalon;
+import org.strykeforce.thirdcoast.talon.Talons;
+import org.strykeforce.thirdcoast.util.Settings;
 
 /**
  * Controls a swerve drive wheel azimuth and drive motors. The azimuth and drive Talons are
@@ -28,48 +32,61 @@ import org.strykeforce.thirdcoast.talon.ThirdCoastTalon;
  */
 public class Wheel {
 
-  public static final double TICKS_PER_ROTATION = 4096;
+  private static final String TABLE = "THIRDCOAST.WHEEL";
   private static final Logger logger = LoggerFactory.getLogger(Wheel.class);
-  private final TalonProvisioner talonProvisioner;
-  private final ThirdCoastTalon azimuthTalon;
-  private final ThirdCoastTalon driveTalon;
 
-  private double driveSetpointMax;
+  private final double kTicksPerRevolution;
+  private final double kDriveSetpointMax;
+  private final ControlMode kAzimuthControlMode;
+  private final ControlMode kDriveOpenLoopControlMode;
+  private final ControlMode kDriveClosedLoopControlMode;
+
+  private final TalonSRX azimuthTalon;
+  private final TalonSRX driveTalon;
+  private final int[] profileSlotSetpoint = new int[4];
   private double azimuthSetpoint;
   private double driveSetpoint;
+  private ControlMode driveControlMode;
 
   /**
-   * This designated constructor constructs a wheel by supplying azimuthTalon and driveTalon talons.
-   * They are initialized with Talon configurations named "azimuthTalon" and "driveTalon"
-   * respectively. Assumes the Talon configurations have been registered.
+   * This designated constructor constructs a wheel by supplying azimuth and drive talons. They are
+   * initialized with Talon configurations named "azimuth" and "drive" respectively.
    *
-   * @param talonProvisioner the TalonProvisioner used to provision Talons
-   * @param azimuth the azimuthTalon TalonSRX
-   * @param drive the driveTalon TalonSRX
+   * @param settings the settings from TOML config file
+   * @param azimuth the configured azimuth TalonSRX
+   * @param drive the configured drive TalonSRX
    */
-  public Wheel(TalonProvisioner talonProvisioner, ThirdCoastTalon azimuth, ThirdCoastTalon drive) {
-    final String AZIMUTH_PARAMETERS = "azimuth";
-    final String DRIVE_PARAMETERS = "drive";
+  public Wheel(Settings settings, TalonSRX azimuth, TalonSRX drive) {
 
-    this.talonProvisioner = talonProvisioner;
+    Toml toml = settings.getTable(TABLE);
+    kTicksPerRevolution = (double) toml.getLong("ticksPerRevolution");
+    kDriveSetpointMax = (double) toml.getLong("driveSetpointMax");
+    kAzimuthControlMode = ControlMode.valueOf(toml.getString("azimuthControlMode"));
+    kDriveOpenLoopControlMode = ControlMode.valueOf(toml.getString("driveOpenLoopControlMode"));
+    kDriveClosedLoopControlMode = ControlMode.valueOf(toml.getString("driveClosedLoopControlMode"));
+
     azimuthTalon = azimuth;
     driveTalon = drive;
-    setAzimuthParameters(AZIMUTH_PARAMETERS);
-    setDriveParameters(DRIVE_PARAMETERS);
-    logger.info("initialized azimuth = {}, drive = {}", azimuthTalon, driveTalon);
+
+    setDriveMode(OPEN_LOOP);
+
+    logger.debug("azimuth = {} drive = {}", azimuthTalon.getDeviceID(), driveTalon.getDeviceID());
+    logger.debug("ticksPerRevolution = {}", kTicksPerRevolution);
+    logger.debug("driveSetpointMax = {}", kDriveSetpointMax);
+    logger.debug("azimuthControlMode = {}", kAzimuthControlMode);
+    logger.debug("driveOpenLoopControlMode = {}", kDriveOpenLoopControlMode);
+    logger.debug("driveClosedLoopControlMode = {}", kDriveClosedLoopControlMode);
   }
 
   /**
    * Convenience constructor for a wheel by specifying the swerve driveTalon wheel number (0-3).
    *
-   * @param talonFactory the TalonFactory used to create Talons
+   * @param talons the TalonFactory used to create Talons
+   * @param settings the settings from TOML config file
    * @param index the wheel number
    */
-  public Wheel(TalonFactory talonFactory, int index) {
-    this(
-        talonFactory.getProvisioner(),
-        (ThirdCoastTalon) talonFactory.getTalon(index),
-        (ThirdCoastTalon) talonFactory.getTalon(index + 10));
+  public Wheel(Talons talons, Settings settings, int index) {
+    this(settings, talons.getTalon(index), talons.getTalon(index + 10));
   }
 
   /**
@@ -84,26 +101,49 @@ public class Wheel {
    * @param drive 0 to 1.0 in the direction of the wheel azimuth
    */
   public void set(double azimuth, double drive) {
-    driveSetpoint = drive * driveSetpointMax;
+    if (driveControlMode == kDriveOpenLoopControlMode) {
+      driveSetpoint = drive;
+    } else {
+      driveSetpoint = drive * kDriveSetpointMax;
+      selectProfileSlot();
+    }
     azimuth = -azimuth; // azimuth hardware configuration dependent
 
     // don't reset wheel azimuth direction to zero when returning to neutral
     if (driveSetpoint == 0) {
-      driveTalon.set(0);
+      driveTalon.set(driveControlMode, 0);
       return;
     }
 
     double azimuthPosition = azimuthTalon.getSelectedSensorPosition(0);
     double azimuthError =
-        Math.IEEEremainder(azimuth * TICKS_PER_ROTATION - azimuthPosition, TICKS_PER_ROTATION);
-    if (Math.abs(azimuthError) > 0.25 * TICKS_PER_ROTATION) {
-      azimuthError -= Math.copySign(0.5 * TICKS_PER_ROTATION, azimuthError);
+        Math.IEEEremainder(azimuth * kTicksPerRevolution - azimuthPosition, kTicksPerRevolution);
+    if (Math.abs(azimuthError) > 0.25 * kTicksPerRevolution) {
+      azimuthError -= Math.copySign(0.5 * kTicksPerRevolution, azimuthError);
       driveSetpoint = -driveSetpoint;
     }
     azimuthSetpoint = azimuthPosition + azimuthError;
 
-    azimuthTalon.set(azimuthSetpoint);
-    driveTalon.set(driveSetpoint);
+    azimuthTalon.set(kAzimuthControlMode, azimuthSetpoint);
+    driveTalon.set(driveControlMode, driveSetpoint);
+  }
+
+  void selectProfileSlot() {}
+
+  /**
+   * Set the drive mode
+   *
+   * @param driveMode the drive mode
+   */
+  public void setDriveMode(DriveMode driveMode) {
+    switch (driveMode) {
+      case OPEN_LOOP:
+        driveControlMode = kDriveOpenLoopControlMode;
+        break;
+      case CLOSED_LOOP:
+        driveControlMode = kDriveClosedLoopControlMode;
+        break;
+    }
   }
 
   /**
@@ -112,29 +152,8 @@ public class Wheel {
    */
   public void stop() {
     azimuthSetpoint = azimuthTalon.getSelectedSensorPosition(0);
-    azimuthTalon.set(azimuthSetpoint);
-    driveTalon.set(0);
-  }
-
-  public void setAzimuthParameters(String name) {
-    try {
-      TalonConfiguration talonConfiguration = talonProvisioner.configurationFor(name);
-      talonConfiguration.configure(azimuthTalon);
-    } catch (IllegalArgumentException e) {
-      logger.error("azimuth parameters missing", e);
-      throw e;
-    }
-  }
-
-  public void setDriveParameters(String name) {
-    try {
-      TalonConfiguration talonConfiguration = talonProvisioner.configurationFor(name);
-      talonConfiguration.configure(driveTalon);
-      driveSetpointMax = talonConfiguration.getSetpointMax();
-    } catch (IllegalArgumentException e) {
-      logger.error("drive parameters missing", e);
-      throw e;
-    }
+    azimuthTalon.set(kAzimuthControlMode, azimuthSetpoint);
+    driveTalon.set(driveControlMode, 0);
   }
 
   /**
@@ -144,10 +163,9 @@ public class Wheel {
    */
   public void setAzimuthZero(int zero) {
     azimuthSetpoint = (double) (getAzimuthAbsolutePosition() - zero);
-    // TODO: test this timeout value is OK
     ErrorCode e = azimuthTalon.setSelectedSensorPosition((int) azimuthSetpoint, 0, 10);
     Errors.check(e, logger);
-    azimuthTalon.set(azimuthSetpoint);
+    azimuthTalon.set(kAzimuthControlMode, azimuthSetpoint);
   }
 
   /**
@@ -206,6 +224,31 @@ public class Wheel {
     return driveTalon;
   }
 
+  /**
+   * Get encoder ticks per Azimuth revolution.
+   *
+   * @return number of encoder ticks
+   */
+  public int getTicksPerRevolution() {
+    return (int) kTicksPerRevolution;
+  }
+
+  public double getDriveSetpointMax() {
+    return kDriveSetpointMax;
+  }
+
+  public ControlMode getAzimuthControlMode() {
+    return kAzimuthControlMode;
+  }
+
+  public ControlMode getDriveOpenLoopControlMode() {
+    return kDriveOpenLoopControlMode;
+  }
+
+  public ControlMode getDriveClosedLoopControlMode() {
+    return kDriveClosedLoopControlMode;
+  }
+
   @Override
   public String toString() {
     return "Wheel{"
@@ -213,8 +256,8 @@ public class Wheel {
         + azimuthTalon
         + ", driveTalon="
         + driveTalon
-        + ", driveSetpointMax="
-        + driveSetpointMax
+        + ", kDriveSetpointMax="
+        + kDriveSetpointMax
         + '}';
   }
 }

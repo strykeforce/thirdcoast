@@ -1,10 +1,7 @@
 package org.strykeforce.thirdcoast.telemetry
 
-import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX
-import org.strykeforce.thirdcoast.talon.StatusFrameRate
 import org.strykeforce.thirdcoast.telemetry.item.TalonItem
-import spock.lang.Ignore
 import spock.lang.Specification
 
 class TelemetryServiceTest extends Specification {

@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-/** Accesses driver control input. */
+/** Accesses driver config input. */
 @Singleton
 public class Controls {
 

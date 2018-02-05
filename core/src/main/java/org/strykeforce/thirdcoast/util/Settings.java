@@ -18,33 +18,45 @@ public class Settings {
   private static final String DEFAULTS = "/META-INF/thirdcoast/defaults.toml";
 
   private final Toml toml;
+  private final Toml defaults;
 
   @Inject
   public Settings(File config) {
+    defaults = defaults();
     if (Files.notExists(config.toPath())) {
       logger.warn("{} is missing, using defaults in " + DEFAULTS, config);
-      toml = defaults();
+      toml = defaults;
       return;
     }
 
-    this.toml = new Toml(defaults()).read(config);
+    this.toml = new Toml(defaults).read(config);
     logger.info("reading settings from {}", config);
   }
 
   public Settings(String tomlString) {
-    toml = new Toml(defaults()).read(tomlString);
+    defaults = defaults();
+    toml = new Toml(defaults).read(tomlString);
   }
 
   public Settings() {
-    toml = defaults();
+    this("");
   }
 
+  /**
+   * Get a table from the settings, with shallow merging.
+   *
+   * @param key the table key
+   * @return the merged table
+   */
   public Toml getTable(String key) {
     if (!toml.contains(key)) {
       logger.error("table with key '{}' not present", key);
       return new Toml();
     }
-    return toml.getTable(key);
+    Toml table = toml.getTable(key);
+    Toml defaultTable = defaults.getTable(key);
+
+    return new Toml(defaultTable).read(table);
   }
 
   public List<Toml> getTables(String key) {

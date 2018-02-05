@@ -1,4 +1,4 @@
-package org.strykeforce.thirdcoast.talon;
+package org.strykeforce.thirdcoast.talon.config;
 
 import static com.ctre.phoenix.motorcontrol.StatusFrameEnhanced.Status_10_MotionMagic;
 import static com.ctre.phoenix.motorcontrol.StatusFrameEnhanced.Status_13_Base_PIDF0;
@@ -14,6 +14,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.strykeforce.thirdcoast.talon.Errors;
 
 /**
  * Represents a set of frame update rates for a {@link com.ctre.phoenix.motorcontrol.can.TalonSRX}.
@@ -21,10 +22,10 @@ import org.slf4j.LoggerFactory;
  * <p>If not modified, default status frame update rates are:
  *
  * <ul>
- *   <li>General <b>10ms</b>: motor output, limit switches, faults, control mode, soft limits,
+ *   <li>General <b>10ms</b>: motor output, limit switches, faults, config mode, soft limits,
  *       inverted motor output, neutral mode brake
  *   <li>Feedback0 <b>20ms</b>: selected encoder pos/vel for PID loop 0, current, sticky faults,
- *       motion control profile select
+ *       motion config profile select
  *   <li>Quad Encoder <b>160ms</b>: pos/vel, Index rising edge count, A/B/Index pin state
  *   <li>Analog In/Temp/Bus Voltage <b>160ms</b>: analog pos/vel, temp, bus voltage, PID loop 0
  *       selected feedback sensor

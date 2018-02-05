@@ -3,7 +3,8 @@ package org.strykeforce.thirdcoast.swerve;
 import dagger.Module;
 import dagger.Provides;
 import javax.inject.Singleton;
-import org.strykeforce.thirdcoast.talon.TalonFactory;
+import org.strykeforce.thirdcoast.talon.Talons;
+import org.strykeforce.thirdcoast.util.Settings;
 
 /**
  * <a href="https://google.github.io/dagger/" target="_top">Dagger</a> dependency-injection support
@@ -14,12 +15,12 @@ public abstract class WheelModule {
 
   @Provides
   @Singleton
-  public static Wheel[] provideWheels(TalonFactory talonFactory) {
+  public static Wheel[] provideWheels(Talons talons, Settings settings) {
     return new Wheel[] {
-      new Wheel(talonFactory, 0), // front left
-      new Wheel(talonFactory, 1), // front right
-      new Wheel(talonFactory, 2), // rear left
-      new Wheel(talonFactory, 3) // rear right
+      new Wheel(talons, settings, 0), // front left
+      new Wheel(talons, settings, 1), // front right
+      new Wheel(talons, settings, 2), // rear left
+      new Wheel(talons, settings, 3) // rear right
     };
   }
 }

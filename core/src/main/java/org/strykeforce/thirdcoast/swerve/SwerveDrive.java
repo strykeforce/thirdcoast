@@ -1,15 +1,16 @@
 package org.strykeforce.thirdcoast.swerve;
 
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.kauailabs.navx.frc.AHRS;
 import com.moandjiezana.toml.Toml;
 import edu.wpi.first.wpilibj.Preferences;
-import java.util.Arrays;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.talon.TalonConfiguration;
 import org.strykeforce.thirdcoast.telemetry.TelemetryService;
+import org.strykeforce.thirdcoast.telemetry.item.TalonItem;
 import org.strykeforce.thirdcoast.util.Settings;
 
 /**
@@ -35,9 +36,11 @@ public class SwerveDrive {
   private static final String TABLE = "THIRDCOAST.SWERVE";
   private static final int WHEEL_COUNT = 4;
   final AHRS gyro;
+  private final double kLengthComponent;
+  private final double kWidthComponent;
   private final Wheel[] wheels;
-  private final double length;
-  private final double width;
+  private final double[] ws = new double[WHEEL_COUNT];
+  private final double[] wa = new double[WHEEL_COUNT];
 
   @Inject
   SwerveDrive(AHRS gyro, Wheel[] wheels, Settings settings) {
@@ -46,21 +49,33 @@ public class SwerveDrive {
     }
     this.gyro = gyro;
     this.wheels = wheels;
+    logger.info("field orientation driving is {}", gyro == null ? "DISABLED" : "ENABLED");
 
     Toml toml = settings.getTable(TABLE);
-    length = toml.getDouble("length");
-    width = toml.getDouble("width");
+    double length = toml.getDouble("length");
+    double width = toml.getDouble("width");
+    double radius = Math.hypot(length, width);
+    kLengthComponent = length / radius;
+    kWidthComponent = width / radius;
 
-    logger.info(
-        "initialized with gyro = {} wheels = {} length = {} width = {}",
-        gyro,
-        Arrays.toString(wheels),
-        length,
-        width);
+    logger.debug("length = {}", length);
+    logger.debug("width = {}", width);
   }
 
   static String getPreferenceKeyForWheel(int i) {
     return String.format("%s/wheel.%d", SwerveDrive.class.getSimpleName(), i);
+  }
+
+  /**
+   * Set the drive mode.
+   *
+   * @param driveMode the drive mode
+   */
+  public void setDriveMode(DriveMode driveMode) {
+    for (Wheel wheel : wheels) {
+      wheel.setDriveMode(driveMode);
+    }
+    logger.info("drive mode = {}", driveMode);
   }
 
   /**
@@ -93,22 +108,18 @@ public class SwerveDrive {
       forward = temp;
     }
 
-    final double radius = Math.hypot(length, width);
-
-    final double a = strafe - azimuth * (length / radius);
-    final double b = strafe + azimuth * (length / radius);
-    final double c = forward - azimuth * (width / radius);
-    final double d = forward + azimuth * (width / radius);
+    final double a = strafe - azimuth * kLengthComponent;
+    final double b = strafe + azimuth * kLengthComponent;
+    final double c = forward - azimuth * kWidthComponent;
+    final double d = forward + azimuth * kWidthComponent;
 
     // wheel speed
-    double[] ws = new double[4];
     ws[0] = Math.hypot(b, d);
     ws[1] = Math.hypot(b, c);
     ws[2] = Math.hypot(a, d);
     ws[3] = Math.hypot(a, c);
 
     // wheel azimuth
-    double[] wa = new double[4];
     wa[0] = Math.atan2(b, d) * 0.5 / Math.PI;
     wa[1] = Math.atan2(b, c) * 0.5 / Math.PI;
     wa[2] = Math.atan2(a, d) * 0.5 / Math.PI;
@@ -183,9 +194,13 @@ public class SwerveDrive {
    * @param telemetryService the active Telemetry service instance created by the robot
    */
   public void registerWith(TelemetryService telemetryService) {
-    for (Wheel wheel : wheels) {
-      telemetryService.register(wheel.getAzimuthTalon());
-      telemetryService.register(wheel.getDriveTalon());
+    for (int i = 0; i < WHEEL_COUNT; i++) {
+      TalonSRX t = wheels[i].getAzimuthTalon();
+      telemetryService.register(
+          new TalonItem(t, "Azimuth Talon " + i + " (" + t.getDeviceID() + ")"));
+      t = wheels[i].getDriveTalon();
+      telemetryService.register(
+          new TalonItem(t, "Drive Talon " + i + " (" + t.getDeviceID() + ")"));
     }
   }
 
@@ -205,5 +220,29 @@ public class SwerveDrive {
    */
   public AHRS getGyro() {
     return gyro;
+  }
+
+  /**
+   * Unit testing
+   *
+   * @return length
+   */
+  double getLengthComponent() {
+    return kLengthComponent;
+  }
+
+  /**
+   * Unit testing
+   *
+   * @return width
+   */
+  double getWidthComponent() {
+    return kWidthComponent;
+  }
+
+  /** Swerve Drive drive mode */
+  public enum DriveMode {
+    OPEN_LOOP,
+    CLOSED_LOOP
   }
 }

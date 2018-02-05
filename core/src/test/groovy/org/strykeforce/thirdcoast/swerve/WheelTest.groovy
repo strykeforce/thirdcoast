@@ -1,76 +1,61 @@
 package org.strykeforce.thirdcoast.swerve
 
+import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.SensorCollection
-import com.moandjiezana.toml.Toml
-import org.strykeforce.thirdcoast.talon.TalonProvisioner
-import org.strykeforce.thirdcoast.talon.ThirdCoastTalon
+import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import org.strykeforce.thirdcoast.util.Settings
-import spock.lang.Shared
 import spock.lang.Specification
 
 import static com.ctre.phoenix.motorcontrol.ControlMode.*
+import static org.strykeforce.thirdcoast.swerve.SwerveDrive.DriveMode.CLOSED_LOOP
 
 class WheelTest extends Specification {
 
     static final EPSILON = 1e-12
-    static final ROT = Wheel.TICKS_PER_ROTATION
+    static final ROT = 4096
 
-    def azimuth = Mock(ThirdCoastTalon)
-    def drive = Mock(ThirdCoastTalon)
-    @Shared
-    TalonProvisioner provisioner
+    def azimuth = Mock(TalonSRX)
+    def drive = Mock(TalonSRX)
 
-    static tomlString = '''
-    [[TALON]]
-    name = "drive"
-    mode = "PercentOutput"
-    setpointMax    = 12.0
-    continuousCurrentLimit   = 50
-    [TALON.encoder]
-    device = "QuadEncoder"
-
-    [[TALON]]
-    name = "azimuth"
-    mode = "Position"
-    setpointMax     = 4095.0
-    neutralMode = "Coast"
-    pGain =   1.0
-    iGain =   2.0
-    dGain =   3.0
-    fGain =   4.0
-    iZone = 0
-    forward_output_voltage_peak =  6.0
-    reverse_output_voltage_peak = -6.0
-    [TALON.encoder]
-    device  = "CtreMagEncoder_Relative"
-    
-    [[TALON]]
-    name = "speed"
-    mode = "Velocity"
-    setpointMax = 1.0
-'''
-
-    void setupSpec() {
-        provisioner = new TalonProvisioner(new Settings(tomlString))
-    }
-
-    def "configures azimuth and drive talons"() {
+    //
+    // Settings
+    //
+    def "defaults are configured"() {
         when:
-        def wheel = new Wheel(provisioner, azimuth, drive)
+        def wheel = new Wheel(new Settings(), azimuth, drive)
 
         then:
-        1 * drive.changeControlMode(PercentOutput)
-        1 * azimuth.changeControlMode(Position)
-
-        when:
-        wheel.azimuthParameters = "speed"
-
-        then:
-        1 * azimuth.changeControlMode(Velocity)
-        0 * azimuth.changeControlMode(_)
-        0 * drive.changeControlMode(_)
+        with(wheel) {
+            ticksPerRevolution == 4096
+            driveSetpointMax == 0
+            azimuthControlMode == MotionMagic
+            driveOpenLoopControlMode == PercentOutput
+            driveClosedLoopControlMode == Velocity
+        }
     }
 
+
+    def "override drive max setpoint"() {
+        given:
+        def toml = "[THIRDCOAST.WHEEL]\ndriveSetpointMax = 2767"
+
+        when:
+        def wheel = new Wheel(new Settings(toml), azimuth, drive)
+
+        then:
+        with(wheel) {
+            getDriveSetpointMax() == 2767
+            // defaults
+            getTicksPerRevolution() == 4096
+            getAzimuthControlMode() == MotionMagic
+            getDriveOpenLoopControlMode() == PercentOutput
+            getDriveClosedLoopControlMode() == Velocity
+        }
+    }
+
+    //
+    // Azimuth Zero
+    //
     def "gets azimuth absolution position"() {
         setup:
         def sensorCollection = Mock(SensorCollection)
@@ -78,7 +63,7 @@ class WheelTest extends Specification {
         sensorCollection.getPulseWidthPosition() >> 0x1000
 
         when:
-        def wheel = new Wheel(provisioner, azimuth, drive)
+        def wheel = new Wheel(new Settings(), azimuth, drive)
 
         then:
         wheel.azimuthAbsolutePosition == 0
@@ -90,10 +75,13 @@ class WheelTest extends Specification {
         1 * azimuth.setSelectedSensorPosition(-2767, 0, 10)
     }
 
+    //
+    // Calculating Position and Output
+    //
     def "azimuth changes are optimized"() {
         when:
         azimuth.getSelectedSensorPosition(0) >> start_position * ROT
-        def wheel = new Wheel(provisioner, azimuth, drive)
+        def wheel = new Wheel(new Settings(), azimuth, drive)
         wheel.set(setpoint, 1d)
 
         then:
@@ -145,12 +133,14 @@ class WheelTest extends Specification {
 
     def "drive output is scaled"() {
         when:
-        def wheel = new Wheel(provisioner, azimuth, drive)
+        def tomlStr = "[THIRDCOAST.WHEEL]\ndriveSetpointMax=2767"
+        def wheel = new Wheel(new Settings(tomlStr), azimuth, drive)
+        wheel.setDriveMode(CLOSED_LOOP)
         wheel.set(0, 1)
 
         then:
-        1 * azimuth.set(0.0)
-        1 * drive.set(12.0)
+        1 * azimuth.set(MotionMagic, 0.0d)
+        1 * drive.set(Velocity, 2767.0d)
     }
 
     // check some wheel-related math

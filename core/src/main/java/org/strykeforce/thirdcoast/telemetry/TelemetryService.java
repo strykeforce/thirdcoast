@@ -10,13 +10,13 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.strykeforce.thirdcoast.talon.StatusFrameRate;
+import org.strykeforce.thirdcoast.talon.config.StatusFrameRate;
 import org.strykeforce.thirdcoast.telemetry.item.Item;
 import org.strykeforce.thirdcoast.telemetry.item.TalonItem;
 
 /**
  * The Telemetry service registers {@link Item} instances for data collection and controls the
- * starting and stopping of the service. When active, the services listens for incoming control
+ * starting and stopping of the service. When active, the services listens for incoming config
  * messages via a HTTP REST service and sends data over UDP.
  */
 @Singleton
@@ -85,7 +85,7 @@ public class TelemetryService {
    *
    * @param talon the TalonSRX to register for data collection
    * @throws IllegalStateException if TelemetryService is running.
-   * @see org.strykeforce.thirdcoast.talon.StatusFrameRate
+   * @see StatusFrameRate
    */
   public void register(TalonSRX talon) {
     checkNotStarted();

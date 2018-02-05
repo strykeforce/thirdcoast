@@ -3,7 +3,6 @@ package org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import javax.inject.Inject;
 import org.jline.reader.LineReader;
-import org.strykeforce.thirdcoast.talon.ThirdCoastTalon;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.TalonSet;
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractIntConfigCommand;
 

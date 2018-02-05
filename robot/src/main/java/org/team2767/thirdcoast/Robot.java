@@ -6,6 +6,7 @@ import java.io.File;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.swerve.SwerveDrive;
+import org.strykeforce.thirdcoast.talon.Talons;
 import org.strykeforce.thirdcoast.telemetry.TelemetryService;
 
 /** Third Coast swerve drive demo robot. */
@@ -46,7 +47,6 @@ public class Robot extends IterativeRobot {
   @Override
   public void robotInit() {
     logger.info("Robot is initializing");
-    getComponent().talonProvisioner().enableTimeout(true);
     controls = getComponent().controls();
     swerve = getComponent().swerveDrive();
     telemetryService = getComponent().telemetryService();
@@ -58,7 +58,6 @@ public class Robot extends IterativeRobot {
   @Override
   public void teleopInit() {
     logger.info("Robot is enabled in tele-op");
-    getComponent().talonProvisioner().enableTimeout(false);
     swerve.stop();
   }
 
@@ -79,7 +78,7 @@ public class Robot extends IterativeRobot {
 
   @Override
   public void disabledInit() {
-    logger.info("Robot is disabled");
+    Talons.dump(swerve.getWheels()[0].getAzimuthTalon());
   }
 
   @Override

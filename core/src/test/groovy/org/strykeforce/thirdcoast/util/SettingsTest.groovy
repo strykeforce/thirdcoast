@@ -1,38 +1,37 @@
 package org.strykeforce.thirdcoast.util
 
-import org.strykeforce.thirdcoast.talon.TalonProvisioner
+import com.ctre.phoenix.motorcontrol.ControlMode
 import spock.lang.Specification
 
 class SettingsTest extends Specification {
 
-    def "reads defaults"() {
+    def "reads table defaults"() {
         when:
-        def settings = new Settings(new File("/bogus"))
-        def talons = settings.getTables(TalonProvisioner.TALON_TABLE)
+        def settings = new Settings()
+        def toml = settings.getTable("THIRDCOAST.SWERVE")
 
         then:
-        talons.size() == 2
-        talons.get(0).getString("name") == "drive"
-        talons.get(1).getString("name") == "azimuth"
+        toml.getDouble("length") == 1.0
+        toml.getDouble("width") == 1.0
     }
 
-    def "overrides defaults"() {
+    def "overrides table defaults"() {
         given:
-        def tomlStr = '''
-[[TALON]]
-  name = "stryke"
+        def tomlStr = "[THIRDCOAST.WHEEL]\nticksPerRevolution = 2767\n" +
+                "driveClosedLoopControlMode = \"Disabled\""
 
-[[TALON]]
-  name = "force"
-'''
         when:
         def settings = new Settings(tomlStr)
-        def talons = settings.getTables(TalonProvisioner.TALON_TABLE)
+        def wheel = settings.getTable("THIRDCOAST.WHEEL")
 
         then:
-        talons.size() == 2
-        talons.get(0).getString("name") == "stryke"
-        talons.get(1).getString("name") == "force"
+        with(wheel) {
+            ticksPerRevolution == 2767
+            driveSetpointMax == 0
+            azimuthControlMode == ControlMode.MotionMagic.name()
+            driveOpenLoopControlMode == ControlMode.PercentOutput.name()
+            driveClosedLoopControlMode == ControlMode.Disabled.name()
+        }
 
     }
 }

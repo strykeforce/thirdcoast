@@ -14,9 +14,7 @@ import org.jline.utils.AttributedStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.talon.TalonConfiguration;
-import org.strykeforce.thirdcoast.talon.TalonFactory;
-import org.strykeforce.thirdcoast.talon.TalonProvisioner;
-import org.strykeforce.thirdcoast.talon.ThirdCoastTalon;
+import org.strykeforce.thirdcoast.talon.Talons;
 import org.strykeforce.thirdcoast.telemetry.tct.AbstractCommand;
 import org.strykeforce.thirdcoast.telemetry.tct.Command;
 import org.strykeforce.thirdcoast.telemetry.tct.ConfigurationsManager;
@@ -31,7 +29,7 @@ public class LoadConfigsCommand extends AbstractCommand {
 
   private final ConfigurationsManager configurationsManager;
   private final TalonSet talonSet;
-  private final TalonFactory talonFactory;
+  private final Talons talons;
   private final Command listCommand;
 
   @Inject
@@ -39,12 +37,12 @@ public class LoadConfigsCommand extends AbstractCommand {
       ConfigurationsManager configurationsManager,
       TalonSet talonSet,
       LineReader reader,
-      TalonFactory talonFactory,
+      Talons talons,
       ListCommand listCommand) {
     super(NAME, reader);
     this.configurationsManager = configurationsManager;
     this.talonSet = talonSet;
-    this.talonFactory = talonFactory;
+    this.talons = talons;
     this.listCommand = listCommand;
   }
 
@@ -101,8 +99,7 @@ public class LoadConfigsCommand extends AbstractCommand {
       talonSet.clearSelected();
 
       for (Integer id : configuration.getTalonIds()) {
-        ThirdCoastTalon talon =
-            (ThirdCoastTalon) talonFactory.getTalonWithConfiguration(id, selected);
+        ThirdCoastTalon talon = (ThirdCoastTalon) talons.getTalonWithConfiguration(id, selected);
         talonSet.selectTalon(talon);
         logger.info("adding talon with id {} and configuration {}", id, selected);
       }

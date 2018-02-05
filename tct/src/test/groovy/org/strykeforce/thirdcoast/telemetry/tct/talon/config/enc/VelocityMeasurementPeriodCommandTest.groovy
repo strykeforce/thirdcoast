@@ -1,7 +1,5 @@
 package org.strykeforce.thirdcoast.telemetry.tct.talon.config.enc
 
-import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod
-import org.strykeforce.thirdcoast.talon.ThirdCoastTalon
 import org.strykeforce.thirdcoast.telemetry.tct.Command
 import org.strykeforce.thirdcoast.telemetry.tct.talon.config.AbstractTalonConfigCommandTest
 
