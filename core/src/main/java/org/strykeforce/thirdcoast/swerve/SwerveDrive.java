@@ -1,5 +1,6 @@
 package org.strykeforce.thirdcoast.swerve;
 
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.kauailabs.navx.frc.AHRS;
 import com.moandjiezana.toml.Toml;
 import edu.wpi.first.wpilibj.Preferences;
@@ -9,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.talon.TalonConfiguration;
 import org.strykeforce.thirdcoast.telemetry.TelemetryService;
+import org.strykeforce.thirdcoast.telemetry.item.TalonItem;
 import org.strykeforce.thirdcoast.util.Settings;
 
 /**
@@ -192,9 +194,13 @@ public class SwerveDrive {
    * @param telemetryService the active Telemetry service instance created by the robot
    */
   public void registerWith(TelemetryService telemetryService) {
-    for (Wheel wheel : wheels) {
-      telemetryService.register(wheel.getAzimuthTalon());
-      telemetryService.register(wheel.getDriveTalon());
+    for (int i = 0; i < WHEEL_COUNT; i++) {
+      TalonSRX t = wheels[i].getAzimuthTalon();
+      telemetryService.register(
+          new TalonItem(t, "Azimuth Talon " + i + " (" + t.getDeviceID() + ")"));
+      t = wheels[i].getDriveTalon();
+      telemetryService.register(
+          new TalonItem(t, "Drive Talon " + i + " (" + t.getDeviceID() + ")"));
     }
   }
 
