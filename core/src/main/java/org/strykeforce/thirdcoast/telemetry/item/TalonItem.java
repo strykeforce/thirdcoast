@@ -58,7 +58,7 @@ public class TalonItem extends AbstractItem {
   public TalonItem(TalonSRX talon, String description) {
     super(TYPE, description, MEASURES);
     this.talon = talon;
-    sensorCollection = talon.getSensorCollection();
+    sensorCollection = talon != null ? talon.getSensorCollection() : null;
   }
 
   public TalonItem(TalonSRX talon) {
