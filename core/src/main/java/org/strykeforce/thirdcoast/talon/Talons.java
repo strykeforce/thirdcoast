@@ -13,7 +13,6 @@ import java.util.Map;
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.util.Settings;
@@ -41,14 +40,14 @@ public class Talons {
       logger.debug("added '{}' for TalonSRX ids: {}", config.getName(), config.getTalonIds());
     }
 
-    for (TalonConfiguration configuration : talonConfigurations) {
-      for (Integer id : configuration.getTalonIds()) {
+    for (TalonConfiguration config : talonConfigurations) {
+      for (Integer id : config.getTalonIds()) {
         if (talons.containsKey(id)) {
-          logger.error("TalonSRX {} already configured, ignoring", id);
+          logger.error("TalonSRX {} already configured, ignoring '{}'", id, config.getName());
           continue;
         }
         TalonSRX talon = factory.create(id);
-        configuration.configure(talon, timeout);
+        config.configure(talon, timeout);
         talons.put(id, talon);
       }
     }
@@ -152,7 +151,6 @@ public class Talons {
    * @param id the device ID of the TalonSRX to create
    * @return the TalonSRX
    */
-  @NotNull
   public TalonSRX getTalon(int id) {
     if (!talons.containsKey(id)) {
       logger.error("TalonSRX {} not found", id);
