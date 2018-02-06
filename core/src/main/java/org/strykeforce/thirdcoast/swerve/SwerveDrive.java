@@ -196,11 +196,13 @@ public class SwerveDrive {
   public void registerWith(TelemetryService telemetryService) {
     for (int i = 0; i < WHEEL_COUNT; i++) {
       TalonSRX t = wheels[i].getAzimuthTalon();
-      telemetryService.register(
-          new TalonItem(t, "Azimuth Talon " + i + " (" + t.getDeviceID() + ")"));
+      if (t != null)
+        telemetryService.register(
+            new TalonItem(t, "Azimuth Talon " + i + " (" + t.getDeviceID() + ")"));
       t = wheels[i].getDriveTalon();
-      telemetryService.register(
-          new TalonItem(t, "Drive Talon " + i + " (" + t.getDeviceID() + ")"));
+      if (t != null)
+        telemetryService.register(
+            new TalonItem(t, "Drive Talon " + i + " (" + t.getDeviceID() + ")"));
     }
   }
 
