@@ -11,6 +11,7 @@ import spock.lang.Ignore
 import spock.lang.Specification
 
 import static org.strykeforce.thirdcoast.telemetry.grapher.Measure.ABSOLUTE_ENCODER_POSITION
+import static org.strykeforce.thirdcoast.telemetry.grapher.Measure.CLOSED_LOOP_TARGET
 import static org.strykeforce.thirdcoast.telemetry.grapher.Measure.SELECTED_SENSOR_VELOCITY
 import static org.strykeforce.thirdcoast.telemetry.grapher.Measure.SETPOINT
 
@@ -61,8 +62,8 @@ class InventoryTest extends Specification {
             with(measures[0]) {
                 deviceType == "talon"
                 deviceMeasures.size == TalonItem.MEASURES.size()
-                Measure.valueOf(deviceMeasures[0].id) == SETPOINT
-                deviceMeasures[0].description == SETPOINT.description
+                Measure.valueOf(deviceMeasures[0].id) == CLOSED_LOOP_TARGET
+                deviceMeasures[0].description == CLOSED_LOOP_TARGET.description
                 Measure.valueOf(deviceMeasures[5].id) == SELECTED_SENSOR_VELOCITY
                 deviceMeasures[5].description == SELECTED_SENSOR_VELOCITY.description
             }

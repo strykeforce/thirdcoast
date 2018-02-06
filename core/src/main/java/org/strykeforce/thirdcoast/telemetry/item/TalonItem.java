@@ -21,7 +21,7 @@ public class TalonItem extends AbstractItem {
   public static final Set<Measure> MEASURES =
       Collections.unmodifiableSet(
           EnumSet.of(
-              Measure.SETPOINT,
+              Measure.CLOSED_LOOP_TARGET,
               Measure.OUTPUT_CURRENT,
               Measure.OUTPUT_VOLTAGE,
               Measure.OUTPUT_PERCENT,
@@ -86,7 +86,7 @@ public class TalonItem extends AbstractItem {
     }
 
     switch (measure) {
-      case SETPOINT:
+      case CLOSED_LOOP_TARGET:
         return () -> talon.getClosedLoopTarget(0);
       case OUTPUT_CURRENT:
         return talon::getOutputCurrent;

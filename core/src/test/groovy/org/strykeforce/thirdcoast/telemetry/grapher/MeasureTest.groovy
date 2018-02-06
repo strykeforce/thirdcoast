@@ -6,7 +6,7 @@ class MeasureTest extends Specification {
 
     def "find by id"() {
         expect:
-        Measure.valueOf("SETPOINT") == Measure.SETPOINT
+        Measure.valueOf("CLOSED_LOOP_TARGET") == Measure.CLOSED_LOOP_TARGET
     }
 
     def "measure does not exist"() {

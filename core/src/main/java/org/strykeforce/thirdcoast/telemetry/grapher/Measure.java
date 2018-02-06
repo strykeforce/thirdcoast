@@ -2,7 +2,7 @@ package org.strykeforce.thirdcoast.telemetry.grapher;
 
 /** Available telemetry measurement types. */
 public enum Measure {
-  SETPOINT("Setpoint"),
+  CLOSED_LOOP_TARGET("Closed-loop Setpoint"),
 
   // BaseMotorController
   OUTPUT_CURRENT("Output Current"),
