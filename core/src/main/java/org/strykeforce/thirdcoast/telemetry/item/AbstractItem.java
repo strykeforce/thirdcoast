@@ -17,6 +17,9 @@ public abstract class AbstractItem implements Item {
   public final Set<Measure> measures;
 
   public AbstractItem(String type, String description, Set<Measure> measures) {
+    assert (type != null);
+    assert (description != null);
+    assert (measures != null);
     this.type = type;
     this.description = description;
     this.measures = measures;

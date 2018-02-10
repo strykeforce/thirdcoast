@@ -68,6 +68,11 @@ public class Wheel {
     azimuthTalon = azimuth;
     driveTalon = drive;
 
+    if (azimuthTalon == null || driveTalon == null) {
+      logger.error("Talons missing, aborting initialization");
+      return;
+    }
+
     setDriveMode(OPEN_LOOP);
 
     logger.debug("azimuth = {} drive = {}", azimuthTalon.getDeviceID(), driveTalon.getDeviceID());
@@ -162,6 +167,10 @@ public class Wheel {
    * @param zero encoder position (in ticks) where wheel is zeroed.
    */
   public void setAzimuthZero(int zero) {
+    if (azimuthTalon == null) {
+      logger.error("azimuth Talon not present, aborting setAzimuthZero(int)");
+      return;
+    }
     azimuthSetpoint = (double) (getAzimuthAbsolutePosition() - zero);
     ErrorCode e = azimuthTalon.setSelectedSensorPosition((int) azimuthSetpoint, 0, 10);
     Errors.check(e, logger);
@@ -178,16 +187,6 @@ public class Wheel {
     return azimuthSetpoint;
   }
 
-  //  /**
-  //   * Return the drive speed setpoint. Note this may differ from the actual speed if the wheel is
-  //   * accelerating.
-  //   *
-  //   * @return speed setpoint
-  //   */
-  //  public double getDriveSetpoint() {
-  //    return driveSetpoint;
-  //  }
-
   /**
    * Indicates if the wheel has reversed drive direction to optimize azimuth rotation.
    *
@@ -203,6 +202,10 @@ public class Wheel {
    * @return 0 - 4095 encoder ticks
    */
   public int getAzimuthAbsolutePosition() {
+    if (azimuthTalon == null) {
+      logger.error("azimuth Talon not present, returning 0 for getAzimuthAbsolutePosition()");
+      return 0;
+    }
     return azimuthTalon.getSensorCollection().getPulseWidthPosition() & 0xFFF;
   }
 
