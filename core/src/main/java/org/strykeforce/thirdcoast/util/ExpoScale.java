@@ -13,6 +13,13 @@ public class ExpoScale {
     offset = 1.0 / (scale * Math.pow(1 - deadband, 3) + (1 - scale) * (1 - deadband));
   }
 
+  /**
+   * Return the joystick axis position input adjusted on an exponential scale with deadband
+   * adjustment.
+   *
+   * @param input the joystick axis position
+   * @return the adjusted input value, range is -1.0 to 1.0
+   */
   public double applyExpoScale(double input) {
     double y;
 
