@@ -4,7 +4,7 @@ package org.strykeforce.thirdcoast.util;
 public class RateLimit {
 
   private final double rateLimit;
-  private double lastLimit;
+  private double lastLimit = 0;
 
   public RateLimit(double rateLimit) {
     this.rateLimit = rateLimit;
