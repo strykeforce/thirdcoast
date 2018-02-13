@@ -1,0 +1,15 @@
+##
+## /testdata/settings/test.toml
+##
+
+[THIRDCOAST.WHEEL]
+  driveSetpointMax           = 2767
+  azimuthControlMode         = "Disabled"
+
+
+[THIRDCOAST.SWERVE]
+  length = 1.0
+  width  = 1.0
+
+[THIRDCOAST.TALONS]
+  timeout = 2767
