@@ -29,12 +29,18 @@ public class Talons {
 
   @Inject
   public Talons(Settings settings, Factory factory) {
+    logger.info("loading settings from '{}'", TABLE);
     Toml settingsTable = settings.getTable(TABLE);
+
     final int timeout = settingsTable.getLong("timeout").intValue();
     logger.debug("TalonSRX configuration timeout = {}", timeout);
 
     List<TalonConfiguration> talonConfigurations = new ArrayList<>();
-    for (Toml toml : settings.getTables(TALONS)) {
+    logger.info("loading TalonSRX configurations from '{}' table array", TALONS);
+    List<Toml> talonConfigTables = settings.getTables(TALONS);
+    if (talonConfigTables.size() == 0) logger.warn("no TalonSRX configurations available");
+
+    for (Toml toml : talonConfigTables) {
       TalonConfiguration config = TalonConfiguration.create(toml);
       talonConfigurations.add(config);
       logger.debug("added '{}' for TalonSRX ids: {}", config.getName(), config.getTalonIds());
