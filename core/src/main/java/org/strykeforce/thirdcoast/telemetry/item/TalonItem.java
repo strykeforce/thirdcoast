@@ -129,7 +129,7 @@ public class TalonItem extends AbstractItem {
       case QUAD_IDX_PIN:
         return () -> sensorCollection.getPinStateQuadIdx() ? TRUE : FALSE;
       case PULSE_WIDTH_POSITION:
-        return sensorCollection::getPulseWidthPosition;
+        return () -> sensorCollection.getPulseWidthPosition() & 0xFFF;
       case PULSE_WIDTH_VELOCITY:
         return sensorCollection::getPulseWidthVelocity;
       case PULSE_WIDTH_RISE_TO_FALL:
