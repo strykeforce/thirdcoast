@@ -44,14 +44,14 @@ public class SwerveDrive {
 
   @Inject
   SwerveDrive(AHRS gyro, Wheel[] wheels, Settings settings) {
-    if (gyro != null) {
-      gyro.enableLogging(true);
-    }
     this.gyro = gyro;
     this.wheels = wheels;
     logger.info("field orientation driving is {}", gyro == null ? "DISABLED" : "ENABLED");
 
     Toml toml = settings.getTable(TABLE);
+    boolean enableGyroLogging = toml.getBoolean("enableGyroLogging", true);
+    if (gyro != null) gyro.enableLogging(enableGyroLogging);
+
     double length = toml.getDouble("length");
     double width = toml.getDouble("width");
     double radius = Math.hypot(length, width);
@@ -60,6 +60,7 @@ public class SwerveDrive {
 
     logger.debug("length = {}", length);
     logger.debug("width = {}", width);
+    logger.debug("enableGyroLogging = {}", enableGyroLogging);
   }
 
   static String getPreferenceKeyForWheel(int i) {

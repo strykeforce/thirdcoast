@@ -5,11 +5,11 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Timer;
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 import org.strykeforce.thirdcoast.talon.Talons;
 
 public class TalonTestRobot extends IterativeRobot {
-
-  static final File CONFIG_FILE = new File("/home/lvuser/thirdcoast.toml");
 
   private TalonSRX talon;
   private Timer timer = new Timer();
@@ -17,7 +17,13 @@ public class TalonTestRobot extends IterativeRobot {
 
   @Override
   public void robotInit() {
-    RobotComponent component = DaggerRobotComponent.builder().config(CONFIG_FILE).build();
+    URL config = null;
+    try {
+      config = new File("/home/lvuser/thirdcoast.toml").toURI().toURL();
+    } catch (MalformedURLException e) {
+      e.printStackTrace();
+    }
+    RobotComponent component = DaggerRobotComponent.builder().config(config).build();
     Talons talons = component.talons();
     talon = talons.getTalon(6);
     Talons.dump(talon);

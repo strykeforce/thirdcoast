@@ -279,19 +279,19 @@ public class TalonConfiguration {
     @Override
     public String toString() {
       return "ClosedLoopProfile{"
-          + "pGain="
+          + "P="
           + pGain
-          + ", iGain="
+          + ", I="
           + iGain
-          + ", dGain="
+          + ", D="
           + dGain
-          + ", fGain="
+          + ", F="
           + fGain
           + ", iZone="
           + iZone
-          + ", maxIntegralAccumulator="
+          + ", maxIntAccum="
           + maxIntegralAccumulator
-          + ", allowableClosedLoopError="
+          + ", allowableError="
           + allowableClosedLoopError
           + '}';
     }
