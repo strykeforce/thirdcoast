@@ -2,7 +2,7 @@ package org.team2767.thirdcoast;
 
 import dagger.BindsInstance;
 import dagger.Component;
-import java.io.File;
+import java.net.URL;
 import javax.inject.Singleton;
 import org.strykeforce.thirdcoast.swerve.GraphableSwerveDriveModule;
 import org.strykeforce.thirdcoast.swerve.GyroModule;
@@ -36,7 +36,7 @@ interface RobotComponent {
   interface Builder {
 
     @BindsInstance
-    Builder config(File config);
+    Builder config(URL config);
 
     RobotComponent build();
   }

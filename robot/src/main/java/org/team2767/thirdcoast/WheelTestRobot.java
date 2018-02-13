@@ -1,6 +1,9 @@
 package org.team2767.thirdcoast;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 import org.strykeforce.thirdcoast.swerve.Wheel;
 import org.strykeforce.thirdcoast.talon.Talons;
 import org.strykeforce.thirdcoast.util.Settings;
@@ -46,7 +49,13 @@ public class WheelTestRobot extends IterativeRobot {
 
   @Override
   public void robotInit() {
-    RobotComponent component = DaggerRobotComponent.builder().config(Robot.CONFIG_FILE).build();
+    URL config = null;
+    try {
+      config = new File("/home/lvuser/thirdcoast.toml").toURI().toURL();
+    } catch (MalformedURLException e) {
+      e.printStackTrace();
+    }
+    RobotComponent component = DaggerRobotComponent.builder().config(config).build();
     controls = component.controls();
     Talons talons = component.talons();
     wheel = new Wheel(talons, new Settings(), 1);

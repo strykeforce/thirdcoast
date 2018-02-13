@@ -4,7 +4,7 @@ plugins {
     id "net.ltgt.apt-idea" version "0.13"
     id "jaci.openrio.gradle.GradleRIO" version "2018.01.22" apply false
     id "net.ltgt.errorprone" version "0.0.13"
-    id "com.diffplug.gradle.spotless" version "3.8.0"
+    id "com.diffplug.gradle.spotless" version "3.9.0"
 }
 
 description = 'Third Coast Framework'
@@ -28,7 +28,7 @@ ext {
             autoFactory         : 'com.google.auto.factory:auto-factory:1.0-beta5',
     ]
     specificationTitle = 'Third Coast Library'
-    specificationVersion = '18.2.0'
+    specificationVersion = '18.3.0'
 }
 
 subprojects {

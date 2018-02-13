@@ -2,7 +2,7 @@ package org.team2767.thirdcoast;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.IterativeRobot;
-import java.io.File;
+import java.net.URL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.swerve.SwerveDrive;
@@ -13,7 +13,6 @@ import org.strykeforce.thirdcoast.telemetry.TelemetryService;
 public class Robot extends IterativeRobot {
 
   static final Logger logger = LoggerFactory.getLogger(Robot.class);
-  static final File CONFIG_FILE = new File("/home/lvuser/thirdcoast.toml");
 
   private RobotComponent component;
   private TelemetryService telemetryService;
@@ -101,8 +100,10 @@ public class Robot extends IterativeRobot {
 
   private RobotComponent getComponent() {
     if (component == null) {
-      logger.info("loading robot configuration from {}", CONFIG_FILE);
-      component = DaggerRobotComponent.builder().config(CONFIG_FILE).build();
+      URL config = this.getClass().getResource("/META-INF/robot/settings.toml");
+
+      logger.info("reading settings from '{}'", config);
+      component = DaggerRobotComponent.builder().config(config).build();
     }
     return component;
   }
