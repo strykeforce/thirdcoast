@@ -66,12 +66,12 @@ public class WheelTestRobot extends IterativeRobot {
   public void teleopInit() {}
 
   private void logTestCase(double[] tc) {
-    System.out.printf(
-        "azimuth = %f, speed = %f, actual azimuth = %f, reversed = %b%n",
-        tc[0] * wheel.getTicksPerRevolution(),
-        tc[1],
-        wheel.getAzimuthSetpoint(),
-        wheel.isDriveReversed());
+    //    System.out.printf(
+    //        "azimuth = %f, speed = %f, actual azimuth = %f, reversed = %b%n",
+    //        tc[0] * wheel.getTicksPerRevolution(),
+    //        tc[1],
+    //        wheel.getAzimuthSetpoint(),
+    //        wheel.isDriveReversed());
   }
 
   @Override

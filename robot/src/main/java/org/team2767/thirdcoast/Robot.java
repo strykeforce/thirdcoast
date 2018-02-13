@@ -2,6 +2,8 @@ package org.team2767.thirdcoast;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.IterativeRobot;
+import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -100,8 +102,13 @@ public class Robot extends IterativeRobot {
 
   private RobotComponent getComponent() {
     if (component == null) {
-      URL config = this.getClass().getResource("/META-INF/robot/settings.toml");
-
+      //      URL config = this.getClass().getResource("/META-INF/robot/settings.toml");
+      URL config = null;
+      try {
+        config = new File("/home/lvuser/thirdcoast.toml").toURI().toURL();
+      } catch (MalformedURLException e) {
+        e.printStackTrace();
+      }
       logger.info("reading settings from '{}'", config);
       component = DaggerRobotComponent.builder().config(config).build();
     }
