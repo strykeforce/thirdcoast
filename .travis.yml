@@ -13,16 +13,6 @@ deploy:
      local_dir:    docs
      on:
        branch:     master
-  - provider:      releases
-    api_key:
-      secure:      VawxVLIOq2XSIRsgsZUPEw5y1f6iWXqY6ujvhydIDO150KXEBjytHIv3BOkpDmtkM4PAjfe3LzXdL2gJ7xLjuvDiuE1+aD/eM5PtHD4omPtzBVxWBot/jwvsxP2zTmZsGvBGvkffvA2GalOdSFnfa5S18W5L5DgyGe1nJFCwLhMwNXTnSIBr01W8LemcN7PAu/rtpSB1iYPI75Weiyaq1SsjRYJ6La2/tIMhQUnEWEgWcJh1mg0DikcDE8A5pXDDmhHrIvEFa8Q3SJQmIC0ZiVdiWTlnV4LjPt8knfegPZXyrO6VvitIZxwHP+U5P6N7JsFIhVpU6N2isF40dgoXm9d/Nyi3HdsYTcqmbK1JpzcArx5XqjXolwpPPnZ5/KV5DLcZyOZqar2NOGVjs5h55WHnxdgHZqYP30nP9nc1SY8Bw/4Tm6aebOLFXR1PAnilxYfhbk666IQwGsAsPUxDK2ZpB3fBZfr0j2Mwi3ZwkBK0Cqike6E2PQKDkdSiGAkCHUKORepKy+iJC7/8B/ToakI2ena8pi763BBDegyHxllH4EZ+gep0Q/MNKmBvrEIvv8oRgcovV6RZ6JFy4NaosHFVWGoi242Sn9Z0CDg+LTq2uGc1YIuVMzsPi8jCPmTCR7Di4OtGyeaujFqrv0HhYGH9mekoaSU3avfot3Zo/Ws=
-    file:
-      - tct/build/libs/tct.jar
-      - tct/script/tct.sh
-    skip_cleanup:  true
-    body: "This command-line utility runs on your robot's hardware or a bench system. When run manually, it will run in the place of your robot program. When not being run manually, it will not interfere with normal robot program execution.\n\nAny commands below run in a SSH session on the roboRIO.\n\n1. Download `tct.jar` and the `tct.sh` shell script from above and copy to the same directory on the roboRIO, for example `/home/admin`\n2. Make the `tct.sh` shell script executable with `chmod +x tct.sh`.\n3. Optional, but recommended, stop the fauto-run of any existing robot code on the roboRIO with `/etc/init.d/nilvrt stop`. Reboot the roboRIO to restore auto-run.\n4. Run with `./tct.sh`\n"
-    on:
-      tags:        true
 
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
