@@ -16,8 +16,6 @@ ext {
             bytebuddy           : 'net.bytebuddy:byte-buddy:1.7.9',
             dagger              : 'com.google.dagger:dagger:2.14.1',
             daggerCompiler      : 'com.google.dagger:dagger-compiler:2.14.1',
-            jlineTerminal       : 'org.jline:jline-terminal:3.5.2',
-            jlineReader         : 'org.jline:jline-reader:3.5.2',
             logback             : 'ch.qos.logback:logback-classic:1.2.3',
             moshi               : 'com.squareup.moshi:moshi:1.5.0',
             nanohttpd           : 'org.nanohttpd:nanohttpd:2.3.2-SNAPSHOT',
