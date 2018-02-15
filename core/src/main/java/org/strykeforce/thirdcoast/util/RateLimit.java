@@ -16,7 +16,7 @@ public class RateLimit {
    * @param joystickInput joystick axis position
    * @return the joystick axis position after rate limiting
    */
-  public double applyRateLimit(double joystickInput) {
+  public double apply(double joystickInput) {
     double y;
     if (Math.abs(joystickInput - lastLimit) > rateLimit) {
       y = lastLimit + Math.copySign(rateLimit, joystickInput - lastLimit);

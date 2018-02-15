@@ -1,6 +1,5 @@
 package org.strykeforce.thirdcoast.swerve
 
-import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.SensorCollection
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import org.strykeforce.thirdcoast.util.Settings
@@ -11,8 +10,8 @@ import static org.strykeforce.thirdcoast.swerve.SwerveDrive.DriveMode.CLOSED_LOO
 
 class WheelTest extends Specification {
 
-    static final EPSILON = 1e-12
-    static final ROT = 4096
+    static final EPSILON = 1e-12d
+    static final ROT = 4096d
 
     def azimuth = Mock(TalonSRX)
     def drive = Mock(TalonSRX)
@@ -26,11 +25,7 @@ class WheelTest extends Specification {
 
         then:
         with(wheel) {
-            ticksPerRevolution == 4096
             driveSetpointMax == 0
-            azimuthControlMode == MotionMagic
-            driveOpenLoopControlMode == PercentOutput
-            driveClosedLoopControlMode == Velocity
         }
     }
 
@@ -46,10 +41,6 @@ class WheelTest extends Specification {
         with(wheel) {
             getDriveSetpointMax() == 2767
             // defaults
-            getTicksPerRevolution() == 4096
-            getAzimuthControlMode() == MotionMagic
-            getDriveOpenLoopControlMode() == PercentOutput
-            getDriveClosedLoopControlMode() == Velocity
         }
     }
 
@@ -85,8 +76,10 @@ class WheelTest extends Specification {
         wheel.set(setpoint, 1d)
 
         then:
-        Math.abs(wheel.azimuthSetpoint - end_position * ROT) < EPSILON
-        wheel.isDriveReversed() == is_reversed
+        1 * azimuth.set(MotionMagic, {
+            Math.abs(it - end_position * ROT) < EPSILON
+        })
+        1 * drive.set(PercentOutput, is_reversed ? -1d : 1d)
 
         where:
         start_position | setpoint || end_position | is_reversed
@@ -133,14 +126,31 @@ class WheelTest extends Specification {
 
     def "drive output is scaled"() {
         when:
-        def tomlStr = "[THIRDCOAST.WHEEL]\ndriveSetpointMax=2767"
+        def tomlStr = "[THIRDCOAST.WHEEL]\ndriveSetpointMax=10_000"
         def wheel = new Wheel(new Settings(tomlStr), azimuth, drive)
         wheel.setDriveMode(CLOSED_LOOP)
-        wheel.set(0, 1)
+        wheel.set(0, setpoint)
 
         then:
-        1 * azimuth.set(MotionMagic, 0.0d)
-        1 * drive.set(Velocity, 2767.0d)
+        1 * drive.set(Velocity, output)
+
+        where:
+        setpoint || output
+        1        || 10_000.0
+        -1       || -10_000.0
+        0        || 0
+        0.5      || 5_000.0
+        -0.5     || -5_000.0
+    }
+
+    def "neutral drive output leaves azimuths in previous position"() {
+        when:
+        def wheel = new Wheel(new Settings(), azimuth, drive)
+        wheel.set(0, 0)
+
+        then:
+        0 * azimuth.set(_)
+        1 * drive.set(PercentOutput, 0)
     }
 
     // check some wheel-related math

@@ -20,7 +20,7 @@ public class ExpoScale {
    * @param input the joystick axis position
    * @return the adjusted input value, range is -1.0 to 1.0
    */
-  public double applyExpoScale(double input) {
+  public double apply(double input) {
     double y;
 
     if (Math.abs(input) < deadband) {
