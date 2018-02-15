@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Calendar Versioning](http://calver.org/).
 
+## [18.3.0] - 2018-02-13
+
+### Added
+
+- Swerve drive `Wheel` class now has basic support for a pluggable implementation of drive wheel "driver" to allow different control strategies, for example, open-loop vs gain-scheduled closed-loop.
+- Ultrasonic Rangefinder grapher telemetry `Item`.
+
+### Changed
+
+- Talons are now configured with Quad encoder by default if no other sensor selected.
+- Gyro logging can be turned off in config file.
+- Config file location is now passed in as a URL to allow embedding in JAR.
+
+### Fixed
+
+- Telemetry now reports lower 12 bits of absolute encoder position (pulse width position).
+
 ## [18.2.0] - 2018-02-03
 
 ### Changed
@@ -97,4 +114,5 @@ This version upgrades the library to be compatible with the 2018 Phoenix TalonSR
 [18.0.4]: https://github.com/strykeforce/thirdcoast/compare/v17.2.0...v18.0.4
 [18.0.5]: https://github.com/strykeforce/thirdcoast/compare/v18.0.4...v18.0.5
 [18.2.0]: https://github.com/strykeforce/thirdcoast/compare/v18.0.5...v18.2.0
-[unreleased]: https://github.com/strykeforce/thirdcoast/compare/v17.2.0...develop
+[18.3.0]: https://github.com/strykeforce/thirdcoast/compare/v18.2.0...v18.3.0
+[unreleased]: https://github.com/strykeforce/thirdcoast/compare/v18.3.0...develop
