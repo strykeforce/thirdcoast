@@ -37,6 +37,13 @@ public class Wheel {
 
   private static final String TABLE = "THIRDCOAST.WHEEL";
   private static final int TICKS = 4096;
+
+  private static final int LOW_SHIFT = 400;
+  private static final int MID_SHIFT = 4000;
+  private static final int LOW_SLOT = 0;
+  private static final int MID_SLOT = 1;
+  private static final int HIGH_SLOT = 2;
+
   private static final Logger logger = LoggerFactory.getLogger(Wheel.class);
 
   private final double kDriveSetpointMax;
@@ -47,6 +54,7 @@ public class Wheel {
   private final DoubleConsumer openLoopDriver;
   private final DoubleConsumer closedLoopDriver;
   private DoubleConsumer currentDriver;
+  private int prevDriverSlot = -1;
 
   /**
    * This designated constructor constructs a wheel by supplying azimuth and drive talons. They are
@@ -65,7 +73,7 @@ public class Wheel {
     driveTalon = drive;
 
     openLoopDriver = (setpoint) -> driveTalon.set(PercentOutput, setpoint);
-    closedLoopDriver = (setpoint) -> driveTalon.set(Velocity, setpoint * kDriveSetpointMax);
+    closedLoopDriver = closedLoopDriver();
 
     if (azimuthTalon == null || driveTalon == null) {
       logger.error("Talons missing, aborting initialization");
@@ -196,6 +204,25 @@ public class Wheel {
 
   public double getDriveSetpointMax() {
     return kDriveSetpointMax;
+  }
+
+  private DoubleConsumer closedLoopDriver() {
+    return (setpoint) -> {
+      int output = (int) (setpoint * kDriveSetpointMax);
+      int slot = HIGH_SLOT;
+      int magnitude = Math.abs(output);
+      if (magnitude < MID_SHIFT) {
+        if (magnitude < LOW_SHIFT) {
+          slot = LOW_SLOT;
+        } else slot = MID_SLOT;
+      }
+
+      if (slot != prevDriverSlot) {
+        driveTalon.selectProfileSlot(slot, 0);
+        prevDriverSlot = slot;
+      }
+      driveTalon.set(Velocity, output);
+    };
   }
 
   @Override
