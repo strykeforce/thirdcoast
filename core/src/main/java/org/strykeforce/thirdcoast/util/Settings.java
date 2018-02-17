@@ -25,7 +25,7 @@ public class Settings {
     defaults = defaults();
 
     if (config == null) {
-      logger.warn("'{}' is missing, using defaults", config);
+      logger.warn("Third Coast settings are missing, using defaults");
       this.toml = defaults;
       return;
     }
@@ -33,9 +33,9 @@ public class Settings {
     Toml toml = defaults;
     try {
       toml = new Toml(defaults).read(config.openStream());
-      logger.info("reading settings from '{}'", config);
+      logger.info("reading Third Coast settings from '{}'", config);
     } catch (IOException e) {
-      logger.error("unable to read '{}', using defaults", config);
+      logger.error("unable to read Third Coast settings from '{}', using defaults", config);
     }
 
     this.toml = toml;

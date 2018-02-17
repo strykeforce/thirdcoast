@@ -21,7 +21,7 @@ dependencies {
     compile navx()
     compile project(':core')
     compile libs.logback
-    apt libs.daggerCompiler
+    annotationProcessor libs.daggerCompiler
     compileOnly libs.jetbrainsAnnotations
     compileOnly libs.jsr305
 }

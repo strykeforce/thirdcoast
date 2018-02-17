@@ -42,7 +42,25 @@ public enum Measure {
   POSITION("Position"),
   //  SPEED("Speed"),
   VALUE("Value"),
-  GYRO_YAW("Gyro Yaw");
+
+  // Swerve
+  GYRO_YAW("Gyro Yaw"),
+  SWERVE_FORWARD("Swerve Forward"),
+  SWERVE_STRAFE("Swerve Strafe"),
+  SWERVE_AZIMUTH("Swerve Azimuth"),
+
+  // PathFinder
+  PATH_SEG_X("Trajectory X Coordinate"),
+  PATH_SEG_Y("Trajectory Y Coordinate"),
+  PATH_SEG_POSITION_METERS("Trajectory Position (meters)"),
+  PATH_SEG_POSITION_TICKS("Trajectory Position (ticks)"),
+  PATH_SEG_VELOCITY("Trajectory Velocity"),
+  PATH_SEG_ACCELERATION("Trajectory Acceleration"),
+  PATH_SEG_JERK("Trajectory Jerk"),
+  PATH_SEG_HEADING("Trajectory Heading"),
+  PATH_DISTANCE("Distance Travelled"),
+  PATH_POSITION_ERROR("Path Position Error"),
+  ;
 
   private final String description;
 
