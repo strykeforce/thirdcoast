@@ -4,6 +4,10 @@ import static com.ctre.phoenix.motorcontrol.ControlMode.MotionMagic;
 import static com.ctre.phoenix.motorcontrol.ControlMode.PercentOutput;
 import static com.ctre.phoenix.motorcontrol.ControlMode.Velocity;
 import static org.strykeforce.thirdcoast.swerve.SwerveDrive.DriveMode.OPEN_LOOP;
+import static org.strykeforce.thirdcoast.swerve.Wheel.State.HIGH;
+import static org.strykeforce.thirdcoast.swerve.Wheel.State.INIT;
+import static org.strykeforce.thirdcoast.swerve.Wheel.State.LOW;
+import static org.strykeforce.thirdcoast.swerve.Wheel.State.MID;
 
 import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
@@ -37,25 +41,20 @@ public class Wheel {
 
   private static final String TABLE = "THIRDCOAST.WHEEL";
   private static final int TICKS = 4096;
-
   private static final int LOW_SHIFT = 400;
   private static final int MID_SHIFT = 4000;
   private static final int LOW_SLOT = 0;
   private static final int MID_SLOT = 1;
   private static final int HIGH_SLOT = 2;
-
   private static final Logger logger = LoggerFactory.getLogger(Wheel.class);
-
   private final double kDriveSetpointMax;
-
   private final TalonSRX azimuthTalon;
   private final TalonSRX driveTalon;
-
   private final DoubleConsumer openLoopDriver;
   private final DoubleConsumer closedLoopDriver;
   private DoubleConsumer currentDriver;
   private int prevDriverSlot = -1;
-
+  private State state;
   /**
    * This designated constructor constructs a wheel by supplying azimuth and drive talons. They are
    * initialized with Talon configurations named "azimuth" and "drive" respectively.
@@ -142,6 +141,7 @@ public class Wheel {
         break;
       case CLOSED_LOOP:
         currentDriver = closedLoopDriver;
+        state = INIT;
         break;
     }
   }
@@ -209,20 +209,35 @@ public class Wheel {
   private DoubleConsumer closedLoopDriver() {
     return (setpoint) -> {
       int output = (int) (setpoint * kDriveSetpointMax);
-      int slot = HIGH_SLOT;
       int magnitude = Math.abs(output);
-      if (magnitude < MID_SHIFT) {
-        if (magnitude < LOW_SHIFT) {
-          slot = LOW_SLOT;
-        } else slot = MID_SLOT;
+      State prev = state;
+
+      // We assume smooth transitions through states, starting with LOW. If not, for example jumping
+      // from LOW to high speed, we will apply mid-range tuning for 1 control-loop iteration.
+      switch (state) {
+        case INIT:
+          state = nextState(magnitude, prev, LOW);
+          break;
+        case LOW:
+          if (magnitude > LOW.max) state = nextState(output, prev, MID);
+          break;
+        case MID:
+          if (magnitude > MID.max) state = nextState(output, prev, HIGH);
+          else if (magnitude < MID.min) state = nextState(output, prev, LOW);
+          break;
+        case HIGH:
+          if (magnitude < HIGH.min) state = nextState(output, prev, MID);
+          break;
       }
 
-      if (slot != prevDriverSlot) {
-        driveTalon.selectProfileSlot(slot, 0);
-        prevDriverSlot = slot;
-      }
+      if (state != prev) driveTalon.selectProfileSlot(state.slot, 0);
       driveTalon.set(Velocity, output);
     };
+  }
+
+  private State nextState(int output, State prev, State state) {
+    logger.info("output = {}, switching state from {} to {}", output, prev, state);
+    return state;
   }
 
   @Override
@@ -235,5 +250,21 @@ public class Wheel {
         + ", kDriveSetpointMax="
         + kDriveSetpointMax
         + '}';
+  }
+
+  enum State {
+    INIT(0, 0, 0),
+    LOW(0, 500, 3000),
+    MID(1, 2500, 6000),
+    HIGH(2, 5000, 40_000);
+
+    final int slot;
+    final int min, max;
+
+    State(int slot, int min, int max) {
+      this.slot = slot;
+      this.min = min;
+      this.max = max;
+    }
   }
 }

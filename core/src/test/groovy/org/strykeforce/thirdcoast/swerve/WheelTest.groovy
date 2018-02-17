@@ -3,6 +3,7 @@ package org.strykeforce.thirdcoast.swerve
 import com.ctre.phoenix.motorcontrol.SensorCollection
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import org.strykeforce.thirdcoast.util.Settings
+import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -145,29 +146,102 @@ class WheelTest extends Specification {
     }
 
     def "drive shifts profile slots"() {
-        when:
+        given:
         def tomlStr = "[THIRDCOAST.WHEEL]\ndriveSetpointMax=10_000"
         def wheel = new Wheel(new Settings(tomlStr), azimuth, drive)
         wheel.setDriveMode(CLOSED_LOOP)
-        wheel.set(0, setpoint)
 
+        when:
+        wheel.set(0, 0)
         then:
-        1 * drive.selectProfileSlot(slot, 0)
-        1 * drive.set(Velocity, setpoint * 10_000)
+        1 * drive.selectProfileSlot(0, 0)
+        1 * drive.set(Velocity, 0)
+        0 * drive._
 
-        where:
-        setpoint || slot
-        0.0      || 0
-        0.01     || 0
-        0.039    || 0
-        0.041    || 1
-        0.1      || 1
-        0.4      || 2
-        1.0      || 2
-        -0.1     || 1
-        -0.04    || 1
-        -0.01    || 0
-        0.0      || 0
+        when:
+        wheel.set(0, 0.01)
+        then:
+        1 * drive.set(Velocity, 100)
+        0 * drive._
+
+        when:
+        wheel.set(0, 0.3)
+        then:
+        1 * drive.set(Velocity, 3000)
+        0 * drive._
+
+        when:
+        wheel.set(0, 0.3)
+        then:
+        1 * drive.set(Velocity, 3000)
+        0 * drive._
+
+        when:
+        wheel.set(0, 0.301)
+        then:
+        1 * drive.selectProfileSlot(1, 0)
+        1 * drive.set(Velocity, 3010)
+        0 * drive._
+
+        when:
+        wheel.set(0, 0.3)
+        then:
+        1 * drive.set(Velocity, 3000)
+        0 * drive._
+
+        when:
+        wheel.set(0, 0.6)
+        then:
+        1 * drive.set(Velocity, 6000)
+        0 * drive._
+
+        when:
+        wheel.set(0, 0.601)
+        then:
+        1 * drive.selectProfileSlot(2, 0)
+        1 * drive.set(Velocity, 6010)
+        0 * drive._
+
+        when:
+        wheel.set(0, 0.5)
+        then:
+        1 * drive.set(Velocity, 5000)
+        0 * drive._
+
+        when:
+        wheel.set(0, 0.499)
+        then:
+        1 * drive.selectProfileSlot(1, 0)
+        1 * drive.set(Velocity, 4990)
+        0 * drive._
+
+        when:
+        wheel.set(0, 0.25)
+        then:
+        1 * drive.set(Velocity, 2500)
+        0 * drive._
+
+        when:
+        wheel.set(0, 0.249)
+        then:
+        1 * drive.selectProfileSlot(0, 0)
+        1 * drive.set(Velocity, 2490)
+        0 * drive._
+
+
+//        where:
+//        setpoint || slot
+//        0.0      || 0
+//        0.01     || 0
+//        0.3      || 0
+//        0.041    || 1
+//        0.1      || 1
+//        0.4      || 2
+//        1.0      || 2
+//        -0.1     || 1
+//        -0.04    || 1
+//        -0.01    || 0
+//        0.0      || 0
     }
 
     def "drive only selects slot once"() {
