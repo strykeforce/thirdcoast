@@ -19,7 +19,7 @@ public class ThirdCoastTalon extends WPI_TalonSRX {
   private static final Logger logger = LoggerFactory.getLogger(ThirdCoastTalon.class);
 
   private double setpoint = Double.NaN;
-  private ControlMode controlMode = ControlMode.Disabled;
+  private ControlMode controlMode = ControlMode.PercentOutput;
 
   public ThirdCoastTalon(int deviceNumber) {
     super(deviceNumber);
