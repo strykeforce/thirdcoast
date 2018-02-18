@@ -498,7 +498,7 @@ public class TalonConfigurationBuilder {
   }
 
   /**
-   * Configure the Talon current limit, enabled if greater than 0.
+   * Configure the Talon current limit.
    *
    * @param currentLimit the current limit.
    * @return this builder.
@@ -508,6 +508,31 @@ public class TalonConfigurationBuilder {
     this.continuousCurrentLimit = currentLimit;
     return this;
   }
+
+  /**
+   * Configure the Talon peak current limit.
+   *
+   * @param currentLimit the current limit.
+   * @return this builder.
+   */
+  @NotNull
+  public TalonConfigurationBuilder peakCurrentLimit(int currentLimit) {
+    this.peakCurrentLimit = currentLimit;
+    return this;
+  }
+
+  /**
+   * Configure the Talon peak current limit duration.
+   *
+   * @param duration the peak current limit duration.
+   * @return this builder.
+   */
+  @NotNull
+  public TalonConfigurationBuilder peakCurrentDuration(int duration) {
+    this.peakCurrentLimitDuration = duration;
+    return this;
+  }
+
 
   /**
    * Set the voltage ramp rate. Limits the rate at which the throttle will change. Affects all

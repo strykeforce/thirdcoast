@@ -51,6 +51,7 @@ public class Wheel {
    * @param talonProvisioner the TalonProvisioner used to provision Talons
    * @param azimuth the azimuthTalon TalonSRX
    * @param drive the driveTalon TalonSRX
+   * @param settings the settings
    */
   public Wheel(
       TalonProvisioner talonProvisioner,
@@ -80,6 +81,7 @@ public class Wheel {
    *
    * @param talonFactory the TalonFactory used to create Talons
    * @param index the wheel number
+   * @param settings the settings
    */
   public Wheel(TalonFactory talonFactory, Settings settings, int index) {
     this(
