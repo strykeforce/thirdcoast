@@ -533,7 +533,6 @@ public class TalonConfigurationBuilder {
     return this;
   }
 
-
   /**
    * Set the voltage ramp rate. Limits the rate at which the throttle will change. Affects all
    * modes.
@@ -692,11 +691,10 @@ public class TalonConfigurationBuilder {
    */
   @NotNull
   public TalonConfigurationBuilder profileSlot(int profileSlot) {
-    assert(profileSlot >=0 && profileSlot < 4);
+    assert (profileSlot >= 0 && profileSlot < 4);
     this.profileSlot = profileSlot;
     return this;
   }
-
 
   /**
    * Set the motion-magic acceleration.
