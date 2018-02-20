@@ -3,9 +3,7 @@ package org.strykeforce.thirdcoast.swerve
 import com.ctre.phoenix.motorcontrol.SensorCollection
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import org.strykeforce.thirdcoast.util.Settings
-import spock.lang.Shared
 import spock.lang.Specification
-import spock.lang.Unroll
 
 import static com.ctre.phoenix.motorcontrol.ControlMode.*
 import static org.strykeforce.thirdcoast.swerve.SwerveDrive.DriveMode.CLOSED_LOOP
@@ -23,7 +21,7 @@ class WheelTest extends Specification {
     //
     def "defaults are configured"() {
         when:
-        def wheel = new Wheel(new Settings(), azimuth, drive)
+        def wheel = new DefaultWheel(new Settings(), azimuth, drive)
 
         then:
         with(wheel) {
@@ -37,7 +35,7 @@ class WheelTest extends Specification {
         def toml = "[THIRDCOAST.WHEEL]\ndriveSetpointMax = 2767"
 
         when:
-        def wheel = new Wheel(new Settings(toml), azimuth, drive)
+        def wheel = new DefaultWheel(new Settings(toml), azimuth, drive)
 
         then:
         with(wheel) {
@@ -56,7 +54,7 @@ class WheelTest extends Specification {
         sensorCollection.getPulseWidthPosition() >> 0x1000
 
         when:
-        def wheel = new Wheel(new Settings(), azimuth, drive)
+        def wheel = new DefaultWheel(new Settings(), azimuth, drive)
 
         then:
         wheel.azimuthAbsolutePosition == 0
@@ -74,7 +72,7 @@ class WheelTest extends Specification {
     def "azimuth changes are optimized"() {
         when:
         azimuth.getSelectedSensorPosition(0) >> start_position * ROT
-        def wheel = new Wheel(new Settings(), azimuth, drive)
+        def wheel = new DefaultWheel(new Settings(), azimuth, drive)
         wheel.set(setpoint, 1d)
 
         then:
@@ -129,7 +127,7 @@ class WheelTest extends Specification {
     def "drive output is scaled"() {
         when:
         def tomlStr = "[THIRDCOAST.WHEEL]\ndriveSetpointMax=10_000"
-        def wheel = new Wheel(new Settings(tomlStr), azimuth, drive)
+        def wheel = new DefaultWheel(new Settings(tomlStr), azimuth, drive)
         wheel.setDriveMode(CLOSED_LOOP)
         wheel.set(0, setpoint)
 
@@ -145,122 +143,10 @@ class WheelTest extends Specification {
         -0.5     || -5_000.0
     }
 
-    def "drive shifts profile slots"() {
-        given:
-        def tomlStr = "[THIRDCOAST.WHEEL]\ndriveSetpointMax=10_000"
-        def wheel = new Wheel(new Settings(tomlStr), azimuth, drive)
-        wheel.setDriveMode(CLOSED_LOOP)
-
-        when:
-        wheel.set(0, 0)
-        then:
-        1 * drive.selectProfileSlot(0, 0)
-        1 * drive.set(Velocity, 0)
-        0 * drive._
-
-        when:
-        wheel.set(0, 0.01)
-        then:
-        1 * drive.set(Velocity, 100)
-        0 * drive._
-
-        when:
-        wheel.set(0, 0.3)
-        then:
-        1 * drive.set(Velocity, 3000)
-        0 * drive._
-
-        when:
-        wheel.set(0, 0.3)
-        then:
-        1 * drive.set(Velocity, 3000)
-        0 * drive._
-
-        when:
-        wheel.set(0, 0.301)
-        then:
-        1 * drive.selectProfileSlot(1, 0)
-        1 * drive.set(Velocity, 3010)
-        0 * drive._
-
-        when:
-        wheel.set(0, 0.3)
-        then:
-        1 * drive.set(Velocity, 3000)
-        0 * drive._
-
-        when:
-        wheel.set(0, 0.6)
-        then:
-        1 * drive.set(Velocity, 6000)
-        0 * drive._
-
-        when:
-        wheel.set(0, 0.601)
-        then:
-        1 * drive.selectProfileSlot(2, 0)
-        1 * drive.set(Velocity, 6010)
-        0 * drive._
-
-        when:
-        wheel.set(0, 0.5)
-        then:
-        1 * drive.set(Velocity, 5000)
-        0 * drive._
-
-        when:
-        wheel.set(0, 0.499)
-        then:
-        1 * drive.selectProfileSlot(1, 0)
-        1 * drive.set(Velocity, 4990)
-        0 * drive._
-
-        when:
-        wheel.set(0, 0.25)
-        then:
-        1 * drive.set(Velocity, 2500)
-        0 * drive._
-
-        when:
-        wheel.set(0, 0.249)
-        then:
-        1 * drive.selectProfileSlot(0, 0)
-        1 * drive.set(Velocity, 2490)
-        0 * drive._
-
-
-//        where:
-//        setpoint || slot
-//        0.0      || 0
-//        0.01     || 0
-//        0.3      || 0
-//        0.041    || 1
-//        0.1      || 1
-//        0.4      || 2
-//        1.0      || 2
-//        -0.1     || 1
-//        -0.04    || 1
-//        -0.01    || 0
-//        0.0      || 0
-    }
-
-    def "drive only selects slot once"() {
-        given:
-        def tomlStr = "[THIRDCOAST.WHEEL]\ndriveSetpointMax=10_000"
-        def wheel = new Wheel(new Settings(tomlStr), azimuth, drive)
-        wheel.setDriveMode(CLOSED_LOOP)
-
-        when:
-        wheel.set(0, 0.01)
-        wheel.set(0, 0.02)
-
-        then:
-        1 * drive.selectProfileSlot(0, 0)
-    }
 
     def "neutral drive output leaves azimuths in previous position"() {
         when:
-        def wheel = new Wheel(new Settings(), azimuth, drive)
+        def wheel = new DefaultWheel(new Settings(), azimuth, drive)
         wheel.set(0, 0)
 
         then:
