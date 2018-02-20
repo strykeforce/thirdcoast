@@ -121,7 +121,7 @@ public class TalonItem extends AbstractItem {
       case QUAD_IDX_PIN:
         return () -> sensorCollection.getPinStateQuadIdx() ? TRUE : FALSE;
       case PULSE_WIDTH_POSITION:
-        return sensorCollection::getPulseWidthPosition;
+        return () -> sensorCollection.getPulseWidthPosition() & 0xFFF;
       case PULSE_WIDTH_VELOCITY:
         return sensorCollection::getPulseWidthVelocity;
       case PULSE_WIDTH_RISE_TO_FALL:
@@ -151,7 +151,7 @@ public class TalonItem extends AbstractItem {
     writer.name("description").value(((WPI_TalonSRX) talon).getDescription());
     writer.name("firmwareVersion").value(talon.getFirmwareVersion());
     writer.name("controlMode").value(talon.getControlMode().toString());
-    //writer.name("brakeEnabledDuringNeutral").value(talon.getBrakeEnableDuringNeutral());
+    // writer.name("brakeEnabledDuringNeutral").value(talon.getBrakeEnableDuringNeutral());
     writer
         .name("onBootBrakeMode")
         .value(talon.configGetParameter(ParamEnum.eOnBoot_BrakeMode, 0, 0));
@@ -166,9 +166,9 @@ public class TalonItem extends AbstractItem {
         .name("peakCurrentLimitAmps")
         .value(talon.configGetParameter(ParamEnum.ePeakCurrentLimitAmps, 0, 0));
 
-    //writer.name("encoderCodesPerRef").value(NA);
+    // writer.name("encoderCodesPerRef").value(NA);
     writer.name("inverted").value(talon.getInverted());
-    //writer.name("numberOfQuadIdxRises").value(talon.getNumberOfQuadIdxRises());
+    // writer.name("numberOfQuadIdxRises").value(talon.getNumberOfQuadIdxRises());
     writer
         .name("eQuadIdxPolarity")
         .value(talon.configGetParameter(ParamEnum.eQuadIdxPolarity, 0, 0));
@@ -225,8 +225,8 @@ public class TalonItem extends AbstractItem {
     if (talon.getControlMode() == ControlMode.MotionMagic) {
       writer.name("enabled").value(true);
       writer.name("acceleration").value(talon.configGetParameter(ParamEnum.eMotMag_Accel, 0, 0));
-      //writer.name("actTrajPosition").value(talon.getMotionMagicActTrajPosition());
-      //writer.name("actTrajVelocity").value(talon.getMotionMagicActTrajVelocity());
+      // writer.name("actTrajPosition").value(talon.getMotionMagicActTrajPosition());
+      // writer.name("actTrajVelocity").value(talon.getMotionMagicActTrajVelocity());
       writer
           .name("cruiseVelocity")
           .value(talon.configGetParameter(ParamEnum.eMotMag_VelCruise, 0, 0));
