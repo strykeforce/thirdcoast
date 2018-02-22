@@ -65,6 +65,7 @@ public class SwerveDrive {
 
   /**
    * Return key that wheel zero information is stored under in WPI preferences.
+   *
    * @param wheel the wheel number
    * @return the String key
    */

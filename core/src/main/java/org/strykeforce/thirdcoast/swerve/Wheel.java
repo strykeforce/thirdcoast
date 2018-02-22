@@ -102,6 +102,7 @@ public abstract class Wheel {
 
   /**
    * Set azimuth to encoder position.
+   *
    * @param position position in encoder ticks.
    */
   public void setAzimuthPosition(int position) {
