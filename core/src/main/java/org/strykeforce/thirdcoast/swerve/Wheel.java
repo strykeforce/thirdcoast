@@ -32,12 +32,12 @@ import org.strykeforce.thirdcoast.util.Settings;
  */
 public abstract class Wheel {
 
+  static final Logger logger = LoggerFactory.getLogger(Wheel.class);
   private static final String TABLE = "THIRDCOAST.WHEEL";
   private static final int TICKS = 4096;
-  static final Logger logger = LoggerFactory.getLogger(Wheel.class);
   protected final double kDriveSetpointMax;
-  private final TalonSRX azimuthTalon;
   protected final TalonSRX driveTalon;
+  private final TalonSRX azimuthTalon;
   protected DoubleConsumer currentDriver;
 
   /**
@@ -100,6 +100,23 @@ public abstract class Wheel {
     currentDriver.accept(drive);
   }
 
+  /**
+   * Set azimuth to encoder position.
+   * @param position position in encoder ticks.
+   */
+  public void setAzimuthPosition(int position) {
+    azimuthTalon.set(MotionMagic, position);
+  }
+
+  public void disableAzimuth() {
+    azimuthTalon.neutralOutput();
+  }
+
+  /**
+   * Set the drive mode
+   *
+   * @param driveMode the drive mode
+   */
   public abstract void setDriveMode(DriveMode driveMode);
 
   /**

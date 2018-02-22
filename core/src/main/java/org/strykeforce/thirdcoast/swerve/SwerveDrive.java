@@ -63,8 +63,13 @@ public class SwerveDrive {
     logger.debug("enableGyroLogging = {}", enableGyroLogging);
   }
 
-  static String getPreferenceKeyForWheel(int i) {
-    return String.format("%s/wheel.%d", SwerveDrive.class.getSimpleName(), i);
+  /**
+   * Return key that wheel zero information is stored under in WPI preferences.
+   * @param wheel the wheel number
+   * @return the String key
+   */
+  public static String getPreferenceKeyForWheel(int wheel) {
+    return String.format("%s/wheel.%d", SwerveDrive.class.getSimpleName(), wheel);
   }
 
   /**
