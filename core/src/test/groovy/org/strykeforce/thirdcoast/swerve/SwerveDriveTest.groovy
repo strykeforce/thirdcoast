@@ -107,17 +107,4 @@ class SwerveDriveTest extends spock.lang.Specification {
         0 || "SwerveDrive/wheel.0"
         1 || "SwerveDrive/wheel.1"
     }
-
-    // check some swerve related math
-    def "calculate max of 4 doubles"() {
-        expect:
-        Math.max(Math.max(a, b), Math.max(c, d)) == max
-
-        where:
-        a   | b   | c   | d   || max
-        0.1 | 0.2 | 1.1 | 0.2 || 1.1
-        1.1 | 0.2 | 0.1 | 0.2 || 1.1
-        0.1 | 1.2 | 0.1 | 0.2 || 1.2
-        0.1 | 1.2 | 0.1 | 1.2 || 1.2
-    }
 }
