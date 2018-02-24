@@ -38,6 +38,7 @@ public class SwerveDrive {
   final AHRS gyro;
   private final double kLengthComponent;
   private final double kWidthComponent;
+  private final double kGyroRateCorrection;
   private final Wheel[] wheels;
   private final double[] ws = new double[WHEEL_COUNT];
   private final double[] wa = new double[WHEEL_COUNT];
@@ -58,9 +59,19 @@ public class SwerveDrive {
     kLengthComponent = length / radius;
     kWidthComponent = width / radius;
 
+    if (gyro != null) {
+      double robotPeriod = toml.getDouble("robotPeriod");
+      double gyroRateCoeff = toml.getDouble("gyroRateCoeff");
+      int rate = gyro.getActualUpdateRate();
+      double gyroPeriod = 1.0 / rate;
+      kGyroRateCorrection = (robotPeriod / gyroPeriod) * gyroRateCoeff;
+      logger.debug("gyro frequency = {} Hz", rate);
+    } else kGyroRateCorrection = 0;
+
     logger.debug("length = {}", length);
     logger.debug("width = {}", width);
     logger.debug("enableGyroLogging = {}", enableGyroLogging);
+    logger.debug("gyroRateCorrection = {}", kGyroRateCorrection);
   }
 
   /**
@@ -109,7 +120,12 @@ public class SwerveDrive {
 
     // field-oriented
     if (gyro != null) {
-      final double angle = gyro.getYaw() * Math.PI / 180.0;
+      double angle = gyro.getYaw();
+      angle += gyro.getRate() * kGyroRateCorrection;
+      if (angle < -180d) angle += 360d;
+      else if (angle > 180d) angle -= 360d;
+
+      angle = Math.toRadians(angle);
       final double temp = forward * Math.cos(angle) + strafe * Math.sin(angle);
       strafe = -forward * Math.sin(angle) + strafe * Math.cos(angle);
       forward = temp;

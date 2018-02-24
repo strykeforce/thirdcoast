@@ -2,6 +2,7 @@ package org.strykeforce.thirdcoast.swerve;
 
 import static org.strykeforce.thirdcoast.telemetry.grapher.Measure.ANGLE;
 import static org.strykeforce.thirdcoast.telemetry.grapher.Measure.GYRO_YAW;
+import static org.strykeforce.thirdcoast.telemetry.grapher.Measure.GYRO_YAW_RATE;
 
 import com.kauailabs.navx.frc.AHRS;
 import com.squareup.moshi.JsonWriter;
@@ -23,7 +24,9 @@ public class GraphableSwerveDrive extends SwerveDrive implements Item {
   private static final String DESCRIPTION = "Swerve Drive";
 
   private static final Set<Measure> MEASURES =
-      Collections.unmodifiableSet(EnumSet.of(ANGLE, GYRO_YAW));
+      Collections.unmodifiableSet(EnumSet.of(ANGLE, GYRO_YAW, GYRO_YAW_RATE));
+
+  private double prevAngle;
 
   @Inject
   public GraphableSwerveDrive(AHRS gyro, Wheel[] wheels, Settings settings) {
@@ -66,6 +69,8 @@ public class GraphableSwerveDrive extends SwerveDrive implements Item {
         return gyro::getAngle;
       case GYRO_YAW:
         return gyro::getYaw;
+      case GYRO_YAW_RATE:
+        return gyro::getRate;
       default:
         throw new AssertionError(measure);
     }
