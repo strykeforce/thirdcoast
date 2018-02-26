@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.IterativeRobot;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import org.strykeforce.thirdcoast.swerve.DefaultWheel;
 import org.strykeforce.thirdcoast.swerve.Wheel;
 import org.strykeforce.thirdcoast.talon.Talons;
 import org.strykeforce.thirdcoast.util.Settings;
@@ -58,7 +59,7 @@ public class WheelTestRobot extends IterativeRobot {
     RobotComponent component = DaggerRobotComponent.builder().config(config).build();
     controls = component.controls();
     Talons talons = component.talons();
-    wheel = new Wheel(talons, new Settings(), 1);
+    wheel = new DefaultWheel(talons, new Settings(), 1);
     wheel.setAzimuthZero(1000);
   }
 

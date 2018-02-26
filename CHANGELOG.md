@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Calendar Versioning](http://calver.org/).
 
+## [18.3.1] - 2018-02-23
+
+### Added
+
+- Implement drive closed-loop gain scaling by subclassing Wheel with a custom implementation.
+- Grapher support for PathFinder controller.
+- Added methods to `SwerveDrive` to support azimuth belt slip correction.
+
+### Changed
+
+- Moved the `tct` command-line utility to its own repo and removed `sim` development tool.
+
 ## [18.3.0] - 2018-02-13
 
 ### Added
@@ -115,4 +127,5 @@ This version upgrades the library to be compatible with the 2018 Phoenix TalonSR
 [18.0.5]: https://github.com/strykeforce/thirdcoast/compare/v18.0.4...v18.0.5
 [18.2.0]: https://github.com/strykeforce/thirdcoast/compare/v18.0.5...v18.2.0
 [18.3.0]: https://github.com/strykeforce/thirdcoast/compare/v18.2.0...v18.3.0
+[18.3.1]: https://github.com/strykeforce/thirdcoast/compare/v18.3.0...v18.3.1
 [unreleased]: https://github.com/strykeforce/thirdcoast/compare/v18.3.0...develop

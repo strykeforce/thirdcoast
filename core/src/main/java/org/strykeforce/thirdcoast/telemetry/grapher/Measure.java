@@ -45,6 +45,7 @@ public enum Measure {
 
   // Swerve
   GYRO_YAW("Gyro Yaw"),
+  GYRO_YAW_RATE("Gyro Yaw Rate (deg/sec)"),
   SWERVE_FORWARD("Swerve Forward"),
   SWERVE_STRAFE("Swerve Strafe"),
   SWERVE_AZIMUTH("Swerve Azimuth"),
