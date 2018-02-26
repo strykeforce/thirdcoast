@@ -6,7 +6,7 @@ import org.strykeforce.thirdcoast.util.Settings
 import spock.lang.Specification
 
 import static com.ctre.phoenix.motorcontrol.ControlMode.*
-import static org.strykeforce.thirdcoast.swerve.SwerveDrive.DriveMode.CLOSED_LOOP
+import static org.strykeforce.thirdcoast.swerve.SwerveDrive.DriveMode.TRAJECTORY
 
 class WheelTest extends Specification {
 
@@ -128,7 +128,7 @@ class WheelTest extends Specification {
         when:
         def tomlStr = "[THIRDCOAST.WHEEL]\ndriveSetpointMax=10_000"
         def wheel = new DefaultWheel(new Settings(tomlStr), azimuth, drive)
-        wheel.setDriveMode(CLOSED_LOOP)
+        wheel.setDriveMode(TRAJECTORY)
         wheel.set(0, setpoint)
 
         then:

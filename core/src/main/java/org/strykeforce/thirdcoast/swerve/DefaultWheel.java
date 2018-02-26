@@ -33,17 +33,22 @@ public class DefaultWheel extends Wheel {
   }
 
   /**
-   * Set the drive mode
+   * Set the operating mode of the wheel's drive motors. In this default wheel implementation {@code
+   * OPEN_LOOP} and {@code TELEOP} are equivalent and {@code CLOSED_LOOP}, {@code TRAJECTORY} and
+   * {@code AZIMUTH} are equivalent.
    *
-   * @param driveMode the drive mode
+   * @param driveMode the desired drive mode
    */
   @Override
   public void setDriveMode(DriveMode driveMode) {
     switch (driveMode) {
       case OPEN_LOOP:
+      case TELEOP:
         currentDriver = openLoopDriver;
         break;
       case CLOSED_LOOP:
+      case TRAJECTORY:
+      case AZIMUTH:
         currentDriver = closedLoopDriver;
         break;
     }

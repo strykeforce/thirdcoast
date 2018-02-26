@@ -4,8 +4,8 @@ package org.strykeforce.thirdcoast.swerve
 import org.strykeforce.thirdcoast.util.Settings
 import spock.lang.Shared
 
-import static org.strykeforce.thirdcoast.swerve.SwerveDrive.DriveMode.CLOSED_LOOP
-import static org.strykeforce.thirdcoast.swerve.SwerveDrive.DriveMode.OPEN_LOOP
+import static org.strykeforce.thirdcoast.swerve.SwerveDrive.DriveMode.TRAJECTORY
+import static org.strykeforce.thirdcoast.swerve.SwerveDrive.DriveMode.TELEOP
 
 class SwerveDriveTest extends spock.lang.Specification {
 
@@ -44,19 +44,19 @@ class SwerveDriveTest extends spock.lang.Specification {
 
         when:
         def swerve = new SwerveDrive(null, wheels, new Settings())
-        swerve.setDriveMode(OPEN_LOOP)
+        swerve.setDriveMode(TELEOP)
 
         then:
         for (int i = 0; i < 4; i++) {
-            1 * wheels[i].setDriveMode(OPEN_LOOP)
+            1 * wheels[i].setDriveMode(TELEOP)
         }
 
         when:
-        swerve.setDriveMode(CLOSED_LOOP)
+        swerve.setDriveMode(TRAJECTORY)
 
         then:
         for (int i = 0; i < 4; i++) {
-            1 * wheels[i].setDriveMode(CLOSED_LOOP)
+            1 * wheels[i].setDriveMode(TRAJECTORY)
         }
     }
 

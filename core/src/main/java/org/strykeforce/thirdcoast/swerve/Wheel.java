@@ -1,7 +1,7 @@
 package org.strykeforce.thirdcoast.swerve;
 
 import static com.ctre.phoenix.motorcontrol.ControlMode.MotionMagic;
-import static org.strykeforce.thirdcoast.swerve.SwerveDrive.DriveMode.OPEN_LOOP;
+import static org.strykeforce.thirdcoast.swerve.SwerveDrive.DriveMode.TELEOP;
 
 import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
@@ -61,7 +61,7 @@ public abstract class Wheel {
       return;
     }
 
-    setDriveMode(OPEN_LOOP);
+    setDriveMode(TELEOP);
 
     logger.debug("azimuth = {} drive = {}", azimuthTalon.getDeviceID(), driveTalon.getDeviceID());
     logger.debug("driveSetpointMax = {}", kDriveSetpointMax);

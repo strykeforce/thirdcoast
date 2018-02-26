@@ -268,6 +268,9 @@ public class SwerveDrive {
   /** Swerve Drive drive mode */
   public enum DriveMode {
     OPEN_LOOP,
-    CLOSED_LOOP
+    CLOSED_LOOP,
+    TELEOP,
+    TRAJECTORY,
+    AZIMUTH
   }
 }
