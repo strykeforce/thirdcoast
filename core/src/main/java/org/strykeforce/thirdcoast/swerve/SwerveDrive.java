@@ -51,7 +51,6 @@ public class SwerveDrive {
 
     Toml toml = settings.getTable(TABLE);
     boolean enableGyroLogging = toml.getBoolean("enableGyroLogging", true);
-    if (gyro != null) gyro.enableLogging(enableGyroLogging);
 
     double length = toml.getDouble("length");
     double width = toml.getDouble("width");
@@ -59,14 +58,18 @@ public class SwerveDrive {
     kLengthComponent = length / radius;
     kWidthComponent = width / radius;
 
-    if (gyro != null) {
+    if (gyro != null && gyro.isConnected()) {
+      gyro.enableLogging(enableGyroLogging);
       double robotPeriod = toml.getDouble("robotPeriod");
       double gyroRateCoeff = toml.getDouble("gyroRateCoeff");
       int rate = gyro.getActualUpdateRate();
       double gyroPeriod = 1.0 / rate;
       kGyroRateCorrection = (robotPeriod / gyroPeriod) * gyroRateCoeff;
       logger.debug("gyro frequency = {} Hz", rate);
-    } else kGyroRateCorrection = 0;
+    } else {
+      logger.warn("gyro is missing or not enabled");
+      kGyroRateCorrection = 0;
+    }
 
     logger.debug("length = {}", length);
     logger.debug("width = {}", width);
