@@ -45,6 +45,7 @@ public class FeedbackSensor implements Configurable {
     ErrorCode err = talon.configSelectedFeedbackSensor(feedbackDevice, pidIdx, timeout);
     Errors.check(talon, "configSelectedFeedbackSensor", err, logger);
     talon.setSensorPhase(phaseSensor);
+    if (phaseSensor) logger.warn("sensor phase reversed for talon {}", talon.getDeviceID());
   }
 
   @Override
