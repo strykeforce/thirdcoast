@@ -121,12 +121,12 @@ public class SwerveDrive {
    */
   public void drive(double forward, double strafe, double azimuth) {
 
-    // field-oriented
+    // Use gyro for field-oriented drive. We use getAngle instead of getYaw to enable arbitrary
+    // autonomous starting positions.
     if (gyro != null) {
-      double angle = gyro.getYaw();
+      double angle = gyro.getAngle();
       angle += gyro.getRate() * kGyroRateCorrection;
-      if (angle < -180d) angle += 360d;
-      else if (angle > 180d) angle -= 360d;
+      angle = Math.IEEEremainder(angle, 360.0);
 
       angle = Math.toRadians(angle);
       final double temp = forward * Math.cos(angle) + strafe * Math.sin(angle);
