@@ -35,6 +35,7 @@ class FeedbackSensorTest extends Specification {
 
         then:
         1 * talon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 1, timeout)
+        1 * talon.getDeviceID()
         1 * talon.setSensorPhase(true)
         0 * talon._
 
