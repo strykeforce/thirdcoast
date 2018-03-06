@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Calendar Versioning](http://calver.org/).
 
-## [Unreleased]
+## [18.4.0] - 2018-03-06
 
 ### Added
 
@@ -13,7 +13,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ### Changed
 
--   Allow for arbitrarily rotated auton starting position.
+-   Allow for arbitrarily rotated autonomous starting position. Use `gyro.setAngleAdjustment(double)` when robot has a rotated starting position.
 -   Turn off logging if gyro not connected.
 -   Log warning for TalonSRX encoder phase reversal.
 
@@ -151,5 +151,7 @@ This version upgrades the library to be compatible with the 2018 Phoenix TalonSR
 [18.3.0]: https://github.com/strykeforce/thirdcoast/compare/v18.2.0...v18.3.0
 
 [18.3.1]: https://github.com/strykeforce/thirdcoast/compare/v18.3.0...v18.3.1
+
+[18.4.0]: https://github.com/strykeforce/thirdcoast/compare/v18.3.1...v18.4.0
 
 [unreleased]: https://github.com/strykeforce/thirdcoast/compare/v18.3.1...develop
