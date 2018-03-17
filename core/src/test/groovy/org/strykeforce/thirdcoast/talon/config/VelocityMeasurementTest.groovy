@@ -20,7 +20,7 @@ class VelocityMeasurementTest extends Specification {
 
         then:
         1 * talon.configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_100Ms, timeout)
-        1 * talon.configVelocityMeasurementWindow(32, timeout)
+        1 * talon.configVelocityMeasurementWindow(64, timeout)
         0 * talon._
     }
 
@@ -28,7 +28,7 @@ class VelocityMeasurementTest extends Specification {
         given:
         def tomlStr = "period = \"Period_2Ms\""
         def toml = new Toml().read(tomlStr)
-        def expected = new VelocityMeasurement(VelocityMeasPeriod.Period_2Ms, 32)
+        def expected = new VelocityMeasurement(VelocityMeasPeriod.Period_2Ms, 64)
 
         expect:
         VelocityMeasurement.create(toml) == expected

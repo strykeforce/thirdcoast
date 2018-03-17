@@ -6,7 +6,7 @@ import spock.lang.Specification
 
 class TelemetryServiceTest extends Specification {
 
-    def "prevent multiple copies and preserve insertion order"() {
+    def "prevent multiple copies and sort by type and deviceId"() {
         given:
         def talon1 = Stub(WPI_TalonSRX)
         talon1.getDeviceID() >> 1
@@ -28,8 +28,8 @@ class TelemetryServiceTest extends Specification {
 
         then:
         inv.itemForId(0) instanceof TalonItem
-        inv.itemForId(0).deviceId() == 2
-        inv.itemForId(1).deviceId() == 1
+        inv.itemForId(0).deviceId() == 1
+        inv.itemForId(1).deviceId() == 2
         inv.itemForId(2).deviceId() == 3
 
         when:

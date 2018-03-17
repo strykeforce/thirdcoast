@@ -4,6 +4,7 @@ import com.squareup.moshi.JsonWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +23,7 @@ public abstract class AbstractInventory implements Inventory {
 
   public AbstractInventory(final Collection<Item> items) {
     this.items.addAll(items);
+    Collections.sort(this.items);
   }
 
   @Override
