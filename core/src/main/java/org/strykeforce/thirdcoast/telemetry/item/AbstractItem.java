@@ -42,6 +42,8 @@ public abstract class AbstractItem implements Item {
 
   @Override
   public int compareTo(@NotNull Item other) {
+    int result = type.compareTo(other.type());
+    if (result != 0) return result;
     return Integer.compare(deviceId(), other.deviceId());
   }
 
