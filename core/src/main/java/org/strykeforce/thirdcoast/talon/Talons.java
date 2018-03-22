@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -166,6 +167,16 @@ public class Talons {
       logger.error("TalonSRX {} not found", id);
     }
     return talons.get(id);
+  }
+
+  /**
+   * Convenience method to get ordered list of {@link TalonSRX}.
+   *
+   * @param ids List of TalonSRX ids
+   * @return List of TalonSRX objects
+   */
+  public List<TalonSRX> getTalons(List<? extends Integer> ids) {
+    return ids.stream().map(this::getTalon).collect(Collectors.toList());
   }
 
   static class Factory {
