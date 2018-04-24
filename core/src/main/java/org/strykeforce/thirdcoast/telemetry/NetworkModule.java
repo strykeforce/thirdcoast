@@ -27,8 +27,8 @@ public abstract class NetworkModule {
   @Provides
   @Named("client")
   static int provideClientPort() {
-    logger.debug("providing client port 5555");
-    return 5555;
+    logger.debug("providing client port 5801");
+    return 5801;
   }
 
   @Provides
