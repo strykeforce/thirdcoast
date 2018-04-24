@@ -28,7 +28,7 @@ ext {
             autoFactory         : 'com.google.auto.factory:auto-factory:1.0-beta5',
     ]
     specificationTitle = 'Third Coast Library'
-    specificationVersion = '18.1.3.1'
+    specificationVersion = '18.1.3.2'
 }
 
 subprojects {
