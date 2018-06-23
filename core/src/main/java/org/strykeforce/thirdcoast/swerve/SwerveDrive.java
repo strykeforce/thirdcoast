@@ -36,12 +36,14 @@ public class SwerveDrive {
   private static final String TABLE = "THIRDCOAST.SWERVE";
   private static final int WHEEL_COUNT = 4;
   final AHRS gyro;
-  private final double kLengthComponent;
-  private final double kWidthComponent;
   private final double kGyroRateCorrection;
   private final Wheel[] wheels;
   private final double[] ws = new double[WHEEL_COUNT];
   private final double[] wa = new double[WHEEL_COUNT];
+  private double offsetX;
+  private double offsetY;
+  private double[] kLengthComponents;
+  private double[] kWidthComponents;
 
   @Inject
   SwerveDrive(AHRS gyro, Wheel[] wheels, Settings settings) {
@@ -49,32 +51,62 @@ public class SwerveDrive {
     this.wheels = wheels;
     logger.info("field orientation driving is {}", gyro == null ? "DISABLED" : "ENABLED");
 
-    Toml toml = settings.getTable(TABLE);
-    boolean enableGyroLogging = toml.getBoolean("enableGyroLogging", true);
+    if (settings != null) {
 
-    double length = toml.getDouble("length");
-    double width = toml.getDouble("width");
-    double radius = Math.hypot(length, width);
-    kLengthComponent = length / radius;
-    kWidthComponent = width / radius;
+      Toml toml = settings.getTable(TABLE);
+      boolean enableGyroLogging = toml.getBoolean("enableGyroLogging", true);
 
-    if (gyro != null && gyro.isConnected()) {
-      gyro.enableLogging(enableGyroLogging);
-      double robotPeriod = toml.getDouble("robotPeriod");
-      double gyroRateCoeff = toml.getDouble("gyroRateCoeff");
-      int rate = gyro.getActualUpdateRate();
-      double gyroPeriod = 1.0 / rate;
-      kGyroRateCorrection = (robotPeriod / gyroPeriod) * gyroRateCoeff;
-      logger.debug("gyro frequency = {} Hz", rate);
+      double[] radii = new double[4];
+      kLengthComponents = new double[4];
+
+      double length = toml.getDouble("length");
+      double width = toml.getDouble("width");
+      offsetX = toml.getDouble("offsetX");
+      offsetY = toml.getDouble("offsetY");
+
+      if (offsetY != 0.0 && offsetX != 0.0) {
+        radii = findRadii(length, width);
+      }
+
+      // double radius = Math.hypot(length, width);
+
+      for (int i = 0; i < radii.length; i++) {
+        kLengthComponents[i] = length / radii[i];
+        kWidthComponents[i] = width / radii[i];
+      }
+
+      if (gyro != null && gyro.isConnected()) {
+        gyro.enableLogging(enableGyroLogging);
+        double robotPeriod = toml.getDouble("robotPeriod");
+        double gyroRateCoeff = toml.getDouble("gyroRateCoeff");
+        int rate = gyro.getActualUpdateRate();
+        double gyroPeriod = 1.0 / rate;
+        kGyroRateCorrection = (robotPeriod / gyroPeriod) * gyroRateCoeff;
+        logger.debug("gyro frequency = {} Hz", rate);
+      } else {
+        logger.warn("gyro is missing or not enabled");
+        kGyroRateCorrection = 0;
+      }
+
+      logger.debug("length = {}", length);
+      logger.debug("width = {}", width);
+      logger.debug("enableGyroLogging = {}", enableGyroLogging);
+      logger.debug("gyroRateCorrection = {}", kGyroRateCorrection);
     } else {
-      logger.warn("gyro is missing or not enabled");
       kGyroRateCorrection = 0;
     }
+  }
 
-    logger.debug("length = {}", length);
-    logger.debug("width = {}", width);
-    logger.debug("enableGyroLogging = {}", enableGyroLogging);
-    logger.debug("gyroRateCorrection = {}", kGyroRateCorrection);
+  public double[] findRadii(double length, double width) {
+
+    double[] radii = new double[4];
+
+    radii[0] = Math.hypot((width - offsetX), (length - offsetY));
+    radii[1] = Math.hypot((width + offsetX), (length - offsetY));
+    radii[2] = Math.hypot((width - offsetX), (length + offsetY));
+    radii[3] = Math.hypot((width + offsetX), (length + offsetY));
+
+    return radii;
   }
 
   /**
@@ -134,22 +166,30 @@ public class SwerveDrive {
       forward = temp;
     }
 
-    final double a = strafe - azimuth * kLengthComponent;
-    final double b = strafe + azimuth * kLengthComponent;
-    final double c = forward - azimuth * kWidthComponent;
-    final double d = forward + azimuth * kWidthComponent;
+    final double a2 = strafe - azimuth * kLengthComponents[2];
+    final double a3 = strafe - azimuth * kLengthComponents[3];
+    final double b0 = strafe + azimuth * kLengthComponents[0];
+    final double b1 = strafe + azimuth * kLengthComponents[1];
+    final double c1 = forward - azimuth * kWidthComponents[1];
+    final double c3 = forward - azimuth * kWidthComponents[3];
+    final double d0 = forward + azimuth * kWidthComponents[0];
+    final double d2 = forward + azimuth * kWidthComponents[2];
 
-    // wheel speed
-    ws[0] = Math.hypot(b, d);
-    ws[1] = Math.hypot(b, c);
-    ws[2] = Math.hypot(a, d);
-    ws[3] = Math.hypot(a, c);
+    // wheel 0
+    ws[0] = Math.hypot(b0, d0);
+    wa[0] = Math.atan2(b0, d0) * 0.5 / Math.PI;
 
-    // wheel azimuth
-    wa[0] = Math.atan2(b, d) * 0.5 / Math.PI;
-    wa[1] = Math.atan2(b, c) * 0.5 / Math.PI;
-    wa[2] = Math.atan2(a, d) * 0.5 / Math.PI;
-    wa[3] = Math.atan2(a, c) * 0.5 / Math.PI;
+    // wheel 1
+    ws[1] = Math.hypot(b1, c1);
+    wa[1] = Math.atan2(b1, c1) * 0.5 / Math.PI;
+
+    // wheel 2
+    ws[2] = Math.hypot(a2, d2);
+    wa[2] = Math.atan2(a2, d2) * 0.5 / Math.PI;
+
+    // wheel 3
+    ws[3] = Math.hypot(a3, c3);
+    wa[3] = Math.atan2(a3, c3) * 0.5 / Math.PI;
 
     // normalize wheel speed
     final double maxWheelSpeed = Math.max(Math.max(ws[0], ws[1]), Math.max(ws[2], ws[3]));
@@ -255,8 +295,8 @@ public class SwerveDrive {
    *
    * @return length
    */
-  double getLengthComponent() {
-    return kLengthComponent;
+  double[] getLengthComponent() {
+    return kLengthComponents;
   }
 
   /**
@@ -264,8 +304,8 @@ public class SwerveDrive {
    *
    * @return width
    */
-  double getWidthComponent() {
-    return kWidthComponent;
+  double[] getWidthComponent() {
+    return kWidthComponents;
   }
 
   /** Swerve Drive drive mode */
