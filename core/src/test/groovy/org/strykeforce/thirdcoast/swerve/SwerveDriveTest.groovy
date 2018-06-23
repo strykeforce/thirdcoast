@@ -1,11 +1,10 @@
 package org.strykeforce.thirdcoast.swerve
 
-
 import org.strykeforce.thirdcoast.util.Settings
 import spock.lang.Shared
 
-import static org.strykeforce.thirdcoast.swerve.SwerveDrive.DriveMode.TRAJECTORY
 import static org.strykeforce.thirdcoast.swerve.SwerveDrive.DriveMode.TELEOP
+import static org.strykeforce.thirdcoast.swerve.SwerveDrive.DriveMode.TRAJECTORY
 
 class SwerveDriveTest extends spock.lang.Specification {
 
