@@ -40,8 +40,6 @@ public class SwerveDrive {
   private final Wheel[] wheels;
   private final double[] ws = new double[WHEEL_COUNT];
   private final double[] wa = new double[WHEEL_COUNT];
-  private double offsetX;
-  private double offsetY;
   private double[] kLengthComponents;
   private double[] kWidthComponents;
 
@@ -61,11 +59,11 @@ public class SwerveDrive {
 
       double length = toml.getDouble("length");
       double width = toml.getDouble("width");
-      offsetX = toml.getDouble("offsetX");
-      offsetY = toml.getDouble("offsetY");
+      double offsetX = toml.getDouble("offsetX");
+      double offsetY = toml.getDouble("offsetY");
 
       if (offsetY != 0.0 && offsetX != 0.0) {
-        radii = findRadii(length, width);
+        radii = findRadii(length, width, offsetX, offsetY);
       }
 
       // double radius = Math.hypot(length, width);
@@ -97,7 +95,7 @@ public class SwerveDrive {
     }
   }
 
-  public double[] findRadii(double length, double width) {
+  public double[] findRadii(double length, double width, double offsetX, double offsetY) {
 
     double[] radii = new double[4];
 
