@@ -15,6 +15,8 @@
   enableGyroLogging = true
   length            = 1.0
   width             = 1.0
+  offsetX           = 0.0
+  offsetY           = 0.0
 
 [THIRDCOAST.TALONS]
   timeout = 10
