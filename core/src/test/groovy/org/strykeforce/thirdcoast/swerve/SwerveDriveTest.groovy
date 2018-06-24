@@ -30,9 +30,9 @@ class SwerveDriveTest extends spock.lang.Specification {
 
         then:
         with(swerve) {
-            lengthComponent == length / radius
+            lengthComponents == length / radius
             // defaults
-            widthComponent == width / radius
+            widthComponents == width / radius
         }
     }
 

@@ -54,23 +54,35 @@ public class SwerveDrive {
       Toml toml = settings.getTable(TABLE);
       boolean enableGyroLogging = toml.getBoolean("enableGyroLogging", true);
 
-      double[] radii = new double[4];
       kLengthComponents = new double[4];
+      kWidthComponents = new double[4];
 
       double length = toml.getDouble("length");
       double width = toml.getDouble("width");
       double offsetX = toml.getDouble("offsetX");
       double offsetY = toml.getDouble("offsetY");
 
-      if (offsetY != 0.0 && offsetX != 0.0) {
-        radii = findRadii(length, width, offsetX, offsetY);
-      }
-
-      // double radius = Math.hypot(length, width);
+      double[] radii = findRadii(length, width, offsetX, offsetY);
 
       for (int i = 0; i < radii.length; i++) {
-        kLengthComponents[i] = length / radii[i];
-        kWidthComponents[i] = width / radii[i];
+        System.out.print("length = " + length);
+        System.out.println(" width = " + width);
+        System.out.println("radii[i] = " + radii[i]);
+
+        if (radii[i] != 0) {
+          kLengthComponents[i] = length / radii[i];
+        } else {
+          kLengthComponents[i] = 0.0;
+        }
+
+        if (radii[i] != 0) {
+          kWidthComponents[i] = width / radii[i];
+        } else {
+          kWidthComponents[i] = 0.0;
+        }
+
+        System.out.println("kLengthComponents[i] = " + kLengthComponents[i]);
+        System.out.println("kWidthComponents[i] = " + kWidthComponents[i] + "\n\n");
       }
 
       if (gyro != null && gyro.isConnected()) {
@@ -105,16 +117,6 @@ public class SwerveDrive {
     radii[3] = Math.hypot((width + offsetX), (length + offsetY));
 
     return radii;
-  }
-
-  /**
-   * Return key that wheel zero information is stored under in WPI preferences.
-   *
-   * @param wheel the wheel number
-   * @return the String key
-   */
-  public static String getPreferenceKeyForWheel(int wheel) {
-    return String.format("%s/wheel.%d", SwerveDrive.class.getSimpleName(), wheel);
   }
 
   /**
@@ -235,6 +237,16 @@ public class SwerveDrive {
   }
 
   /**
+   * Return key that wheel zero information is stored under in WPI preferences.
+   *
+   * @param wheel the wheel number
+   * @return the String key
+   */
+  public static String getPreferenceKeyForWheel(int wheel) {
+    return String.format("%s/wheel.%d", SwerveDrive.class.getSimpleName(), wheel);
+  }
+
+  /**
    * Set wheels' azimuth relative offset from zero based on the current absolute position. This uses
    * the physical zero position as read by the absolute encoder and saved during the wheel alignment
    * process.
@@ -280,6 +292,24 @@ public class SwerveDrive {
   }
 
   /**
+   * Returns the wheel speed array of the swerve drive.
+   *
+   * @return the Wheel speed array
+   */
+  public double[] getWs() {
+    return ws;
+  }
+
+  /**
+   * Returns the wheel azimuth array.
+   *
+   * @return the Wheel azimuth array
+   */
+  public double[] getWa() {
+    return wa;
+  }
+
+  /**
    * Get the gyro instance being used by the drive.
    *
    * @return the gyro instance
@@ -293,7 +323,7 @@ public class SwerveDrive {
    *
    * @return length
    */
-  double[] getLengthComponent() {
+  double[] getLengthComponents() {
     return kLengthComponents;
   }
 
@@ -302,7 +332,7 @@ public class SwerveDrive {
    *
    * @return width
    */
-  double[] getWidthComponent() {
+  double[] getWidthComponents() {
     return kWidthComponents;
   }
 
