@@ -65,9 +65,6 @@ public class SwerveDrive {
       double[] radii = findRadii(length, width, offsetX, offsetY);
 
       for (int i = 0; i < radii.length; i++) {
-        System.out.print("length = " + length);
-        System.out.println(" width = " + width);
-        System.out.println("radii[i] = " + radii[i]);
 
         if (radii[i] != 0) {
           kLengthComponents[i] = length / radii[i];
@@ -80,9 +77,6 @@ public class SwerveDrive {
         } else {
           kWidthComponents[i] = 0.0;
         }
-
-        System.out.println("kLengthComponents[i] = " + kLengthComponents[i]);
-        System.out.println("kWidthComponents[i] = " + kWidthComponents[i] + "\n\n");
       }
 
       if (gyro != null && gyro.isConnected()) {
