@@ -30,9 +30,23 @@ class SwerveDriveTest extends spock.lang.Specification {
 
         then:
         with(swerve) {
-            lengthComponents == length / radius
-            // defaults
-            widthComponents == width / radius
+
+
+
+            for (int i = 0; i < radii.length; i++) {
+
+                if (radii[i] != 0) {
+                    kLengthComponents[i] == length / radii[i];
+                } else {
+                    kLengthComponents[i] == 0.0;
+                }
+
+                if (radii[i] != 0) {
+                    kWidthComponents[i] == width / radii[i];
+                } else {
+                    kWidthComponents[i] == 0.0;
+                }
+            }
         }
     }
 

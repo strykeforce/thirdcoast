@@ -42,6 +42,7 @@ public class SwerveDrive {
   private final double[] wa = new double[WHEEL_COUNT];
   private double[] kLengthComponents;
   private double[] kWidthComponents;
+  private double[] radii;
 
   @Inject
   SwerveDrive(AHRS gyro, Wheel[] wheels, Settings settings) {
@@ -62,7 +63,7 @@ public class SwerveDrive {
       double offsetX = toml.getDouble("offsetX");
       double offsetY = toml.getDouble("offsetY");
 
-      double[] radii = findRadii(length, width, offsetX, offsetY);
+      radii = findRadii(length, width, offsetX, offsetY);
 
       for (int i = 0; i < radii.length; i++) {
 
@@ -310,6 +311,15 @@ public class SwerveDrive {
    */
   public AHRS getGyro() {
     return gyro;
+  }
+
+  /**
+   * Returns the radii array
+   *
+   * @return the radii distances to each wheel 0 to 3
+   */
+  public double[] getRadii() {
+    return radii;
   }
 
   /**
