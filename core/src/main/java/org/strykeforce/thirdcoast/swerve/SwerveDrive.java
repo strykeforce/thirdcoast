@@ -4,14 +4,15 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.kauailabs.navx.frc.AHRS;
 import com.moandjiezana.toml.Toml;
 import edu.wpi.first.wpilibj.Preferences;
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.talon.TalonConfiguration;
 import org.strykeforce.thirdcoast.telemetry.TelemetryService;
 import org.strykeforce.thirdcoast.telemetry.item.TalonItem;
 import org.strykeforce.thirdcoast.util.Settings;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 /**
  * Control a Third Coast swerve drive.
@@ -164,18 +165,18 @@ public class SwerveDrive {
     final double a3 = strafe - azimuth * kLengthComponents[3];
     final double b0 = strafe + azimuth * kLengthComponents[0];
     final double b1 = strafe + azimuth * kLengthComponents[1];
-    final double c1 = forward - azimuth * kWidthComponents[1];
+    final double d1 = forward - azimuth * kWidthComponents[1];
     final double c3 = forward - azimuth * kWidthComponents[3];
-    final double d0 = forward + azimuth * kWidthComponents[0];
+    final double c0 = forward + azimuth * kWidthComponents[0];
     final double d2 = forward + azimuth * kWidthComponents[2];
 
     // wheel 0
-    ws[0] = Math.hypot(b0, d0);
-    wa[0] = Math.atan2(b0, d0) * 0.5 / Math.PI;
+    ws[0] = Math.hypot(b0, c0);
+    wa[0] = Math.atan2(b0, c0) * 0.5 / Math.PI;
 
     // wheel 1
-    ws[1] = Math.hypot(b1, c1);
-    wa[1] = Math.atan2(b1, c1) * 0.5 / Math.PI;
+    ws[1] = Math.hypot(b1, d1);
+    wa[1] = Math.atan2(b1, d1) * 0.5 / Math.PI;
 
     // wheel 2
     ws[2] = Math.hypot(a2, d2);
