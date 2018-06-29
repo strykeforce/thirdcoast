@@ -17,12 +17,15 @@ class SwerveDriveOffsetTest extends Specification {
         given:
         def offsetX = 0.0
         def offsetY = 0.0
-        SwerveDrive swerveDrive = new SwerveDrive(null, null, null)
+        def toml = "[THIRDCOAST.SWERVE]\nlength = " + length + "\nwidth = " + width + "\noffsetX = " + offsetX +
+                "\noffsetY = " + offsetY
+        SwerveDrive swerveDrive = new SwerveDrive(null, null, new Settings(toml))
 
         when:
-        double[] radii = swerveDrive.findRadii(length, width, offsetX, offsetY)
+        swerveDrive.updateRadii(length, width, offsetX, offsetY)
 
         then:
+        double[] radii = swerveDrive.getRadii()
         1e-3 > Math.abs(r1 - radii[0])
         1e-3 > Math.abs(r2 - radii[1])
         1e-3 > Math.abs(r3 - radii[2])
@@ -41,12 +44,15 @@ class SwerveDriveOffsetTest extends Specification {
 
     def "calculate findRadii with offset"() {
         given:
-        SwerveDrive swerveDrive = new SwerveDrive(null, null, null)
+        def toml = "[THIRDCOAST.SWERVE]\nlength = " + length + "\nwidth = " + width + "\noffsetX = " + offsetX +
+                "\noffsetY = " + offsetY
+        SwerveDrive swerveDrive = new SwerveDrive(null, null, new Settings(toml))
 
         when:
-        double[] radii = swerveDrive.findRadii(length, width, offsetX, offsetY)
+        swerveDrive.updateRadii(length, width, offsetX, offsetY)
 
         then:
+        double[] radii = swerveDrive.getRadii();
         1e-3 > Math.abs(r0 - radii[0])
         1e-3 > Math.abs(r1 - radii[1])
         1e-3 > Math.abs(r2 - radii[2])
@@ -75,6 +81,7 @@ class SwerveDriveOffsetTest extends Specification {
         def toml = "[THIRDCOAST.SWERVE]\nlength = " + length + "\nwidth = " + width + "\noffsetX = " + offsetX +
                 "\noffsetY = " + offsetY
         SwerveDrive swerveDrive = new SwerveDrive(null, null, new Settings(toml))
+        swerveDrive.updateRadii(length, width, offsetX, offsetY);
         double[] kLengthComponents = swerveDrive.getLengthComponents()
 
         then:
@@ -106,6 +113,7 @@ class SwerveDriveOffsetTest extends Specification {
         def toml = "[THIRDCOAST.SWERVE]\nlength = " + length + "\nwidth = " + width + "\noffsetX = " + offsetX +
                 "\noffsetY = " + offsetY
         SwerveDrive swerveDrive = new SwerveDrive(null, null, new Settings(toml))
+        swerveDrive.updateRadii(length, width, offsetX, offsetY);
         double[] kWidthComponents = swerveDrive.getWidthComponents()
 
         then:
@@ -138,13 +146,14 @@ class SwerveDriveOffsetTest extends Specification {
         def width = 1.0
         def toml = "[THIRDCOAST.SWERVE]\nlength = " + length + "\nwidth = " + width + "\noffsetX = " + oX +
                 "\noffsetY = " + oY
-        SwerveDrive swerve = new SwerveDrive(null, wheels, new Settings(toml))
+        SwerveDrive swerveDrive = new SwerveDrive(null, wheels, new Settings(toml))
 
         when:
+        swerveDrive.updateRadii(length, width, oX, oY);
         for (Wheel w : wheels) {
             w.azimuthTalon.getPosition() >> 0
         }
-        swerve.drive(f, s, a)
+        swerveDrive.drive(f, s, a)
 
         then:
         1 * wheels[0].set({ Math.abs(it - w0a) < 1e-3 }, { Math.abs(it - w0d) < 1e-4 })
