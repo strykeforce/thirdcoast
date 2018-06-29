@@ -43,6 +43,10 @@ public class SwerveDrive {
   private double[] kLengthComponents;
   private double[] kWidthComponents;
   private double[] radii;
+  private double offsetX;
+  private double offsetY;
+  private double length;
+  private double width;
 
   @Inject
   SwerveDrive(AHRS gyro, Wheel[] wheels, Settings settings) {
@@ -50,35 +54,19 @@ public class SwerveDrive {
     this.wheels = wheels;
     logger.info("field orientation driving is {}", gyro == null ? "DISABLED" : "ENABLED");
 
+    radii = new double[4];
+    kLengthComponents = new double[4];
+    kWidthComponents = new double[4];
+
     if (settings != null) {
 
       Toml toml = settings.getTable(TABLE);
       boolean enableGyroLogging = toml.getBoolean("enableGyroLogging", true);
 
-      kLengthComponents = new double[4];
-      kWidthComponents = new double[4];
-
-      double length = toml.getDouble("length");
-      double width = toml.getDouble("width");
-      double offsetX = toml.getDouble("offsetX");
-      double offsetY = toml.getDouble("offsetY");
-
-      radii = findRadii(length, width, offsetX, offsetY);
-
-      for (int i = 0; i < radii.length; i++) {
-
-        if (radii[i] != 0) {
-          kLengthComponents[i] = length / radii[i];
-        } else {
-          kLengthComponents[i] = 0.0;
-        }
-
-        if (radii[i] != 0) {
-          kWidthComponents[i] = width / radii[i];
-        } else {
-          kWidthComponents[i] = 0.0;
-        }
-      }
+      length = toml.getDouble("length");
+      width = toml.getDouble("width");
+      offsetX = toml.getDouble("offsetX");
+      offsetY = toml.getDouble("offsetY");
 
       if (gyro != null && gyro.isConnected()) {
         gyro.enableLogging(enableGyroLogging);
@@ -100,18 +88,6 @@ public class SwerveDrive {
     } else {
       kGyroRateCorrection = 0;
     }
-  }
-
-  public double[] findRadii(double length, double width, double offsetX, double offsetY) {
-
-    double[] radii = new double[4];
-
-    radii[0] = Math.hypot((width - offsetX), (length - offsetY));
-    radii[1] = Math.hypot((width + offsetX), (length - offsetY));
-    radii[2] = Math.hypot((width - offsetX), (length + offsetY));
-    radii[3] = Math.hypot((width + offsetX), (length + offsetY));
-
-    return radii;
   }
 
   /**
@@ -147,6 +123,8 @@ public class SwerveDrive {
    * @param azimuth robot rotation, from -1.0 (CCW) to 1.0 (CW)
    */
   public void drive(double forward, double strafe, double azimuth) {
+
+    updateRadii(length, width, offsetX, offsetY);
 
     // Use gyro for field-oriented drive. We use getAngle instead of getYaw to enable arbitrary
     // autonomous starting positions.
@@ -197,6 +175,29 @@ public class SwerveDrive {
     // set wheels
     for (int i = 0; i < WHEEL_COUNT; i++) {
       wheels[i].set(wa[i], ws[i]);
+    }
+  }
+
+  private void updateRadii(double length, double width, double offsetX, double offsetY) {
+
+    radii[0] = Math.hypot((width - offsetX), (length - offsetY));
+    radii[1] = Math.hypot((width + offsetX), (length - offsetY));
+    radii[2] = Math.hypot((width - offsetX), (length + offsetY));
+    radii[3] = Math.hypot((width + offsetX), (length + offsetY));
+
+    for (int i = 0; i < radii.length; i++) {
+
+      if (radii[i] != 0) {
+        kLengthComponents[i] = length / radii[i];
+      } else {
+        kLengthComponents[i] = 0.0;
+      }
+
+      if (radii[i] != 0) {
+        kWidthComponents[i] = width / radii[i];
+      } else {
+        kWidthComponents[i] = 0.0;
+      }
     }
   }
 
@@ -338,6 +339,35 @@ public class SwerveDrive {
    */
   double[] getWidthComponents() {
     return kWidthComponents;
+  }
+
+  /**
+   * Sets x direction center of rotation offset
+   *
+   * @param offsetX the x direction offset
+   */
+  public void setOffsetX(double offsetX) {
+    this.offsetX = offsetX;
+  }
+
+  /**
+   * Sets y direction center of rotation offset
+   *
+   * @param offsetY the y direction offset
+   */
+  public void setOffsetY(double offsetY) {
+    this.offsetY = offsetY;
+  }
+
+  /**
+   * Sets x and y direction center of rotation offset
+   *
+   * @param offsetX the x direction offset
+   * @param offsetY the y direction offset
+   */
+  public void setOffsets(double offsetX, double offsetY) {
+    this.offsetX = offsetX;
+    this.offsetY = offsetY;
   }
 
   /** Swerve Drive drive mode */
