@@ -370,6 +370,12 @@ public class SwerveDrive {
     this.offsetY = offsetY;
   }
 
+  /** Resets center of rotation to the center of the robot */
+  public void resetCenter() {
+    offsetX = 0.0;
+    offsetY = 0.0;
+  }
+
   /** Swerve Drive drive mode */
   public enum DriveMode {
     OPEN_LOOP,
