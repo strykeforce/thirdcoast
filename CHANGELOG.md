@@ -4,6 +4,20 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Calendar Versioning](http://calver.org/).
 
+## [18.5.0] - 2018-08-18
+
+###
+
+- Convenience method to get multiple Talons.
+
+### Changed
+
+- Sort grapher inventory list consistently.
+
+### Fixed
+
+- Default value for Talon velocity measurement window.
+
 ## [18.4.0] - 2018-03-06
 
 ### Added
@@ -153,5 +167,7 @@ This version upgrades the library to be compatible with the 2018 Phoenix TalonSR
 [18.3.1]: https://github.com/strykeforce/thirdcoast/compare/v18.3.0...v18.3.1
 
 [18.4.0]: https://github.com/strykeforce/thirdcoast/compare/v18.3.1...v18.4.0
+
+[18.5.0]: https://github.com/strykeforce/thirdcoast/compare/v18.4.0...v18.5.0
 
 [unreleased]: https://github.com/strykeforce/thirdcoast/compare/v18.3.1...develop
