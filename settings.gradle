@@ -1,2 +1,5 @@
+enableFeaturePreview('STABLE_PUBLISHING')
 rootProject.name = 'thirdcoast'
 include 'core'
+include 'telemetry'
+

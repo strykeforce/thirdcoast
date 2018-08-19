@@ -1,0 +1,13 @@
+apply from: "${rootDir}/gradle/publish.gradle"
+
+sourceCompatibility = 1.8
+
+
+repositories {
+    maven { url = 'https://oss.sonatype.org/content/repositories/snapshots' } // nanohttpd
+}
+
+dependencies {
+    implementation 'org.nanohttpd:nanohttpd:2.3.2-SNAPSHOT'
+    implementation project(':core')
+}
