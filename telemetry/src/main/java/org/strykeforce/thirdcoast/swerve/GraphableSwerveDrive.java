@@ -13,7 +13,6 @@ import java.util.Set;
 import java.util.function.DoubleSupplier;
 import javax.inject.Inject;
 import org.jetbrains.annotations.NotNull;
-import org.strykeforce.thirdcoast.telemetry.TelemetryService;
 import org.strykeforce.thirdcoast.telemetry.grapher.Measure;
 import org.strykeforce.thirdcoast.telemetry.item.Item;
 import org.strykeforce.thirdcoast.util.Settings;
@@ -33,11 +32,12 @@ public class GraphableSwerveDrive extends SwerveDrive implements Item {
     super(gyro, wheels, settings);
   }
 
-  @Override
-  public void registerWith(TelemetryService telemetryService) {
-    super.registerWith(telemetryService);
-    telemetryService.register(this);
-  }
+  // FIXME
+  //  @Override
+  //  public void registerWith(TelemetryService telemetryService) {
+  //    super.registerWith(telemetryService);
+  //    telemetryService.register(this);
+  //  }
 
   @Override
   public int deviceId() {
@@ -76,6 +76,7 @@ public class GraphableSwerveDrive extends SwerveDrive implements Item {
     }
   }
 
+  // TODO: remove moshi dependency
   @Override
   public void toJson(JsonWriter writer) throws IOException {
     writer.beginObject();

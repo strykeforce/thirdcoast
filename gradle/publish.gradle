@@ -1,0 +1,62 @@
+apply from: "$rootDir/gradle/bintray.gradle"
+
+apply plugin: 'maven-publish'
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+}
+
+publishing {
+    publications {
+        library(MavenPublication) {
+            from components.java
+
+            artifact sourcesJar
+            artifact javadocJar
+
+            groupId project.group
+            artifactId project.name
+            version project.version
+
+            pom {
+                name = project.name
+                description = projectDescription
+                url = githubUrl
+
+                licenses {
+                    license {
+                        name = 'The MIT License'
+                        url = 'https://opensource.org/licenses/MIT'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'jhh'
+                        name = 'Jeff Hutchison'
+                        email = 'jeff@j3ff.io'
+                    }
+                }
+                scm {
+                    url = githubUrl
+                    connection = "scm:git:" + githubUrl + ".git"
+                    developerConnection = "scm:git:" + githubUrl + ".git"
+                }
+                issueManagement {
+                    system = 'GitHub Issues'
+                    url = githubUrl + "/issues"
+                }
+            }
+        }
+    }
+}

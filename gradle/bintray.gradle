@@ -1,0 +1,26 @@
+apply plugin: 'com.jfrog.bintray'
+
+bintray {
+    user = System.getenv('BINTRAY_USER')
+    key = System.getenv('BINTRAY_API_KEY')
+
+    pkg {
+        websiteUrl = githubUrl
+        issueTrackerUrl = "$githubUrl/issues"
+        vcsUrl = githubUrl
+        githubRepo = 'jhh/tc'
+
+        desc = projectDescription
+        labels = ['java']
+        repo = 'generic'
+        name = project.name
+        licenses = ['MIT']
+        publications = ['library']
+
+        version {
+            name = project.version
+            released = new Date()
+            vcsTag = project.version
+        }
+    }
+}
