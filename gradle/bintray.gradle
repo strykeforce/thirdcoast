@@ -8,11 +8,11 @@ bintray {
         websiteUrl = githubUrl
         issueTrackerUrl = "$githubUrl/issues"
         vcsUrl = githubUrl
-        githubRepo = 'jhh/tc'
+        githubRepo = 'strykeforce/thirdcoast'
 
         desc = projectDescription
         labels = ['java']
-        repo = 'generic'
+        repo = 'maven'
         name = project.name
         licenses = ['MIT']
         publications = ['library']

@@ -40,6 +40,10 @@ publishing {
                         url = 'https://opensource.org/licenses/MIT'
                     }
                 }
+                organization {
+                    name = 'Stryke Force 4-H FIRST Robotics Team 2767'
+                    url  = 'https://www.strykeforce.org'
+                }
                 developers {
                     developer {
                         id = 'jhh'
