@@ -33,7 +33,7 @@ import org.strykeforce.thirdcoast.util.Settings;
 public abstract class Wheel {
 
   static final Logger logger = LoggerFactory.getLogger(Wheel.class);
-  private static final String TABLE = "THIRDCOAST.WHEEL";
+  private static final String WHEEL_TABLE = "THIRDCOAST.WHEEL";
   private static final int TICKS = 4096;
   protected final double kDriveSetpointMax;
   protected final TalonSRX driveTalon;
@@ -50,7 +50,7 @@ public abstract class Wheel {
    */
   public Wheel(Settings settings, TalonSRX azimuth, TalonSRX drive) {
 
-    Toml toml = settings.getTable(TABLE);
+    Toml toml = settings.getTable(WHEEL_TABLE);
     kDriveSetpointMax = (double) toml.getLong("driveSetpointMax");
 
     azimuthTalon = azimuth;

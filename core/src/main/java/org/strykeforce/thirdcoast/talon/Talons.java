@@ -6,17 +6,18 @@ import com.ctre.phoenix.motorcontrol.SensorCollection;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.moandjiezana.toml.Toml;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.strykeforce.thirdcoast.util.Settings;
+
+import javax.annotation.ParametersAreNonnullByDefault;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import javax.annotation.ParametersAreNonnullByDefault;
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.strykeforce.thirdcoast.util.Settings;
 
 /** Instantiate {@link TalonSRX} instances with defaults. */
 @Singleton
@@ -36,6 +37,10 @@ public class Talons {
     final int timeout = settingsTable.getLong("timeout").intValue();
     logger.debug("TalonSRX configuration timeout = {}", timeout);
 
+    final boolean summarizeErrors = settingsTable.getBoolean("summarizeErrors", false);
+    Errors.setSummarized(summarizeErrors);
+    logger.debug("TalonSRX configuration errors summarized = {}", summarizeErrors);
+
     List<TalonConfiguration> talonConfigurations = new ArrayList<>();
     List<Toml> talonConfigTables = settings.getTables(TALONS);
     if (talonConfigTables.size() == 0) logger.warn("no TalonSRX configurations available");
@@ -51,6 +56,7 @@ public class Talons {
       logger.debug("added '{}' for TalonSRX ids: {}", config.getName(), config.getTalonIds());
     }
 
+    Errors.setCount(0);
     for (TalonConfiguration config : talonConfigurations) {
       for (Integer id : config.getTalonIds()) {
         if (talons.containsKey(id)) {
@@ -62,6 +68,8 @@ public class Talons {
         talons.put(id, talon);
       }
     }
+    int errorCount = Errors.getCount();
+    if (errorCount > 0) logger.error("TalonSRX configuration error count = {}", errorCount);
   }
 
   @SuppressWarnings("unused")
