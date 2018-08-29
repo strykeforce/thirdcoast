@@ -3,18 +3,22 @@ package org.strykeforce.thirdcoast.telemetry.grapher;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.JsonWriter;
 import com.squareup.moshi.Moshi;
+import edu.wpi.first.wpilibj.command.Subsystem;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.DoubleSupplier;
 import okio.BufferedSink;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.telemetry.Inventory;
 import org.strykeforce.thirdcoast.telemetry.item.Item;
 
 /** Represents a subscription request for streaming data. */
 public class Subscription {
 
+  static final Logger logger = LoggerFactory.getLogger(Subsystem.class);
   private final String client;
   private final List<DoubleSupplier> measurements = new ArrayList<>(16);
   private final List<String> descriptions = new ArrayList<>(16);
@@ -25,7 +29,7 @@ public class Subscription {
     try {
       request = RequestJson.fromJson(requestJson);
     } catch (IOException e) {
-      e.printStackTrace();
+      logger.error("Exception parsing request JSON", e);
     }
 
     for (RequestJson.Item jsonItem : request.subscription) {

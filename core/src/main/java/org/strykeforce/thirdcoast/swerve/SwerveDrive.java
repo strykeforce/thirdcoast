@@ -1,17 +1,16 @@
 package org.strykeforce.thirdcoast.swerve;
 
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.kauailabs.navx.frc.AHRS;
 import com.moandjiezana.toml.Toml;
 import edu.wpi.first.wpilibj.Preferences;
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.strykeforce.thirdcoast.talon.Errors;
 import org.strykeforce.thirdcoast.talon.TalonConfiguration;
-import org.strykeforce.thirdcoast.telemetry.TelemetryService;
-import org.strykeforce.thirdcoast.telemetry.item.TalonItem;
 import org.strykeforce.thirdcoast.util.Settings;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 /**
  * Control a Third Coast swerve drive.
@@ -33,7 +32,8 @@ import org.strykeforce.thirdcoast.util.Settings;
 public class SwerveDrive {
 
   private static final Logger logger = LoggerFactory.getLogger(SwerveDrive.class);
-  private static final String TABLE = "THIRDCOAST.SWERVE";
+  private static final String SWERVE_TABLE = "THIRDCOAST.SWERVE";
+  private static final String TALONS_TABLE = "THIRDCOAST.TALONS";
   private static final int WHEEL_COUNT = 4;
   final AHRS gyro;
   private final double kLengthComponent;
@@ -49,8 +49,14 @@ public class SwerveDrive {
     this.wheels = wheels;
     logger.info("field orientation driving is {}", gyro == null ? "DISABLED" : "ENABLED");
 
-    Toml toml = settings.getTable(TABLE);
+    Toml toml = settings.getTable(SWERVE_TABLE);
     boolean enableGyroLogging = toml.getBoolean("enableGyroLogging", true);
+
+    Toml talonsToml = settings.getTable(TALONS_TABLE);
+    final boolean summarizeErrors = talonsToml.getBoolean("summarizeErrors", false);
+    Errors.setSummarized(summarizeErrors);
+    Errors.setCount(0);
+    logger.debug("TalonSRX configuration errors summarized = {}", summarizeErrors);
 
     double length = toml.getDouble("length");
     double width = toml.getDouble("width");
@@ -204,32 +210,15 @@ public class SwerveDrive {
    * @see #saveAzimuthPositions()
    */
   public void zeroAzimuthEncoders() {
+    Errors.setCount(0);
     Preferences prefs = Preferences.getInstance();
     for (int i = 0; i < WHEEL_COUNT; i++) {
       int position = prefs.getInt(getPreferenceKeyForWheel(i), 0);
       wheels[i].setAzimuthZero(position);
       logger.info("azimuth {}: loaded zero = {}", i, position);
     }
-  }
-
-  /**
-   * Register the swerve wheel azimuth and drive {@link com.ctre.phoenix.motorcontrol.can.TalonSRX}
-   * with the Telemetry service for data collection. The Telemetry service will set the Talon status
-   * frame update rates to default values during registration.
-   *
-   * @param telemetryService the active Telemetry service instance created by the robot
-   */
-  public void registerWith(TelemetryService telemetryService) {
-    for (int i = 0; i < WHEEL_COUNT; i++) {
-      TalonSRX t = wheels[i].getAzimuthTalon();
-      if (t != null)
-        telemetryService.register(
-            new TalonItem(t, "Azimuth Talon " + i + " (" + t.getDeviceID() + ")"));
-      t = wheels[i].getDriveTalon();
-      if (t != null)
-        telemetryService.register(
-            new TalonItem(t, "Drive Talon " + i + " (" + t.getDeviceID() + ")"));
-    }
+    int errorCount = Errors.getCount();
+    if (errorCount > 0) logger.error("TalonSRX set azimuth zero error count = {}", errorCount);
   }
 
   /**
