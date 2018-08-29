@@ -3,13 +3,14 @@ package org.strykeforce.thirdcoast.swerve;
 import com.kauailabs.navx.frc.AHRS;
 import com.moandjiezana.toml.Toml;
 import edu.wpi.first.wpilibj.Preferences;
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.talon.Errors;
 import org.strykeforce.thirdcoast.talon.TalonConfiguration;
 import org.strykeforce.thirdcoast.util.Settings;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 /**
  * Control a Third Coast swerve drive.
@@ -219,26 +220,6 @@ public class SwerveDrive {
     int errorCount = Errors.getCount();
     if (errorCount > 0) logger.error("TalonSRX set azimuth zero error count = {}", errorCount);
   }
-
-  /**
-   * Register the swerve wheel azimuth and drive {@link com.ctre.phoenix.motorcontrol.can.TalonSRX}
-   * with the Telemetry service for data collection. The Telemetry service will set the Talon status
-   * frame update rates to default values during registration.
-   *
-   * @param telemetryService the active Telemetry service instance created by the robot
-   */
-  //  public void registerWith(TelemetryService telemetryService) {
-  //    for (int i = 0; i < WHEEL_COUNT; i++) {
-  //      TalonSRX t = wheels[i].getAzimuthTalon();
-  //      if (t != null)
-  //        telemetryService.register(
-  //            new TalonItem(t, "Azimuth Talon " + i + " (" + t.getDeviceID() + ")"));
-  //      t = wheels[i].getDriveTalon();
-  //      if (t != null)
-  //        telemetryService.register(
-  //            new TalonItem(t, "Drive Talon " + i + " (" + t.getDeviceID() + ")"));
-  //    }
-  //  }
 
   /**
    * Returns the four wheels of the swerve drive.
