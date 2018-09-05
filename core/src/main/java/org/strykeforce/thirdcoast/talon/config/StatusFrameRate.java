@@ -102,6 +102,7 @@ public final class StatusFrameRate {
    * @param talon the Talon to registerWith
    */
   public void configure(TalonSRX talon) {
+    logger.warn("changing status frame rates for talon {}", talon.getDeviceID());
     ErrorCode err = talon.setStatusFramePeriod(Status_1_General, general, timeout);
     Errors.check(err, logger);
     err = talon.setStatusFramePeriod(Status_2_Feedback0, feedback, timeout);

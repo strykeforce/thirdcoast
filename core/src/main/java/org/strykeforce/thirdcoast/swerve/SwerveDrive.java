@@ -1,5 +1,6 @@
 package org.strykeforce.thirdcoast.swerve;
 
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.kauailabs.navx.frc.AHRS;
 import com.moandjiezana.toml.Toml;
 import edu.wpi.first.wpilibj.Preferences;
@@ -9,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.talon.TalonConfiguration;
 import org.strykeforce.thirdcoast.telemetry.TelemetryService;
+import org.strykeforce.thirdcoast.telemetry.item.TalonItem;
 import org.strykeforce.thirdcoast.util.Settings;
 
 /**
@@ -36,32 +38,53 @@ public class SwerveDrive {
   final AHRS gyro;
   private final double kLengthComponent;
   private final double kWidthComponent;
+  private final double kGyroRateCorrection;
   private final Wheel[] wheels;
   private final double[] ws = new double[WHEEL_COUNT];
   private final double[] wa = new double[WHEEL_COUNT];
 
   @Inject
   SwerveDrive(AHRS gyro, Wheel[] wheels, Settings settings) {
-    if (gyro != null) {
-      gyro.enableLogging(true);
-    }
     this.gyro = gyro;
     this.wheels = wheels;
     logger.info("field orientation driving is {}", gyro == null ? "DISABLED" : "ENABLED");
 
     Toml toml = settings.getTable(TABLE);
+    boolean enableGyroLogging = toml.getBoolean("enableGyroLogging", true);
+
     double length = toml.getDouble("length");
     double width = toml.getDouble("width");
     double radius = Math.hypot(length, width);
     kLengthComponent = length / radius;
     kWidthComponent = width / radius;
 
+    if (gyro != null && gyro.isConnected()) {
+      gyro.enableLogging(enableGyroLogging);
+      double robotPeriod = toml.getDouble("robotPeriod");
+      double gyroRateCoeff = toml.getDouble("gyroRateCoeff");
+      int rate = gyro.getActualUpdateRate();
+      double gyroPeriod = 1.0 / rate;
+      kGyroRateCorrection = (robotPeriod / gyroPeriod) * gyroRateCoeff;
+      logger.debug("gyro frequency = {} Hz", rate);
+    } else {
+      logger.warn("gyro is missing or not enabled");
+      kGyroRateCorrection = 0;
+    }
+
     logger.debug("length = {}", length);
     logger.debug("width = {}", width);
+    logger.debug("enableGyroLogging = {}", enableGyroLogging);
+    logger.debug("gyroRateCorrection = {}", kGyroRateCorrection);
   }
 
-  static String getPreferenceKeyForWheel(int i) {
-    return String.format("%s/wheel.%d", SwerveDrive.class.getSimpleName(), i);
+  /**
+   * Return key that wheel zero information is stored under in WPI preferences.
+   *
+   * @param wheel the wheel number
+   * @return the String key
+   */
+  public static String getPreferenceKeyForWheel(int wheel) {
+    return String.format("%s/wheel.%d", SwerveDrive.class.getSimpleName(), wheel);
   }
 
   /**
@@ -98,9 +121,14 @@ public class SwerveDrive {
    */
   public void drive(double forward, double strafe, double azimuth) {
 
-    // field-oriented
+    // Use gyro for field-oriented drive. We use getAngle instead of getYaw to enable arbitrary
+    // autonomous starting positions.
     if (gyro != null) {
-      final double angle = gyro.getYaw() * Math.PI / 180.0;
+      double angle = gyro.getAngle();
+      angle += gyro.getRate() * kGyroRateCorrection;
+      angle = Math.IEEEremainder(angle, 360.0);
+
+      angle = Math.toRadians(angle);
       final double temp = forward * Math.cos(angle) + strafe * Math.sin(angle);
       strafe = -forward * Math.sin(angle) + strafe * Math.cos(angle);
       forward = temp;
@@ -192,9 +220,15 @@ public class SwerveDrive {
    * @param telemetryService the active Telemetry service instance created by the robot
    */
   public void registerWith(TelemetryService telemetryService) {
-    for (Wheel wheel : wheels) {
-      telemetryService.register(wheel.getAzimuthTalon());
-      telemetryService.register(wheel.getDriveTalon());
+    for (int i = 0; i < WHEEL_COUNT; i++) {
+      TalonSRX t = wheels[i].getAzimuthTalon();
+      if (t != null)
+        telemetryService.register(
+            new TalonItem(t, "Azimuth Talon " + i + " (" + t.getDeviceID() + ")"));
+      t = wheels[i].getDriveTalon();
+      if (t != null)
+        telemetryService.register(
+            new TalonItem(t, "Drive Talon " + i + " (" + t.getDeviceID() + ")"));
     }
   }
 
@@ -237,6 +271,9 @@ public class SwerveDrive {
   /** Swerve Drive drive mode */
   public enum DriveMode {
     OPEN_LOOP,
-    CLOSED_LOOP
+    CLOSED_LOOP,
+    TELEOP,
+    TRAJECTORY,
+    AZIMUTH
   }
 }

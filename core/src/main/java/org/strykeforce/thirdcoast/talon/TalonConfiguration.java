@@ -44,12 +44,10 @@ public class TalonConfiguration {
             VelocityMeasurement.DEFAULT,
             Output.DEFAULT,
             MotionMagic.DEFAULT);
-    List<ClosedLoopProfile> closedLoopProfiles =
-        Arrays.asList(
-            ClosedLoopProfile.DEFAULT,
-            ClosedLoopProfile.DEFAULT,
-            ClosedLoopProfile.DEFAULT,
-            ClosedLoopProfile.DEFAULT);
+    List<ClosedLoopProfile> closedLoopProfiles = new ArrayList<>(PROFILE_COUNT);
+    for (int i = 0; i < PROFILE_COUNT; i++) {
+      closedLoopProfiles.add(ClosedLoopProfile.DEFAULT);
+    }
     DEFAULT =
         new TalonConfiguration(
             "DEFAULT", configurables, closedLoopProfiles, Collections.emptyList());
@@ -97,7 +95,6 @@ public class TalonConfiguration {
         new TalonConfiguration(name, configurables, closedLoopProfiles, talonIds);
 
     assert (configuration.closedLoopProfile.size() == PROFILE_COUNT);
-
     return configuration;
   }
 
@@ -118,14 +115,15 @@ public class TalonConfiguration {
     }
 
     for (int i = 0; i < profileTables.size(); i++) {
-      logger.debug("adding closed-loop profile for slot {}", i);
-      closedLoopProfiles.add(ClosedLoopProfile.create(profileTables.get(i)));
+      ClosedLoopProfile clp = ClosedLoopProfile.create(profileTables.get(i));
+      closedLoopProfiles.add(clp);
+      logger.debug("profile slot {}: {}", i, clp);
     }
 
     // fill in any remaining with default
     for (int i = 0; i < PROFILE_COUNT - profileTables.size(); i++) {
-      logger.debug("adding DEFAULT profile for slot {}", i);
       closedLoopProfiles.add(ClosedLoopProfile.DEFAULT);
+      logger.debug("profile slot {}: {}", i, ClosedLoopProfile.DEFAULT);
     }
     return closedLoopProfiles;
   }
@@ -281,19 +279,19 @@ public class TalonConfiguration {
     @Override
     public String toString() {
       return "ClosedLoopProfile{"
-          + "pGain="
+          + "P="
           + pGain
-          + ", iGain="
+          + ", I="
           + iGain
-          + ", dGain="
+          + ", D="
           + dGain
-          + ", fGain="
+          + ", F="
           + fGain
           + ", iZone="
           + iZone
-          + ", maxIntegralAccumulator="
+          + ", maxIntAccum="
           + maxIntegralAccumulator
-          + ", allowableClosedLoopError="
+          + ", allowableError="
           + allowableClosedLoopError
           + '}';
     }

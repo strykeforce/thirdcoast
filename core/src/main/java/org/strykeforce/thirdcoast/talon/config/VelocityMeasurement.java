@@ -16,7 +16,7 @@ import org.strykeforce.thirdcoast.talon.Errors;
 public class VelocityMeasurement implements Configurable {
 
   public static final VelocityMeasurement DEFAULT =
-      new VelocityMeasurement(VelocityMeasPeriod.Period_100Ms, 32);
+      new VelocityMeasurement(VelocityMeasPeriod.Period_100Ms, 64);
   private static final Toml DEFAULT_TOML =
       new Toml().read(new TomlWriter().write(VelocityMeasurement.DEFAULT));
   private static final Logger logger = LoggerFactory.getLogger(VelocityMeasurement.class);

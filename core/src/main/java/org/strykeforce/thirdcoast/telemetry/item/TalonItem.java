@@ -21,7 +21,7 @@ public class TalonItem extends AbstractItem {
   public static final Set<Measure> MEASURES =
       Collections.unmodifiableSet(
           EnumSet.of(
-              Measure.SETPOINT,
+              Measure.CLOSED_LOOP_TARGET,
               Measure.OUTPUT_CURRENT,
               Measure.OUTPUT_VOLTAGE,
               Measure.OUTPUT_PERCENT,
@@ -55,10 +55,19 @@ public class TalonItem extends AbstractItem {
   private final TalonSRX talon;
   private final SensorCollection sensorCollection;
 
-  public TalonItem(final TalonSRX talon) {
-    super(TYPE, "Talon " + talon.getDeviceID(), MEASURES);
+  public TalonItem(TalonSRX talon, String description) {
+    super(TYPE, description != null ? description : defaultDescription(talon), MEASURES);
+    assert (talon != null);
     this.talon = talon;
     sensorCollection = talon.getSensorCollection();
+  }
+
+  public TalonItem(TalonSRX talon) {
+    this(talon, defaultDescription(talon));
+  }
+
+  private static String defaultDescription(TalonSRX talon) {
+    return talon != null ? "TalonSRX " + talon.getDeviceID() : "NO TALON";
   }
 
   public TalonSRX getTalon() {
@@ -77,7 +86,7 @@ public class TalonItem extends AbstractItem {
     }
 
     switch (measure) {
-      case SETPOINT:
+      case CLOSED_LOOP_TARGET:
         return () -> talon.getClosedLoopTarget(0);
       case OUTPUT_CURRENT:
         return talon::getOutputCurrent;
@@ -120,7 +129,7 @@ public class TalonItem extends AbstractItem {
       case QUAD_IDX_PIN:
         return () -> sensorCollection.getPinStateQuadIdx() ? TRUE : FALSE;
       case PULSE_WIDTH_POSITION:
-        return sensorCollection::getPulseWidthPosition;
+        return () -> sensorCollection.getPulseWidthPosition() & 0xFFF;
       case PULSE_WIDTH_VELOCITY:
         return sensorCollection::getPulseWidthVelocity;
       case PULSE_WIDTH_RISE_TO_FALL:

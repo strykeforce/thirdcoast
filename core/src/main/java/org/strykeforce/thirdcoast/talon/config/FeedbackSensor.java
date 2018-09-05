@@ -1,5 +1,7 @@
 package org.strykeforce.thirdcoast.talon.config;
 
+import static com.ctre.phoenix.motorcontrol.FeedbackDevice.QuadEncoder;
+
 import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
@@ -15,7 +17,7 @@ import org.strykeforce.thirdcoast.talon.Errors;
 @ParametersAreNonnullByDefault
 public class FeedbackSensor implements Configurable {
 
-  public static final FeedbackSensor DEFAULT = new FeedbackSensor(FeedbackDevice.None, 0, false);
+  public static final FeedbackSensor DEFAULT = new FeedbackSensor(QuadEncoder, 0, false);
   private static final Toml DEFAULT_TOML =
       new Toml().read(new TomlWriter().write(FeedbackSensor.DEFAULT));
 
@@ -43,6 +45,7 @@ public class FeedbackSensor implements Configurable {
     ErrorCode err = talon.configSelectedFeedbackSensor(feedbackDevice, pidIdx, timeout);
     Errors.check(talon, "configSelectedFeedbackSensor", err, logger);
     talon.setSensorPhase(phaseSensor);
+    if (phaseSensor) logger.warn("sensor phase reversed for talon {}", talon.getDeviceID());
   }
 
   @Override

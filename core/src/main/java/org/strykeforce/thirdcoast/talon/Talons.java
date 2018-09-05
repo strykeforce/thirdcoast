@@ -10,11 +10,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.util.Settings;
@@ -31,28 +30,38 @@ public class Talons {
 
   @Inject
   public Talons(Settings settings, Factory factory) {
+    logger.info("loading settings from '{}'", TABLE);
     Toml settingsTable = settings.getTable(TABLE);
+
     final int timeout = settingsTable.getLong("timeout").intValue();
+    logger.debug("TalonSRX configuration timeout = {}", timeout);
 
     List<TalonConfiguration> talonConfigurations = new ArrayList<>();
-    for (Toml toml : settings.getTables(TALONS)) {
+    List<Toml> talonConfigTables = settings.getTables(TALONS);
+    if (talonConfigTables.size() == 0) logger.warn("no TalonSRX configurations available");
+    else
+      logger.info(
+          "loading {} TalonSRX configurations from '{}' table array",
+          talonConfigTables.size(),
+          TALONS);
+
+    for (Toml toml : talonConfigTables) {
       TalonConfiguration config = TalonConfiguration.create(toml);
-      logger.debug("added config '{}' for talons {}", config.getName(), config.getTalonIds());
       talonConfigurations.add(config);
+      logger.debug("added '{}' for TalonSRX ids: {}", config.getName(), config.getTalonIds());
     }
 
-    for (TalonConfiguration configuration : talonConfigurations) {
-      for (Integer id : configuration.getTalonIds()) {
+    for (TalonConfiguration config : talonConfigurations) {
+      for (Integer id : config.getTalonIds()) {
         if (talons.containsKey(id)) {
-          logger.error("Talon {} already configured, skipping", id);
+          logger.error("TalonSRX {} already configured, ignoring '{}'", id, config.getName());
           continue;
         }
         TalonSRX talon = factory.create(id);
-        configuration.configure(talon, timeout);
+        config.configure(talon, timeout);
         talons.put(id, talon);
       }
     }
-    logger.debug("timeout = {}", timeout);
   }
 
   @SuppressWarnings("unused")
@@ -97,14 +106,13 @@ public class Talons {
     logger.debug("Closed Loop Target 1 = {}", talon.getClosedLoopTarget(1));
     logger.debug("Control Mode = {}", talon.getControlMode());
 
-    logger.debug("Error Derivative 0 = {}", talon.getErrorDerivative(0));
-    logger.debug("Error Derivative 1 = {}", talon.getErrorDerivative(1));
-
-    logger.debug("Active Trajectory Heading = {}", talon.getActiveTrajectoryHeading());
-    logger.debug("Active Trajectory Position = {}", talon.getActiveTrajectoryPosition());
-    logger.debug("Active Trajectory Velocity = {}", talon.getActiveTrajectoryVelocity());
-    logger.debug("Base ID = {}", talon.getBaseID());
-    logger.debug("Bus Voltage = {}", talon.getBusVoltage());
+    //    logger.debug("Error Derivative 0 = {}", talon.getErrorDerivative(0));
+    //    logger.debug("Error Derivative 1 = {}", talon.getErrorDerivative(1));
+    //    logger.debug("Active Trajectory Heading = {}", talon.getActiveTrajectoryHeading());
+    //    logger.debug("Active Trajectory Position = {}", talon.getActiveTrajectoryPosition());
+    //    logger.debug("Active Trajectory Velocity = {}", talon.getActiveTrajectoryVelocity());
+    //    logger.debug("Base ID = {}", talon.getBaseID());
+    //    logger.debug("Bus Voltage = {}", talon.getBusVoltage());
 
     Faults faults = new Faults();
     talon.getFaults(faults);
@@ -154,12 +162,21 @@ public class Talons {
    * @param id the device ID of the TalonSRX to create
    * @return the TalonSRX
    */
-  @NotNull
   public TalonSRX getTalon(int id) {
     if (!talons.containsKey(id)) {
-      throw new NoSuchElementException("Talon " + id);
+      logger.error("TalonSRX {} not found", id);
     }
     return talons.get(id);
+  }
+
+  /**
+   * Convenience method to get ordered list of {@link TalonSRX}.
+   *
+   * @param ids List of TalonSRX ids
+   * @return List of TalonSRX objects
+   */
+  public List<TalonSRX> getTalons(List<? extends Integer> ids) {
+    return ids.stream().map(this::getTalon).collect(Collectors.toList());
   }
 
   static class Factory {

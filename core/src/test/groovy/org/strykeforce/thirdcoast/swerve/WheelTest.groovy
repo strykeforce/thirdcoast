@@ -1,18 +1,17 @@
 package org.strykeforce.thirdcoast.swerve
 
-import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.SensorCollection
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import org.strykeforce.thirdcoast.util.Settings
 import spock.lang.Specification
 
 import static com.ctre.phoenix.motorcontrol.ControlMode.*
-import static org.strykeforce.thirdcoast.swerve.SwerveDrive.DriveMode.CLOSED_LOOP
+import static org.strykeforce.thirdcoast.swerve.SwerveDrive.DriveMode.TRAJECTORY
 
 class WheelTest extends Specification {
 
-    static final EPSILON = 1e-12
-    static final ROT = 4096
+    static final EPSILON = 1e-12d
+    static final ROT = 4096d
 
     def azimuth = Mock(TalonSRX)
     def drive = Mock(TalonSRX)
@@ -22,15 +21,11 @@ class WheelTest extends Specification {
     //
     def "defaults are configured"() {
         when:
-        def wheel = new Wheel(new Settings(), azimuth, drive)
+        def wheel = new DefaultWheel(new Settings(), azimuth, drive)
 
         then:
         with(wheel) {
-            ticksPerRevolution == 4096
             driveSetpointMax == 0
-            azimuthControlMode == MotionMagic
-            driveOpenLoopControlMode == PercentOutput
-            driveClosedLoopControlMode == Velocity
         }
     }
 
@@ -40,16 +35,12 @@ class WheelTest extends Specification {
         def toml = "[THIRDCOAST.WHEEL]\ndriveSetpointMax = 2767"
 
         when:
-        def wheel = new Wheel(new Settings(toml), azimuth, drive)
+        def wheel = new DefaultWheel(new Settings(toml), azimuth, drive)
 
         then:
         with(wheel) {
             getDriveSetpointMax() == 2767
             // defaults
-            getTicksPerRevolution() == 4096
-            getAzimuthControlMode() == MotionMagic
-            getDriveOpenLoopControlMode() == PercentOutput
-            getDriveClosedLoopControlMode() == Velocity
         }
     }
 
@@ -63,7 +54,7 @@ class WheelTest extends Specification {
         sensorCollection.getPulseWidthPosition() >> 0x1000
 
         when:
-        def wheel = new Wheel(new Settings(), azimuth, drive)
+        def wheel = new DefaultWheel(new Settings(), azimuth, drive)
 
         then:
         wheel.azimuthAbsolutePosition == 0
@@ -81,12 +72,14 @@ class WheelTest extends Specification {
     def "azimuth changes are optimized"() {
         when:
         azimuth.getSelectedSensorPosition(0) >> start_position * ROT
-        def wheel = new Wheel(new Settings(), azimuth, drive)
+        def wheel = new DefaultWheel(new Settings(), azimuth, drive)
         wheel.set(setpoint, 1d)
 
         then:
-        Math.abs(wheel.azimuthSetpoint - end_position * ROT) < EPSILON
-        wheel.isDriveReversed() == is_reversed
+        1 * azimuth.set(MotionMagic, {
+            Math.abs(it - end_position * ROT) < EPSILON
+        })
+        1 * drive.set(PercentOutput, is_reversed ? -1d : 1d)
 
         where:
         start_position | setpoint || end_position | is_reversed
@@ -133,70 +126,31 @@ class WheelTest extends Specification {
 
     def "drive output is scaled"() {
         when:
-        def tomlStr = "[THIRDCOAST.WHEEL]\ndriveSetpointMax=2767"
-        def wheel = new Wheel(new Settings(tomlStr), azimuth, drive)
-        wheel.setDriveMode(CLOSED_LOOP)
-        wheel.set(0, 1)
+        def tomlStr = "[THIRDCOAST.WHEEL]\ndriveSetpointMax=10_000"
+        def wheel = new DefaultWheel(new Settings(tomlStr), azimuth, drive)
+        wheel.setDriveMode(TRAJECTORY)
+        wheel.set(0, setpoint)
 
         then:
-        1 * azimuth.set(MotionMagic, 0.0d)
-        1 * drive.set(Velocity, 2767.0d)
-    }
-
-    // check some wheel-related math
-    def "calculates error between current azimuth and setpoint"() {
-        expect:
-        Math.abs(Math.IEEEremainder(setpoint * ROT - position * ROT, ROT) - error * ROT) < EPSILON
+        1 * drive.set(Velocity, output)
 
         where:
-        position | setpoint || error
-        0        | 0        || 0
-        0.25     | 0.25     || 0
-        0.25     | 0.5      || 0.25
-        0.25     | -0.25    || -0.5
-        0.25     | -0.5     || 0.25
-        -0.4     | 0.4      || -0.2
-        0.5      | -0.5     || 0
-        -0.5     | 0.5      || 0
-        -0.01    | 0.01     || 0.02
-        -0.4     | 0.2      || -0.4
-        -2.4     | 0.2      || -0.4
+        setpoint || output
+        1        || 10_000.0
+        -1       || -10_000.0
+        0        || 0
+        0.5      || 5_000.0
+        -0.5     || -5_000.0
     }
 
-    def "calculate minimal azimuth error with drive direction"() {
+
+    def "neutral drive output leaves azimuths in previous position"() {
         when:
-        def error = Math.IEEEremainder(setpoint * ROT - position * ROT, ROT)
-        def isReversed = false
-        if (Math.abs(error) > 0.25 * ROT) {
-            error -= Math.copySign(0.5 * ROT, error)
-            isReversed = true
-        }
+        def wheel = new DefaultWheel(new Settings(), azimuth, drive)
+        wheel.set(0, 0)
 
         then:
-        Math.abs(error - expected_error * ROT) < EPSILON
-        isReversed == expected_reverse
-        Math.abs(position * ROT + error - expected_position * ROT) < EPSILON
-
-        where:
-        setpoint | position || expected_error | expected_position | expected_reverse
-        0        | 0        || 0              | 0                 | false
-        0.25     | 0.5      || -0.25          | 0.25              | false
-        -0.5     | -0.25    || -0.25          | -0.5              | false
-        0.25     | -0.1     || -0.15          | -0.25             | true
-        -0.5     | 0.5      || 0              | 0.5               | false
-        -0.5     | 0.5      || 0              | 0.5               | false
-        0.49     | -0.5     || -0.01          | -0.51             | false
-        0        | 1.0      || 0              | 1.0               | false
-        0        | 1.1      || -0.1           | 1.0               | false
-        0.4      | -2.4     || -0.2           | -2.6              | false
-        0        | -0.4     || -0.1           | -0.5              | true
-        0.2      | -0.4     || 0.1            | -0.3              | true
-        0.2      | -2.4     || 0.1            | -2.3              | true
-        -0.2     | 0.4      || -0.1           | 0.3               | true
-        -0.2     | 2.4      || -0.1           | 2.3               | true
-        0.6      | 0        || 0.1            | 0.1               | true
-        -1.0     | 0.5      || 0.0            | 0.5               | true
-        1.5      | 0.5      || 0.0            | 0.5               | false
-
+        0 * azimuth.set(_)
+        1 * drive.set(PercentOutput, 0)
     }
 }

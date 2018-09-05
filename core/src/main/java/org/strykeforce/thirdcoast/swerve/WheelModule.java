@@ -17,10 +17,10 @@ public abstract class WheelModule {
   @Singleton
   public static Wheel[] provideWheels(Talons talons, Settings settings) {
     return new Wheel[] {
-      new Wheel(talons, settings, 0), // front left
-      new Wheel(talons, settings, 1), // front right
-      new Wheel(talons, settings, 2), // rear left
-      new Wheel(talons, settings, 3) // rear right
+      new DefaultWheel(talons, settings, 0), // front left
+      new DefaultWheel(talons, settings, 1), // front right
+      new DefaultWheel(talons, settings, 2), // rear left
+      new DefaultWheel(talons, settings, 3) // rear right
     };
   }
 }

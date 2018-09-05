@@ -1,6 +1,5 @@
 plugins {
     id 'groovy'
-//    id 'maven-publish'
     id 'maven'
     id "com.jfrog.bintray" version "1.8.0"
 }
@@ -24,8 +23,8 @@ dependencies {
     compileOnly libs.jsr305
     compileOnly libs.autoFactory
 
-    apt libs.daggerCompiler
-    apt libs.autoFactory
+    annotationProcessor libs.daggerCompiler
+    annotationProcessor libs.autoFactory
 
     testCompile libs.spock
     testCompile libs.logback

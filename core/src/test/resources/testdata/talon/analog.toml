@@ -29,7 +29,7 @@ talonIds = []
 
 [velocityMeasurement]
   period = "Period_100Ms"
-  window = 32
+  window = 64
 
 [output]
   neutralDeadband = 0.04

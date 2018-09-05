@@ -1,9 +1,9 @@
 package org.strykeforce.thirdcoast.util;
 
 import com.moandjiezana.toml.Toml;
-import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
+import java.net.URL;
 import java.util.Collections;
 import java.util.List;
 import javax.inject.Inject;
@@ -21,16 +21,24 @@ public class Settings {
   private final Toml defaults;
 
   @Inject
-  public Settings(File config) {
+  public Settings(URL config) {
     defaults = defaults();
-    if (Files.notExists(config.toPath())) {
-      logger.warn("{} is missing, using defaults in " + DEFAULTS, config);
-      toml = defaults;
+
+    if (config == null) {
+      logger.warn("Third Coast settings are missing, using defaults");
+      this.toml = defaults;
       return;
     }
 
-    this.toml = new Toml(defaults).read(config);
-    logger.info("reading settings from {}", config);
+    Toml toml = defaults;
+    try {
+      toml = new Toml(defaults).read(config.openStream());
+      logger.info("reading Third Coast settings from '{}'", config);
+    } catch (IOException e) {
+      logger.error("unable to read Third Coast settings from '{}', using defaults", config);
+    }
+
+    this.toml = toml;
   }
 
   public Settings(String tomlString) {
@@ -61,7 +69,7 @@ public class Settings {
 
   public List<Toml> getTables(String key) {
     if (!toml.contains(key)) {
-      logger.error("table with key '{}' not present", key);
+      logger.warn("table array with key '{}' not present", key);
       return Collections.emptyList();
     }
     return toml.getTables(key);

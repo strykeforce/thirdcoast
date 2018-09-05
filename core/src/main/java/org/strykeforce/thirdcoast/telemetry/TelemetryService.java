@@ -80,20 +80,14 @@ public class TelemetryService {
   }
 
   /**
-   * Register a Talon for telemetry sending and set its CAN bus frame rates to default values. If
-   * this Talon is already registered the frame rates are not updated.
+   * Convenience method to register a TalonSRX for telemetry sending.
    *
    * @param talon the TalonSRX to register for data collection
    * @throws IllegalStateException if TelemetryService is running.
    * @see StatusFrameRate
    */
   public void register(TalonSRX talon) {
-    checkNotStarted();
-    if (items.add(new TalonItem(talon))) {
-      logger.info("registered talon {}", talon.getDeviceID());
-      return;
-    }
-    logger.info("talon {} was already registered", talon.getDeviceID());
+    register(new TalonItem(talon));
   }
 
   /**

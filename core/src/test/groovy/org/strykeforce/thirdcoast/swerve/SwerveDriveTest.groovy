@@ -4,8 +4,8 @@ package org.strykeforce.thirdcoast.swerve
 import org.strykeforce.thirdcoast.util.Settings
 import spock.lang.Shared
 
-import static org.strykeforce.thirdcoast.swerve.SwerveDrive.DriveMode.CLOSED_LOOP
-import static org.strykeforce.thirdcoast.swerve.SwerveDrive.DriveMode.OPEN_LOOP
+import static org.strykeforce.thirdcoast.swerve.SwerveDrive.DriveMode.TRAJECTORY
+import static org.strykeforce.thirdcoast.swerve.SwerveDrive.DriveMode.TELEOP
 
 class SwerveDriveTest extends spock.lang.Specification {
 
@@ -44,19 +44,19 @@ class SwerveDriveTest extends spock.lang.Specification {
 
         when:
         def swerve = new SwerveDrive(null, wheels, new Settings())
-        swerve.setDriveMode(OPEN_LOOP)
+        swerve.setDriveMode(TELEOP)
 
         then:
         for (int i = 0; i < 4; i++) {
-            1 * wheels[i].setDriveMode(OPEN_LOOP)
+            1 * wheels[i].setDriveMode(TELEOP)
         }
 
         when:
-        swerve.setDriveMode(CLOSED_LOOP)
+        swerve.setDriveMode(TRAJECTORY)
 
         then:
         for (int i = 0; i < 4; i++) {
-            1 * wheels[i].setDriveMode(CLOSED_LOOP)
+            1 * wheels[i].setDriveMode(TRAJECTORY)
         }
     }
 
@@ -106,18 +106,5 @@ class SwerveDriveTest extends spock.lang.Specification {
         i || key
         0 || "SwerveDrive/wheel.0"
         1 || "SwerveDrive/wheel.1"
-    }
-
-    // check some swerve related math
-    def "calculate max of 4 doubles"() {
-        expect:
-        Math.max(Math.max(a, b), Math.max(c, d)) == max
-
-        where:
-        a   | b   | c   | d   || max
-        0.1 | 0.2 | 1.1 | 0.2 || 1.1
-        1.1 | 0.2 | 0.1 | 0.2 || 1.1
-        0.1 | 1.2 | 0.1 | 0.2 || 1.2
-        0.1 | 1.2 | 0.1 | 1.2 || 1.2
     }
 }
