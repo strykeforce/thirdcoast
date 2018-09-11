@@ -18,3 +18,4 @@
 
 [THIRDCOAST.TALONS]
   timeout = 10
+  summarizeErrors = false

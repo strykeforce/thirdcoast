@@ -1,18 +1,17 @@
 package org.strykeforce.thirdcoast.telemetry;
 
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Optional;
-import java.util.Set;
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.strykeforce.thirdcoast.swerve.SwerveDrive;
+import org.strykeforce.thirdcoast.swerve.Wheel;
 import org.strykeforce.thirdcoast.talon.config.StatusFrameRate;
 import org.strykeforce.thirdcoast.telemetry.item.Item;
 import org.strykeforce.thirdcoast.telemetry.item.TalonItem;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
+import java.util.*;
 
 /**
  * The Telemetry service registers {@link Item} instances for data collection and controls the
@@ -80,17 +79,6 @@ public class TelemetryService {
   }
 
   /**
-   * Convenience method to register a TalonSRX for telemetry sending.
-   *
-   * @param talon the TalonSRX to register for data collection
-   * @throws IllegalStateException if TelemetryService is running.
-   * @see StatusFrameRate
-   */
-  public void register(TalonSRX talon) {
-    register(new TalonItem(talon));
-  }
-
-  /**
    * Registers an Item for telemetry sending.
    *
    * @param item the Item to register for data collection
@@ -115,6 +103,31 @@ public class TelemetryService {
     checkNotStarted();
     items.addAll(collection);
     logger.info("registered all: {}", collection);
+  }
+
+  /**
+   * Convenience method to register a {@code TalonSRX} for telemetry sending.
+   *
+   * @param talon the TalonSRX to register for data collection
+   * @throws IllegalStateException if TelemetryService is running.
+   * @see StatusFrameRate
+   */
+  public void register(TalonSRX talon) {
+    register(new TalonItem(talon));
+  }
+
+  /**
+   * Convenience method to register a {@code SwerveDrive} for telemetry sending.
+   *
+   * @param swerveDrive the SwerveDrive to register for data collection
+   * @throws IllegalStateException if TelemetryService is running.
+   * @see StatusFrameRate
+   */
+  public void register(SwerveDrive swerveDrive) {
+    for (Wheel wheel : swerveDrive.getWheels()) {
+      register(new TalonItem(wheel.getAzimuthTalon()));
+      register(new TalonItem(wheel.getDriveTalon()));
+    }
   }
 
   /**

@@ -1,62 +1,72 @@
-plugins {
-    id "java"
-    id "idea"
-    id "net.ltgt.apt-idea" version "0.15"
-    id "jaci.openrio.gradle.GradleRIO" version "2018.03.06" apply false
-    id "net.ltgt.errorprone" version "0.0.13"
-    id "com.diffplug.gradle.spotless" version "3.10.0"
-}
-
-description = 'Third Coast Framework'
-
-ext {
-    libs = [
-            jetbrainsAnnotations: 'org.jetbrains:annotations:15.0',
-            jsr305              : 'com.google.code.findbugs:jsr305:3.0.2',
-            bytebuddy           : 'net.bytebuddy:byte-buddy:1.7.10',
-            dagger              : 'com.google.dagger:dagger:2.14.1',
-            daggerCompiler      : 'com.google.dagger:dagger-compiler:2.14.1',
-            logback             : 'ch.qos.logback:logback-classic:1.2.3',
-            moshi               : 'com.squareup.moshi:moshi:1.5.0',
-            nanohttpd           : 'org.nanohttpd:nanohttpd:2.3.2-SNAPSHOT',
-            objenesis           : 'org.objenesis:objenesis:2.6',
-            slf4j               : 'org.slf4j:slf4j-api:1.7.25',
-            spock               : 'org.spockframework:spock-core:1.1-groovy-2.4',
-            toml4j              : 'com.moandjiezana.toml:toml4j:0.7.2',
-            autoFactory         : 'com.google.auto.factory:auto-factory:1.0-beta5',
-    ]
-    specificationTitle = 'Third Coast Library'
-    specificationVersion = '18.5.0'
+buildscript {
+    repositories {
+        jcenter()
+        maven { url "https://plugins.gradle.org/m2/" }
+    }
+    dependencies {
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.+'
+        classpath "gradle.plugin.jaci.openrio.gradle:GradleRIO:2018.03.06"
+        classpath "net.ltgt.gradle:gradle-apt-plugin:0.18"
+        classpath "com.diffplug.spotless:spotless-plugin-gradle:3.14.0"
+        classpath "net.ltgt.gradle:gradle-errorprone-plugin:0.0.16"
+    }
 }
 
 subprojects {
-    apply plugin: 'java'
+    group = 'org.strykeforce.thirdcoast'
+    version = '18.6.0'
+
+    apply plugin: 'java-library'
+    apply plugin: 'groovy'
     apply plugin: 'jaci.openrio.gradle.GradleRIO'
     apply plugin: 'net.ltgt.apt-idea'
+    apply plugin: 'com.diffplug.gradle.spotless'
     apply plugin: 'net.ltgt.errorprone'
 
     repositories {
         jcenter()
-        maven { url 'https://oss.sonatype.org/content/repositories/snapshots' } // nanohttpd
     }
-}
 
-spotless {
-    java {
-        googleJavaFormat()
-        target '**/*.java'
+    dependencies {
+        implementation wpilib()
+        implementation ctre()
+        implementation navx()
+        implementation 'com.moandjiezana.toml:toml4j:0.7.2'
+        implementation 'org.slf4j:slf4j-api:1.7.25'
+        implementation 'com.squareup.moshi:moshi:1.5.0' // TODO: move to telemetry
+
+        implementation 'com.google.dagger:dagger:2.14.1'
+        annotationProcessor 'com.google.dagger:dagger-compiler:2.14.1'
+
+        compileOnly 'com.google.auto.factory:auto-factory:1.0-beta5'
+        annotationProcessor 'com.google.auto.factory:auto-factory:1.0-beta5'
+
+        compileOnly 'org.jetbrains:annotations:15.0'
+        compileOnly 'com.google.code.findbugs:jsr305:3.0.2'
+
+        errorprone 'com.google.errorprone:error_prone_core:2.3.1'
+
+        testImplementation 'org.spockframework:spock-core:1.1-groovy-2.4'
+        testImplementation 'ch.qos.logback:logback-classic:1.2.3'
+        testRuntime 'net.bytebuddy:byte-buddy:1.7.10'
+        testRuntime 'org.objenesis:objenesis:2.6'
     }
-}
 
-idea {
-    module {
-        apt {
-            addGeneratedSourcesDirs = true
-            addAptDependencies = false
+    idea {
+        module {
+            downloadJavadoc = true
+            downloadSources = true
+        }
+    }
+
+    spotless {
+        java {
+            googleJavaFormat()
+            target '**/*.java'
         }
     }
 }
 
-task wrapper(type: Wrapper) {
-    gradleVersion = '4.2.1'
+wrapper {
+    gradleVersion = '4.9'
 }
