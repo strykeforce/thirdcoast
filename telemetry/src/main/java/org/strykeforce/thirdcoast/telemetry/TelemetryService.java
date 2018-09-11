@@ -1,6 +1,9 @@
 package org.strykeforce.thirdcoast.telemetry;
 
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import java.util.*;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.swerve.SwerveDrive;
@@ -8,10 +11,6 @@ import org.strykeforce.thirdcoast.swerve.Wheel;
 import org.strykeforce.thirdcoast.talon.config.StatusFrameRate;
 import org.strykeforce.thirdcoast.telemetry.item.Item;
 import org.strykeforce.thirdcoast.telemetry.item.TalonItem;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import java.util.*;
 
 /**
  * The Telemetry service registers {@link Item} instances for data collection and controls the
