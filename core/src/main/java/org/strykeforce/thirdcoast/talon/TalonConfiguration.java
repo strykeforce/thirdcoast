@@ -4,24 +4,13 @@ import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.moandjiezana.toml.Toml;
 import com.moandjiezana.toml.TomlWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.strykeforce.thirdcoast.talon.config.Configurable;
-import org.strykeforce.thirdcoast.talon.config.CurrentLimits;
-import org.strykeforce.thirdcoast.talon.config.FeedbackSensor;
-import org.strykeforce.thirdcoast.talon.config.LimitSwitches;
-import org.strykeforce.thirdcoast.talon.config.MotionMagic;
-import org.strykeforce.thirdcoast.talon.config.Output;
-import org.strykeforce.thirdcoast.talon.config.SoftLimits;
-import org.strykeforce.thirdcoast.talon.config.VelocityMeasurement;
+import org.strykeforce.thirdcoast.talon.config.*;
 
 /**
  * Represents a Talon configuration.
@@ -70,9 +59,8 @@ public class TalonConfiguration {
   }
 
   public static TalonConfiguration create(@Nullable Toml toml) {
-    if (toml == null) {
-      return DEFAULT;
-    }
+    if (toml == null) return DEFAULT;
+
     String name = toml.getString("name", DEFAULT.name);
     List<Integer> talonIds = new ArrayList<>();
     for (Long l : toml.getList("talonIds", Collections.<Long>emptyList())) {
@@ -96,6 +84,33 @@ public class TalonConfiguration {
 
     assert (configuration.closedLoopProfile.size() == PROFILE_COUNT);
     return configuration;
+  }
+
+  @NotNull
+  public static Map<String, Object> dump(@Nullable Toml toml) {
+    //    if (toml == null) return DEFAULT;
+
+    Map<String, Object> dump = new LinkedHashMap<>();
+    String name = toml.getString("name", DEFAULT.name);
+    dump.put("name", name);
+    List<Integer> talonIds = new ArrayList<>();
+    for (Long l : toml.getList("talonIds", Collections.<Long>emptyList())) {
+      talonIds.add(l.intValue());
+    }
+    dump.put("talonIds", talonIds);
+    List<ClosedLoopProfile> closedLoopProfiles = getClosedLoopProfiles(toml, name);
+    dump.put("closedLoopProfile", closedLoopProfiles);
+    dump.put("motionMagic", MotionMagic.create(toml.getTable("motionMagic")));
+    dump.put(
+        "selectedFeedbackSensor", FeedbackSensor.create(toml.getTable("selectedFeedbackSensor")));
+    dump.put("limitSwitch", LimitSwitches.create(toml.getTable("limitSwitch")));
+    dump.put("softLimit", SoftLimits.create(toml.getTable("softLimit")));
+    dump.put("currentLimit", CurrentLimits.create(toml.getTable("currentLimit")));
+    dump.put(
+        "velocityMeasurement", VelocityMeasurement.create(toml.getTable("velocityMeasurement")));
+    dump.put("output", Output.create(toml.getTable("output")));
+
+    return dump;
   }
 
   @NotNull
