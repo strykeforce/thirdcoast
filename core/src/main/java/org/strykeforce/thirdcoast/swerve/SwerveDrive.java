@@ -3,14 +3,13 @@ package org.strykeforce.thirdcoast.swerve;
 import com.kauailabs.navx.frc.AHRS;
 import com.moandjiezana.toml.Toml;
 import edu.wpi.first.wpilibj.Preferences;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.talon.Errors;
 import org.strykeforce.thirdcoast.talon.TalonConfiguration;
 import org.strykeforce.thirdcoast.util.Settings;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
 
 /**
  * Control a Third Coast swerve drive.
