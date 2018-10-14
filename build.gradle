@@ -14,7 +14,7 @@ buildscript {
 
 subprojects {
     group = 'org.strykeforce.thirdcoast'
-    version = '18.6.0'
+    version = '18.7.0'
 
     apply plugin: 'java-library'
     apply plugin: 'groovy'

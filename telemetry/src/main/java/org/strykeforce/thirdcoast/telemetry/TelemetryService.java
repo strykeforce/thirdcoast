@@ -2,8 +2,7 @@ package org.strykeforce.thirdcoast.telemetry;
 
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import java.util.*;
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import java.util.function.Function;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.swerve.SwerveDrive;
@@ -17,7 +16,6 @@ import org.strykeforce.thirdcoast.telemetry.item.TalonItem;
  * starting and stopping of the service. When active, the services listens for incoming config
  * messages via a HTTP REST service and sends data over UDP.
  */
-@Singleton
 public class TelemetryService {
 
   static final Logger logger = LoggerFactory.getLogger(TelemetryService.class);
@@ -27,7 +25,7 @@ public class TelemetryService {
   // this list as the inventory id.
 
   private final Set<Item> items = new LinkedHashSet<>();
-  private final TelemetryControllerFactory telemetryControllerFactory;
+  private final Function<Inventory, TelemetryController> telemetryControllerFactory;
   private TelemetryController telemetryController;
   private boolean running = false;
 
@@ -36,8 +34,7 @@ public class TelemetryService {
    *
    * @param telemetryControllerFactory telemetry controller factory
    */
-  @Inject
-  public TelemetryService(TelemetryControllerFactory telemetryControllerFactory) {
+  public TelemetryService(Function<Inventory, TelemetryController> telemetryControllerFactory) {
     this.telemetryControllerFactory = telemetryControllerFactory;
     logger.debug("Telemetry service created");
   }
@@ -48,7 +45,7 @@ public class TelemetryService {
       logger.info("already started");
       return;
     }
-    telemetryController = telemetryControllerFactory.create(new RobotInventory(items));
+    telemetryController = telemetryControllerFactory.apply(new RobotInventory(items));
     telemetryController.start();
     logger.info("started");
     running = true;
