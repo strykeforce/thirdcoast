@@ -5,6 +5,7 @@ bintray {
     key = System.getenv('BINTRAY_API_KEY')
 
     pkg {
+        userOrg = 'strykeforce'
         websiteUrl = githubUrl
         issueTrackerUrl = "$githubUrl/issues"
         vcsUrl = githubUrl
