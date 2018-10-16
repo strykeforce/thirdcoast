@@ -4,6 +4,8 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX
 import org.strykeforce.thirdcoast.telemetry.item.TalonItem
 import spock.lang.Specification
 
+import java.util.function.Function
+
 class TelemetryServiceTest extends Specification {
 
     def "prevent multiple copies and sort by type and deviceId"() {
@@ -14,7 +16,8 @@ class TelemetryServiceTest extends Specification {
         talon2.getDeviceID() >> 2
         def talon3 = Stub(WPI_TalonSRX)
         talon3.getDeviceID() >> 3
-        def telemetry = new TelemetryService()
+        Function<Inventory, TelemetryController> telemetryControllerFactory = Stub()
+        def telemetry = new TelemetryService(telemetryControllerFactory)
 
         when:
         telemetry.register(talon2)
