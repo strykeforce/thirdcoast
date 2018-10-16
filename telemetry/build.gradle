@@ -33,7 +33,7 @@ dependencies {
     // telemetry
     implementation 'org.nanohttpd:nanohttpd:2.3.2-SNAPSHOT'
     implementation 'com.squareup.moshi:moshi:1.5.0'
-    implementation project(':core')
+    implementation project(':swerve')
 
     // Logging
     compile 'io.github.microutils:kotlin-logging:1.5.9'
