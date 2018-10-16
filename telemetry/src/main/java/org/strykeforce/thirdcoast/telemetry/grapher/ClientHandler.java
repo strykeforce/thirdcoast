@@ -10,8 +10,6 @@ import java.net.SocketAddress;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
-import javax.inject.Inject;
-import javax.inject.Named;
 import okio.Buffer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,8 +24,7 @@ public class ClientHandler {
   private SocketAddress socketAddress;
   private int count = 0;
 
-  @Inject
-  ClientHandler(@Named("client") int port, DatagramSocket socket) {
+  public ClientHandler(int port, DatagramSocket socket) {
     this.port = port;
     this.socket = socket;
   }

@@ -1,7 +1,5 @@
 package org.strykeforce.thirdcoast.telemetry;
 
-import com.google.auto.factory.AutoFactory;
-import com.google.auto.factory.Provided;
 import com.squareup.moshi.JsonWriter;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
@@ -9,15 +7,8 @@ import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import javax.annotation.ParametersAreNonnullByDefault;
-import javax.inject.Inject;
-import javax.inject.Named;
 import okio.Buffer;
 import org.jetbrains.annotations.NotNull;
 import org.nanohttpd.protocols.http.NanoHTTPD;
@@ -31,7 +22,6 @@ import org.strykeforce.thirdcoast.telemetry.grapher.Subscription;
 
 /** Provides a web service to config telemetry. */
 @ParametersAreNonnullByDefault
-@AutoFactory
 public class TelemetryController extends NanoHTTPD {
 
   static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -40,11 +30,10 @@ public class TelemetryController extends NanoHTTPD {
   private final ClientHandler clientHandler;
   private final int port;
 
-  @Inject
   public TelemetryController(
-      final Inventory inventory,
-      @Provided final ClientHandler clientHandler,
-      @Provided final @Named("server") int port) {
+      @NotNull final Inventory inventory,
+      @NotNull final ClientHandler clientHandler,
+      final int port) {
     super(port);
     this.clientHandler = clientHandler;
     this.port = port;
