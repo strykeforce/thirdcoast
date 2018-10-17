@@ -44,8 +44,12 @@ dependencies {
 task dokkaJavadoc(type: org.jetbrains.dokka.gradle.DokkaTask) {
     outputFormat = 'javadoc'
     outputDirectory = javadoc.destinationDir
-    inputs.dir 'src/main/kotlin'
+    jdkVersion = 8
+    reportUndocumented = false
+    externalDocumentationLink { url = new URL("http://first.wpi.edu/FRC/roborio/release/docs/java/") }
+    externalDocumentationLink { url = new URL("http://www.ctr-electronics.com/downloads/api/java/html/") }
 }
+
 
 task javadocJar(type: Jar, dependsOn: dokkaJavadoc) {
     classifier = 'javadoc'

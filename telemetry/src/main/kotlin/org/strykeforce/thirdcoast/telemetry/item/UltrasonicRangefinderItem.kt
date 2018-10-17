@@ -8,28 +8,28 @@ import java.util.*
 import java.util.function.DoubleSupplier
 
 class UltrasonicRangefinderItem(canId: Int, private val pwmChannel: PWMChannel) :
-  AbstractItem("sensor", "Ultrasonic Rangefinder ($canId, $pwmChannel)", MEASURES) {
+    AbstractItem("sensor", "Ultrasonic Rangefinder ($canId, $pwmChannel)", MEASURES) {
 
-  private val deviceId: Int = canId * 10 + pwmChannel.value
-  private val canifier: CANifier = CANifier(canId)
-  private val dutyCycleAndPeriod = DoubleArray(2)
+    private val deviceId: Int = canId * 10 + pwmChannel.value
+    private val canifier: CANifier = CANifier(canId)
+    private val dutyCycleAndPeriod = DoubleArray(2)
 
-  override fun deviceId(): Int {
-    return deviceId
-  }
-
-  override fun measurementFor(measure: Measure): DoubleSupplier {
-    if (!MEASURES.contains(measure)) {
-      throw IllegalArgumentException("invalid measure: " + measure.name)
+    override fun deviceId(): Int {
+        return deviceId
     }
-    return {
-      canifier.getPWMInput(pwmChannel, dutyCycleAndPeriod)
-      dutyCycleAndPeriod[0]
-    } as DoubleSupplier
-  }
 
-  companion object {
+    override fun measurementFor(measure: Measure): DoubleSupplier {
+        if (!MEASURES.contains(measure)) {
+            throw IllegalArgumentException("invalid measure: " + measure.name)
+        }
+        return {
+            canifier.getPWMInput(pwmChannel, dutyCycleAndPeriod)
+            dutyCycleAndPeriod[0]
+        } as DoubleSupplier
+    }
 
-    private val MEASURES = Collections.unmodifiableSet(EnumSet.of(VALUE))
-  }
+    companion object {
+
+        private val MEASURES = Collections.unmodifiableSet(EnumSet.of(VALUE))
+    }
 }
