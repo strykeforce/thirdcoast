@@ -7,7 +7,6 @@ import java.util.*
 import java.util.function.DoubleSupplier
 
 private const val TYPE = "digitalOutput"
-private val MEASURES: Set<Measure> = Collections.unmodifiableSet(EnumSet.of(Measure.VALUE))
 
 /** Represents a [DigitalInput] telemetry-enable Item.  */
 class DigitalOutputItem @JvmOverloads constructor(
@@ -57,4 +56,8 @@ class DigitalOutputItem @JvmOverloads constructor(
         return "DigitalInputItem{" + "digitalOutput=" + digitalOutput + "} " + super.toString()
     }
 
+    companion object {
+        @JvmStatic
+        val MEASURES: Set<Measure> = Collections.unmodifiableSet(EnumSet.of(Measure.VALUE))
+    }
 }

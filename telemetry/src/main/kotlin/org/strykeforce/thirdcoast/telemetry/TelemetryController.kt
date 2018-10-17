@@ -12,7 +12,6 @@ import org.strykeforce.thirdcoast.telemetry.grapher.Subscription
 import java.io.IOException
 import java.net.Inet4Address
 import java.net.NetworkInterface
-import java.net.SocketException
 import java.util.*
 
 private const val JSON = "application/json"
@@ -28,27 +27,18 @@ class TelemetryController(
     private val inventoryEndpoints: List<String>
         get() {
             val endpoints = ArrayList<String>(2)
-            try {
-                val nets = NetworkInterface.getNetworkInterfaces()
-                for (netint in Collections.list(nets)) {
-                    val inetAddresses = netint.inetAddresses
-                    for (addr in Collections.list(inetAddresses)) {
-                        if (!addr.isLinkLocalAddress && addr.javaClass == Inet4Address::class.java) {
-                            endpoints.add(
-                                String.format("http://%s:%d/v1/grapher/inventory", addr.hostAddress, port)
-                            )
-                        }
-                    }
+            val nets = NetworkInterface.getNetworkInterfaces()
+            for (netint in Collections.list(nets)) {
+                val inetAddresses = netint.inetAddresses
+                for (addr in Collections.list(inetAddresses)) {
+                    if (!addr.isLinkLocalAddress && addr.javaClass == Inet4Address::class.java)
+                        endpoints += "http://${addr.hostAddress}:$port/v1/grapher/inventory"
                 }
-            } catch (e: SocketException) {
-                logger.error("Exception looking up network interfaces", e)
             }
-
             return endpoints
         }
 
     init {
-
         addHTTPInterceptor { session ->
             if (session.method == Method.GET && session.uri.equals(
                     "/v1/grapher/inventory",
@@ -56,14 +46,9 @@ class TelemetryController(
                 )
             ) {
                 val buffer = Buffer()
-                try {
-                    inventory.writeInventory(buffer)
-                } catch (e: IOException) {
-                    logger.error("Exception creating grapher inventory JSON", e)
-                    return@addHTTPInterceptor errorResponseFor(e)
-                }
+                inventory.writeInventory(buffer)
 
-                logger.debug("Inventory requested from {}", session.remoteIpAddress)
+                logger.debug { "inventory requested from ${session.remoteIpAddress}" }
                 return@addHTTPInterceptor Response.newFixedLengthResponse(Status.OK, JSON, buffer.readByteArray())
             }
             null
@@ -84,7 +69,7 @@ class TelemetryController(
                     sub.toJson(buffer)
                     return@addHTTPInterceptor Response.newFixedLengthResponse(Status.OK, JSON, buffer.readByteArray())
                 } catch (t: Throwable) {
-                    logger.error("Exception starting grapher", t)
+                    logger.error("couldn't start grapher", t)
                     return@addHTTPInterceptor errorResponseFor(t)
                 }
 
@@ -102,7 +87,7 @@ class TelemetryController(
                     clientHandler.shutdown()
                     return@addHTTPInterceptor Response.newFixedLengthResponse(Status.NO_CONTENT, JSON, "")
                 } catch (t: Throwable) {
-                    logger.error("Exception stopping grapher", t)
+                    logger.error("couldn't stop grapher", t)
                     return@addHTTPInterceptor errorResponseFor(t)
                 }
 
@@ -117,7 +102,7 @@ class TelemetryController(
                     inventory.toJson(buffer)
                     return@addHTTPInterceptor Response.newFixedLengthResponse(Status.OK, JSON, buffer.readByteArray())
                 } catch (t: Throwable) {
-                    logger.error("Exception creating detail inventory JSON", t)
+                    logger.error("couldn't create detail inventory JSON", t)
                     return@addHTTPInterceptor errorResponseFor(t)
                 }
 
@@ -131,11 +116,11 @@ class TelemetryController(
         try {
             start(NanoHTTPD.SOCKET_READ_TIMEOUT, true)
         } catch (e: IOException) {
-            logger.error("Couldn't start server", e)
+            logger.error("couldn't start web service", e)
         }
 
         if (logger.isInfoEnabled) {
-            logger.info("Started web server")
+            logger.info("started web service")
             for (end in inventoryEndpoints) {
                 logger.info(end)
             }
@@ -146,7 +131,7 @@ class TelemetryController(
     fun shutdown() {
         clientHandler.shutdown()
         super.stop()
-        logger.info("Stopped web server")
+        logger.info("stopped web service")
     }
 
     private fun errorResponseFor(e: Throwable): Response {

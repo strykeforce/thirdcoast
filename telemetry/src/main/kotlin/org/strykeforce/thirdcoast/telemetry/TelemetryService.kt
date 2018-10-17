@@ -3,7 +3,6 @@ package org.strykeforce.thirdcoast.telemetry
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import mu.KotlinLogging
 import org.strykeforce.thirdcoast.swerve.SwerveDrive
-import org.strykeforce.thirdcoast.talon.config.StatusFrameRate
 import org.strykeforce.thirdcoast.telemetry.item.Item
 import org.strykeforce.thirdcoast.telemetry.item.TalonItem
 import java.util.*
@@ -32,9 +31,8 @@ class TelemetryService(private val telemetryControllerFactory: Function<Inventor
             logger.info("already started")
             return
         }
-        telemetryController = telemetryControllerFactory.apply(RobotInventory(items))
-        telemetryController!!.start()
-        logger.info("started")
+        telemetryController = telemetryControllerFactory.apply(RobotInventory(items)).also { it.start() }
+        logger.info("started telemetry controller")
         running = true
     }
 
@@ -44,7 +42,7 @@ class TelemetryService(private val telemetryControllerFactory: Function<Inventor
             logger.info("already stopped")
             return
         }
-        telemetryController!!.shutdown()
+        telemetryController?.shutdown()
         telemetryController = null
         logger.info("stopped")
         running = false
@@ -70,7 +68,7 @@ class TelemetryService(private val telemetryControllerFactory: Function<Inventor
     fun register(item: Item) {
         checkNotStarted()
         if (items.add(item)) {
-            logger.info("registered item {}", item.description())
+            logger.info { "registered item ${item.description()}" }
             return
         }
         logger.info { "item ${item.description()} was already registered" }
@@ -99,16 +97,13 @@ class TelemetryService(private val telemetryControllerFactory: Function<Inventor
     }
 
     /**
-     * Convenience method to register a `SwerveDrive` for telemetry sending.
+     * Convenience method to register a [SwerveDrive] for telemetry sending.
      *
-     * @param swerveDrive the SwerveDrive to register for data collection
      * @throws IllegalStateException if TelemetryService is running.
      */
-    fun register(swerveDrive: SwerveDrive) {
-        for (wheel in swerveDrive.wheels) {
-            register(TalonItem(wheel.azimuthTalon))
-            register(TalonItem(wheel.driveTalon))
-        }
+    fun register(swerveDrive: SwerveDrive) = swerveDrive.wheels.forEach {
+        register(TalonItem(it.azimuthTalon))
+        register(TalonItem(it.driveTalon))
     }
 
     /**

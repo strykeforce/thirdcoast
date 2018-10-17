@@ -17,18 +17,12 @@ class Subscription(inventory: Inventory, private val client: String, requestJson
     private val descriptions = ArrayList<String>(16)
 
     init {
-        var request: RequestJson? = RequestJson.EMPTY
-        try {
-            request = RequestJson.fromJson(requestJson)
-        } catch (e: IOException) {
-            logger.error("Exception parsing request JSON", e)
-        }
-
-        for (jsonItem in request!!.subscription) {
-            val item = inventory.itemForId(jsonItem.itemId)
-            val measure = Measure.valueOf(jsonItem.measurementId!!)
-            measurements.add(item.measurementFor(measure))
-            descriptions.add(item.description() + ": " + measure.description)
+        val request: RequestJson = RequestJson.fromJson(requestJson) ?: RequestJson.EMPTY
+        request.subscription.forEach {
+            val item = inventory.itemForId(it.itemId)
+            val measure = Measure.valueOf(it.measurementId)
+            measurements += item.measurementFor(measure)
+            descriptions += item.description() + ": " + measure.description
         }
     }
 
@@ -79,7 +73,7 @@ class Subscription(inventory: Inventory, private val client: String, requestJson
         internal class Item {
 
             var itemId: Int = 0
-            var measurementId: String? = null
+            lateinit var measurementId: String
 
             override fun toString(): String {
                 return "Item{" + "itemId=" + itemId + ", measurementId=" + measurementId + '}'.toString()
