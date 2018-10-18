@@ -68,10 +68,10 @@ class TelemetryService(private val telemetryControllerFactory: Function<Inventor
     fun register(item: Item) {
         checkNotStarted()
         if (items.add(item)) {
-            logger.info { "registered item ${item.description()}" }
+            logger.info { "registered item ${item.description}" }
             return
         }
-        logger.info { "item ${item.description()} was already registered" }
+        logger.info { "item ${item.description} was already registered" }
     }
 
     /**

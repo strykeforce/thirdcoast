@@ -36,8 +36,8 @@ abstract class AbstractInventory(items: Collection<Item>) : Inventory {
         for (i in items.indices) {
             writer.beginObject()
             writer.name("id").value(i.toLong())
-            writer.name("type").value(items[i].type())
-            writer.name("description").value(items[i].description())
+            writer.name("type").value(items[i].type)
+            writer.name("description").value(items[i].description)
             writer.endObject()
         }
         writer.endArray()
@@ -46,7 +46,7 @@ abstract class AbstractInventory(items: Collection<Item>) : Inventory {
     @Throws(IOException::class)
     internal fun writeMeasures(writer: JsonWriter) {
         val measures = HashMap<String, Set<Measure>>()
-        items.forEach { it -> (measures.putIfAbsent(it.type(), it.measures())) }
+        items.forEach { it -> (measures.putIfAbsent(it.type, it.measures)) }
         writer.beginArray()
         for ((key, value) in measures) {
             writeDeviceMeasures(writer, key, value)
@@ -73,17 +73,6 @@ abstract class AbstractInventory(items: Collection<Item>) : Inventory {
         writer.name("id").value(measure.name)
         writer.name("description").value(measure.description)
         writer.endObject()
-    }
-
-    @Throws(IOException::class)
-    override fun toJson(sink: BufferedSink) {
-        val writer = JsonWriter.of(sink)
-        writer.indent = "  "
-        writer.beginArray()
-        for (item in items) {
-            item.toJson(writer)
-        }
-        writer.endArray()
     }
 
     override fun toString(): String {

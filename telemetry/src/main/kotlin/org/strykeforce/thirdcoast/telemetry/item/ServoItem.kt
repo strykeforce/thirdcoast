@@ -2,61 +2,40 @@ package org.strykeforce.thirdcoast.telemetry.item
 
 import edu.wpi.first.wpilibj.Servo
 import org.strykeforce.thirdcoast.telemetry.grapher.Measure
-import java.util.*
+import org.strykeforce.thirdcoast.telemetry.grapher.Measure.ANGLE
+import org.strykeforce.thirdcoast.telemetry.grapher.Measure.POSITION
 import java.util.function.DoubleSupplier
 
-private const val TYPE = "servo"
-
 /** Represents a [Servo] telemetry-enable Item.  */
-class ServoItem @JvmOverloads constructor(private val servo: Servo, description: String = "Servo " + servo.channel) :
-    AbstractItem(TYPE, description, MEASURES) {
+class ServoItem @JvmOverloads constructor(
+    private val servo: Servo,
+    override val description: String = "Servo ${servo.channel}"
+) : Item {
 
-    override fun deviceId(): Int {
-        return servo.channel
-    }
+    override val deviceId = servo.channel
+    override val type = "servo"
+    override val measures = setOf(POSITION, ANGLE)
 
     override fun measurementFor(measure: Measure): DoubleSupplier {
-        if (!MEASURES.contains(measure)) {
-            throw IllegalArgumentException("invalid measure: " + measure.name)
-        }
+        require(measures.contains(measure))
+
         return when (measure) {
-            Measure.POSITION -> DoubleSupplier { servo.position }
-            Measure.ANGLE -> DoubleSupplier { servo.angle }
-            else -> throw AssertionError(measure)
+            POSITION -> DoubleSupplier { servo.position }
+            ANGLE -> DoubleSupplier { servo.angle }
+            else -> TODO("$measure not implemented")
         }
     }
 
-    /**
-     * Indicates if some other `ServoItem` has the same underlying `Servo` as this one.
-     *
-     * @param other the reference object with which to compare.
-     * @return true if this Servo has the same channel ID, false otherwise.
-     */
     override fun equals(other: Any?): Boolean {
-        if (other === this) {
-            return true
-        }
-        if (other !is ServoItem) {
-            return false
-        }
-        val item = other as ServoItem?
-        return item!!.servo.channel == servo.channel
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as ServoItem
+
+        if (deviceId != other.deviceId) return false
+
+        return true
     }
 
-    /**
-     * Returns a hashcode value for this ServoItem.
-     *
-     * @return a hashcode value for this ServoItem.
-     */
-    override fun hashCode(): Int {
-        return servo.channel
-    }
-
-    override fun toString(): String {
-        return "ServoItem{" + "servo=" + servo + "} " + super.toString()
-    }
-
-    companion object {
-        val MEASURES: Set<Measure> = Collections.unmodifiableSet(EnumSet.of(Measure.POSITION, Measure.ANGLE))
-    }
+    override fun hashCode() = deviceId
 }

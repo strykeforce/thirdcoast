@@ -94,21 +94,6 @@ class TelemetryController(
             }
             null
         }
-
-        addHTTPInterceptor { session ->
-            if (session.method == Method.GET && session.uri.equals("/v1/inventory", ignoreCase = true)) {
-                val buffer = Buffer()
-                try {
-                    inventory.toJson(buffer)
-                    return@addHTTPInterceptor Response.newFixedLengthResponse(Status.OK, JSON, buffer.readByteArray())
-                } catch (t: Throwable) {
-                    logger.error("couldn't create detail inventory JSON", t)
-                    return@addHTTPInterceptor errorResponseFor(t)
-                }
-
-            }
-            null
-        }
     }
 
     /** Start web service to listen for HTTP commands that control telemetry service. */
