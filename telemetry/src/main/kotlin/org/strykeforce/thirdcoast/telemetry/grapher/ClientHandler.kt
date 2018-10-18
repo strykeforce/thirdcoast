@@ -31,7 +31,7 @@ class ClientHandler(private val port: Int, private val socket: DatagramSocket) {
                     try {
                         subscription.measurementsToJson(buffer)
                         val bytes = buffer.readByteArray()
-                        val packet = DatagramPacket(bytes, bytes.size, InetSocketAddress(subscription.client(), port))
+                        val packet = DatagramPacket(bytes, bytes.size, InetSocketAddress(subscription.client, port))
                         socket.send(packet)
                     } catch (e: IOException) {
                         logger.error("Exception sending grapher data", e)
@@ -42,7 +42,7 @@ class ClientHandler(private val port: Int, private val socket: DatagramSocket) {
                 MILLISECONDS
             )
         }
-        logger.info { "sending graph data to ${subscription.client()}:$port" }
+        logger.info { "sending graph data to ${subscription.client}:$port" }
     }
 
     /** Stop streaming to client.  */

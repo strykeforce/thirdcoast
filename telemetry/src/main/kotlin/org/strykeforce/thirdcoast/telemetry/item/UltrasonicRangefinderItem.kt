@@ -4,32 +4,40 @@ import com.ctre.phoenix.CANifier
 import com.ctre.phoenix.CANifier.PWMChannel
 import org.strykeforce.thirdcoast.telemetry.grapher.Measure
 import org.strykeforce.thirdcoast.telemetry.grapher.Measure.VALUE
-import java.util.*
 import java.util.function.DoubleSupplier
 
-class UltrasonicRangefinderItem(canId: Int, private val pwmChannel: PWMChannel) :
-    AbstractItem("sensor", "Ultrasonic Rangefinder ($canId, $pwmChannel)", MEASURES) {
+class UltrasonicRangefinderItem @JvmOverloads constructor(
+    canId: Int,
+    private val pwmChannel: PWMChannel,
+    override val description: String = "Sensor ${canId * 10 + pwmChannel.value}"
+) : Item {
 
-    private val deviceId: Int = canId * 10 + pwmChannel.value
+    override val deviceId = canId * 10 + pwmChannel.value
+    override val type = "sensor"
+    override val measures = setOf(VALUE)
+
+
     private val canifier: CANifier = CANifier(canId)
     private val dutyCycleAndPeriod = DoubleArray(2)
 
-    override fun deviceId(): Int {
-        return deviceId
-    }
-
     override fun measurementFor(measure: Measure): DoubleSupplier {
-        if (!MEASURES.contains(measure)) {
-            throw IllegalArgumentException("invalid measure: " + measure.name)
-        }
-        return {
+        require(measures.contains(measure))
+        return DoubleSupplier {
             canifier.getPWMInput(pwmChannel, dutyCycleAndPeriod)
             dutyCycleAndPeriod[0]
-        } as DoubleSupplier
+        }
     }
 
-    companion object {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
 
-        private val MEASURES = Collections.unmodifiableSet(EnumSet.of(VALUE))
+        other as UltrasonicRangefinderItem
+
+        if (deviceId != other.deviceId) return false
+
+        return true
     }
+
+    override fun hashCode() = deviceId
 }

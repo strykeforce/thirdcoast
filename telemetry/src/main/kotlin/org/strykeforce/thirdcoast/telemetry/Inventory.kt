@@ -26,13 +26,4 @@ interface Inventory {
     @Throws(IOException::class)
     fun writeInventory(sink: BufferedSink)
 
-    /**
-     * Writes the detailed inventory to the supplied sink. This can be used as data for web-based
-     * status pages, etc.
-     *
-     * @param sink the sink to write to.
-     * @throws IOException if an IO error occurs during writing.
-     */
-    @Throws(IOException::class)
-    fun toJson(sink: BufferedSink)
 }

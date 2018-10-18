@@ -2,17 +2,16 @@ package org.strykeforce.thirdcoast.telemetry.grapher
 
 import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.Moshi
-import mu.KotlinLogging
 import okio.BufferedSink
 import org.strykeforce.thirdcoast.telemetry.Inventory
 import java.io.IOException
 import java.util.*
 import java.util.function.DoubleSupplier
 
-private val logger = KotlinLogging.logger {}
+//private val logger = KotlinLogging.logger {}
 
 /** Represents a subscription request for streaming data.  */
-class Subscription(inventory: Inventory, private val client: String, requestJson: String) {
+class Subscription(inventory: Inventory, val client: String, requestJson: String) {
     private val measurements = ArrayList<DoubleSupplier>(16)
     private val descriptions = ArrayList<String>(16)
 
@@ -22,12 +21,8 @@ class Subscription(inventory: Inventory, private val client: String, requestJson
             val item = inventory.itemForId(it.itemId)
             val measure = Measure.valueOf(it.measurementId)
             measurements += item.measurementFor(measure)
-            descriptions += item.description() + ": " + measure.description
+            descriptions += "${item.description}: ${measure.description}"
         }
-    }
-
-    fun client(): String {
-        return client
     }
 
     @Throws(IOException::class)
