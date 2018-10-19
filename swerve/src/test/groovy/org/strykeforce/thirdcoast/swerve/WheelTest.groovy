@@ -2,7 +2,6 @@ package org.strykeforce.thirdcoast.swerve
 
 import com.ctre.phoenix.motorcontrol.SensorCollection
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
-import org.strykeforce.thirdcoast.util.Settings
 import spock.lang.Specification
 
 import static com.ctre.phoenix.motorcontrol.ControlMode.*
@@ -21,7 +20,7 @@ class WheelTest extends Specification {
     //
     def "defaults are configured"() {
         when:
-        def wheel = new DefaultWheel(new Settings(), azimuth, drive)
+        def wheel = new Wheel(azimuth, drive, 0.0)
 
         then:
         with(wheel) {
@@ -31,11 +30,8 @@ class WheelTest extends Specification {
 
 
     def "override drive max setpoint"() {
-        given:
-        def toml = "[THIRDCOAST.WHEEL]\ndriveSetpointMax = 2767"
-
         when:
-        def wheel = new DefaultWheel(new Settings(toml), azimuth, drive)
+        def wheel = new Wheel(azimuth, drive, 2767)
 
         then:
         with(wheel) {
@@ -54,7 +50,7 @@ class WheelTest extends Specification {
         sensorCollection.getPulseWidthPosition() >> 0x1000
 
         when:
-        def wheel = new DefaultWheel(new Settings(), azimuth, drive)
+        def wheel = new Wheel(azimuth, drive, 0.0)
 
         then:
         wheel.azimuthAbsolutePosition == 0
@@ -72,7 +68,7 @@ class WheelTest extends Specification {
     def "azimuth changes are optimized"() {
         when:
         azimuth.getSelectedSensorPosition(0) >> start_position * ROT
-        def wheel = new DefaultWheel(new Settings(), azimuth, drive)
+        def wheel = new Wheel(azimuth, drive, 0.0)
         wheel.set(setpoint, 1d)
 
         then:
@@ -126,19 +122,18 @@ class WheelTest extends Specification {
 
     def "drive output is scaled"() {
         when:
-        def tomlStr = "[THIRDCOAST.WHEEL]\ndriveSetpointMax=10_000"
-        def wheel = new DefaultWheel(new Settings(tomlStr), azimuth, drive)
+        def wheel = new Wheel(azimuth, drive, 10_000)
         wheel.setDriveMode(TRAJECTORY)
-        wheel.set(0, setpoint)
+        wheel.set(0.0, setpoint)
 
         then:
         1 * drive.set(Velocity, output)
 
         where:
         setpoint || output
-        1        || 10_000.0
-        -1       || -10_000.0
-        0        || 0
+        1.0      || 10_000.0
+        -1.0     || -10_000.0
+        0.0      || 0.0
         0.5      || 5_000.0
         -0.5     || -5_000.0
     }
@@ -146,7 +141,7 @@ class WheelTest extends Specification {
 
     def "neutral drive output leaves azimuths in previous position"() {
         when:
-        def wheel = new DefaultWheel(new Settings(), azimuth, drive)
+        def wheel = new Wheel(azimuth, drive, 0.0)
         wheel.set(0, 0)
 
         then:
