@@ -1,25 +1,16 @@
 package org.strykeforce.thirdcoast.swerve;
 
 import com.kauailabs.navx.frc.AHRS;
-import com.moandjiezana.toml.Toml;
 import edu.wpi.first.wpilibj.Preferences;
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.talon.Errors;
-import org.strykeforce.thirdcoast.talon.TalonConfiguration;
-import org.strykeforce.thirdcoast.util.Settings;
 
 /**
  * Control a Third Coast swerve drive.
  *
- * <p>Wheels are injected by a Dagger provider in {@link WheelModule}. They are a singleton array
- * numbered 0-3 from front to back, with even numbers on the left side when facing forward. The
- * azimuth and drive Talons are configured using {@link TalonConfiguration} named "azimuth" and
- * "drive", respectively.
- *
- * <p>The gyro is injected by a Dagger provider in {@link GyroModule}.
+ * <p>Wheels are a array numbered 0-3 from front to back, with even numbers on the left side when
+ * facing forward.
  *
  * <p>Derivation of inverse kinematic equations are from Ether's <a
  * href="https://www.chiefdelphi.com/media/papers/2426">Swerve Kinematics and Programming</a>.
@@ -27,12 +18,9 @@ import org.strykeforce.thirdcoast.util.Settings;
  * @see Wheel
  */
 @SuppressWarnings("unused")
-@Singleton
 public class SwerveDrive {
 
   private static final Logger logger = LoggerFactory.getLogger(SwerveDrive.class);
-  private static final String SWERVE_TABLE = "THIRDCOAST.SWERVE";
-  private static final String TALONS_TABLE = "THIRDCOAST.TALONS";
   private static final int WHEEL_COUNT = 4;
   final AHRS gyro;
   private final double kLengthComponent;
@@ -42,31 +30,26 @@ public class SwerveDrive {
   private final double[] ws = new double[WHEEL_COUNT];
   private final double[] wa = new double[WHEEL_COUNT];
 
-  @Inject
-  SwerveDrive(AHRS gyro, Wheel[] wheels, Settings settings) {
-    this.gyro = gyro;
-    this.wheels = wheels;
+  SwerveDrive(SwerveDriveConfig config) {
+    gyro = config.gyro;
+    wheels = config.wheels;
     logger.info("field orientation driving is {}", gyro == null ? "DISABLED" : "ENABLED");
 
-    Toml toml = settings.getTable(SWERVE_TABLE);
-    boolean enableGyroLogging = toml.getBoolean("enableGyroLogging", true);
-
-    Toml talonsToml = settings.getTable(TALONS_TABLE);
-    final boolean summarizeErrors = talonsToml.getBoolean("summarizeErrors", false);
+    final boolean summarizeErrors = config.summarizeTalonErrors;
     Errors.setSummarized(summarizeErrors);
     Errors.setCount(0);
     logger.debug("TalonSRX configuration errors summarized = {}", summarizeErrors);
 
-    double length = toml.getDouble("length");
-    double width = toml.getDouble("width");
+    double length = config.length;
+    double width = config.width;
     double radius = Math.hypot(length, width);
     kLengthComponent = length / radius;
     kWidthComponent = width / radius;
 
     if (gyro != null && gyro.isConnected()) {
-      gyro.enableLogging(enableGyroLogging);
-      double robotPeriod = toml.getDouble("robotPeriod");
-      double gyroRateCoeff = toml.getDouble("gyroRateCoeff");
+      gyro.enableLogging(config.gyroLoggingEnabled);
+      double robotPeriod = config.robotPeriod;
+      double gyroRateCoeff = config.gyroRateCoeff;
       int rate = gyro.getActualUpdateRate();
       double gyroPeriod = 1.0 / rate;
       kGyroRateCorrection = (robotPeriod / gyroPeriod) * gyroRateCoeff;
@@ -78,7 +61,7 @@ public class SwerveDrive {
 
     logger.debug("length = {}", length);
     logger.debug("width = {}", width);
-    logger.debug("enableGyroLogging = {}", enableGyroLogging);
+    logger.debug("enableGyroLogging = {}", config.gyroLoggingEnabled);
     logger.debug("gyroRateCorrection = {}", kGyroRateCorrection);
   }
 

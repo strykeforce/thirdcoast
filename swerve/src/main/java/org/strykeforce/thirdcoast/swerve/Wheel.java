@@ -1,22 +1,19 @@
 package org.strykeforce.thirdcoast.swerve;
 
-import static com.ctre.phoenix.motorcontrol.ControlMode.MotionMagic;
+import static com.ctre.phoenix.motorcontrol.ControlMode.*;
 import static org.strykeforce.thirdcoast.swerve.SwerveDrive.DriveMode.TELEOP;
 
 import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import com.moandjiezana.toml.Toml;
+import java.util.Objects;
 import java.util.function.DoubleConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.swerve.SwerveDrive.DriveMode;
 import org.strykeforce.thirdcoast.talon.Errors;
-import org.strykeforce.thirdcoast.talon.TalonConfiguration;
-import org.strykeforce.thirdcoast.util.Settings;
 
 /**
- * Controls a swerve drive wheel azimuth and drive motors. The azimuth and drive Talons are
- * configured using {@link TalonConfiguration} named "azimuth" and "drive", respectively.
+ * Controls a swerve drive wheel azimuth and drive motors.
  *
  * <p>The swerve-drive inverse kinematics algorithm will always calculate individual wheel angles as
  * -0.5 to 0.5 rotations, measured clockwise with zero being the straight-ahead position. Wheel
@@ -30,49 +27,41 @@ import org.strykeforce.thirdcoast.util.Settings;
  * limits on wheel azimuth rotation. Azimuth Talons have an ID in the range 0-3 with corresponding
  * drive Talon IDs in the range 10-13.
  */
-public abstract class Wheel {
-
-  static final Logger logger = LoggerFactory.getLogger(Wheel.class);
-  private static final String WHEEL_TABLE = "THIRDCOAST.WHEEL";
+public class Wheel {
   private static final int TICKS = 4096;
-  protected final double kDriveSetpointMax;
-  protected final TalonSRX driveTalon;
+
+  private static final Logger logger = LoggerFactory.getLogger(Wheel.class);
+  private final double driveSetpointMax;
+  private final TalonSRX driveTalon;
   private final TalonSRX azimuthTalon;
   protected DoubleConsumer currentDriver;
 
   /**
-   * This designated constructor constructs a wheel by supplying azimuth and drive talons. They are
-   * initialized with Talon configurations named "azimuth" and "drive" respectively.
+   * This constructs a wheel with supplied azimuth and drive talons.
    *
-   * @param settings the settings from TOML config file
+   * <p>Wheels will scale closed-loop drive output to {@code driveSetpointMax}. For example, if
+   * closed-loop drive mode is tuned to have a max usable output of 10,000 ticks per 100ms, set this
+   * to 10,000 and the wheel will send a setpoint of 10,000 to the drive talon when wheel is set to
+   * max drive output (1.0).
+   *
    * @param azimuth the configured azimuth TalonSRX
    * @param drive the configured drive TalonSRX
+   * @param driveSetpointMax scales closed-loop drive output to this value when drive setpoint = 1.0
    */
-  public Wheel(Settings settings, TalonSRX azimuth, TalonSRX drive) {
-
-    Toml toml = settings.getTable(WHEEL_TABLE);
-    kDriveSetpointMax = (double) toml.getLong("driveSetpointMax");
-
-    azimuthTalon = azimuth;
-    driveTalon = drive;
-
-    if (azimuthTalon == null || driveTalon == null) {
-      logger.error("Talons missing, aborting initialization");
-      return;
-    }
+  public Wheel(TalonSRX azimuth, TalonSRX drive, double driveSetpointMax) {
+    this.driveSetpointMax = driveSetpointMax;
+    azimuthTalon = Objects.requireNonNull(azimuth);
+    driveTalon = Objects.requireNonNull(drive);
 
     setDriveMode(TELEOP);
 
     logger.debug("azimuth = {} drive = {}", azimuthTalon.getDeviceID(), driveTalon.getDeviceID());
-    logger.debug("driveSetpointMax = {}", kDriveSetpointMax);
+    logger.debug("driveSetpointMax = {}", driveSetpointMax);
+    if (driveSetpointMax == 0.0) logger.warn("driveSetpointMax may not have been configured");
   }
 
   /**
    * This method calculates the optimal driveTalon settings and applies them.
-   *
-   * <p>The drive setpoint is scaled by the drive Talon {@code setpoint_max} parameter configured in
-   * {@link TalonConfiguration}. For instance, with an open-loop {@code setpoint_max = 12.0} volts,
-   * a drive setpoint of 1.0 would result in the drive Talon being set to 12.0.
    *
    * @param azimuth -0.5 to 0.5 rotations, measured clockwise with zero being the wheel's zeroed
    *     position
@@ -114,11 +103,31 @@ public abstract class Wheel {
   }
 
   /**
-   * Set the drive mode
+   * Set the operating mode of the wheel's drive motors. In this default wheel implementation {@code
+   * OPEN_LOOP} and {@code TELEOP} are equivalent and {@code CLOSED_LOOP}, {@code TRAJECTORY} and
+   * {@code AZIMUTH} are equivalent.
    *
-   * @param driveMode the drive mode
+   * <p>In closed-loop modes, the drive setpoint is scaled by the drive Talon {@code
+   * driveSetpointMax} parameter.
+   *
+   * <p>This method is intended to be overridden if the open or closed-loop drive wheel drivers need
+   * to be customized.
+   *
+   * @param driveMode the desired drive mode
    */
-  public abstract void setDriveMode(DriveMode driveMode);
+  public void setDriveMode(DriveMode driveMode) {
+    switch (driveMode) {
+      case OPEN_LOOP:
+      case TELEOP:
+        currentDriver = (setpoint) -> driveTalon.set(PercentOutput, setpoint);
+        break;
+      case CLOSED_LOOP:
+      case TRAJECTORY:
+      case AZIMUTH:
+        currentDriver = (setpoint) -> driveTalon.set(Velocity, setpoint * driveSetpointMax);
+        break;
+    }
+  }
 
   /**
    * Stop azimuth and drive movement. This resets the azimuth setpoint and relative encoder to the
@@ -177,7 +186,7 @@ public abstract class Wheel {
   }
 
   public double getDriveSetpointMax() {
-    return kDriveSetpointMax;
+    return driveSetpointMax;
   }
 
   @Override
@@ -187,8 +196,8 @@ public abstract class Wheel {
         + azimuthTalon
         + ", driveTalon="
         + driveTalon
-        + ", kDriveSetpointMax="
-        + kDriveSetpointMax
+        + ", driveSetpointMax="
+        + driveSetpointMax
         + '}';
   }
 }

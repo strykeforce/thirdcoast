@@ -1,7 +1,6 @@
 package org.strykeforce.thirdcoast.swerve
 
 
-import org.strykeforce.thirdcoast.util.Settings
 import spock.lang.Shared
 
 import static org.strykeforce.thirdcoast.swerve.SwerveDrive.DriveMode.TRAJECTORY
@@ -9,25 +8,20 @@ import static org.strykeforce.thirdcoast.swerve.SwerveDrive.DriveMode.TELEOP
 
 class SwerveDriveTest extends spock.lang.Specification {
 
-    @Shared
-    Settings settings
-
-    void setupSpec() {
-        settings = new Settings()
-    }
-
     //
     // Settings
     //
     def "override length"() {
         given:
-        double length = 2767.0 // expected, from supplied TOML
-        double width = 1.0     // expected, from defaults
-        def toml = "[THIRDCOAST.SWERVE]\nlength = " + length
+        double length = 2767d // expected, from supplied TOML
+        double width = 1d     // expected, from defaults
         double radius = Math.hypot(length, width)
+        def config = new SwerveDriveConfig()
+        config.length = length
+        config.width = width
 
         when:
-        def swerve = new SwerveDrive(null, null, new Settings(toml))
+        def swerve = new SwerveDrive(config)
 
         then:
         with(swerve) {
@@ -41,9 +35,11 @@ class SwerveDriveTest extends spock.lang.Specification {
     def "sets drive mode"() {
         given:
         Wheel[] wheels = [Mock(Wheel), Mock(Wheel), Mock(Wheel), Mock(Wheel)]
+        def config = new SwerveDriveConfig()
+        config.wheels = wheels
 
         when:
-        def swerve = new SwerveDrive(null, wheels, new Settings())
+        def swerve = new SwerveDrive(config)
         swerve.setDriveMode(TELEOP)
 
         then:
@@ -62,7 +58,9 @@ class SwerveDriveTest extends spock.lang.Specification {
 
     def "calculates inverse kinematics"() {
         Wheel[] wheels = [Mock(Wheel), Mock(Wheel), Mock(Wheel), Mock(Wheel)]
-        SwerveDrive swerve = new SwerveDrive(null, wheels, settings)
+        def config = new SwerveDriveConfig()
+        config.wheels = wheels
+        SwerveDrive swerve = new SwerveDrive(config)
 
         when:
         for (Wheel w : wheels) {
