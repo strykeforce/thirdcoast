@@ -2,13 +2,14 @@ package org.strykeforce.thirdcoast.telemetry.grapher
 
 import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.Moshi
+import mu.KotlinLogging
 import okio.BufferedSink
 import org.strykeforce.thirdcoast.telemetry.Inventory
 import java.io.IOException
 import java.util.*
 import java.util.function.DoubleSupplier
 
-//private val logger = KotlinLogging.logger {}
+private val logger = KotlinLogging.logger {}
 
 /** Represents a subscription request for streaming data.  */
 class Subscription(inventory: Inventory, val client: String, requestJson: String) {
@@ -19,7 +20,12 @@ class Subscription(inventory: Inventory, val client: String, requestJson: String
         val request: RequestJson = RequestJson.fromJson(requestJson) ?: RequestJson.EMPTY
         request.subscription.forEach {
             val item = inventory.itemForId(it.itemId)
-            val measure = Measure.valueOf(it.measurementId)
+            val measure = try {
+                Measure.valueOf(it.measurementId)
+            } catch (e: IllegalArgumentException) {
+                logger.error { "no such measure \"${it.measurementId}\", request JSON = \n$requestJson" }
+                Measure.UNKNOWN
+            }
             measurements += item.measurementFor(measure)
             descriptions += "${item.description}: ${measure.description}"
         }
