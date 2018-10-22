@@ -2,6 +2,7 @@ package org.strykeforce.thirdcoast.telemetry.grapher
 
 /** Available telemetry measurement types.  */
 enum class Measure constructor(val description: String) {
+    UNKNOWN("Unknown Measurement"),
     CLOSED_LOOP_TARGET("Closed-loop Setpoint"),
 
     // BaseMotorController

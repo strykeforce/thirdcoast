@@ -1,135 +1,112 @@
 package org.strykeforce.thirdcoast.telemetry
 
-import com.squareup.moshi.JsonWriter
 import mu.KotlinLogging
 import okio.Buffer
-import org.nanohttpd.protocols.http.NanoHTTPD
-import org.nanohttpd.protocols.http.request.Method
-import org.nanohttpd.protocols.http.response.Response
-import org.nanohttpd.protocols.http.response.Status
+import org.eclipse.jetty.server.Request
+import org.eclipse.jetty.server.Server
+import org.eclipse.jetty.server.handler.AbstractHandler
+import org.eclipse.jetty.server.handler.DefaultHandler
+import org.eclipse.jetty.server.handler.HandlerList
 import org.strykeforce.thirdcoast.telemetry.grapher.ClientHandler
 import org.strykeforce.thirdcoast.telemetry.grapher.Subscription
-import java.io.IOException
 import java.net.Inet4Address
 import java.net.NetworkInterface
-import java.util.*
+import javax.servlet.http.HttpServletRequest
+import javax.servlet.http.HttpServletResponse
+
 
 private const val JSON = "application/json"
+private const val GRAPHER = "/v1/grapher"
+private const val INVENTORY = "$GRAPHER/inventory"
+private const val SUBSCRIPTION = "$GRAPHER/subscription"
+
 private val logger = KotlinLogging.logger {}
+
+internal class TelemetryControllerHandler(private val inventory: Inventory, private val clientHandler: ClientHandler) :
+    AbstractHandler() {
+
+    override fun handle(
+        target: String,
+        baseRequest: Request,
+        request: HttpServletRequest,
+        response: HttpServletResponse
+    ) {
+        logger.debug { "${request.method} $target" }
+
+        baseRequest.isHandled = true
+
+        if (target.toLowerCase() == INVENTORY && request.method == "GET") {
+            val buffer = Buffer()
+            inventory.writeInventory(buffer)
+            response.writeJson(buffer)
+            logger.info { "inventory requested from ${request.remoteAddr}" }
+            return
+        }
+
+        if (target.toLowerCase() == SUBSCRIPTION) {
+            if (request.method == "POST") {
+                val sub = Subscription(inventory, request.remoteAddr, request.reader.readText())
+                clientHandler.start(sub)
+                val buffer = Buffer()
+                sub.toJson(buffer)
+                response.writeJson(buffer)
+                logger.info { "subscription started from ${request.remoteAddr}" }
+                return
+            }
+
+            if (request.method == "DELETE") {
+                clientHandler.shutdown()
+                logger.info { "subscription stopped from ${request.remoteAddr}" }
+                return
+            }
+        }
+        baseRequest.isHandled = false
+    }
+}
+
+private fun HttpServletResponse.writeJson(buffer: Buffer) {
+    this.contentType = JSON
+    this.status = HttpServletResponse.SC_OK
+    this.writer.print(buffer.readUtf8())
+}
 
 /** Provides a web service to config telemetry.  */
 class TelemetryController(
     inventory: Inventory,
     private val clientHandler: ClientHandler,
     private val port: Int
-) : NanoHTTPD(port) {
+) {
+
+
+    private val server = Server(port).apply {
+        handler = HandlerList().apply {
+            handlers = arrayOf(TelemetryControllerHandler(inventory, clientHandler), DefaultHandler())
+        }
+    }
 
     private val inventoryEndpoints: List<String>
         get() {
-            val endpoints = ArrayList<String>(2)
-            val nets = NetworkInterface.getNetworkInterfaces()
-            for (netint in Collections.list(nets)) {
-                val inetAddresses = netint.inetAddresses
-                for (addr in Collections.list(inetAddresses)) {
-                    if (!addr.isLinkLocalAddress && addr.javaClass == Inet4Address::class.java)
-                        endpoints += "http://${addr.hostAddress}:$port/v1/grapher/inventory"
+            val endpoints = mutableListOf<String>()
+            NetworkInterface.getNetworkInterfaces().iterator().forEach { ni ->
+                ni.inetAddresses.iterator().forEach { addr ->
+                    if (addr is Inet4Address && !addr.isLinkLocalAddress)
+                        endpoints += "http://${addr.hostAddress}:$port$INVENTORY"
                 }
             }
             return endpoints
         }
 
-    init {
-        addHTTPInterceptor { session ->
-            if (session.method == Method.GET && session.uri.equals(
-                    "/v1/grapher/inventory",
-                    ignoreCase = true
-                )
-            ) {
-                val buffer = Buffer()
-                inventory.writeInventory(buffer)
-
-                logger.debug { "inventory requested from ${session.remoteIpAddress}" }
-                return@addHTTPInterceptor Response.newFixedLengthResponse(Status.OK, JSON, buffer.readByteArray())
-            }
-            null
-        }
-
-        addHTTPInterceptor { session ->
-            if (session.method == Method.POST && session.uri.equals(
-                    "/v1/grapher/subscription",
-                    ignoreCase = true
-                )
-            ) {
-                val body = HashMap<String, String>()
-                try {
-                    session.parseBody(body)
-                    val sub = Subscription(inventory, session.remoteIpAddress, body["postData"]!!)
-                    clientHandler.start(sub)
-                    val buffer = Buffer()
-                    sub.toJson(buffer)
-                    return@addHTTPInterceptor Response.newFixedLengthResponse(Status.OK, JSON, buffer.readByteArray())
-                } catch (t: Throwable) {
-                    logger.error("couldn't start grapher", t)
-                    return@addHTTPInterceptor errorResponseFor(t)
-                }
-
-            }
-            null
-        }
-
-        addHTTPInterceptor { session ->
-            if (session.method == Method.DELETE && session.uri.equals(
-                    "/v1/grapher/subscription",
-                    ignoreCase = true
-                )
-            ) {
-                try {
-                    clientHandler.shutdown()
-                    return@addHTTPInterceptor Response.newFixedLengthResponse(Status.NO_CONTENT, JSON, "")
-                } catch (t: Throwable) {
-                    logger.error("couldn't stop grapher", t)
-                    return@addHTTPInterceptor errorResponseFor(t)
-                }
-
-            }
-            null
-        }
-    }
-
     /** Start web service to listen for HTTP commands that control telemetry service. */
-    override fun start() {
-        try {
-            start(NanoHTTPD.SOCKET_READ_TIMEOUT, true)
-        } catch (e: IOException) {
-            logger.error("couldn't start web service", e)
-        }
-
-        if (logger.isInfoEnabled) {
-            logger.info("started web service")
-            for (end in inventoryEndpoints) {
-                logger.info(end)
-            }
-        }
+    fun start() {
+        server.start()
+        logger.info("started web service")
+        inventoryEndpoints.forEach(logger::info)
     }
 
     /** Stop streaming to client and shut down web service. */
     fun shutdown() {
         clientHandler.shutdown()
-        super.stop()
+        server.stop()
         logger.info("stopped web service")
     }
-
-    private fun errorResponseFor(e: Throwable): Response {
-        val buffer = Buffer()
-        val writer = JsonWriter.of(buffer)
-        try {
-            writer.beginObject()
-            writer.name("error").value(e.message)
-            writer.endObject()
-        } catch (ignored: IOException) {
-        }
-
-        return Response.newFixedLengthResponse(Status.INTERNAL_ERROR, JSON, buffer.readByteArray())
-    }
-
 }

@@ -23,7 +23,6 @@ sourceCompatibility = 1.8
 
 
 repositories {
-    maven { url = 'https://oss.sonatype.org/content/repositories/snapshots' } // nanohttpd
     maven { url = "https://dl.bintray.com/kotlin/kotlin-eap" } // FIXME
 }
 
@@ -32,7 +31,7 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 
     // telemetry
-    implementation 'org.nanohttpd:nanohttpd:2.3.2-SNAPSHOT'
+    implementation 'org.eclipse.jetty:jetty-server:9.4.12.v20180830'
     implementation 'com.squareup.moshi:moshi:1.5.0'
     implementation project(':swerve')
 

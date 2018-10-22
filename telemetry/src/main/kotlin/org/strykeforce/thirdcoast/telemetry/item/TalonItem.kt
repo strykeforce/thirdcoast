@@ -46,9 +46,8 @@ class TalonItem @JvmOverloads constructor(
     private val sensorCollection = talon.sensorCollection
 
     override fun measurementFor(measure: Measure): DoubleSupplier {
-        require(measures.contains(measure))
-
         return when (measure) {
+            UNKNOWN -> DoubleSupplier { 2767.0 }
             CLOSED_LOOP_TARGET -> DoubleSupplier { talon.getClosedLoopTarget(0).toDouble() }
             OUTPUT_CURRENT -> DoubleSupplier { talon.outputCurrent }
             OUTPUT_VOLTAGE -> DoubleSupplier { talon.motorOutputVoltage }

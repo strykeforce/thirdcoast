@@ -23,29 +23,26 @@ class TelemetryService(private val telemetryControllerFactory: Function<Inventor
 
     private val items = LinkedHashSet<Item>()
     private var telemetryController: TelemetryController? = null
-    private var running = false
 
     /** Start the Telemetry service and listen for client connections.  */
     fun start() {
-        if (running) {
+        if (telemetryController != null) {
             logger.info("already started")
             return
         }
         telemetryController = telemetryControllerFactory.apply(RobotInventory(items)).also { it.start() }
         logger.info("started telemetry controller")
-        running = true
     }
 
     /** Stop the Telemetry service.  */
     fun stop() {
-        if (!running) {
+        if (telemetryController == null) {
             logger.info("already stopped")
             return
         }
         telemetryController?.shutdown()
         telemetryController = null
         logger.info("stopped")
-        running = false
     }
 
     /**
@@ -130,7 +127,7 @@ class TelemetryService(private val telemetryControllerFactory: Function<Inventor
     }
 
     private fun checkNotStarted() {
-        if (running) {
+        if (telemetryController != null) {
             throw IllegalStateException("TelemetryService must be stopped.")
         }
     }
