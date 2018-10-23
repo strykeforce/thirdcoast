@@ -2,7 +2,6 @@ package org.strykeforce.thirdcoast.telemetry.grapher
 
 import mu.KotlinLogging
 import okio.Buffer
-import java.io.IOException
 import java.net.DatagramPacket
 import java.net.DatagramSocket
 import java.net.InetSocketAddress
@@ -24,23 +23,18 @@ class ClientHandler(private val port: Int, private val socket: DatagramSocket) {
     fun start(subscription: Subscription) {
         if (scheduler != null) return
 
+        val address = InetSocketAddress(subscription.client, port)
+        val packet = DatagramPacket(ByteArray(0), 0, address)
+        val buffer = Buffer()
+        val runnable = {
+            subscription.measurementsToJson(buffer)
+            val bytes = buffer.readByteArray()
+            packet.setData(bytes, 0, bytes.size)
+            socket.send(packet)
+        }
+
         scheduler = Executors.newSingleThreadScheduledExecutor().also {
-            it.scheduleAtFixedRate(
-                {
-                    val buffer = Buffer()
-                    try {
-                        subscription.measurementsToJson(buffer)
-                        val bytes = buffer.readByteArray()
-                        val packet = DatagramPacket(bytes, bytes.size, InetSocketAddress(subscription.client, port))
-                        socket.send(packet)
-                    } catch (e: IOException) {
-                        logger.error("Exception sending grapher data", e)
-                    }
-                },
-                0,
-                5,
-                MILLISECONDS
-            )
+            it.scheduleAtFixedRate(runnable, 0, 5, MILLISECONDS)
         }
         logger.info { "sending graph data to ${subscription.client}:$port" }
     }

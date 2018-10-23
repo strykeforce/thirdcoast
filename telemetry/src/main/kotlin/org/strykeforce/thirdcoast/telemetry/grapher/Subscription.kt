@@ -33,33 +33,25 @@ class Subscription(inventory: Inventory, val client: String, requestJson: String
 
     @Throws(IOException::class)
     fun measurementsToJson(sink: BufferedSink) {
-        val ts = System.currentTimeMillis()
         val writer = JsonWriter.of(sink)
         writer.beginObject()
-        writer.name("timestamp").value(ts)
-        writer.name("data")
-        writer.beginArray()
-        for (m in measurements) {
-            writer.value(m.asDouble)
-        }
+            .name("timestamp").value(System.currentTimeMillis())
+            .name("data").beginArray()
+        measurements.forEach { writer.value(it.asDouble) }
         writer.endArray()
-        writer.endObject()
+            .endObject()
     }
 
     @Throws(IOException::class)
     fun toJson(sink: BufferedSink) {
-        val ts = System.currentTimeMillis()
         val writer = JsonWriter.of(sink)
         writer.beginObject()
-        writer.name("type").value("subscription")
-        writer.name("timestamp").value(ts)
-        writer.name("descriptions")
-        writer.beginArray()
-        for (d in descriptions) {
-            writer.value(d)
-        }
+            .name("type").value("subscription")
+            .name("timestamp").value(System.currentTimeMillis())
+            .name("descriptions").beginArray()
+        descriptions.forEach { writer.value(it) }
         writer.endArray()
-        writer.endObject()
+            .endObject()
     }
 
     internal class RequestJson {
@@ -67,18 +59,12 @@ class Subscription(inventory: Inventory, val client: String, requestJson: String
         var type: String = "start"
         var subscription: List<Item> = emptyList()
 
-        override fun toString(): String {
-            return "RequestJson{" + "type='" + type + '\''.toString() + ", subscription=" + subscription + '}'.toString()
-        }
-
         internal class Item {
 
             var itemId: Int = 0
             lateinit var measurementId: String
 
-            override fun toString(): String {
-                return "Item{" + "itemId=" + itemId + ", measurementId=" + measurementId + '}'.toString()
-            }
+            override fun toString() = "Item(itemId=$itemId, measurementId='$measurementId')"
         }
 
         companion object {
@@ -94,5 +80,7 @@ class Subscription(inventory: Inventory, val client: String, requestJson: String
                 return adapter.fromJson(json)
             }
         }
+
+        override fun toString() = "RequestJson(type='$type', subscription=$subscription)"
     }
 }

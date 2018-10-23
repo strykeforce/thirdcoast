@@ -13,37 +13,10 @@ class TalonItem @JvmOverloads constructor(
 
     override val deviceId = talon.deviceID
     override val type = "talon"
-    override val measures = setOf(
-        CLOSED_LOOP_TARGET,
-        OUTPUT_CURRENT,
-        OUTPUT_VOLTAGE,
-        OUTPUT_PERCENT,
-        SELECTED_SENSOR_POSITION,
-        SELECTED_SENSOR_VELOCITY,
-        ACTIVE_TRAJECTORY_POSITION,
-        ACTIVE_TRAJECTORY_VELOCITY,
-        CLOSED_LOOP_ERROR,
-        BUS_VOLTAGE,
-        ERROR_DERIVATIVE,
-        INTEGRAL_ACCUMULATOR,
-        ANALOG_IN,
-        ANALOG_RAW,
-        ANALOG_POSITION,
-        ANALOG_VELOCITY,
-        QUAD_POSITION,
-        QUAD_VELOCITY,
-        QUAD_A_PIN,
-        QUAD_B_PIN,
-        QUAD_IDX_PIN,
-        PULSE_WIDTH_POSITION,
-        PULSE_WIDTH_VELOCITY,
-        PULSE_WIDTH_RISE_TO_FALL,
-        PULSE_WIDTH_RISE_TO_RISE,
-        FORWARD_LIMIT_SWITCH_CLOSED,
-        REVERSE_LIMIT_SWITCH_CLOSED
-    )
+    override val measures
+        get() = MEASURES
 
-    private val sensorCollection = talon.sensorCollection
+    private val sensorCollection = requireNotNull(talon.sensorCollection)
 
     override fun measurementFor(measure: Measure): DoubleSupplier {
         return when (measure) {
@@ -91,4 +64,35 @@ class TalonItem @JvmOverloads constructor(
 
     override fun hashCode() = deviceId
 
+    companion object {
+        val MEASURES = setOf(
+            CLOSED_LOOP_TARGET,
+            OUTPUT_CURRENT,
+            OUTPUT_VOLTAGE,
+            OUTPUT_PERCENT,
+            SELECTED_SENSOR_POSITION,
+            SELECTED_SENSOR_VELOCITY,
+            ACTIVE_TRAJECTORY_POSITION,
+            ACTIVE_TRAJECTORY_VELOCITY,
+            CLOSED_LOOP_ERROR,
+            BUS_VOLTAGE,
+            ERROR_DERIVATIVE,
+            INTEGRAL_ACCUMULATOR,
+            ANALOG_IN,
+            ANALOG_RAW,
+            ANALOG_POSITION,
+            ANALOG_VELOCITY,
+            QUAD_POSITION,
+            QUAD_VELOCITY,
+            QUAD_A_PIN,
+            QUAD_B_PIN,
+            QUAD_IDX_PIN,
+            PULSE_WIDTH_POSITION,
+            PULSE_WIDTH_VELOCITY,
+            PULSE_WIDTH_RISE_TO_FALL,
+            PULSE_WIDTH_RISE_TO_RISE,
+            FORWARD_LIMIT_SWITCH_CLOSED,
+            REVERSE_LIMIT_SWITCH_CLOSED
+        )
+    }
 }

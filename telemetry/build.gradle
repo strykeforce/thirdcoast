@@ -41,6 +41,7 @@ dependencies {
 }
 
 task dokkaJavadoc(type: org.jetbrains.dokka.gradle.DokkaTask) {
+    includes = ['packages.md']
     outputFormat = 'javadoc'
     outputDirectory = javadoc.destinationDir
     jdkVersion = 8
