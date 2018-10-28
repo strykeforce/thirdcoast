@@ -1,3 +1,5 @@
+apply plugin: 'com.diffplug.gradle.spotless'
+
 sourceCompatibility = 1.8
 
 dependencies {
@@ -19,6 +21,13 @@ javadoc {
 task javadocJar(type: Jar, dependsOn: javadoc) {
     classifier = 'javadoc'
     from javadoc.destinationDir
+}
+
+spotless {
+    java {
+        googleJavaFormat()
+        target '**/*.java'
+    }
 }
 
 apply from: "${rootDir}/gradle/publish.gradle" // needs to come after javadocJar

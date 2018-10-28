@@ -6,20 +6,18 @@ buildscript {
     dependencies {
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.+'
         classpath "gradle.plugin.jaci.openrio.gradle:GradleRIO:2018.03.06"
-        classpath "net.ltgt.gradle:gradle-apt-plugin:0.19"
         classpath "com.diffplug.spotless:spotless-plugin-gradle:3.15.0"
     }
 }
 
 subprojects {
     group = 'org.strykeforce.thirdcoast'
-    version = '18.7.1'
+    version = '18.7.2'
 
     apply plugin: 'java-library'
+    apply plugin: 'idea'
     apply plugin: 'groovy'
     apply plugin: 'jaci.openrio.gradle.GradleRIO'
-    apply plugin: 'net.ltgt.apt-idea'
-    apply plugin: 'com.diffplug.gradle.spotless'
 
     repositories {
         jcenter()
@@ -42,13 +40,6 @@ subprojects {
         module {
             downloadJavadoc = true
             downloadSources = true
-        }
-    }
-
-    spotless {
-        java {
-            googleJavaFormat()
-            target '**/*.java'
         }
     }
 }

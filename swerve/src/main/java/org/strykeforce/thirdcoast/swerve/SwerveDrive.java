@@ -30,7 +30,7 @@ public class SwerveDrive {
   private final double[] ws = new double[WHEEL_COUNT];
   private final double[] wa = new double[WHEEL_COUNT];
 
-  SwerveDrive(SwerveDriveConfig config) {
+  public SwerveDrive(SwerveDriveConfig config) {
     gyro = config.gyro;
     wheels = config.wheels;
     logger.info("field orientation driving is {}", gyro == null ? "DISABLED" : "ENABLED");
