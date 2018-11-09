@@ -18,9 +18,8 @@ import static org.strykeforce.thirdcoast.telemetry.grapher.Measure.SETPOINT
 class InventoryTest extends Specification {
 
     TalonSRX talonStub(int id, String description) {
-        def stub = Stub(WPI_TalonSRX)
+        def stub = Stub(TalonSRX)
         stub.getDeviceID() >> id
-        stub.getDescription() >> description
         return stub
     }
 
@@ -34,10 +33,10 @@ class InventoryTest extends Specification {
         Inventory inventory = new RobotInventory(talons)
 
         then:
-        inventory.itemForId(0).description() == "Framistator (51)"
-        inventory.itemForId(0).deviceId() == 51
-        inventory.itemForId(1).description() == "TalonSRX 61"
-        inventory.itemForId(1).deviceId() == 61
+        inventory.itemForId(0).description == "Framistator (51)"
+        inventory.itemForId(0).deviceId == 51
+        inventory.itemForId(1).description == "TalonSRX 61"
+        inventory.itemForId(1).deviceId == 61
     }
 
     def "Creates JSON representation"() {
@@ -61,7 +60,7 @@ class InventoryTest extends Specification {
             measures.size == 1
             with(measures[0]) {
                 deviceType == "talon"
-                deviceMeasures.size == TalonItem.MEASURES.size()
+                deviceMeasures.size == talons[0].measures.size()
                 Measure.valueOf(deviceMeasures[0].id) == CLOSED_LOOP_TARGET
                 deviceMeasures[0].description == CLOSED_LOOP_TARGET.description
                 Measure.valueOf(deviceMeasures[5].id) == SELECTED_SENSOR_VELOCITY

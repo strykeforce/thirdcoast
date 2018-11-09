@@ -1,0 +1,33 @@
+apply plugin: 'com.diffplug.gradle.spotless'
+
+sourceCompatibility = 1.8
+
+dependencies {
+    implementation navx()
+    compileOnly 'org.jetbrains:annotations:15.0'
+}
+
+javadoc {
+    title = "Third Coast Swerve Drive Library"
+    options.overview = "src/main/java/overview.html"
+    options.links = [
+            "https://docs.oracle.com/javase/8/docs/api/",
+            "http://first.wpi.edu/FRC/roborio/release/docs/java/",
+            "http://www.ctr-electronics.com/downloads/api/java/html/",
+            "http://www.kauailabs.com/public_files/navx-mxp/apidocs/java/"
+    ]
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+spotless {
+    java {
+        googleJavaFormat()
+        target '**/*.java'
+    }
+}
+
+apply from: "${rootDir}/gradle/publish.gradle" // needs to come after javadocJar

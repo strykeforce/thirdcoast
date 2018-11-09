@@ -10,21 +10,21 @@ class TalonItemTest extends Specification {
     def "MeasurementFor"() {
         given:
         def talon = Stub(WPI_TalonSRX)
-        talon.getOutputCurrent() >> 2.767
-        talon.getMotorOutputVoltage() >> 27.67
+        talon.getOutputCurrent() >> 2.767d
+        talon.getMotorOutputVoltage() >> 27.67d
         Item item = new TalonItem(talon)
 
         when:
         def d = item.measurementFor(Measure.OUTPUT_CURRENT)
 
         then:
-        d.getAsDouble() == 2.767
+        d.getAsDouble() == 2.767d
 
         when:
         d = item.measurementFor(Measure.OUTPUT_VOLTAGE)
 
         then:
-        d.getAsDouble() == 27.67
+        d.getAsDouble() == 27.67d
     }
 
 }

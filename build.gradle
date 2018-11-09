@@ -6,22 +6,18 @@ buildscript {
     dependencies {
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.+'
         classpath "gradle.plugin.jaci.openrio.gradle:GradleRIO:2018.03.06"
-        classpath "net.ltgt.gradle:gradle-apt-plugin:0.18"
-        classpath "com.diffplug.spotless:spotless-plugin-gradle:3.14.0"
-        classpath "net.ltgt.gradle:gradle-errorprone-plugin:0.0.16"
+        classpath "com.diffplug.spotless:spotless-plugin-gradle:3.15.0"
     }
 }
 
 subprojects {
     group = 'org.strykeforce.thirdcoast'
-    version = '18.6.0'
+    version = '18.7.2'
 
     apply plugin: 'java-library'
+    apply plugin: 'idea'
     apply plugin: 'groovy'
     apply plugin: 'jaci.openrio.gradle.GradleRIO'
-    apply plugin: 'net.ltgt.apt-idea'
-    apply plugin: 'com.diffplug.gradle.spotless'
-    apply plugin: 'net.ltgt.errorprone'
 
     repositories {
         jcenter()
@@ -30,21 +26,9 @@ subprojects {
     dependencies {
         implementation wpilib()
         implementation ctre()
-        implementation navx()
-        implementation 'com.moandjiezana.toml:toml4j:0.7.2'
         implementation 'org.slf4j:slf4j-api:1.7.25'
-        implementation 'com.squareup.moshi:moshi:1.5.0' // TODO: move to telemetry
 
-        implementation 'com.google.dagger:dagger:2.14.1'
-        annotationProcessor 'com.google.dagger:dagger-compiler:2.14.1'
-
-        compileOnly 'com.google.auto.factory:auto-factory:1.0-beta5'
-        annotationProcessor 'com.google.auto.factory:auto-factory:1.0-beta5'
-
-        compileOnly 'org.jetbrains:annotations:15.0'
         compileOnly 'com.google.code.findbugs:jsr305:3.0.2'
-
-        errorprone 'com.google.errorprone:error_prone_core:2.3.1'
 
         testImplementation 'org.spockframework:spock-core:1.1-groovy-2.4'
         testImplementation 'ch.qos.logback:logback-classic:1.2.3'
@@ -58,15 +42,4 @@ subprojects {
             downloadSources = true
         }
     }
-
-    spotless {
-        java {
-            googleJavaFormat()
-            target '**/*.java'
-        }
-    }
-}
-
-wrapper {
-    gradleVersion = '4.9'
 }

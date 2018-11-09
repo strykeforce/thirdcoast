@@ -138,7 +138,7 @@ class SubscriptionTest extends Specification {
                 return 1.23
             }
         }
-        item.description() >>> ["Test 1", "Test 2"]
+        item.description >>> ["Test 1", "Test 2"]
         inventory.itemForId(_) >>> item
         def subscription = new Subscription(inventory, "localhost", json)
         def buffer = new Buffer()
