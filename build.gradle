@@ -12,7 +12,7 @@ buildscript {
 
 subprojects {
     group = 'org.strykeforce.thirdcoast'
-    version = '18.7.2'
+    version = '18.7.3'
 
     apply plugin: 'java-library'
     apply plugin: 'idea'
@@ -21,6 +21,10 @@ subprojects {
 
     repositories {
         jcenter()
+    }
+
+    wpi {
+        ctreVersion = "5.7.1.0"
     }
 
     dependencies {
