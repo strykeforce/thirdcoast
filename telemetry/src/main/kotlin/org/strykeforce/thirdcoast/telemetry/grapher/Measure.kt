@@ -32,8 +32,8 @@ enum class Measure constructor(val description: String) {
     QUAD_IDX_PIN("Quadrature Index State"),
     PULSE_WIDTH_POSITION("Pulse Width Position"),
     PULSE_WIDTH_VELOCITY("Pulse Width Velocity"),
-    PULSE_WIDTH_RISE_TO_FALL("Pulse Width Rise-Fall"),
-    PULSE_WIDTH_RISE_TO_RISE("Pulse Width Rise-Rise"),
+    PULSE_WIDTH_RISE_TO_FALL("PWM Pulse Width"),
+    PULSE_WIDTH_RISE_TO_RISE("PWM Period"),
     FORWARD_LIMIT_SWITCH_CLOSED("Forward Limit Switch Closed"),
     REVERSE_LIMIT_SWITCH_CLOSED("Reverse Limit Switch Closed"),
     //  FORWARD_SOFT_LIMIT("Forward Soft Limit"),
@@ -61,5 +61,19 @@ enum class Measure constructor(val description: String) {
     PATH_SEG_JERK("Trajectory Jerk"),
     PATH_SEG_HEADING("Trajectory Heading"),
     PATH_DISTANCE("Distance Travelled"),
-    PATH_POSITION_ERROR("Path Position Error")
+    PATH_POSITION_ERROR("Path Position Error"),
+
+    // Canifier
+    PWM0_PULSE_WIDTH("PWM 0 Pulse Width"),
+    PWM0_PERIOD("PWM 0 Period"),
+    PWM0_PULSE_WIDTH_POSITION("PWM 0 Pulse Width Position"),
+    PWM1_PULSE_WIDTH("PWM 1 Pulse Width"),
+    PWM1_PERIOD("PWM 1 Period"),
+    PWM1_PULSE_WIDTH_POSITION("PWM 1 Pulse Width Position"),
+    PWM2_PULSE_WIDTH("PWM 2 Pulse Width"),
+    PWM2_PERIOD("PWM 2 Period"),
+    PWM2_PULSE_WIDTH_POSITION("PWM 2 Pulse Width Position"),
+    PWM3_PULSE_WIDTH("PWM 3 Pulse Width"),
+    PWM3_PERIOD("PWM 3 Period"),
+    PWM3_PULSE_WIDTH_POSITION("PWM 3 Pulse Width Position"),
 }
