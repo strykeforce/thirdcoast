@@ -66,16 +66,6 @@ public class SwerveDrive {
   }
 
   /**
-   * Return key that wheel zero information is stored under in WPI preferences.
-   *
-   * @param wheel the wheel number
-   * @return the String key
-   */
-  public static String getPreferenceKeyForWheel(int wheel) {
-    return String.format("%s/wheel.%d", SwerveDrive.class.getSimpleName(), wheel);
-  }
-
-  /**
    * Set the drive mode.
    *
    * @param driveMode the drive mode
@@ -154,6 +144,83 @@ public class SwerveDrive {
   }
 
   /**
+   * TEMPORARY, needs API and more
+   *
+   * <p>Change center of rotation on the robot
+   */
+  public void driveCenterOfRotation() {
+    double[] radii = new double[4];
+
+    double[] wa = new double[4];
+    double[] ws = new double[4];
+
+    double offsetX = -10.75;
+    double offsetY = 0.0;
+
+    logger.debug("offsetX = {} offsetY = {}", offsetX, offsetY);
+
+    double length = 21.5 / 2.0;
+    double width = 21.5 / 2.0;
+
+    double velocity = 0.2;
+
+    double[] centerOfRot = {offsetX, offsetY};
+
+    double[] w0 = {width, -length};
+    double[] w1 = {width, length};
+    double[] w2 = {-width, -length};
+    double[] w3 = {-width, length};
+
+    logger.debug("l = {} w = {} ", length, width);
+
+    radii[0] = Math.hypot(centerOfRot[0] - w0[0], centerOfRot[1] - w0[1]);
+    radii[1] = Math.hypot(centerOfRot[0] - w1[0], centerOfRot[1] - w1[1]);
+    radii[2] = Math.hypot(centerOfRot[0] - w2[0], centerOfRot[1] - w2[1]);
+    radii[3] = Math.hypot(centerOfRot[0] - w3[0], centerOfRot[1] - w3[1]);
+
+    logger.debug("radii = {}", radii);
+
+    double x;
+    double y;
+
+    // wheel 0
+    ws[0] = radii[0] * velocity / 15.0;
+    x = centerOfRot[0] - w0[0];
+    y = centerOfRot[1] - w0[1];
+    wa[0] = 0.25 + Math.atan2(y, x) * 0.5 / Math.PI;
+
+    // wheel 1
+    ws[1] = radii[1] * velocity / 15.0;
+    x = centerOfRot[0] - w1[0];
+    y = centerOfRot[1] - w1[1];
+    wa[1] = 0.25 + Math.atan2(y, x) * 0.5 / Math.PI;
+
+    // wheel 2
+    ws[2] = radii[2] * velocity / 15.0;
+    x = centerOfRot[0] - w2[0];
+    y = centerOfRot[1] - w2[1];
+    wa[2] = 0.25 + Math.atan2(y, x) * 0.5 / Math.PI;
+
+    // wheel 3
+    ws[3] = radii[3] * velocity / 15.0;
+    x = centerOfRot[0] - w3[0];
+    y = centerOfRot[1] - w3[1];
+    wa[3] = 0.25 + Math.atan2(y, x) * 0.5 / Math.PI;
+
+    // normalize wheel speed
+    double maxWheelSpeed = Math.max(Math.max(ws[0], ws[1]), Math.max(ws[2], ws[3]));
+    if (maxWheelSpeed > 1.0) {
+      for (int i = 0; i < 4; i++) {
+        ws[i] /= maxWheelSpeed;
+      }
+    }
+
+    for (int i = 0; i < WHEEL_COUNT; i++) {
+      wheels[i].set(wa[i], ws[i]);
+    }
+  }
+
+  /**
    * Stops all wheels' azimuth and drive movement. Calling this in the robots {@code teleopInit} and
    * {@code autonomousInit} will reset wheel azimuth relative encoders to the current position and
    * thereby prevent wheel rotation if the wheels were moved manually while the robot was disabled.
@@ -182,6 +249,16 @@ public class SwerveDrive {
       prefs.putInt(getPreferenceKeyForWheel(i), position);
       logger.info("azimuth {}: saved zero = {}", i, position);
     }
+  }
+
+  /**
+   * Return key that wheel zero information is stored under in WPI preferences.
+   *
+   * @param wheel the wheel number
+   * @return the String key
+   */
+  public static String getPreferenceKeyForWheel(int wheel) {
+    return String.format("%s/wheel.%d", SwerveDrive.class.getSimpleName(), wheel);
   }
 
   /**
