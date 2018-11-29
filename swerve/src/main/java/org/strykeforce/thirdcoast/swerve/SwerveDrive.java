@@ -29,6 +29,10 @@ public class SwerveDrive {
   private final Wheel[] wheels;
   private final double[] ws = new double[WHEEL_COUNT];
   private final double[] wa = new double[WHEEL_COUNT];
+  private double offsetX;
+  private double offsetY;
+  private double length;
+  private double width;
 
   public SwerveDrive(SwerveDriveConfig config) {
     gyro = config.gyro;
@@ -40,8 +44,8 @@ public class SwerveDrive {
     Errors.setCount(0);
     logger.debug("TalonSRX configuration errors summarized = {}", summarizeErrors);
 
-    double length = config.length;
-    double width = config.width;
+    length = config.length;
+    width = config.width;
     double radius = Math.hypot(length, width);
     kLengthComponent = length / radius;
     kWidthComponent = width / radius;
@@ -143,35 +147,31 @@ public class SwerveDrive {
     }
   }
 
+  // TODO: Implement driveCenterOfRotation() for more wheels
+
   /**
-   * TEMPORARY, needs API and more
+   * TEMPORARY, only correct for 4 wheels
    *
    * <p>Change center of rotation on the robot
+   *
+   * @param speed velocity of azimuth, -1.0 to 1.0
    */
-  public void driveCenterOfRotation() {
-    double[] radii = new double[4];
-
-    double[] wa = new double[4];
-    double[] ws = new double[4];
-
-    double offsetX = -10.75;
-    double offsetY = 0.0;
+  public void driveCenterOfRotation(double speed) {
+    double[] radii = new double[WHEEL_COUNT];
 
     logger.debug("offsetX = {} offsetY = {}", offsetX, offsetY);
 
-    double length = 21.5 / 2.0;
-    double width = 21.5 / 2.0;
-
-    double velocity = 0.2;
+    double halfLength = length / 2.0;
+    double halfWidth = width / 2.0;
 
     double[] centerOfRot = {offsetX, offsetY};
 
-    double[] w0 = {width, -length};
-    double[] w1 = {width, length};
-    double[] w2 = {-width, -length};
-    double[] w3 = {-width, length};
+    double[] w0 = {halfWidth, -halfLength};
+    double[] w1 = {halfWidth, halfLength};
+    double[] w2 = {-halfWidth, -halfLength};
+    double[] w3 = {-halfWidth, halfLength};
 
-    logger.debug("l = {} w = {} ", length, width);
+    logger.debug("l = {} w = {} ", halfLength, halfWidth);
 
     radii[0] = Math.hypot(centerOfRot[0] - w0[0], centerOfRot[1] - w0[1]);
     radii[1] = Math.hypot(centerOfRot[0] - w1[0], centerOfRot[1] - w1[1]);
@@ -184,25 +184,25 @@ public class SwerveDrive {
     double y;
 
     // wheel 0
-    ws[0] = radii[0] * velocity / 15.0;
+    ws[0] = radii[0] * speed / 15.0; // FIXME
     x = centerOfRot[0] - w0[0];
     y = centerOfRot[1] - w0[1];
     wa[0] = 0.25 + Math.atan2(y, x) * 0.5 / Math.PI;
 
     // wheel 1
-    ws[1] = radii[1] * velocity / 15.0;
+    ws[1] = radii[1] * speed / 15.0; // FIXME
     x = centerOfRot[0] - w1[0];
     y = centerOfRot[1] - w1[1];
     wa[1] = 0.25 + Math.atan2(y, x) * 0.5 / Math.PI;
 
     // wheel 2
-    ws[2] = radii[2] * velocity / 15.0;
+    ws[2] = radii[2] * speed / 15.0; // FIXME
     x = centerOfRot[0] - w2[0];
     y = centerOfRot[1] - w2[1];
     wa[2] = 0.25 + Math.atan2(y, x) * 0.5 / Math.PI;
 
     // wheel 3
-    ws[3] = radii[3] * velocity / 15.0;
+    ws[3] = radii[3] * speed / 15.0; // FIXME
     x = centerOfRot[0] - w3[0];
     y = centerOfRot[1] - w3[1];
     wa[3] = 0.25 + Math.atan2(y, x) * 0.5 / Math.PI;
@@ -218,6 +218,37 @@ public class SwerveDrive {
     for (int i = 0; i < WHEEL_COUNT; i++) {
       wheels[i].set(wa[i], ws[i]);
     }
+  }
+
+  /**
+   * Sets x-direction center of rotation offset
+   *
+   * @param offsetX offset distance in inches
+   */
+  public void setOffsetX(double offsetX) {
+    this.offsetX = offsetX;
+  }
+
+
+  /**
+   * Sets y-direction center of rotation offset
+   *
+   * @param offsetY offset distance in inches
+   */
+  public void setOffsetY(double offsetY) {
+    this.offsetY = offsetY;
+  }
+
+  /**
+   * Resets center of rotation to 0.0
+   */
+  public void resetCenter() {
+
+    // TODO: set in settings?
+    // TODO: set to 0 or original?
+
+    setOffsetX(0.0);
+    setOffsetY(0.0);
   }
 
   /**
