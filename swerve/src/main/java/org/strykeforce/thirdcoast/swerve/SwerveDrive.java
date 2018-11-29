@@ -229,7 +229,6 @@ public class SwerveDrive {
     this.offsetX = offsetX;
   }
 
-
   /**
    * Sets y-direction center of rotation offset
    *
@@ -239,9 +238,7 @@ public class SwerveDrive {
     this.offsetY = offsetY;
   }
 
-  /**
-   * Resets center of rotation to 0.0
-   */
+  /** Resets center of rotation to 0.0 */
   public void resetCenter() {
 
     // TODO: set in settings?
