@@ -3,17 +3,6 @@ sudo:              false
 jdk:
   - oraclejdk8
 
-after_success:
-  - cp -R core/build/docs/javadoc docs/
-
-deploy:
-  -  provider:     pages
-     skip_cleanup: true
-     github_token: $GITHUB_TOKEN
-     local_dir:    docs
-     on:
-       branch:     master
-
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -rf $HOME/.gradle/caches/*/plugin-resolution/
