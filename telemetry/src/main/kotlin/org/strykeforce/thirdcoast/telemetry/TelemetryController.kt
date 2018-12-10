@@ -9,12 +9,14 @@ import org.eclipse.jetty.server.handler.DefaultHandler
 import org.eclipse.jetty.server.handler.HandlerList
 import org.strykeforce.thirdcoast.telemetry.grapher.ClientHandler
 import org.strykeforce.thirdcoast.telemetry.grapher.Subscription
+import java.net.DatagramSocket
 import java.net.Inet4Address
 import java.net.NetworkInterface
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
-
+private const val SERVER_PORT = 5800
+private const val CLIENT_PORT = 5801
 private const val JSON = "application/json"
 private const val GRAPHER = "/v1/grapher"
 private const val INVENTORY = "$GRAPHER/inventory"
@@ -77,6 +79,7 @@ class TelemetryController(
     private val port: Int
 ) {
 
+    constructor(inventory: Inventory) : this(inventory, ClientHandler(CLIENT_PORT, DatagramSocket()), SERVER_PORT)
 
     private val server = Server(port).apply {
         handler = HandlerList().apply {

@@ -13,6 +13,7 @@ private val logger = KotlinLogging.logger {}
 
 /** Handles data streaming with Grapher client.  */
 class ClientHandler(private val port: Int, private val socket: DatagramSocket) {
+
     private var scheduler: ScheduledExecutorService? = null
 
     /**
