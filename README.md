@@ -4,4 +4,4 @@ Stryke Force team 2767's Third Coast swerve drive and telemetry API for FRC robo
 
 See examples of usage in [thirdcoast-examples](https://github.com/strykeforce/thirdcoast-examples) repo.
 
-You can create pre-configured project that use Third Coast with [cookiecutter-robot](https://github.com/strykeforce/cookiecutter-robot).
+You can create pre-configured projects that use Third Coast with [cookiecutter-robot](https://github.com/strykeforce/cookiecutter-robot).
