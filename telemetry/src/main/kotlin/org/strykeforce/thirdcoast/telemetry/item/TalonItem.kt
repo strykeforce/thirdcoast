@@ -34,8 +34,8 @@ class TalonItem @JvmOverloads constructor(
             ERROR_DERIVATIVE -> DoubleSupplier { talon.getErrorDerivative(0) }
             INTEGRAL_ACCUMULATOR -> DoubleSupplier { talon.getIntegralAccumulator(0) }
             ANALOG_IN -> DoubleSupplier { sensorCollection.analogIn.toDouble() }
-            ANALOG_RAW -> DoubleSupplier { sensorCollection.analogInRaw.toDouble() }
-            ANALOG_VELOCITY -> DoubleSupplier { sensorCollection.analogInVel.toDouble() }
+            ANALOG_IN_RAW -> DoubleSupplier { sensorCollection.analogInRaw.toDouble() }
+            ANALOG_IN_VELOCITY -> DoubleSupplier { sensorCollection.analogInVel.toDouble() }
             QUAD_POSITION -> DoubleSupplier { sensorCollection.quadraturePosition.toDouble() }
             QUAD_VELOCITY -> DoubleSupplier { sensorCollection.quadratureVelocity.toDouble() }
             QUAD_A_PIN -> DoubleSupplier { sensorCollection.pinStateQuadA.toDouble() }
@@ -79,9 +79,8 @@ class TalonItem @JvmOverloads constructor(
             ERROR_DERIVATIVE,
             INTEGRAL_ACCUMULATOR,
             ANALOG_IN,
-            ANALOG_RAW,
-            ANALOG_POSITION,
-            ANALOG_VELOCITY,
+            ANALOG_IN_RAW,
+            ANALOG_IN_VELOCITY,
             QUAD_POSITION,
             QUAD_VELOCITY,
             QUAD_A_PIN,
