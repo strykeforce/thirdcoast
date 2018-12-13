@@ -9,6 +9,8 @@ import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit.MILLISECONDS
 
+private const val PERIOD = 5L // milliseconds
+
 private val logger = KotlinLogging.logger {}
 
 /** Handles data streaming with Grapher client.  */
@@ -35,7 +37,7 @@ class ClientHandler(private val port: Int, private val socket: DatagramSocket) {
         }
 
         scheduler = Executors.newSingleThreadScheduledExecutor().also {
-            it.scheduleAtFixedRate(runnable, 0, 5, MILLISECONDS)
+            it.scheduleAtFixedRate(runnable, 0, PERIOD, MILLISECONDS)
         }
         logger.info { "sending graph data to ${subscription.client}:$port" }
     }
