@@ -2,4 +2,4 @@ enableFeaturePreview('STABLE_PUBLISHING')
 rootProject.name = 'thirdcoast'
 include 'swerve'
 include 'telemetry'
-
+include 'deadeye'
