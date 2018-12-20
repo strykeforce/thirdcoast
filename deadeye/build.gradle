@@ -1,0 +1,28 @@
+apply plugin: 'com.diffplug.gradle.spotless'
+
+sourceCompatibility = 1.8
+
+dependencies {
+
+    // https://mvnrepository.com/artifact/io.reactivex.rxjava2/rxjava
+    implementation group: 'io.reactivex.rxjava2', name: 'rxjava', version: '2.2.4'
+
+    // https://mvnrepository.com/artifact/com.jakewharton.rxrelay2/rxrelay
+    implementation group: 'com.jakewharton.rxrelay2', name: 'rxrelay', version: '2.1.0'
+
+    implementation 'javax.inject:javax.inject:1'
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+spotless {
+    java {
+        googleJavaFormat()
+    }
+}
+
+apply from: "${rootDir}/gradle/publish.gradle" // needs to come after javadocJar
+

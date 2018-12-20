@@ -10,26 +10,19 @@ buildscript {
     }
 }
 
-subprojects {
+configure(subprojects) {
     group = 'org.strykeforce.thirdcoast'
-    version = '18.7.4'
+    version = '18.7.5'
 
     apply plugin: 'java-library'
     apply plugin: 'idea'
     apply plugin: 'groovy'
-    apply plugin: 'jaci.openrio.gradle.GradleRIO'
 
     repositories {
         jcenter()
     }
 
-    wpi {
-        ctreVersion = "5.7.1.0"
-    }
-
     dependencies {
-        implementation wpilib()
-        implementation ctre()
         implementation 'org.slf4j:slf4j-api:1.7.25'
 
         compileOnly 'com.google.code.findbugs:jsr305:3.0.2'
@@ -45,5 +38,18 @@ subprojects {
             downloadJavadoc = true
             downloadSources = true
         }
+    }
+}
+
+configure(subprojects - project(":deadeye")) {
+    apply plugin: 'jaci.openrio.gradle.GradleRIO'
+
+    wpi {
+        ctreVersion = "5.7.1.0"
+    }
+
+    dependencies {
+        implementation wpilib()
+        implementation ctre()
     }
 }
