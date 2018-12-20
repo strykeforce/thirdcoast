@@ -1,52 +1,72 @@
 package org.strykeforce.thirdcoast.deadeye;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.Arrays;
 
 public class DeadeyeMessage {
 
-  public static final int TYPE_FRAME_DATA = 0xDEADDA7A;
-  public static final int TYPE_PING = 0xDEADBACC;
-  public static final int TYPE_PONG = 0xDEADCCAB;
+  public static final ByteOrder BYTE_ORDER = ByteOrder.LITTLE_ENDIAN;
 
-  public final int type;
-  public final double[] data = new double[4];
+  public static final byte ERROR_BYTE = (byte) 0;
+  public static final byte HEARTBEAT_BYTE = (byte) 1;
+  public static final byte[] HEARTBEAT_BYTES = {HEARTBEAT_BYTE};
+  public static final byte DATA_BYTE = (byte) 2;
+  public static final byte NODATA_BYTE = (byte) 3;
+
+  public final Type type;
+
   public final int latency;
+  public final double[] data = new double[4];
 
-  DeadeyeMessage(byte[] bytes) {
-    ByteBuffer buffer = ByteBuffer.wrap(bytes);
-    buffer.order(DeadeyeService.BYTE_ORDER);
-    buffer.rewind();
-    type = buffer.getInt();
+  private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+  public DeadeyeMessage(byte[] bytes) {
+
+    byte type = bytes.length > 0 ? bytes[0] : ERROR_BYTE;
 
     switch (type) {
-      case TYPE_FRAME_DATA:
+      case HEARTBEAT_BYTE:
+        this.type = Type.HEARTBEAT;
+        break;
+      case DATA_BYTE:
+        this.type = Type.DATA;
+        ByteBuffer buffer = ByteBuffer.wrap(bytes);
+        buffer.order(BYTE_ORDER);
+        buffer.position(Integer.BYTES); // skip over 1 integer
         latency = buffer.getInt();
         for (int i = 0; i < 4; i++) {
           data[i] = buffer.getDouble();
         }
-        //        System.out.println("FRAME DATA:" + Arrays.toString(data));
         return;
-
-      case TYPE_PONG:
-        //        System.out.println("PONG DATA");
+      case NODATA_BYTE:
+        this.type = Type.NODATA;
         break;
-
       default:
-        System.out.println("UNKNOWN TYPE: " + type);
+        this.type = Type.ERROR;
     }
     latency = 0;
   }
 
   @Override
   public String toString() {
-    return "VisionData{"
+    return "DeadeyeMessage{"
         + "type="
-        + String.format("0x%08X", type)
-        + ", data="
-        + Arrays.toString(data)
+        + type
         + ", latency="
         + latency
+        + ", data="
+        + Arrays.toString(data)
         + '}';
+  }
+
+  public enum Type {
+    HEARTBEAT,
+    DATA,
+    NODATA,
+    ERROR
   }
 }

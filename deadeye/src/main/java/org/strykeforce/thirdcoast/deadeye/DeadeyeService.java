@@ -9,22 +9,17 @@ import org.strykeforce.thirdcoast.deadeye.rx.RxUdp;
 
 import java.net.DatagramPacket;
 import java.net.InetSocketAddress;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.strykeforce.thirdcoast.deadeye.ConnectionEvent.CONNECTED;
 import static org.strykeforce.thirdcoast.deadeye.ConnectionEvent.DISCONNECTED;
+import static org.strykeforce.thirdcoast.deadeye.DeadeyeMessage.Type.HEARTBEAT;
 
 public class DeadeyeService {
-  public static final ByteOrder BYTE_ORDER = ByteOrder.LITTLE_ENDIAN;
 
   private static final int PING_INTERVAL = 100;
   private static final int PONG_LIMIT = PING_INTERVAL * 4;
   private static final int PORT = 5555;
-
-  private static final byte[] PING_BYTES =
-      ByteBuffer.allocate(4).order(BYTE_ORDER).putInt(DeadeyeMessage.TYPE_PING).array();
 
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -44,7 +39,7 @@ public class DeadeyeService {
 
     // send pings
     Observable.interval(PING_INTERVAL, MILLISECONDS)
-        .map(i -> PING_BYTES)
+        .map(i -> DeadeyeMessage.HEARTBEAT_BYTES)
         .subscribe(RxUdp.observerSendingTo(ADDRESS));
 
     // monitor pongs
@@ -58,7 +53,9 @@ public class DeadeyeService {
             .share();
 
     pongs =
-        messageObservable.filter(vd -> vd.type == DeadeyeMessage.TYPE_PONG).timestamp(MILLISECONDS);
+        messageObservable
+            .filter(deadeyeMessage -> deadeyeMessage.type == HEARTBEAT)
+            .timestamp(MILLISECONDS);
 
     heartbeat = Observable.interval(PING_INTERVAL / 2, MILLISECONDS).timestamp(MILLISECONDS);
 
@@ -79,6 +76,10 @@ public class DeadeyeService {
               .map(ConnectionEvent::toString)
               .subscribe(logger::info, t -> logger.error("connection event logging", t));
     }
+  }
+
+  public Observable<ConnectionEvent> getConnectionEventObservable() {
+    return connectionEventObservable;
   }
 
   public Observable<DeadeyeMessage> getMessageObservable() {
