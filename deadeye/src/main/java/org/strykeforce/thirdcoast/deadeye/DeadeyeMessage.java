@@ -1,11 +1,10 @@
 package org.strykeforce.thirdcoast.deadeye;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Arrays;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DeadeyeMessage {
 

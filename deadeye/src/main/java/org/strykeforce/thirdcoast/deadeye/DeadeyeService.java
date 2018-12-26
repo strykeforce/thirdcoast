@@ -1,19 +1,18 @@
 package org.strykeforce.thirdcoast.deadeye;
 
-import io.reactivex.Observable;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Timed;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.strykeforce.thirdcoast.deadeye.rx.RxUdp;
-
-import java.net.DatagramPacket;
-import java.net.InetSocketAddress;
-
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.strykeforce.thirdcoast.deadeye.ConnectionEvent.CONNECTED;
 import static org.strykeforce.thirdcoast.deadeye.ConnectionEvent.DISCONNECTED;
 import static org.strykeforce.thirdcoast.deadeye.DeadeyeMessage.Type.HEARTBEAT;
+
+import io.reactivex.Observable;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Timed;
+import java.net.DatagramPacket;
+import java.net.InetSocketAddress;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.strykeforce.thirdcoast.deadeye.rx.RxUdp;
 
 public class DeadeyeService {
 
