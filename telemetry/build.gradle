@@ -39,12 +39,8 @@ dependencies {
 
 task dokkaJavadoc(type: org.jetbrains.dokka.gradle.DokkaTask) {
     includes = ['packages.md']
-    outputFormat = 'javadoc'
     outputDirectory = javadoc.destinationDir
-    jdkVersion = 8
     reportUndocumented = false
-    externalDocumentationLink { url = new URL("http://first.wpi.edu/FRC/roborio/release/docs/java/") }
-    externalDocumentationLink { url = new URL("http://www.ctr-electronics.com/downloads/api/java/html/") }
 }
 
 

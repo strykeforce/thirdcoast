@@ -22,9 +22,9 @@ public class SwerveDriveConfig {
 
   /**
    * Robot period is the {@code TimedRobot} period in seconds, defaults to {@code
-   * TimedRobot.DEFAULT_PERIOD}.
+   * TimedRobot.kDefaultPeriod}.
    */
-  public double robotPeriod = TimedRobot.DEFAULT_PERIOD;
+  public double robotPeriod = TimedRobot.kDefaultPeriod;
 
   /** Factor to correct gyro lag when simultaneously applying azimuth and drive. */
   public double gyroRateCoeff = 0.0;

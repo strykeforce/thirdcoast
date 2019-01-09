@@ -5,14 +5,14 @@ buildscript {
     }
     dependencies {
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.+'
-        classpath "gradle.plugin.jaci.openrio.gradle:GradleRIO:2018.03.06"
+        classpath "edu.wpi.first:GradleRIO:2019.1.1"
         classpath "com.diffplug.spotless:spotless-plugin-gradle:3.15.0"
     }
 }
 
 configure(subprojects) {
     group = 'org.strykeforce.thirdcoast'
-    version = '18.7.5'
+    version = '19.0.0'
 
     apply plugin: 'java-library'
     apply plugin: 'idea'
@@ -29,8 +29,8 @@ configure(subprojects) {
 
         testImplementation 'org.spockframework:spock-core:1.1-groovy-2.4'
         testImplementation 'ch.qos.logback:logback-classic:1.2.3'
-        testRuntime 'net.bytebuddy:byte-buddy:1.7.10'
-        testRuntime 'org.objenesis:objenesis:2.6'
+        testRuntime 'net.bytebuddy:byte-buddy:1.9.6'
+        testRuntime 'org.objenesis:objenesis:3.0.1'
     }
 
     idea {
@@ -42,14 +42,10 @@ configure(subprojects) {
 }
 
 configure(subprojects - project(":deadeye")) {
-    apply plugin: 'jaci.openrio.gradle.GradleRIO'
-
-    wpi {
-        ctreVersion = "5.7.1.0"
-    }
-
+    apply plugin: "edu.wpi.first.GradleRIO"
+    
     dependencies {
-        implementation wpilib()
-        implementation ctre()
+        compile wpi.deps.wpilib()
+        compile wpi.deps.vendor.java()
     }
 }
