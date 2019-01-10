@@ -3,8 +3,6 @@ apply plugin: 'com.diffplug.gradle.spotless'
 sourceCompatibility = 11
 
 dependencies {
-//    compile   wpi.deps.wpilib()
-//    compile wpi.deps.vendor.java()
     compileOnly 'org.jetbrains:annotations:15.0'
 }
 
