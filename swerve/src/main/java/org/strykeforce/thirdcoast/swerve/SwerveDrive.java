@@ -139,15 +139,6 @@ public class SwerveDrive {
     wa[2] = Math.atan2(a, d) * 0.5 / Math.PI;
     wa[3] = Math.atan2(a, c) * 0.5 / Math.PI;
 
-    //    logger.debug("FO: forward = {}, strafe = {}, yaw = {}", forward, strafe, azimuth);
-    logger.debug(
-        "wa[0] = {}, wa[1] = {}, wa[2] = {}, wa[3] = {}",
-        String.format("%4.2f", wa[0]),
-        String.format("%4.2f", wa[1]),
-        String.format("%4.2f", wa[2]),
-        String.format("%4.2f", wa[3]));
-    //    if (true) return;
-
     // normalize wheel speed
     final double maxWheelSpeed = Math.max(Math.max(ws[0], ws[1]), Math.max(ws[2], ws[3]));
     if (maxWheelSpeed > 1.0) {
