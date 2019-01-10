@@ -1,5 +1,10 @@
 package org.strykeforce.thirdcoast.swerve;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.byLessThan;
+import static org.mockito.Mockito.*;
+import static org.strykeforce.thirdcoast.swerve.SwerveDrive.DriveMode.TELEOP;
+
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.Preferences;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,11 +15,6 @@ import org.junit.jupiter.params.provider.CsvFileSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.byLessThan;
-import static org.mockito.Mockito.*;
-import static org.strykeforce.thirdcoast.swerve.SwerveDrive.DriveMode.TELEOP;
 
 @ExtendWith(MockitoExtension.class)
 class SwerveDriveTest {
