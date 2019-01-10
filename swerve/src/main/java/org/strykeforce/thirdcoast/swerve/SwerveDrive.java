@@ -176,7 +176,10 @@ public class SwerveDrive {
    * @see #zeroAzimuthEncoders()
    */
   public void saveAzimuthPositions() {
-    Preferences prefs = Preferences.getInstance();
+    saveAzimuthPositions(Preferences.getInstance());
+  }
+
+  void saveAzimuthPositions(Preferences prefs) {
     for (int i = 0; i < WHEEL_COUNT; i++) {
       int position = wheels[i].getAzimuthAbsolutePosition();
       prefs.putInt(getPreferenceKeyForWheel(i), position);
@@ -192,8 +195,11 @@ public class SwerveDrive {
    * @see #saveAzimuthPositions()
    */
   public void zeroAzimuthEncoders() {
+    zeroAzimuthEncoders(Preferences.getInstance());
+  }
+
+  void zeroAzimuthEncoders(Preferences prefs) {
     Errors.setCount(0);
-    Preferences prefs = Preferences.getInstance();
     for (int i = 0; i < WHEEL_COUNT; i++) {
       int position = prefs.getInt(getPreferenceKeyForWheel(i), 0);
       wheels[i].setAzimuthZero(position);

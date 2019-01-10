@@ -34,7 +34,7 @@ public class Wheel {
   private final double driveSetpointMax;
   private final TalonSRX driveTalon;
   private final TalonSRX azimuthTalon;
-  protected DoubleConsumer currentDriver;
+  protected DoubleConsumer driver;
 
   /**
    * This constructs a wheel with supplied azimuth and drive talons.
@@ -70,7 +70,7 @@ public class Wheel {
   public void set(double azimuth, double drive) {
     // don't reset wheel azimuth direction to zero when returning to neutral
     if (drive == 0) {
-      currentDriver.accept(0d);
+      driver.accept(0d);
       return;
     }
 
@@ -86,7 +86,7 @@ public class Wheel {
     }
 
     azimuthTalon.set(MotionMagic, azimuthPosition + azimuthError);
-    currentDriver.accept(drive);
+    driver.accept(drive);
   }
 
   /**
@@ -119,12 +119,12 @@ public class Wheel {
     switch (driveMode) {
       case OPEN_LOOP:
       case TELEOP:
-        currentDriver = (setpoint) -> driveTalon.set(PercentOutput, setpoint);
+        driver = (setpoint) -> driveTalon.set(PercentOutput, setpoint);
         break;
       case CLOSED_LOOP:
       case TRAJECTORY:
       case AZIMUTH:
-        currentDriver = (setpoint) -> driveTalon.set(Velocity, setpoint * driveSetpointMax);
+        driver = (setpoint) -> driveTalon.set(Velocity, setpoint * driveSetpointMax);
         break;
     }
   }
@@ -135,19 +135,24 @@ public class Wheel {
    */
   public void stop() {
     azimuthTalon.set(MotionMagic, azimuthTalon.getSelectedSensorPosition(0));
-    currentDriver.accept(0d);
+    driver.accept(0d);
   }
 
   /**
-   * Set the azimuthTalon encoder relative to wheel zero alignment position.
+   * Set the azimuthTalon encoder relative to wheel zero alignment position. For example, if current
+   * absolute encoder = 0 and zero setpoint = 2767, then current relative setpoint = -2767.
    *
-   * @param zero encoder position (in ticks) where wheel is zeroed.
+   * <pre>
+   *
+   * relative:  -2767                               0
+   *           ---|---------------------------------|-------
+   * absolute:    0                               2767
+   *
+   * </pre>
+   *
+   * @param zero zero setpoint, absolute encoder position (in ticks) where wheel is zeroed.
    */
   public void setAzimuthZero(int zero) {
-    if (azimuthTalon == null) {
-      logger.error("azimuth Talon not present, aborting setAzimuthZero(int)");
-      return;
-    }
     int azimuthSetpoint = getAzimuthAbsolutePosition() - zero;
     ErrorCode err = azimuthTalon.setSelectedSensorPosition(azimuthSetpoint, 0, 10);
     Errors.check(err, logger);
@@ -157,13 +162,9 @@ public class Wheel {
   /**
    * Returns the wheel's azimuth absolute position in encoder ticks.
    *
-   * @return 0 - 4095 encoder ticks
+   * @return 0 - 4095, corresponding to one full revolution.
    */
   public int getAzimuthAbsolutePosition() {
-    if (azimuthTalon == null) {
-      logger.error("azimuth Talon not present, returning 0 for getAzimuthAbsolutePosition()");
-      return 0;
-    }
     return azimuthTalon.getSensorCollection().getPulseWidthPosition() & 0xFFF;
   }
 
