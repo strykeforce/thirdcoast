@@ -21,7 +21,7 @@ class TalonItem @JvmOverloads constructor(
     override fun measurementFor(measure: Measure): DoubleSupplier {
         return when (measure) {
             UNKNOWN -> DoubleSupplier { 2767.0 }
-            CLOSED_LOOP_TARGET -> DoubleSupplier { talon.getClosedLoopTarget(0).toDouble() }
+            CLOSED_LOOP_TARGET -> DoubleSupplier { talon.getClosedLoopTarget(0) }
             OUTPUT_CURRENT -> DoubleSupplier { talon.outputCurrent }
             OUTPUT_VOLTAGE -> DoubleSupplier { talon.motorOutputVoltage }
             OUTPUT_PERCENT -> DoubleSupplier { talon.motorOutputPercent }

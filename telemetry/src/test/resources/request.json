@@ -1,0 +1,17 @@
+{
+  "type": "start",
+  "subscription": [
+    {
+      "itemId": 0,
+      "measurementId": "BASE_ID"
+    },
+    {
+      "itemId": 0,
+      "measurementId": "VALUE"
+    },
+    {
+      "itemId": 1,
+      "measurementId": "JERK_EXPECTED"
+    }
+  ]
+}

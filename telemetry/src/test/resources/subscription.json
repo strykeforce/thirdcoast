@@ -1,0 +1,9 @@
+{
+  "type": "subscription",
+  "timestamp": 2767,
+  "descriptions": [
+    "item zero: Base ID",
+    "item zero: Measured Value",
+    "item one: Expected Jerk"
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "items": [
+    {
+      "id": 0,
+      "type": "one"
+    },
+    {
+      "id": 1,
+      "type": "two"
+    }
+  ],
+  "measures": [
+    {
+      "deviceType": "one",
+      "deviceMeasures": [
+        {
+          "id": "VALUE",
+          "description": "Measured Value"
+        },
+        {
+          "id": "POSITION",
+          "description": "Position"
+        }
+      ]
+    },
+    {
+      "deviceType": "two",
+      "deviceMeasures": [
+        {
+          "id": "BUS_VOLTAGE",
+          "description": "Bus Voltage"
+        }
+      ]
+    }
+  ]
+}
