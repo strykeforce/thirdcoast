@@ -82,7 +82,7 @@ class SwerveDriveTest {
     SwerveDrive swerve = new SwerveDrive(config);
     for (int i = 0; i < 4; i++) {
       String key = SwerveDrive.getPreferenceKeyForWheel(i);
-      doReturn(i).when(prefs).getInt(key, 0);
+      doReturn(i).when(prefs).getInt(key, SwerveDrive.DEFAULT_ABSOLUTE_AZIMUTH_OFFSET);
     }
     swerve.zeroAzimuthEncoders(prefs);
 

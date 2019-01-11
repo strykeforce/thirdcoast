@@ -20,6 +20,7 @@ import org.strykeforce.thirdcoast.talon.Errors;
 @SuppressWarnings("unused")
 public class SwerveDrive {
 
+  public final static int DEFAULT_ABSOLUTE_AZIMUTH_OFFSET = 200;
   private static final Logger logger = LoggerFactory.getLogger(SwerveDrive.class);
   private static final int WHEEL_COUNT = 4;
   final AHRS gyro;
@@ -201,7 +202,7 @@ public class SwerveDrive {
   void zeroAzimuthEncoders(Preferences prefs) {
     Errors.setCount(0);
     for (int i = 0; i < WHEEL_COUNT; i++) {
-      int position = prefs.getInt(getPreferenceKeyForWheel(i), 0);
+      int position = prefs.getInt(getPreferenceKeyForWheel(i), DEFAULT_ABSOLUTE_AZIMUTH_OFFSET);
       wheels[i].setAzimuthZero(position);
       logger.info("azimuth {}: loaded zero = {}", i, position);
     }
