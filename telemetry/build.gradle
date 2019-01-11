@@ -17,7 +17,7 @@ buildscript {
 apply plugin: "kotlin"
 apply plugin: 'org.jetbrains.dokka'
 
-sourceCompatibility = 1.8
+sourceCompatibility = 11
 
 
 repositories {
@@ -34,6 +34,9 @@ dependencies {
 
     // Logging
     compile 'io.github.microutils:kotlin-logging:1.6.10'
+    
+    // unit tests
+    testImplementation 'org.skyscreamer:jsonassert:1.+'
 
 }
 

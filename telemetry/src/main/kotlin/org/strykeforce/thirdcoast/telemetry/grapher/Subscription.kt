@@ -38,8 +38,7 @@ class Subscription(inventory: Inventory, val client: String, requestJson: String
             .name("timestamp").value(System.currentTimeMillis())
             .name("data").beginArray()
         measurements.forEach { writer.value(it.asDouble) }
-        writer.endArray()
-            .endObject()
+        writer.endArray().endObject()
     }
 
     @Throws(IOException::class)
