@@ -15,6 +15,7 @@ buildscript {
 }
 
 apply plugin: "kotlin"
+apply plugin: "kotlin-kapt"
 apply plugin: 'org.jetbrains.dokka'
 
 sourceCompatibility = 11
@@ -28,8 +29,10 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 
     // telemetry
-    implementation 'org.eclipse.jetty:jetty-server:9.4.12.v20180830'
-    implementation 'com.squareup.moshi:moshi:1.5.0'
+    implementation "org.eclipse.jetty:jetty-server:9.4.12.v20180830"
+    implementation "com.squareup.moshi:moshi:1.8.0"
+    kapt "com.squareup.moshi:moshi-kotlin-codegen:1.8.0"
+    implementation "com.squareup.okhttp3:okhttp:3.12.0"
     implementation project(':swerve')
 
     // Logging

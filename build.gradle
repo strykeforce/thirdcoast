@@ -12,7 +12,7 @@ buildscript {
 
 configure(subprojects) {
     group = 'org.strykeforce.thirdcoast'
-    version = '19.0.1'
+    version = '19.1.0'
 
     apply plugin: 'java-library'
     apply plugin: 'idea'
@@ -39,6 +39,8 @@ configure(subprojects) {
         module {
             downloadJavadoc = true
             downloadSources = true
+            sourceDirs += files('build/generated/source/kaptKotlin/main')
+            generatedSourceDirs += files('build/generated/source/kaptKotlin/main')
         }
     }
 
