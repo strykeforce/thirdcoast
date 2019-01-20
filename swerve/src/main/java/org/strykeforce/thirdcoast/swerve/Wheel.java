@@ -35,6 +35,7 @@ public class Wheel {
   private final TalonSRX driveTalon;
   private final TalonSRX azimuthTalon;
   protected DoubleConsumer driver;
+  private boolean isInverted = false;
 
   /**
    * This constructs a wheel with supplied azimuth and drive talons.
@@ -81,6 +82,7 @@ public class Wheel {
 
     // minimize azimuth rotation, reversing drive if necessary
     if (Math.abs(azimuthError) > 0.25 * TICKS) {
+      isInverted = true;
       azimuthError -= Math.copySign(0.5 * TICKS, azimuthError);
       drive = -drive;
     }
@@ -188,6 +190,10 @@ public class Wheel {
 
   public double getDriveSetpointMax() {
     return driveSetpointMax;
+  }
+
+  public boolean isInverted() {
+    return isInverted;
   }
 
   @Override
