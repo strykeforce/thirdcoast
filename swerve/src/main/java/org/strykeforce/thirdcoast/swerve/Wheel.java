@@ -1,16 +1,17 @@
 package org.strykeforce.thirdcoast.swerve;
 
-import static com.ctre.phoenix.motorcontrol.ControlMode.*;
-import static org.strykeforce.thirdcoast.swerve.SwerveDrive.DriveMode.TELEOP;
-
 import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import java.util.Objects;
-import java.util.function.DoubleConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.swerve.SwerveDrive.DriveMode;
 import org.strykeforce.thirdcoast.talon.Errors;
+
+import java.util.Objects;
+import java.util.function.DoubleConsumer;
+
+import static com.ctre.phoenix.motorcontrol.ControlMode.*;
+import static org.strykeforce.thirdcoast.swerve.SwerveDrive.DriveMode.TELEOP;
 
 /**
  * Controls a swerve drive wheel azimuth and drive motors.
@@ -81,8 +82,8 @@ public class Wheel {
     double azimuthError = Math.IEEEremainder(azimuth - azimuthPosition, TICKS);
 
     // minimize azimuth rotation, reversing drive if necessary
-    if (Math.abs(azimuthError) > 0.25 * TICKS) {
-      isInverted = true;
+    isInverted = Math.abs(azimuthError) > 0.25 * TICKS;
+    if (isInverted) {
       azimuthError -= Math.copySign(0.5 * TICKS, azimuthError);
       drive = -drive;
     }
