@@ -81,8 +81,8 @@ public class Wheel {
     double azimuthError = Math.IEEEremainder(azimuth - azimuthPosition, TICKS);
 
     // minimize azimuth rotation, reversing drive if necessary
-    if (Math.abs(azimuthError) > 0.25 * TICKS) {
-      isInverted = true;
+    isInverted = Math.abs(azimuthError) > 0.25 * TICKS;
+    if (isInverted) {
       azimuthError -= Math.copySign(0.5 * TICKS, azimuthError);
       drive = -drive;
     }
