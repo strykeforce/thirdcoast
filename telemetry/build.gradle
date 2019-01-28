@@ -1,6 +1,6 @@
 buildscript {
     ext {
-        kotlin_version = '1.3.11'
+        kotlin_version = '1.3.20'
         junit_version = '5.2.0'
     }
 
@@ -37,7 +37,7 @@ dependencies {
 
     // Logging
     compile 'io.github.microutils:kotlin-logging:1.6.10'
-    
+
     // unit tests
     testImplementation 'org.skyscreamer:jsonassert:1.+'
 
