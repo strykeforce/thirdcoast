@@ -13,3 +13,4 @@ The Talon SRX provision library was removed after the 2018 season. With the addi
 You can create pre-configured projects that use Third Coast with [cookiecutter-robot](https://github.com/strykeforce/cookiecutter-robot).
 
 See examples of usage in [thirdcoast-examples](https://github.com/strykeforce/thirdcoast-examples) repo and other engineering resources at [strykeforce.org](https://strykeforce.org/resources/).
+
