@@ -23,18 +23,18 @@ public class SwerveDrive {
   public static final int DEFAULT_ABSOLUTE_AZIMUTH_OFFSET = 200;
   private static final Logger logger = LoggerFactory.getLogger(SwerveDrive.class);
   private static final int WHEEL_COUNT = 4;
-  final AHRS gyro;
+  private final AHRS gyro;
   private final double kLengthComponent;
   private final double kWidthComponent;
   private final double kGyroRateCorrection;
   private final Wheel[] wheels;
   private final double[] ws = new double[WHEEL_COUNT];
   private final double[] wa = new double[WHEEL_COUNT];
+  private boolean isFieldOriented;
 
   public SwerveDrive(SwerveDriveConfig config) {
     gyro = config.gyro;
     wheels = config.wheels;
-    logger.info("field orientation driving is {}", gyro == null ? "DISABLED" : "ENABLED");
 
     final boolean summarizeErrors = config.summarizeTalonErrors;
     Errors.setSummarized(summarizeErrors);
@@ -47,7 +47,9 @@ public class SwerveDrive {
     kLengthComponent = length / radius;
     kWidthComponent = width / radius;
 
-    if (gyro != null && gyro.isConnected()) {
+    setFieldOriented(gyro != null && gyro.isConnected());
+
+    if (isFieldOriented) {
       gyro.enableLogging(config.gyroLoggingEnabled);
       double robotPeriod = config.robotPeriod;
       double gyroRateCoeff = config.gyroRateCoeff;
@@ -112,14 +114,14 @@ public class SwerveDrive {
 
     // Use gyro for field-oriented drive. We use getAngle instead of getYaw to enable arbitrary
     // autonomous starting positions.
-    if (gyro != null) {
+    if (isFieldOriented) {
       double angle = gyro.getAngle();
       angle += gyro.getRate() * kGyroRateCorrection;
       angle = Math.IEEEremainder(angle, 360.0);
 
       angle = Math.toRadians(angle);
       final double temp = forward * Math.cos(angle) + strafe * Math.sin(angle);
-      strafe = -forward * Math.sin(angle) + strafe * Math.cos(angle);
+      strafe = strafe * Math.cos(angle) - forward * Math.sin(angle);
       forward = temp;
     }
 
@@ -226,6 +228,26 @@ public class SwerveDrive {
    */
   public AHRS getGyro() {
     return gyro;
+  }
+
+  /**
+   * Get status of field-oriented driving.
+   *
+   * @return status of field-oriented driving.
+   */
+  public boolean isFieldOriented() {
+    return isFieldOriented;
+  }
+
+  /**
+   * Enable or disable field-oriented driving. Enabled by default if connected gyro is passed in via
+   * {@code SwerveDriveConfig} during construction.
+   *
+   * @param enabled true to enable field-oriented driving.
+   */
+  public void setFieldOriented(boolean enabled) {
+    isFieldOriented = enabled;
+    logger.info("field orientation driving is {}", isFieldOriented ? "ENABLED" : "DISABLED");
   }
 
   /**
