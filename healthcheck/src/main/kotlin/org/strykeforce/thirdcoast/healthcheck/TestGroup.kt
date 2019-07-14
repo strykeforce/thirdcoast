@@ -50,7 +50,7 @@ abstract class TestGroup(val healthCheck: HealthCheck) : Test {
             h2 { +name }
             table {
                 val reportable = tests.filterIsInstance<Reportable>()
-                if (!reportable.isEmpty()) {
+                if (reportable.isNotEmpty()) {
                     reportable.first().apply { reportHeader(tagConsumer) }
                     reportable.forEach { it.reportRows(tagConsumer) }
                 }
@@ -76,6 +76,7 @@ abstract class TestGroup(val healthCheck: HealthCheck) : Test {
 class TalonGroup(healthCheck: HealthCheck) : TestGroup(healthCheck) {
     var talons = emptyList<TalonSRX>()
 
+    @Suppress("unused")
     fun timedTest(init: TalonTimedTest.() -> Unit): Test {
         val spinTest = TalonTimedTest(this)
         spinTest.init()
@@ -83,6 +84,7 @@ class TalonGroup(healthCheck: HealthCheck) : TestGroup(healthCheck) {
         return spinTest
     }
 
+    @Suppress("unused")
     fun positionTest(init: TalonPositionTest.() -> Unit): Test {
         val positionTest = TalonPositionTest(this)
         positionTest.init()
@@ -90,6 +92,7 @@ class TalonGroup(healthCheck: HealthCheck) : TestGroup(healthCheck) {
         return positionTest
     }
 
+    @Suppress("unused")
     fun positionTalon(init: TalonPosition.() -> Unit): Test {
         val position = TalonPosition(this)
         position.init()

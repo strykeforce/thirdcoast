@@ -59,10 +59,10 @@ class TalonTimedTest(private val group: TalonGroup) : Test, Reportable {
             STOPPING -> {
                 group.talons.forEach { it.set(PercentOutput, 0.0) }
 
-                talonCurrents.forEach { talon, currents ->
+                talonCurrents.forEach { (talon, currents) ->
                     logger.info { "talon ${talon.deviceID} average current = ${currents.average()}" }
                 }
-                talonSpeeds.forEach { talon, speeds ->
+                talonSpeeds.forEach { (talon, speeds) ->
                     logger.info { "talon ${talon.deviceID} average speed = ${speeds.average()}" }
                 }
                 logger.info { "timed test finished" }

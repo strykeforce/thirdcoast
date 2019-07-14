@@ -22,6 +22,7 @@ class HealthCheck {
     private lateinit var iterator: Iterator<TestGroup>
     private lateinit var currentTestGroup: TestGroup
 
+    @Suppress("unused")
     fun talonCheck(init: TalonGroup.() -> Unit): TalonGroup {
         val test = TalonGroup(this)
         test.init()
@@ -29,6 +30,7 @@ class HealthCheck {
         return test
     }
 
+    @Suppress("unused")
     fun execute() = when (state) {
         STARTING -> {
             check(testGroups.isNotEmpty()) { "no tests groups" }
@@ -53,8 +55,10 @@ class HealthCheck {
         STOPPED -> throw IllegalStateException()
     }
 
+    @Suppress("unused")
     fun isFinished() = state == STOPPED
 
+    @Suppress("unused")
     fun report() {
         File(HTML_PATH).writer().use { writer ->
             writer.appendln("<!DOCTYPE html>")
@@ -82,6 +86,7 @@ class HealthCheck {
         return "org.strykeforce.thirdcoast.healthcheck.HealthCheck(testGroups=$testGroups)"
     }
 
+    @Suppress("unused")
     private enum class HealthcheckState {
         STARTING,
         RUNNING,

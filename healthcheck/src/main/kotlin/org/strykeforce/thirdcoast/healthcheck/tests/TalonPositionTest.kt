@@ -27,7 +27,6 @@ class TalonPositionTest(private val group: TalonGroup) : Test, Reportable {
     var peakVoltage = 12.0
 
     var encoderChangeTarget = 0
-    var encoderGoodEnough = 5
     var encoderTimeOutCount = 0
 
     private var state = STARTING
