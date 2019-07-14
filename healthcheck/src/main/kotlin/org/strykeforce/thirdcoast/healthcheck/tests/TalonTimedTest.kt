@@ -9,8 +9,8 @@ import kotlinx.html.th
 import kotlinx.html.tr
 import mu.KotlinLogging
 import org.strykeforce.thirdcoast.healthcheck.Reportable
-import org.strykeforce.thirdcoast.healthcheck.TalonGroup
 import org.strykeforce.thirdcoast.healthcheck.Test
+import org.strykeforce.thirdcoast.healthcheck.groups.TalonGroup
 import org.strykeforce.thirdcoast.healthcheck.statusOf
 import org.strykeforce.thirdcoast.healthcheck.tests.TalonTimedTest.TalonTimedTestState.*
 import kotlin.math.roundToInt

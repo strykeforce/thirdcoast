@@ -5,6 +5,8 @@ import kotlinx.html.*
 import kotlinx.html.stream.appendHTML
 import mu.KotlinLogging
 import org.strykeforce.thirdcoast.healthcheck.HealthCheck.HealthcheckState.*
+import org.strykeforce.thirdcoast.healthcheck.groups.TalonGroup
+import org.strykeforce.thirdcoast.healthcheck.groups.TestGroup
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*

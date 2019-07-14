@@ -4,8 +4,8 @@ import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import kotlinx.html.TagConsumer
 import mu.KotlinLogging
-import org.strykeforce.thirdcoast.healthcheck.TalonGroup
 import org.strykeforce.thirdcoast.healthcheck.Test
+import org.strykeforce.thirdcoast.healthcheck.groups.TalonGroup
 import org.strykeforce.thirdcoast.healthcheck.tests.TalonPosition.TalonPositionState.*
 import kotlin.math.absoluteValue
 
