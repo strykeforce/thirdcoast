@@ -1,15 +1,15 @@
-package org.strykeforce.thirdcoast.telemetry.item
+package org.strykeforce.thirdcoast.telemetry.graphable
 
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import org.strykeforce.thirdcoast.telemetry.grapher.Measure
 import org.strykeforce.thirdcoast.telemetry.grapher.Measure.*
 import java.util.function.DoubleSupplier
 
-/** Represents a [TalonSRX] telemetry-enable Item.  */
-class TalonItem @JvmOverloads constructor(
+/** Represents a [TalonSRX] telemetry-enable Graphable.  */
+class TalonGraphable @JvmOverloads constructor(
     private val talon: TalonSRX,
     override val description: String = "TalonSRX ${talon.deviceID}"
-) : Item {
+) : Graphable {
 
     override val deviceId = talon.deviceID
     override val type = "talon"
@@ -55,7 +55,7 @@ class TalonItem @JvmOverloads constructor(
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as TalonItem
+        other as TalonGraphable
 
         if (deviceId != other.deviceId) return false
 

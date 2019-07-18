@@ -11,7 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONParser;
 import org.strykeforce.thirdcoast.telemetry.Inventory;
-import org.strykeforce.thirdcoast.telemetry.item.Item;
+import org.strykeforce.thirdcoast.telemetry.graphable.Graphable;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -24,18 +24,18 @@ import static org.strykeforce.thirdcoast.telemetry.grapher.Measure.*;
 @ExtendWith(MockitoExtension.class)
 class SubscriptionTest {
 
-  @Mock Item itemZero, itemOne;
+  @Mock Graphable graphableZero, graphableOne;
   @Mock Inventory inventory;
 
   @BeforeEach
   void setUp() {
-    doReturn(itemZero).when(inventory).itemForId(0);
-    doReturn(itemOne).when(inventory).itemForId(1);
-    doReturn((DoubleSupplier) () -> 27d).when(itemZero).measurementFor(BASE_ID);
-    doReturn((DoubleSupplier) () -> 67d).when(itemZero).measurementFor(VALUE);
-    doReturn((DoubleSupplier) () -> 2767d).when(itemOne).measurementFor(JERK_EXPECTED);
-    when(itemZero.getDescription()).thenReturn("item zero");
-    when(itemOne.getDescription()).thenReturn("item one");
+    doReturn(graphableZero).when(inventory).graphableForId(0);
+    doReturn(graphableOne).when(inventory).graphableForId(1);
+    doReturn((DoubleSupplier) () -> 27d).when(graphableZero).measurementFor(BASE_ID);
+    doReturn((DoubleSupplier) () -> 67d).when(graphableZero).measurementFor(VALUE);
+    doReturn((DoubleSupplier) () -> 2767d).when(graphableOne).measurementFor(JERK_EXPECTED);
+    when(graphableZero.getDescription()).thenReturn("graphable zero");
+    when(graphableOne.getDescription()).thenReturn("graphable one");
   }
 
   @Test

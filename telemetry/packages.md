@@ -4,7 +4,7 @@
 
 Provides a data streaming service for robot sensors, actuators or subsystems. Documentation for client-server communication is [here](https://strykeforce.github.io/posts/thirdcoast-telemetry/).
 
-# Package org.strykeforce.thirdcoast.telemetry.item
+# Package org.strykeforce.thirdcoast.telemetry.graphable
 
 Robot sensors, actuators or subsystems that are telemetry-enabled.
 

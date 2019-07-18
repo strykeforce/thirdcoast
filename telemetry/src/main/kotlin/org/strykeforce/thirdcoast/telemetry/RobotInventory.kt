@@ -1,6 +1,6 @@
 package org.strykeforce.thirdcoast.telemetry
 
-import org.strykeforce.thirdcoast.telemetry.item.Item
+import org.strykeforce.thirdcoast.telemetry.graphable.Graphable
 
 /** Default implementation of [Inventory] for a robot.  */
-class RobotInventory(items: Collection<Item>) : AbstractInventory(items)
+class RobotInventory(graphables: Collection<Graphable>) : AbstractInventory(graphables)

@@ -19,7 +19,7 @@ class Subscription(inventory: Inventory, val client: String, requestJson: String
     init {
         val request: RequestJson = RequestJson.fromJson(requestJson) ?: RequestJson.EMPTY
         request.subscription.forEach {
-            val item = inventory.itemForId(it.itemId)
+            val item = inventory.graphableForId(it.graphableId)
             val measure = try {
                 Measure.valueOf(it.measurementId)
             } catch (e: IllegalArgumentException) {
@@ -56,14 +56,14 @@ class Subscription(inventory: Inventory, val client: String, requestJson: String
     internal class RequestJson {
 
         var type: String = "start"
-        var subscription: List<Item> = emptyList()
+        var subscription: List<Graphable> = emptyList()
 
-        internal class Item {
+        internal class Graphable {
 
-            var itemId: Int = 0
+            var graphableId: Int = 0
             lateinit var measurementId: String
 
-            override fun toString() = "Item(itemId=$itemId, measurementId='$measurementId')"
+            override fun toString() = "Graphable(graphableId=$graphableId, measurementId='$measurementId')"
         }
 
         companion object {

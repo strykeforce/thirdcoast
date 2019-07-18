@@ -1,4 +1,4 @@
-package org.strykeforce.thirdcoast.telemetry.item
+package org.strykeforce.thirdcoast.telemetry.graphable
 
 import com.ctre.phoenix.CANifier
 import com.ctre.phoenix.CANifier.PWMChannel.*
@@ -7,11 +7,11 @@ import org.strykeforce.thirdcoast.telemetry.grapher.Measure
 import org.strykeforce.thirdcoast.telemetry.grapher.Measure.*
 import java.util.function.DoubleSupplier
 
-/** Represents a [TalonSRX] telemetry-enable Item.  */
-class CanifierItem @JvmOverloads constructor(
+/** Represents a [TalonSRX] telemetry-enable Graphable.  */
+class CanifierGraphable @JvmOverloads constructor(
     private val canifier: CANifier,
     override val description: String = "CANifier ${canifier.deviceID}"
-) : Item {
+) : Graphable {
 
     override val deviceId = canifier.deviceID
     override val type = "canifier"
@@ -63,7 +63,7 @@ class CanifierItem @JvmOverloads constructor(
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as CanifierItem
+        other as CanifierGraphable
 
         if (deviceId != other.deviceId) return false
 

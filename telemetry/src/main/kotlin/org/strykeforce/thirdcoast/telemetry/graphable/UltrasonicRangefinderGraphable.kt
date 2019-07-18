@@ -1,4 +1,4 @@
-package org.strykeforce.thirdcoast.telemetry.item
+package org.strykeforce.thirdcoast.telemetry.graphable
 
 import com.ctre.phoenix.CANifier
 import com.ctre.phoenix.CANifier.PWMChannel
@@ -6,11 +6,11 @@ import org.strykeforce.thirdcoast.telemetry.grapher.Measure
 import org.strykeforce.thirdcoast.telemetry.grapher.Measure.VALUE
 import java.util.function.DoubleSupplier
 
-class UltrasonicRangefinderItem @JvmOverloads constructor(
+class UltrasonicRangefinderGraphable @JvmOverloads constructor(
     canId: Int,
     private val pwmChannel: PWMChannel,
     override val description: String = "Sensor ${canId * 10 + pwmChannel.value}"
-) : Item {
+) : Graphable {
 
     override val deviceId = canId * 10 + pwmChannel.value
     override val type = "sensor"
@@ -32,7 +32,7 @@ class UltrasonicRangefinderItem @JvmOverloads constructor(
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as UltrasonicRangefinderItem
+        other as UltrasonicRangefinderGraphable
 
         if (deviceId != other.deviceId) return false
 

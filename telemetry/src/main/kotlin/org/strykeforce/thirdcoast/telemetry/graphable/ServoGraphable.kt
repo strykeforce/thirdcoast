@@ -1,4 +1,4 @@
-package org.strykeforce.thirdcoast.telemetry.item
+package org.strykeforce.thirdcoast.telemetry.graphable
 
 import edu.wpi.first.wpilibj.Servo
 import org.strykeforce.thirdcoast.telemetry.grapher.Measure
@@ -6,11 +6,11 @@ import org.strykeforce.thirdcoast.telemetry.grapher.Measure.ANGLE
 import org.strykeforce.thirdcoast.telemetry.grapher.Measure.POSITION
 import java.util.function.DoubleSupplier
 
-/** Represents a [Servo] telemetry-enable Item.  */
-class ServoItem @JvmOverloads constructor(
+/** Represents a [Servo] telemetry-enable Graphable.  */
+class ServoGraphable @JvmOverloads constructor(
     private val servo: Servo,
     override val description: String = "Servo ${servo.channel}"
-) : Item {
+) : Graphable {
 
     override val deviceId = servo.channel
     override val type = "servo"
@@ -30,7 +30,7 @@ class ServoItem @JvmOverloads constructor(
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as ServoItem
+        other as ServoGraphable
 
         if (deviceId != other.deviceId) return false
 

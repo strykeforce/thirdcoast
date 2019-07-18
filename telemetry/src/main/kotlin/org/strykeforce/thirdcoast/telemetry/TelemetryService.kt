@@ -3,15 +3,15 @@ package org.strykeforce.thirdcoast.telemetry
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import mu.KotlinLogging
 import org.strykeforce.thirdcoast.swerve.SwerveDrive
-import org.strykeforce.thirdcoast.telemetry.item.Item
-import org.strykeforce.thirdcoast.telemetry.item.TalonItem
+import org.strykeforce.thirdcoast.telemetry.graphable.Graphable
+import org.strykeforce.thirdcoast.telemetry.graphable.TalonGraphable
 import java.util.*
 import java.util.function.Function
 
 private val logger = KotlinLogging.logger {}
 
 /**
- * The Telemetry service registers [Item] instances for data collection and controls the
+ * The Telemetry service registers [Graphable] instances for data collection and controls the
  * starting and stopping of the service. When active, the services listens for incoming config
  * messages via a HTTP REST service and sends data over UDP.
  */
@@ -21,7 +21,7 @@ class TelemetryService(private val telemetryControllerFactory: Function<Inventor
     // when start is called. The inventory copies this collection into a List, using its index in
     // this list as the inventory id.
 
-    private val items = LinkedHashSet<Item>()
+    private val graphables = LinkedHashSet<Graphable>()
     private var telemetryController: TelemetryController? = null
 
     /** Start the Telemetry service and listen for client connections.  */
@@ -30,7 +30,7 @@ class TelemetryService(private val telemetryControllerFactory: Function<Inventor
             logger.info("already started")
             return
         }
-        telemetryController = telemetryControllerFactory.apply(RobotInventory(items)).also { it.start() }
+        telemetryController = telemetryControllerFactory.apply(RobotInventory(graphables)).also { it.start() }
         logger.info("started telemetry controller")
     }
 
@@ -52,23 +52,23 @@ class TelemetryService(private val telemetryControllerFactory: Function<Inventor
      */
     fun clear() {
         checkNotStarted()
-        items.clear()
-        logger.info("item set was cleared")
+        graphables.clear()
+        logger.info("graphable set was cleared")
     }
 
     /**
-     * Registers an Item for telemetry sending.
+     * Registers an Graphable for telemetry sending.
      *
-     * @param item the Item to register for data collection
+     * @param graphable the Graphable to register for data collection
      * @throws IllegalStateException if TelemetryService is running.
      */
-    fun register(item: Item) {
+    fun register(graphable: Graphable) {
         checkNotStarted()
-        if (items.add(item)) {
-            logger.info { "registered item ${item.description}" }
+        if (graphables.add(graphable)) {
+            logger.info { "registered graphable ${graphable.description}" }
             return
         }
-        logger.info { "item ${item.description} was already registered" }
+        logger.info { "graphable ${graphable.description} was already registered" }
     }
 
     /**
@@ -77,9 +77,9 @@ class TelemetryService(private val telemetryControllerFactory: Function<Inventor
      * @param collection the collection of Items to register for data collection
      * @throws IllegalStateException if TelemetryService is running.
      */
-    fun registerAll(collection: Collection<Item>) {
+    fun registerAll(collection: Collection<Graphable>) {
         checkNotStarted()
-        items.addAll(collection)
+        graphables.addAll(collection)
         logger.info { "registered all: $collection" }
     }
 
@@ -90,7 +90,7 @@ class TelemetryService(private val telemetryControllerFactory: Function<Inventor
      * @throws IllegalStateException if TelemetryService is running.
      */
     fun register(talon: TalonSRX) {
-        register(TalonItem(talon))
+        register(TalonGraphable(talon))
     }
 
     /**
@@ -99,31 +99,31 @@ class TelemetryService(private val telemetryControllerFactory: Function<Inventor
      * @throws IllegalStateException if TelemetryService is running.
      */
     fun register(swerveDrive: SwerveDrive) = swerveDrive.wheels.forEach {
-        register(TalonItem(it.azimuthTalon))
-        register(TalonItem(it.driveTalon))
+        register(TalonGraphable(it.azimuthTalon))
+        register(TalonGraphable(it.driveTalon))
     }
 
     /**
-     * Get an unmodifiable view of the registered items.
+     * Get an unmodifiable view of the registered graphables.
      *
      * @return an unmodifiable Set of Items.
      */
-    fun getItems(): Set<Item> {
-        return Collections.unmodifiableSet(items)
+    fun getGraphables(): Set<Graphable> {
+        return Collections.unmodifiableSet(graphables)
     }
 
     /**
-     * Unregister [item] from a stopped `TelemetryService`.
+     * Unregister [graphable] from a stopped `TelemetryService`.
      *
      * @throws AssertionError if TelemetryService is running.
      */
-    fun remove(item: Item) {
+    fun remove(graphable: Graphable) {
         checkNotStarted()
-        if (items.remove(item)) {
-            logger.info { "removed $item" }
+        if (graphables.remove(graphable)) {
+            logger.info { "removed $graphable" }
             return
         }
-        throw AssertionError(item.toString())
+        throw AssertionError(graphable.toString())
     }
 
     private fun checkNotStarted() {
