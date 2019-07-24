@@ -10,6 +10,12 @@ import org.strykeforce.thirdcoast.healthcheck.Reportable
 import org.strykeforce.thirdcoast.healthcheck.Test
 import org.strykeforce.thirdcoast.healthcheck.groups.TestGroup.TestGroupState.*
 
+/**
+ * An abstract base class intended to be subclassed by concrete implementations of [TestGroup]. Executes and provides
+ * a report for each test in the group.
+ *
+ * @property name name of test group.
+ */
 abstract class TestGroup(val healthCheck: HealthCheck) : Test {
     override var name = "name not set"
     private val logger = KotlinLogging.logger {}

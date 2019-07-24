@@ -7,6 +7,11 @@ import org.strykeforce.thirdcoast.healthcheck.tests.TalonPosition
 import org.strykeforce.thirdcoast.healthcheck.tests.TalonPositionTest
 import org.strykeforce.thirdcoast.healthcheck.tests.TalonTimedTest
 
+/**
+ * Group of talons to run for each test
+ *
+ * @property talons list of talons to use.
+ */
 class TalonGroup(healthCheck: HealthCheck) : TestGroup(healthCheck) {
     var talons = emptyList<TalonSRX>()
 

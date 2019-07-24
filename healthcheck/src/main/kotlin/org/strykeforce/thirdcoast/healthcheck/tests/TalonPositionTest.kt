@@ -17,6 +17,18 @@ import kotlin.math.absoluteValue
 
 private val logger = KotlinLogging.logger {}
 
+/**
+ * Run a Talon SRX to a position while logging encoder speed and current draw.
+ *
+ * @property name name of test to appear on HTML report.
+ * @property currentRange range of acceptable currents for color coding HTML report.
+ * @property speedRange range of acceptable encoder speeds for color coding HTML report.
+ * @property warmUp time to wait after starting test before beginning to log data.
+ * @property peakVoltage maximum output voltage.
+ * @property encoderChangeTarget encoder position delta to move.
+ * @property encoderTimeOutCount loop count after which to stop test if no delta is measured.
+ *
+ */
 @Suppress("MemberVisibilityCanBePrivate")
 class TalonPositionTest(private val group: TalonGroup) : Test, Reportable {
     override var name = "position test"

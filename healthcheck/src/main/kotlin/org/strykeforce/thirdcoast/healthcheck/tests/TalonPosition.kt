@@ -11,6 +11,15 @@ import kotlin.math.absoluteValue
 
 private val logger = KotlinLogging.logger {}
 
+
+/**
+ * Run a Talon SRX to a position. Current draw and encoder speeds are not logged and a report is not generated.
+ *
+ * @property name name of test to appear on HTML report.
+ * @property controlMode talon control mode.
+ * @property encoderTarget talon SRX position target (position setpoint).
+ * @property encoderGoodEnough acceptable final position error.
+ */
 @Suppress("MemberVisibilityCanBePrivate")
 class TalonPosition(private val group: TalonGroup) : Test {
     override var name = "position talon"

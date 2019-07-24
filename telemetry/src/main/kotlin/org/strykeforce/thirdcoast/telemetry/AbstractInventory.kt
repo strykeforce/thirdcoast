@@ -6,7 +6,7 @@ import org.strykeforce.thirdcoast.telemetry.item.Item
 import java.io.IOException
 
 /**
- * An abstract base class intended to be subclassed by concrete implmentations of [Inventory].
+ * An abstract base class intended to be subclassed by concrete implementations of [Inventory].
  */
 abstract class AbstractInventory(items: Collection<Item>) : Inventory {
 

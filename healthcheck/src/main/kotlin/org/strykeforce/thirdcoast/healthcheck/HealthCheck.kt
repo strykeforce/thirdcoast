@@ -16,6 +16,14 @@ private const val HTML_PATH = "/var/local/natinst/www/healthcheck/index.html"
 
 private val logger = KotlinLogging.logger {}
 
+/**
+ * HealthCheck subsystem. Executes all instances of [TestGroup] and generates a complete HTML report at 10.27.67
+ * .2/healthcheck/index.html. See www.github.com/rkalnins/healthcheck-testbed for an example implementation.
+ *
+ * Customs tests may be written by creating a group and adding tests.
+ *
+ * @property period robot loop time. Default set to [TimedRobot] default period.
+ */
 class HealthCheck {
     var period = TimedRobot.kDefaultPeriod
 

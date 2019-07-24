@@ -17,6 +17,17 @@ import kotlin.math.roundToInt
 
 private val logger = KotlinLogging.logger {}
 
+/**
+ * Run a Talon SRX open loop at a percentage for specified time while logging encoder speed and current draw.
+ *
+ * @property name name of test to appear on HTML report.
+ * @property percentOutput -1.0 to 1.0 (-12V to 12V).
+ * @property currentRange range of acceptable currents for color coding HTML report.
+ * @property speedRange range of acceptable encoder speeds for color coding HTML report.
+ * @property warmUp time to wait after starting test before beginning to log data.
+ * @property duration test duration after warmup ends.
+ *
+ */
 @Suppress("MemberVisibilityCanBePrivate")
 class TalonTimedTest(private val group: TalonGroup) : Test, Reportable {
     override var name = "talon timed test"
