@@ -11,7 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONParser;
 import org.strykeforce.thirdcoast.telemetry.Inventory;
-import org.strykeforce.thirdcoast.telemetry.item.Item;
+import org.strykeforce.thirdcoast.telemetry.item.Measurable;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -24,7 +24,8 @@ import static org.strykeforce.thirdcoast.telemetry.grapher.Measure.*;
 @ExtendWith(MockitoExtension.class)
 class SubscriptionTest {
 
-  @Mock Item itemZero, itemOne;
+  @Mock
+  Measurable itemZero, itemOne;
   @Mock Inventory inventory;
 
   @BeforeEach

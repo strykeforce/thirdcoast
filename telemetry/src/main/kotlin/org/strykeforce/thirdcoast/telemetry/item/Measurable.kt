@@ -4,14 +4,14 @@ import org.strykeforce.thirdcoast.telemetry.grapher.Measure
 import java.util.function.DoubleSupplier
 
 /**
- * An item that can be graphed. These are used as `Set` elements and implementing classes
+ * An item that can be measured and graphed. These are used as `Set` elements and implementing classes
  * should implement an identity-based version of equals and hashCode.
  *
  *
- * The abstract base class implementing `Item` implements `Comparable` by comparing
- * the results returned by `Item#deviceId()`.
+ * The abstract base class implementing `Measurable` implements `Comparable` by comparing
+ * the results returned by `Measurable#deviceId()`.
  */
-interface Item : Comparable<Item> {
+interface Measurable : Comparable<Measurable> {
 
     /**
      * Returns the underlying device id, for example, CAN bus address or PWM port.
@@ -29,7 +29,7 @@ interface Item : Comparable<Item> {
     val description: String
 
     /**
-     * `Set` of `Measure` items applicable to this item type.
+     * `Set` of `Measure` parameters applicable to this item type.
      */
     val measures: Set<Measure>
 
@@ -39,7 +39,7 @@ interface Item : Comparable<Item> {
      */
     fun measurementFor(measure: Measure): DoubleSupplier
 
-    override fun compareTo(other: Item): Int {
+    override fun compareTo(other: Measurable): Int {
         val result = type.compareTo(other.type)
         return if (result != 0) result else deviceId.compareTo(other.deviceId)
     }

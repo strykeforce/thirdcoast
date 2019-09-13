@@ -5,11 +5,11 @@ import org.strykeforce.thirdcoast.telemetry.grapher.Measure
 import org.strykeforce.thirdcoast.telemetry.grapher.Measure.*
 import java.util.function.DoubleSupplier
 
-/** Represents a [TalonSRX] telemetry-enable Item.  */
+/** Represents a [TalonSRX] telemetry-enable `Measurable` item.  */
 class TalonItem @JvmOverloads constructor(
     private val talon: TalonSRX,
     override val description: String = "TalonSRX ${talon.deviceID}"
-) : Item {
+) : Measurable {
 
     override val deviceId = talon.deviceID
     override val type = "talon"

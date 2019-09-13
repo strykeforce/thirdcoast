@@ -7,11 +7,11 @@ import org.strykeforce.thirdcoast.telemetry.grapher.Measure
 import org.strykeforce.thirdcoast.telemetry.grapher.Measure.*
 import java.util.function.DoubleSupplier
 
-/** Represents a [TalonSRX] telemetry-enable Item.  */
+/** Represents a [TalonSRX] telemetry-enable `Measurable` item.  */
 class CanifierItem @JvmOverloads constructor(
     private val canifier: CANifier,
     override val description: String = "CANifier ${canifier.deviceID}"
-) : Item {
+) : Measurable {
 
     override val deviceId = canifier.deviceID
     override val type = "canifier"

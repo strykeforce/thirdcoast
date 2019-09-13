@@ -2,13 +2,13 @@ package org.strykeforce.thirdcoast.telemetry
 
 import com.squareup.moshi.JsonWriter
 import okio.BufferedSink
-import org.strykeforce.thirdcoast.telemetry.item.Item
+import org.strykeforce.thirdcoast.telemetry.item.Measurable
 import java.io.IOException
 
 /**
- * An abstract base class intended to be subclassed by concrete implmentations of [Inventory].
+ * An abstract base class intended to be subclassed by concrete implementations of [Inventory].
  */
-abstract class AbstractInventory(items: Collection<Item>) : Inventory {
+abstract class AbstractInventory(items: Collection<Measurable>) : Inventory {
 
     protected val items = items.sorted()
 
@@ -29,7 +29,7 @@ abstract class AbstractInventory(items: Collection<Item>) : Inventory {
     override fun toString() = "AbstractInventory(items=$items)"
 }
 
-private fun JsonWriter.writeItems(items: List<Item>): JsonWriter {
+private fun JsonWriter.writeItems(items: List<Measurable>): JsonWriter {
     beginArray()
     items.forEachIndexed { index, item ->
         beginObject()
@@ -41,7 +41,7 @@ private fun JsonWriter.writeItems(items: List<Item>): JsonWriter {
     return endArray()
 }
 
-private fun JsonWriter.writeMeasures(items: List<Item>): JsonWriter {
+private fun JsonWriter.writeMeasures(items: List<Measurable>): JsonWriter {
     beginArray()
     items.associateBy({ it.type }, { it.measures }).forEach { type, measures ->
         beginObject()

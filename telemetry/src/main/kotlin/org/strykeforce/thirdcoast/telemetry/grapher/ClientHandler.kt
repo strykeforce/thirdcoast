@@ -19,9 +19,9 @@ class ClientHandler(private val port: Int, private val socket: DatagramSocket) {
     private var scheduler: ScheduledExecutorService? = null
 
     /**
-     * Start streaming the items specified in the subscription.
+     * Start streaming the `Measurable` items specified in the subscription.
      *
-     * @param subscription Items to stream to client
+     * @param subscription items to stream to client
      */
     fun start(subscription: Subscription) {
         if (scheduler != null) return

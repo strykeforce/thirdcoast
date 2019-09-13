@@ -6,11 +6,12 @@ import org.strykeforce.thirdcoast.telemetry.grapher.Measure
 import org.strykeforce.thirdcoast.telemetry.grapher.Measure.VALUE
 import java.util.function.DoubleSupplier
 
+/** Represents a PWM ultrasonic rangefinder telemetry-enable `Measurable` item.  */
 class UltrasonicRangefinderItem @JvmOverloads constructor(
     canId: Int,
     private val pwmChannel: PWMChannel,
     override val description: String = "Sensor ${canId * 10 + pwmChannel.value}"
-) : Item {
+) : Measurable {
 
     override val deviceId = canId * 10 + pwmChannel.value
     override val type = "sensor"

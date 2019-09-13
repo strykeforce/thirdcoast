@@ -3,7 +3,7 @@ package org.strykeforce.thirdcoast.telemetry
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import mu.KotlinLogging
 import org.strykeforce.thirdcoast.swerve.SwerveDrive
-import org.strykeforce.thirdcoast.telemetry.item.Item
+import org.strykeforce.thirdcoast.telemetry.item.Measurable
 import org.strykeforce.thirdcoast.telemetry.item.TalonItem
 import java.util.*
 import java.util.function.Function
@@ -11,7 +11,7 @@ import java.util.function.Function
 private val logger = KotlinLogging.logger {}
 
 /**
- * The Telemetry service registers [Item] instances for data collection and controls the
+ * The Telemetry service registers [Measurable] instances for data collection and controls the
  * starting and stopping of the service. When active, the services listens for incoming config
  * messages via a HTTP REST service and sends data over UDP.
  */
@@ -21,7 +21,7 @@ class TelemetryService(private val telemetryControllerFactory: Function<Inventor
     // when start is called. The inventory copies this collection into a List, using its index in
     // this list as the inventory id.
 
-    private val items = LinkedHashSet<Item>()
+    private val items = LinkedHashSet<Measurable>()
     private var telemetryController: TelemetryController? = null
 
     /** Start the Telemetry service and listen for client connections.  */
@@ -62,7 +62,7 @@ class TelemetryService(private val telemetryControllerFactory: Function<Inventor
      * @param item the Item to register for data collection
      * @throws IllegalStateException if TelemetryService is running.
      */
-    fun register(item: Item) {
+    fun register(item: Measurable) {
         checkNotStarted()
         if (items.add(item)) {
             logger.info { "registered item ${item.description}" }
@@ -77,7 +77,7 @@ class TelemetryService(private val telemetryControllerFactory: Function<Inventor
      * @param collection the collection of Items to register for data collection
      * @throws IllegalStateException if TelemetryService is running.
      */
-    fun registerAll(collection: Collection<Item>) {
+    fun registerAll(collection: Collection<Measurable>) {
         checkNotStarted()
         items.addAll(collection)
         logger.info { "registered all: $collection" }
@@ -108,7 +108,7 @@ class TelemetryService(private val telemetryControllerFactory: Function<Inventor
      *
      * @return an unmodifiable Set of Items.
      */
-    fun getItems(): Set<Item> {
+    fun getItems(): Set<Measurable> {
         return Collections.unmodifiableSet(items)
     }
 
@@ -117,7 +117,7 @@ class TelemetryService(private val telemetryControllerFactory: Function<Inventor
      *
      * @throws AssertionError if TelemetryService is running.
      */
-    fun remove(item: Item) {
+    fun remove(item: Measurable) {
         checkNotStarted()
         if (items.remove(item)) {
             logger.info { "removed $item" }
