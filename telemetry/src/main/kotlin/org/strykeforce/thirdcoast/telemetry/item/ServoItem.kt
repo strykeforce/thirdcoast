@@ -6,11 +6,11 @@ import org.strykeforce.thirdcoast.telemetry.grapher.Measure.ANGLE
 import org.strykeforce.thirdcoast.telemetry.grapher.Measure.POSITION
 import java.util.function.DoubleSupplier
 
-/** Represents a [Servo] telemetry-enable Item.  */
+/** Represents a [Servo] telemetry-enable `Measurable` item.  */
 class ServoItem @JvmOverloads constructor(
     private val servo: Servo,
     override val description: String = "Servo ${servo.channel}"
-) : Item {
+) : Measurable {
 
     override val deviceId = servo.channel
     override val type = "servo"

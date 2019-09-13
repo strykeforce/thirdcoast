@@ -9,7 +9,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.strykeforce.thirdcoast.telemetry.grapher.ResourceHelper;
-import org.strykeforce.thirdcoast.telemetry.item.Item;
+import org.strykeforce.thirdcoast.telemetry.item.Measurable;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -22,9 +22,9 @@ import static org.strykeforce.thirdcoast.telemetry.grapher.Measure.*;
 @ExtendWith(MockitoExtension.class)
 class RobotInventoryTest {
 
-  @Mock private Item itemOne;
-  @Mock private Item itemTwo;
-  private Collection<Item> items;
+  @Mock private Measurable itemOne;
+  @Mock private Measurable itemTwo;
+  private Collection<Measurable> items;
 
   @BeforeEach
   void setUp() {

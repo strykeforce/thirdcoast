@@ -7,11 +7,11 @@ import org.strykeforce.thirdcoast.telemetry.grapher.Measure.VALUE
 import java.util.function.DoubleSupplier
 
 
-/** Represents a [DigitalInput] telemetry-enable Item.  */
+/** Represents a [DigitalInput] telemetry-enable `Measurable` item.  */
 class DigitalOutputItem @JvmOverloads constructor(
     private val digitalOutput: DigitalOutput,
     override val description: String = "Digital Output ${digitalOutput.channel}"
-) : Item {
+) : Measurable {
 
     override val deviceId = digitalOutput.channel
     override val type = "digitalOutput"
