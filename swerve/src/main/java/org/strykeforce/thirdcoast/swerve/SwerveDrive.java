@@ -47,6 +47,8 @@ public class SwerveDrive {
     kLengthComponent = length / radius;
     kWidthComponent = width / radius;
 
+    logger.info("gyro is configured: {}", gyro != null);
+    logger.info("gyro is connected: {}", gyro != null && gyro.isConnected());
     setFieldOriented(gyro != null && gyro.isConnected());
 
     if (isFieldOriented) {
