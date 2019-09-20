@@ -5,14 +5,14 @@ buildscript {
     }
     dependencies {
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.+'
-        classpath "edu.wpi.first:GradleRIO:2019.1.1"
-        classpath "com.diffplug.spotless:spotless-plugin-gradle:3.15.0"
+        classpath "edu.wpi.first:GradleRIO:2019.4.1"
+        classpath "com.diffplug.spotless:spotless-plugin-gradle:3.24.2"
     }
 }
 
 configure(subprojects) {
     group = 'org.strykeforce.thirdcoast'
-    version = '19.3.0'
+    version = '19.4.0'
 
     apply plugin: 'java-library'
     apply plugin: 'idea'
