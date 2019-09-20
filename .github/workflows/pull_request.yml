@@ -1,0 +1,16 @@
+on: pull_request
+name: process pull request
+jobs:
+  branchCleanup:
+    name: branch cleanup
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - name: branch cleanup
+      uses: jessfraz/branch-cleanup-action@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: post gif on fail
+      uses: jessfraz/shaking-finger-action@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
