@@ -43,7 +43,7 @@ private fun JsonWriter.writeItems(items: List<Measurable>): JsonWriter {
 
 private fun JsonWriter.writeMeasures(items: List<Measurable>): JsonWriter {
     beginArray()
-    items.associateBy({ it.type }, { it.measures }).forEach { type, measures ->
+    items.associateBy({ it.type }, { it.measures }).forEach { (type, measures) ->
         beginObject()
         name("deviceType").value(type)
         name("deviceMeasures")
