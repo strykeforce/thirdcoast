@@ -5,6 +5,7 @@ import com.squareup.moshi.Moshi
 import mu.KotlinLogging
 import okio.BufferedSink
 import org.strykeforce.thirdcoast.telemetry.Inventory
+import org.strykeforce.thirdcoast.telemetry.item.Measure
 import java.io.IOException
 import java.util.*
 import java.util.function.DoubleSupplier
@@ -20,12 +21,7 @@ class Subscription(inventory: Inventory, val client: String, requestJson: String
         val request: RequestJson = RequestJson.fromJson(requestJson) ?: RequestJson.EMPTY
         request.subscription.forEach {
             val item = inventory.itemForId(it.itemId)
-            val measure = try {
-                Measure.valueOf(it.measurementId)
-            } catch (e: IllegalArgumentException) {
-                logger.error { "no such measure \"${it.measurementId}\", request JSON = \n$requestJson" }
-                Measure.UNKNOWN
-            }
+            val measure = Measure(it.measurementId, it.measurementId)
             measurements += item.measurementFor(measure)
             descriptions += "${item.description}: ${measure.description}"
         }

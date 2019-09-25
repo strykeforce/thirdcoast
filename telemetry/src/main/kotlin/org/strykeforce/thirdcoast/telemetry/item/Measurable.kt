@@ -1,6 +1,5 @@
 package org.strykeforce.thirdcoast.telemetry.item
 
-import org.strykeforce.thirdcoast.telemetry.grapher.Measure
 import java.util.function.DoubleSupplier
 
 /**
@@ -13,36 +12,36 @@ import java.util.function.DoubleSupplier
  */
 interface Measurable : Comparable<Measurable> {
 
-    /**
-     * Returns the underlying device id, for example, CAN bus address or PWM port.
-     */
-    val deviceId: Int
+  /**
+   * Returns the underlying device id, for example, CAN bus address or PWM port.
+   */
+  val deviceId: Int
 
-    /**
-     * A `String` representing the underlying device type.
-     */
-    val type: String
+  /**
+   * A `String` representing the underlying device type.
+   */
+  val type: String
 
-    /**
-     * The description of this item.
-     */
-    val description: String
+  /**
+   * The description of this item.
+   */
+  val description: String
 
-    /**
-     * `Set` of `Measure` parameters applicable to this item type.
-     */
-    val measures: Set<Measure>
+  /**
+   * `Set` of `Measure` parameters applicable to this item type.
+   */
+  val measures: Set<Measure>
 
-    /**
-     * Suppliers that implement the measures.
-     * @return the supplier that gives the current measurement.
-     */
-    fun measurementFor(measure: Measure): DoubleSupplier
+  /**
+   * Suppliers that implement the measures.
+   * @return the supplier that gives the current measurement.
+   */
+  fun measurementFor(measure: Measure): DoubleSupplier
 
-    override fun compareTo(other: Measurable): Int {
-        val result = type.compareTo(other.type)
-        return if (result != 0) result else deviceId.compareTo(other.deviceId)
-    }
+  override fun compareTo(other: Measurable): Int {
+    val result = type.compareTo(other.type)
+    return if (result != 0) result else deviceId.compareTo(other.deviceId)
+  }
 
 }
 

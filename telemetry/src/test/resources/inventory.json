@@ -15,11 +15,11 @@
       "deviceMeasures": [
         {
           "id": "VALUE",
-          "description": "Measured Value"
+          "description": "VALUE description"
         },
         {
           "id": "POSITION",
-          "description": "Position"
+          "description": "POSITION"
         }
       ]
     },
@@ -28,7 +28,7 @@
       "deviceMeasures": [
         {
           "id": "BUS_VOLTAGE",
-          "description": "Bus Voltage"
+          "description": "BUS_VOLTAGE"
         }
       ]
     }
