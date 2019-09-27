@@ -12,7 +12,7 @@ buildscript {
 
 configure(subprojects) {
     group = 'org.strykeforce.thirdcoast'
-    version = '19.4.0'
+    version = '19.4.1'
 
     apply plugin: 'java-library'
     apply plugin: 'idea'

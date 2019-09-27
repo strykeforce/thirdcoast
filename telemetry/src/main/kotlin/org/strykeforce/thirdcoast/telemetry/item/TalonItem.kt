@@ -55,6 +55,8 @@ class TalonItem @JvmOverloads constructor(
     Measure(QUAD_A_PIN, "Quad A Pin State"),
     Measure(QUAD_B_PIN, "Quad B Pin State"),
     Measure(QUAD_IDX_PIN, "Quad Index Pin State"),
+    Measure(QUAD_POSITION, "Quad Position"),
+    Measure(QUAD_VELOCITY, "Quad Velocity"),
     Measure(PULSE_WIDTH_POSITION, "Pulse Width Position"),
     Measure(PULSE_WIDTH_VELOCITY, "Pulse Width Velocity"),
     Measure(PULSE_WIDTH_RISE_TO_FALL, "PWM Pulse Width"),
