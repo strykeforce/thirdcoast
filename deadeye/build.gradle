@@ -1,28 +1,38 @@
-apply plugin: 'com.diffplug.gradle.spotless'
+apply plugin: "kotlin"
+apply plugin: "kotlin-kapt"
+apply plugin: 'org.jetbrains.dokka'
 
 sourceCompatibility = 11
 
 dependencies {
+  // Kotlin
+  compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
 
-    // https://mvnrepository.com/artifact/io.reactivex.rxjava2/rxjava
-    implementation group: 'io.reactivex.rxjava2', name: 'rxjava', version: '2.2.4'
+  // Deadeye
+  implementation "org.eclipse.jetty:jetty-server:$jettyVersion"
+  implementation "com.squareup.moshi:moshi:$moshiVersion"
+  kapt "com.squareup.moshi:moshi-kotlin-codegen:$moshiVersion"
 
-    // https://mvnrepository.com/artifact/com.jakewharton.rxrelay2/rxrelay
-    implementation group: 'com.jakewharton.rxrelay2', name: 'rxrelay', version: '2.1.0'
+  // Logging
+  compile "io.github.microutils:kotlin-logging:$kotlinLoggingVersion"
 
-    implementation 'javax.inject:javax.inject:1'
+  // unit tests
+  testImplementation "org.skyscreamer:jsonassert:$jsonAssert"
+
 }
 
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
-    from javadoc.destinationDir
+task dokkaJavadoc(type: org.jetbrains.dokka.gradle.DokkaTask) {
+  includes = ['packages.md']
+  outputDirectory = javadoc.destinationDir
+  reportUndocumented = false
 }
 
-spotless {
-    java {
-        googleJavaFormat()
-    }
+
+task javadocJar(type: Jar, dependsOn: dokkaJavadoc) {
+  classifier = 'javadoc'
+  from javadoc.destinationDir
 }
+
 
 apply from: "${rootDir}/gradle/publish.gradle" // needs to come after javadocJar
 
