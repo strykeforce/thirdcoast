@@ -8,34 +8,37 @@ repositories {
 }
 
 dependencies {
-    // Kotlin
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
+  // Kotlin
+  compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
 
-    // telemetry
-    implementation "org.eclipse.jetty:jetty-server:$jettyVersion"
-    implementation "com.squareup.moshi:moshi:$moshiVersion"
-    kapt "com.squareup.moshi:moshi-kotlin-codegen:$moshiVersion"
-    implementation "com.squareup.okhttp3:okhttp:$okhttpVersion"
-    implementation project(':swerve')
+  // telemetry
+  implementation "org.eclipse.jetty:jetty-server:$jettyVersion"
+  implementation "com.squareup.moshi:moshi:$moshiVersion"
+  kapt "com.squareup.moshi:moshi-kotlin-codegen:$moshiVersion"
+  implementation "com.squareup.okhttp3:okhttp:$okhttpVersion"
+  implementation project(':swerve')
 
-    // Logging
-    compile "io.github.microutils:kotlin-logging:$kotlinLoggingVersion"
+  // Logging
+  compile "io.github.microutils:kotlin-logging:$kotlinLoggingVersion"
 
-    // unit tests
-    testImplementation "org.skyscreamer:jsonassert:$jsonAssert"
+  // unit tests
+  testImplementation "org.skyscreamer:jsonassert:$jsonAssert"
 
 }
 
 task dokkaJavadoc(type: org.jetbrains.dokka.gradle.DokkaTask) {
-    includes = ['packages.md']
-    outputDirectory = javadoc.destinationDir
-    reportUndocumented = false
+  includes = ['packages.md']
+  outputDirectory = javadoc.destinationDir
+  reportUndocumented = false
+  externalDocumentationLink {
+    url = new URL('https://first.wpi.edu/FRC/roborio/release/docs/java/')
+  }
 }
 
 
 task javadocJar(type: Jar, dependsOn: dokkaJavadoc) {
-    classifier = 'javadoc'
-    from javadoc.destinationDir
+  classifier = 'javadoc'
+  from javadoc.destinationDir
 }
 
 apply from: "${rootDir}/gradle/publish.gradle" // needs to come after javadocJar

@@ -4,10 +4,14 @@ buildscript {
     moshiVersion = '1.8.0'
     jettyVersion = '9.4.19.v20190610'
     okhttpVersion = '3.12.5'
+    slf4jVersion = '1.7.25'
+    logbackVersion = '1.2.3'
     kotlinLoggingVersion = '1.7.6'
     dokkaVersion = '0.9.18'
-    junitVersion = '5.2.0'
+    junitVersion = '5.+'
     jsonAssert = '1.+'
+    assertJVersion = '3.+'
+    mockitoVersion = '2.+'
     gradleRioVersion = '2019.4.1'
     bintrayVersion = '1.+'
     spotlessVersion = '3.+'
@@ -37,25 +41,21 @@ configure(subprojects) {
   }
 
   dependencies {
-    implementation 'org.slf4j:slf4j-api:1.7.25'
-
-    compileOnly 'com.google.code.findbugs:jsr305:3.0.2'
+    implementation "org.slf4j:slf4j-api:$slf4jVersion"
 
     // Testing
-    testImplementation "org.junit.jupiter:junit-jupiter-params:5.+"
-    testImplementation "org.junit.jupiter:junit-jupiter-api:5.+"
-    testImplementation "org.assertj:assertj-core:3.+"
-    testImplementation "org.mockito:mockito-junit-jupiter:2.+"
-    testRuntime "org.junit.jupiter:junit-jupiter-engine:5.+"
-    testRuntime 'ch.qos.logback:logback-classic:1.2.3'
+    testImplementation "org.junit.jupiter:junit-jupiter-params:$junitVersion"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
+    testImplementation "org.assertj:assertj-core:$assertJVersion"
+    testImplementation "org.mockito:mockito-junit-jupiter:$mockitoVersion"
+    testRuntime "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
+    testRuntime "ch.qos.logback:logback-classic:$logbackVersion"
   }
 
   idea {
     module {
       downloadJavadoc = true
       downloadSources = true
-      sourceDirs += files('build/generated/source/kaptKotlin/main')
-      generatedSourceDirs += files('build/generated/source/kaptKotlin/main')
     }
   }
 
@@ -64,6 +64,7 @@ configure(subprojects) {
   }
 }
 
+// applies to all sub-projects except for deadeye
 configure(subprojects - project(":deadeye")) {
   apply plugin: "edu.wpi.first.GradleRIO"
 
