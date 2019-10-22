@@ -1,25 +1,8 @@
-apply plugin: "kotlin"
-apply plugin: "kotlin-kapt"
-apply plugin: 'org.jetbrains.dokka'
-
-sourceCompatibility = 11
-
-repositories {
-}
-
 dependencies {
-  // Kotlin
-  compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
-
   // telemetry
   implementation "org.eclipse.jetty:jetty-server:$jettyVersion"
-  implementation "com.squareup.moshi:moshi:$moshiVersion"
-  kapt "com.squareup.moshi:moshi-kotlin-codegen:$moshiVersion"
   implementation "com.squareup.okhttp3:okhttp:$okhttpVersion"
   implementation project(':swerve')
-
-  // Logging
-  compile "io.github.microutils:kotlin-logging:$kotlinLoggingVersion"
 
   // unit tests
   testImplementation "org.skyscreamer:jsonassert:$jsonAssert"

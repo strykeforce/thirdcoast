@@ -4,7 +4,7 @@ buildscript {
     moshiVersion = '1.8.0'
     jettyVersion = '9.4.19.v20190610'
     okhttpVersion = '3.12.5'
-    slf4jVersion = '1.7.25'
+    slf4jVersion = '1.7.28'
     logbackVersion = '1.2.3'
     kotlinLoggingVersion = '1.7.6'
     dokkaVersion = '0.9.18'
@@ -15,6 +15,7 @@ buildscript {
     gradleRioVersion = '2019.4.1'
     bintrayVersion = '1.+'
     spotlessVersion = '3.+'
+    wpiVersion = '2019.4.1'
   }
   repositories {
     jcenter()
@@ -29,12 +30,15 @@ buildscript {
   }
 }
 
+// applies to all sub-projects
 configure(subprojects) {
   group = 'org.strykeforce.thirdcoast'
   version = '19.4.1'
 
   apply plugin: 'java-library'
   apply plugin: 'idea'
+
+  sourceCompatibility = 11
 
   repositories {
     jcenter()
@@ -69,7 +73,21 @@ configure(subprojects - project(":deadeye")) {
   apply plugin: "edu.wpi.first.GradleRIO"
 
   dependencies {
-    compile wpi.deps.wpilib()
-    compile wpi.deps.vendor.java()
+    implementation wpi.deps.wpilib()
+    implementation wpi.deps.vendor.java()
+  }
+}
+
+// applies to all Kotlin sub-projects
+configure(subprojects - project(":swerve")) {
+  apply plugin: "kotlin"
+  apply plugin: "kotlin-kapt"
+  apply plugin: 'org.jetbrains.dokka'
+
+  dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
+    implementation "io.github.microutils:kotlin-logging:$kotlinLoggingVersion"
+    implementation "com.squareup.moshi:moshi:$moshiVersion"
+    kapt "com.squareup.moshi:moshi-kotlin-codegen:$moshiVersion"
   }
 }

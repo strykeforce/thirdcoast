@@ -1,38 +1,23 @@
-apply plugin: "kotlin"
-apply plugin: "kotlin-kapt"
-apply plugin: 'org.jetbrains.dokka'
-
-sourceCompatibility = 11
+repositories {
+  maven { url = "http://first.wpi.edu/FRC/roborio/maven/release" }
+}
 
 dependencies {
-  // Kotlin
-  compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
-
-  // Deadeye
-  implementation "org.eclipse.jetty:jetty-server:$jettyVersion"
-  implementation "com.squareup.moshi:moshi:$moshiVersion"
-  kapt "com.squareup.moshi:moshi-kotlin-codegen:$moshiVersion"
-
-  // Logging
-  compile "io.github.microutils:kotlin-logging:$kotlinLoggingVersion"
-
-  // unit tests
-  testImplementation "org.skyscreamer:jsonassert:$jsonAssert"
-
+  implementation("edu.wpi.first.ntcore:ntcore-java:$wpiVersion")
 }
-
-task dokkaJavadoc(type: org.jetbrains.dokka.gradle.DokkaTask) {
-  includes = ['packages.md']
-  outputDirectory = javadoc.destinationDir
-  reportUndocumented = false
-}
-
-
-task javadocJar(type: Jar, dependsOn: dokkaJavadoc) {
-  classifier = 'javadoc'
-  from javadoc.destinationDir
-}
-
-
-apply from: "${rootDir}/gradle/publish.gradle" // needs to come after javadocJar
+//
+//task dokkaJavadoc(type: org.jetbrains.dokka.gradle.DokkaTask) {
+//  includes = ['packages.md']
+//  outputDirectory = javadoc.destinationDir
+//  reportUndocumented = false
+//}
+//
+//
+//task javadocJar(type: Jar, dependsOn: dokkaJavadoc) {
+//  classifier = 'javadoc'
+//  from javadoc.destinationDir
+//}
+//
+//
+//apply from: "${rootDir}/gradle/publish.gradle" // needs to come after javadocJar
 
