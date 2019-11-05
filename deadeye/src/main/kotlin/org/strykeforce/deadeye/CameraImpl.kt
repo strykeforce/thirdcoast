@@ -46,7 +46,7 @@ internal class CameraImpl<T : TargetData>(override val id: String) : Camera<T> {
     }
 
   override fun parse(buffer: Buffer) {
-    val targetData = jsonAdapter.fromJson(buffer) ?: throw JsonDataException("parse error")
+    var targetData = jsonAdapter.fromJson(buffer) ?: throw JsonDataException("parse error")
     this.targetData = targetData
     targetDataListener?.onTargetData(targetData)
   }

@@ -10,7 +10,7 @@ import java.net.DatagramPacket
 import java.net.DatagramSocket
 import kotlin.concurrent.thread
 
-private const val LINK = "Link"
+private const val LINK = "Config"
 
 object Deadeye {
   private val cameraCache = mutableMapOf<String, Camera<*>>()
@@ -32,12 +32,12 @@ object Deadeye {
   private val table: NetworkTable by lazy { NetworkTableInstance.getDefault().getTable("/Deadeye") }
   private val moshi: Moshi by lazy { Moshi.Builder().build() }
 
-  var link: Link
+  var config: Config
     get() = with(table.getEntry(LINK).getString("{}")) {
-      Deadeye_LinkJsonAdapter(moshi).fromJson(this) ?: throw JsonDataException("Link: $this")
+      Deadeye_ConfigJsonAdapter(moshi).fromJson(this) ?: throw JsonDataException("Config: $this")
     }
     set(value) = with(table.getEntry(LINK)) {
-      setString(Deadeye_LinkJsonAdapter(moshi).toJson(value))
+      setString(Deadeye_ConfigJsonAdapter(moshi).toJson(value))
     }
 
   init {
@@ -62,6 +62,6 @@ object Deadeye {
 
 
   @JsonClass(generateAdapter = true)
-  data class Link(val address: String, val port: Int, val enabled: Boolean)
+  data class Config(val address: String, val port: Int, val enabled: Boolean)
 
 }
