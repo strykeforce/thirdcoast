@@ -1,58 +1,27 @@
-buildscript {
-    ext {
-        kotlin_version = '1.3.50'
-        junit_version = '5.2.0'
-    }
-
-    repositories {
-        jcenter()
-        maven { url = "https://plugins.gradle.org/m2/" }
-    }
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath "org.jetbrains.dokka:dokka-gradle-plugin:0.9.18"
-    }
-}
-
-apply plugin: "kotlin"
-apply plugin: "kotlin-kapt"
-apply plugin: 'org.jetbrains.dokka'
-
-sourceCompatibility = 11
-
-
-repositories {
-}
-
 dependencies {
-    // Kotlin
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+  // telemetry
+  implementation "org.eclipse.jetty:jetty-server:$jettyVersion"
+  implementation "com.squareup.okhttp3:okhttp:$okhttpVersion"
+  implementation project(':swerve')
 
-    // telemetry
-    implementation "org.eclipse.jetty:jetty-server:9.4.19.v20190610"
-    implementation "com.squareup.moshi:moshi:1.8.0"
-    kapt "com.squareup.moshi:moshi-kotlin-codegen:1.8.0"
-    implementation "com.squareup.okhttp3:okhttp:3.12.5"
-    implementation project(':swerve')
-
-    // Logging
-    compile 'io.github.microutils:kotlin-logging:1.7.6'
-
-    // unit tests
-    testImplementation 'org.skyscreamer:jsonassert:1.+'
+  // unit tests
+  testImplementation "org.skyscreamer:jsonassert:$jsonAssert"
 
 }
 
 task dokkaJavadoc(type: org.jetbrains.dokka.gradle.DokkaTask) {
-    includes = ['packages.md']
-    outputDirectory = javadoc.destinationDir
-    reportUndocumented = false
+  includes = ['packages.md']
+  outputDirectory = javadoc.destinationDir
+  reportUndocumented = false
+  externalDocumentationLink {
+    url = new URL('https://first.wpi.edu/FRC/roborio/release/docs/java/')
+  }
 }
 
 
 task javadocJar(type: Jar, dependsOn: dokkaJavadoc) {
-    classifier = 'javadoc'
-    from javadoc.destinationDir
+  classifier = 'javadoc'
+  from javadoc.destinationDir
 }
 
 apply from: "${rootDir}/gradle/publish.gradle" // needs to come after javadocJar
