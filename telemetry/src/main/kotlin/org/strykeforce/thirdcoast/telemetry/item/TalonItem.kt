@@ -27,6 +27,7 @@ internal const val PULSE_WIDTH_RISE_TO_FALL = "PULSE_WIDTH_RISE_TO_FALL"
 internal const val PULSE_WIDTH_RISE_TO_RISE = "PULSE_WIDTH_RISE_TO_RISE"
 internal const val FORWARD_LIMIT_SWITCH_CLOSED = "FORWARD_LIMIT_SWITCH_CLOSED"
 internal const val REVERSE_LIMIT_SWITCH_CLOSED = "REVERSE_LIMIT_SWITCH_CLOSED"
+internal const val TEMPERATURE = "TEMPERATURE"
 
 /** Represents a [TalonSRX] telemetry-enable `Measurable` item.  */
 class TalonItem @JvmOverloads constructor(
@@ -62,7 +63,8 @@ class TalonItem @JvmOverloads constructor(
     Measure(PULSE_WIDTH_RISE_TO_FALL, "PWM Pulse Width"),
     Measure(PULSE_WIDTH_RISE_TO_RISE, "PWM Period"),
     Measure(FORWARD_LIMIT_SWITCH_CLOSED, "Forward Limit Switch Closed"),
-    Measure(REVERSE_LIMIT_SWITCH_CLOSED, "Reverse Limit Switch Closed")
+    Measure(REVERSE_LIMIT_SWITCH_CLOSED, "Reverse Limit Switch Closed"),
+    Measure(TEMPERATURE, "Controller Temperature")
   )
 
   private val sensorCollection = requireNotNull(talon.sensorCollection)
@@ -95,6 +97,7 @@ class TalonItem @JvmOverloads constructor(
       PULSE_WIDTH_RISE_TO_RISE -> DoubleSupplier { sensorCollection.pulseWidthRiseToRiseUs.toDouble() }
       FORWARD_LIMIT_SWITCH_CLOSED -> DoubleSupplier { sensorCollection.isFwdLimitSwitchClosed.toDouble() }
       REVERSE_LIMIT_SWITCH_CLOSED -> DoubleSupplier { sensorCollection.isRevLimitSwitchClosed.toDouble() }
+      TEMPERATURE -> DoubleSupplier { talon.temperature }
       else -> DoubleSupplier { 2767.0 }
     }
   }
