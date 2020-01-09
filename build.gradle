@@ -1,93 +1,66 @@
-buildscript {
-  ext {
-    kotlinVersion = '1.3.60'
-    moshiVersion = '1.8.0'
-    jettyVersion = '9.4.19.v20190610'
-    okhttpVersion = '3.12.5'
-    slf4jVersion = '1.7.28'
-    logbackVersion = '1.2.3'
-    kotlinLoggingVersion = '1.7.6'
-    dokkaVersion = '0.9.18'
-    junitVersion = '5.+'
-    jsonAssert = '1.+'
-    assertJVersion = '3.+'
-    mockitoVersion = '2.+'
-    gradleRioVersion = '2019.4.1'
-    bintrayVersion = '1.+'
-    spotlessVersion = '3.+'
-    wpiVersion = '2019.4.1'
-  }
-  repositories {
-    jcenter()
-    maven { url "https://plugins.gradle.org/m2/" }
-  }
-  dependencies {
-    classpath "com.jfrog.bintray.gradle:gradle-bintray-plugin:$bintrayVersion"
-    classpath "edu.wpi.first:GradleRIO:$gradleRioVersion"
-    classpath "com.diffplug.spotless:spotless-plugin-gradle:$spotlessVersion"
-    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
-    classpath "org.jetbrains.dokka:dokka-gradle-plugin:$dokkaVersion"
-  }
+plugins {
+    id "java"
+    id "maven-publish"
+    id "org.jetbrains.kotlin.jvm" version "1.3.61"
+    id "org.jetbrains.kotlin.kapt" version "1.3.61"
+    id "edu.wpi.first.GradleRIO" version "2020.1.2"
 }
 
-// applies to all sub-projects
-configure(subprojects) {
-  group = 'org.strykeforce.thirdcoast'
-  version = '19.5.1'
+group = 'org.strykeforce'
+version = '20.0.0'
 
-  apply plugin: 'java-library'
-  apply plugin: 'idea'
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
 
-  sourceCompatibility = 11
+// Set this to true to enable desktop support.
+def includeDesktopSupport = false
 
-  repositories {
-    jcenter()
-  }
+// Defining my dependencies. In this case, WPILib (+ friends), and vendor libraries.
+// Also defines JUnit 4.
+dependencies {
+    implementation wpi.deps.wpilib()
+    nativeZip wpi.deps.wpilibJni(wpi.platforms.roborio)
+    nativeDesktopZip wpi.deps.wpilibJni(wpi.platforms.desktop)
 
-  dependencies {
-    implementation "org.slf4j:slf4j-api:$slf4jVersion"
+
+    implementation wpi.deps.vendor.java()
+    nativeZip wpi.deps.vendor.jni(wpi.platforms.roborio)
+    nativeDesktopZip wpi.deps.vendor.jni(wpi.platforms.desktop)
+
+    implementation "org.jetbrains.kotlin:kotlin-stdlib"
+    implementation "org.slf4j:slf4j-api:1.7.28"
+    implementation "org.eclipse.jetty:jetty-server:9.4.19.v20190610"
+    implementation "com.squareup.okhttp3:okhttp:3.12.5"
+    implementation "io.github.microutils:kotlin-logging:1.7.6"
+    implementation "com.squareup.moshi:moshi:1.8.0"
+    kapt "com.squareup.moshi:moshi-kotlin-codegen:1.8.0"
 
     // Testing
-    testImplementation "org.junit.jupiter:junit-jupiter-params:$junitVersion"
-    testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
-    testImplementation "org.assertj:assertj-core:$assertJVersion"
-    testImplementation "org.mockito:mockito-junit-jupiter:$mockitoVersion"
-    testRuntime "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
-    testRuntime "ch.qos.logback:logback-classic:$logbackVersion"
-  }
+    testImplementation "org.junit.jupiter:junit-jupiter-params:5.+"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:5.+"
+    testImplementation "org.assertj:assertj-core:3.+"
+    testImplementation "org.mockito:mockito-junit-jupiter:2.+"
+    testImplementation "org.skyscreamer:jsonassert:1.+"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.+"
+    testRuntimeOnly "ch.qos.logback:logback-classic:1.2.+"
 
-  idea {
-    module {
-      downloadJavadoc = true
-      downloadSources = true
+    compileOnly 'org.jetbrains:annotations:15.0'
+}
+
+publishing {
+    publications {
+        thirdcoastLibrary(MavenPublication) {
+            from components.java
+        }
     }
-  }
 
-  test {
-    useJUnitPlatform()
-  }
-}
-
-// applies to all sub-projects except for deadeye
-configure(subprojects - project(":deadeye")) {
-  apply plugin: "edu.wpi.first.GradleRIO"
-
-  dependencies {
-    implementation wpi.deps.wpilib()
-    implementation wpi.deps.vendor.java()
-  }
-}
-
-// applies to all Kotlin sub-projects
-configure(subprojects - project(":swerve")) {
-  apply plugin: "kotlin"
-  apply plugin: "kotlin-kapt"
-  apply plugin: 'org.jetbrains.dokka'
-
-  dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
-    implementation "io.github.microutils:kotlin-logging:$kotlinLoggingVersion"
-    implementation "com.squareup.moshi:moshi:$moshiVersion"
-    kapt "com.squareup.moshi:moshi-kotlin-codegen:$moshiVersion"
-  }
+    repositories {
+      maven {
+        url "s3://maven.strykeforce.org/repo"
+        credentials(AwsCredentials) {
+          accessKey "${System.getenv('STRYKEFORCE_AWS_KEY')}"
+          secretKey "${System.getenv('STRYKEFORCE_AWS_SECRET')}"
+      }
+    }
+    }
 }
