@@ -48,6 +48,10 @@ dependencies {
     compileOnly 'org.jetbrains:annotations:15.0'
 }
 
+java {
+  withSourcesJar()
+}
+
 idea {
     module {
       downloadJavadoc = true
