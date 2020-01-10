@@ -1,10 +1,12 @@
 package org.strykeforce.thirdcoast.telemetry
 
+import com.ctre.phoenix.motorcontrol.can.TalonFX
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import mu.KotlinLogging
 import org.strykeforce.thirdcoast.swerve.SwerveDrive
+import org.strykeforce.thirdcoast.talon.TalonFXItem
 import org.strykeforce.thirdcoast.telemetry.item.Measurable
-import org.strykeforce.thirdcoast.telemetry.item.TalonItem
+import org.strykeforce.thirdcoast.telemetry.item.TalonSRXItem
 import java.util.*
 import java.util.function.Function
 
@@ -97,7 +99,17 @@ class TelemetryService(private val telemetryControllerFactory: Function<Inventor
    * @throws IllegalStateException if TelemetryService is running.
    */
   fun register(talon: TalonSRX) {
-    register(TalonItem(talon))
+    register(TalonSRXItem(talon))
+  }
+
+  /**
+   * Convenience method to register a `TalonFX` for telemetry sending.
+   *
+   * @param talon the TalonSRX to register for data collection
+   * @throws IllegalStateException if TelemetryService is running.
+   */
+  fun register(talon: TalonFX) {
+    register(TalonFXItem(talon))
   }
 
   /**
@@ -106,8 +118,8 @@ class TelemetryService(private val telemetryControllerFactory: Function<Inventor
    * @throws IllegalStateException if TelemetryService is running.
    */
   fun register(swerveDrive: SwerveDrive) = swerveDrive.wheels.forEach {
-    register(TalonItem(it.azimuthTalon))
-    register(TalonItem(it.driveTalon))
+    register(TalonSRXItem(it.azimuthTalon))
+    register(TalonSRXItem(it.driveTalon))
   }
 
   /**

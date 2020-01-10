@@ -4,7 +4,8 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import java.util.function.DoubleSupplier
 
 internal const val CLOSED_LOOP_TARGET = "CLOSED_LOOP_TARGET"
-internal const val OUTPUT_CURRENT = "OUTPUT_CURRENT"
+internal const val STATOR_CURRENT = "STATOR_CURRENT"
+internal const val SUPPLY_CURRENT = "SUPPLY_CURRENT"
 internal const val OUTPUT_VOLTAGE = "OUTPUT_VOLTAGE"
 internal const val OUTPUT_PERCENT = "OUTPUT_PERCENT"
 internal const val SELECTED_SENSOR_POSITION = "SELECTED_SENSOR_POSITION"
@@ -30,7 +31,7 @@ internal const val REVERSE_LIMIT_SWITCH_CLOSED = "REVERSE_LIMIT_SWITCH_CLOSED"
 internal const val TEMPERATURE = "TEMPERATURE"
 
 /** Represents a [TalonSRX] telemetry-enable `Measurable` item.  */
-class TalonItem @JvmOverloads constructor(
+class TalonSRXItem @JvmOverloads constructor(
   private val talon: TalonSRX,
   override val description: String = "TalonSRX ${talon.deviceID}"
 ) : Measurable {
@@ -39,7 +40,8 @@ class TalonItem @JvmOverloads constructor(
   override val type = "talon"
   override val measures = setOf(
     Measure(CLOSED_LOOP_TARGET, "Closed-loop Setpoint (PID 0)"),
-    Measure(OUTPUT_CURRENT, "Output Current"),
+    Measure(org.strykeforce.thirdcoast.talon.STATOR_CURRENT, "Stator Current"),
+    Measure(org.strykeforce.thirdcoast.talon.SUPPLY_CURRENT, "Supply Current"),
     Measure(OUTPUT_VOLTAGE, "Output Voltage"),
     Measure(OUTPUT_PERCENT, "Output Percentage"),
     Measure(SELECTED_SENSOR_POSITION, "Selected Sensor Position (PID 0)"),
@@ -72,7 +74,8 @@ class TalonItem @JvmOverloads constructor(
   override fun measurementFor(measure: Measure): DoubleSupplier {
     return when (measure.name) {
       CLOSED_LOOP_TARGET -> DoubleSupplier { talon.getClosedLoopTarget(0) }
-      OUTPUT_CURRENT -> DoubleSupplier { talon.outputCurrent }
+      org.strykeforce.thirdcoast.talon.STATOR_CURRENT -> DoubleSupplier { talon.statorCurrent }
+      org.strykeforce.thirdcoast.talon.SUPPLY_CURRENT -> DoubleSupplier { talon.supplyCurrent }
       OUTPUT_VOLTAGE -> DoubleSupplier { talon.motorOutputVoltage }
       OUTPUT_PERCENT -> DoubleSupplier { talon.motorOutputPercent }
       SELECTED_SENSOR_POSITION -> DoubleSupplier { talon.getSelectedSensorPosition(0).toDouble() }
@@ -106,7 +109,7 @@ class TalonItem @JvmOverloads constructor(
     if (this === other) return true
     if (javaClass != other?.javaClass) return false
 
-    other as TalonItem
+    other as TalonSRXItem
 
     if (deviceId != other.deviceId) return false
 
