@@ -9,7 +9,7 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 
 artifacts {
     archives sourcesJar
-    archives javadocJar
+//    archives javadocJar
 }
 
 publishing {
@@ -18,7 +18,7 @@ publishing {
             from components.java
 
             artifact sourcesJar
-            artifact javadocJar
+//            artifact javadocJar
 
             groupId project.group
             artifactId project.name
