@@ -8,7 +8,7 @@ plugins {
 }
 
 group = 'org.strykeforce'
-version = '20.0.1'
+version = '20.1.0'
 
 sourceCompatibility = JavaVersion.VERSION_11
 targetCompatibility = JavaVersion.VERSION_11
@@ -17,7 +17,7 @@ targetCompatibility = JavaVersion.VERSION_11
 def includeDesktopSupport = false
 
 // Defining my dependencies. In this case, WPILib (+ friends), and vendor libraries.
-// Also defines JUnit 4.
+// Also defines JUnit 5.
 dependencies {
     implementation wpi.deps.wpilib()
     nativeZip wpi.deps.wpilibJni(wpi.platforms.roborio)
