@@ -8,7 +8,7 @@ plugins {
 }
 
 group = 'org.strykeforce'
-version = '20.1.0'
+version = '20.1.1'
 
 sourceCompatibility = JavaVersion.VERSION_11
 targetCompatibility = JavaVersion.VERSION_11
