@@ -4,6 +4,7 @@ import static com.ctre.phoenix.motorcontrol.ControlMode.*;
 import static org.strykeforce.thirdcoast.swerve.SwerveDrive.DriveMode.TELEOP;
 
 import com.ctre.phoenix.ErrorCode;
+import com.ctre.phoenix.motorcontrol.can.BaseTalon;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import java.util.Objects;
 import java.util.function.DoubleConsumer;
@@ -32,7 +33,7 @@ public class Wheel {
 
   private static final Logger logger = LoggerFactory.getLogger(Wheel.class);
   private final double driveSetpointMax;
-  private final TalonSRX driveTalon;
+  private final BaseTalon driveTalon;
   private final TalonSRX azimuthTalon;
   protected DoubleConsumer driver;
   private boolean isInverted = false;
@@ -49,7 +50,7 @@ public class Wheel {
    * @param drive the configured drive TalonSRX
    * @param driveSetpointMax scales closed-loop drive output to this value when drive setpoint = 1.0
    */
-  public Wheel(TalonSRX azimuth, TalonSRX drive, double driveSetpointMax) {
+  public Wheel(TalonSRX azimuth, BaseTalon drive, double driveSetpointMax) {
     this.driveSetpointMax = driveSetpointMax;
     azimuthTalon = Objects.requireNonNull(azimuth);
     driveTalon = Objects.requireNonNull(drive);
@@ -184,7 +185,7 @@ public class Wheel {
    *
    * @return drive Talon instance used by wheel
    */
-  public TalonSRX getDriveTalon() {
+  public BaseTalon getDriveTalon() {
     return driveTalon;
   }
 

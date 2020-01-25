@@ -119,7 +119,9 @@ class TelemetryService(private val telemetryControllerFactory: Function<Inventor
    */
   fun register(swerveDrive: SwerveDrive) = swerveDrive.wheels.forEach {
     register(TalonSRXItem(it.azimuthTalon))
-    register(TalonSRXItem(it.driveTalon))
+    if(it.driveTalon is TalonSRX) register(TalonSRXItem(it.driveTalon as TalonSRX))
+    else if(it.driveTalon is TalonFX) register(TalonFXItem(it.driveTalon as TalonFX))
+    else throw IllegalArgumentException()
   }
 
   /**
