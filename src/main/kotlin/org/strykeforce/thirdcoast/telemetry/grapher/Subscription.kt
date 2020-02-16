@@ -1,5 +1,6 @@
 package org.strykeforce.thirdcoast.telemetry.grapher
 
+import com.squareup.moshi.JsonClass
 import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.Moshi
 import mu.KotlinLogging
@@ -16,10 +17,11 @@ private val logger = KotlinLogging.logger {}
 class Subscription(inventory: Inventory, val client: String, requestJson: String) {
     private val measurements = ArrayList<DoubleSupplier>(16)
     private val descriptions = ArrayList<String>(16)
+    private val moshi: Moshi by lazy { Moshi.Builder().build() }
 
     init {
-        val request: RequestJson = RequestJson.fromJson(requestJson) ?: RequestJson.EMPTY
-        request.subscription.forEach {
+        val request = Subscription_RequestJsonJsonAdapter(moshi).fromJson(requestJson)
+        request?.subscription?.forEach {
             val item = inventory.itemForId(it.itemId)
             val measure = Measure(it.measurementId, it.measurementId)
             measurements += item.measurementFor(measure)
@@ -49,33 +51,10 @@ class Subscription(inventory: Inventory, val client: String, requestJson: String
             .endObject()
     }
 
-    internal class RequestJson {
+    @JsonClass(generateAdapter = true)
+    internal data class Item(val itemId: Int, val measurementId: String)
 
-        var type: String = "start"
-        var subscription: List<Item> = emptyList()
+    @JsonClass(generateAdapter = true)
+    internal data class RequestJson(val type:String, val subscription:List<Item>)
 
-        internal class Item {
-
-            var itemId: Int = 0
-            lateinit var measurementId: String
-
-            override fun toString() = "Item(itemId=$itemId, measurementId='$measurementId')"
-        }
-
-        companion object {
-
-            val EMPTY: RequestJson = RequestJson()
-
-            @JvmStatic
-            @Throws(IOException::class)
-            fun fromJson(json: String): RequestJson? {
-                // TODO: verify type=start
-                val moshi = Moshi.Builder().build()
-                val adapter = moshi.adapter(RequestJson::class.java)
-                return adapter.fromJson(json)
-            }
-        }
-
-        override fun toString() = "RequestJson(type='$type', subscription=$subscription)"
-    }
 }
