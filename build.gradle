@@ -16,6 +16,11 @@ targetCompatibility = JavaVersion.VERSION_11
 // Set this to true to enable desktop support.
 def includeDesktopSupport = false
 
+repositories {
+    jcenter()
+    maven {url = "http://first.wpi.edu/FRC/roborio/maven/release"}
+}
+
 // Defining my dependencies. In this case, WPILib (+ friends), and vendor libraries.
 // Also defines JUnit 5.
 dependencies {
@@ -33,6 +38,7 @@ dependencies {
     implementation "org.eclipse.jetty:jetty-server:9.4.19.v20190610"
     implementation "com.squareup.okhttp3:okhttp:3.12.5"
     implementation "io.github.microutils:kotlin-logging:1.7.6"
+    implementation "org.jetbrains.kotlinx:kotlinx-html-jvm:0.7.1"
     implementation "com.squareup.moshi:moshi:1.9.2"
     kapt "com.squareup.moshi:moshi-kotlin-codegen:1.9.2"
 
