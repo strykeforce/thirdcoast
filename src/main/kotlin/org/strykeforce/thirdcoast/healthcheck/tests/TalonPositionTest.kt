@@ -91,7 +91,7 @@ class TalonPositionTest(private val group: TalonGroup) : Test, Reportable {
             th { +"talon ID" }
             th { +"Setpoint (volts)" }
             th { +"Position (ticks" }
-            th { +"Supply Current (amps" }
+            th { +"Supply Current (amps)" }
             th { +"Stator Current (amps)" }
             th { +"Speed (ticks/100ms)" }
             th { +"Supply Current range" }

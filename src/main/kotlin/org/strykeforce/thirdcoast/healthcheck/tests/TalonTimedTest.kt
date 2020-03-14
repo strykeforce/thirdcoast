@@ -93,7 +93,7 @@ class TalonTimedTest(private val group: TalonGroup) : Test, Reportable {
             th { +"Duration (sec)" }
             th { +"Supply Current (amps)" }
             th { +"Stator Current (amps)" }
-            th { +"Speed (ticks/100ms" }
+            th { +"Speed (ticks/100ms)" }
             th { +"Supply Current range" }
             th { +"Stator Current range" }
             th { +"Speed range" }
@@ -114,7 +114,7 @@ class TalonTimedTest(private val group: TalonGroup) : Test, Reportable {
                 td(classes = speedRange.statusOf(speed)) { +"$speed" }
                 td { +"${supplyCurrentRange.start}, ${supplyCurrentRange.endInclusive}" }
                 td { +"${statorCurrentRange.start}, ${statorCurrentRange.endInclusive}" }
-                td { +"${speedRange.start}m ${speedRange.endInclusive}" }
+                td { +"${speedRange.start}, ${speedRange.endInclusive}" }
             }
         }
     }
