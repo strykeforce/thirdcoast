@@ -1,16 +1,10 @@
 package org.strykeforce.thirdcoast.swerve;
 
-import static com.ctre.phoenix.motorcontrol.ControlMode.*;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.byLessThan;
-import static org.junit.jupiter.params.provider.Arguments.arguments;
-import static org.mockito.Mockito.*;
-import static org.strykeforce.thirdcoast.swerve.SwerveDrive.DriveMode.*;
-
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.SensorCollection;
+import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
+import com.ctre.phoenix.motorcontrol.can.BaseTalon;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -22,10 +16,19 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.stream.Stream;
+
+import static com.ctre.phoenix.motorcontrol.ControlMode.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.byLessThan;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
+import static org.mockito.Mockito.*;
+import static org.strykeforce.thirdcoast.swerve.SwerveDrive.DriveMode.*;
+
 @ExtendWith(MockitoExtension.class)
 class WheelTest {
 
-  @Mock private TalonSRX driveTalon;
+  @Mock private BaseTalon driveTalon;
   @Mock private TalonSRX azimuthTalon;
 
   static Stream<Arguments> setDriveModeTestProvider() {
@@ -46,7 +49,7 @@ class WheelTest {
     wheel.set(setpoint, 1.0);
 
     ArgumentCaptor<Double> argument = ArgumentCaptor.forClass(Double.class);
-    verify(azimuthTalon).set(any(), argument.capture());
+    verify(azimuthTalon).set((ControlMode) any(), argument.capture());
     assertThat(argument.getValue()).isCloseTo(endPosition * 4096d, byLessThan(1e-12));
     verify(driveTalon).set(PercentOutput, isReversed ? -1d : 1d);
   }
@@ -56,7 +59,7 @@ class WheelTest {
     Wheel wheel = new Wheel(azimuthTalon, driveTalon, 1.0);
     wheel.set(0d, 0d);
     verify(driveTalon).set(PercentOutput, 0d);
-    verify(azimuthTalon, never()).set(any(), anyDouble());
+    verify(azimuthTalon, never()).set((TalonSRXControlMode) any(), anyDouble());
   }
 
   @Test
