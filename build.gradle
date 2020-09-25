@@ -8,7 +8,7 @@ plugins {
 }
 
 group = 'org.strykeforce'
-version = '20.3.2'
+version = '20.4.2'
 
 sourceCompatibility = JavaVersion.VERSION_11
 targetCompatibility = JavaVersion.VERSION_11
@@ -51,7 +51,7 @@ dependencies {
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.+"
     testRuntimeOnly "ch.qos.logback:logback-classic:1.2.+"
 
-    compileOnly 'org.jetbrains:annotations:15.0'
+    api 'org.jetbrains:annotations:20.1.0'
 }
 
 java {
