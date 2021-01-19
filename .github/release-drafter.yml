@@ -25,6 +25,12 @@ version-resolver:
       - "patch"
   default: patch
 template: |
+  ## Add Third Coast to FRC robot project
+
+  The Third Coast `vendordeps` file is at: http://maven.strykeforce.org/thirdcoast.json
+
+  To install, use **Install new libraries (online)** in VS Code or download manually to your project `vendordeps` directory.
+
   ## Changes
 
   $CHANGES
