@@ -44,7 +44,7 @@ class WheelTest {
   @CsvFileSource(resources = "/wheel_set_cases.csv", numLinesToSkip = 1)
   void set(double startPosition, double setpoint, double endPosition, boolean isReversed) {
     Wheel wheel = new Wheel(azimuthTalon, driveTalon, 1.0);
-    int encoderStartingPosition = (int) Math.round(startPosition * 4096d);
+    double encoderStartingPosition =  Math.round(startPosition * 4096d);
     when(azimuthTalon.getSelectedSensorPosition(0)).thenReturn(encoderStartingPosition);
     wheel.set(setpoint, 1.0);
 
@@ -88,7 +88,7 @@ class WheelTest {
   @Test
   void stopOpenLoop() {
     Wheel wheel = new Wheel(azimuthTalon, driveTalon, 1.0);
-    when(azimuthTalon.getSelectedSensorPosition(0)).thenReturn(2767);
+    when(azimuthTalon.getSelectedSensorPosition(0)).thenReturn(2767.0);
     wheel.setDriveMode(OPEN_LOOP);
     wheel.stop();
     wheel.setDriveMode(CLOSED_LOOP);

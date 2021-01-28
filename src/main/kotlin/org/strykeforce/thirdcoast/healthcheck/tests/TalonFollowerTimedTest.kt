@@ -59,7 +59,7 @@ class TalonFollowerTimedTest(private val group: TalonGroup) : Test, Reportable {
             State.RUNNING -> {
                 talonSupplyCurrents.forEach { (talon, supplyCurrents) -> supplyCurrents.add(talon.supplyCurrent) }
                 talonStatorCurrents.forEach { (talon, statorCurrents) -> statorCurrents.add(talon.statorCurrent) }
-                talonSpeeds.forEach { (talon, speeds) -> speeds.add(talon.selectedSensorVelocity) }
+                talonSpeeds.forEach { (talon, speeds) -> speeds.add(talon.selectedSensorVelocity.toInt()) }
                 if (++iteration == iterations) state = State.STOPPING
             }
             State.STOPPING -> {

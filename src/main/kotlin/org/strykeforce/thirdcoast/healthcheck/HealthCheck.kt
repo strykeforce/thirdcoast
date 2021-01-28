@@ -47,11 +47,11 @@ class HealthCheck {
         State.STOPPED -> throw IllegalStateException()
     }
 
-    fun isFinised() = state == State.STOPPED
+    fun isFinished() = state == State.STOPPED
 
     fun report() {
         File(HTML_PATH).writer().use { writer ->
-            writer.appendln("<!DOCTYPE html>")
+            writer.appendLine("<!DOCTYPE html>")
             val tagConsumer = writer.appendHTML()
             tagConsumer.html {
                 attributes["lang"] = "en"
