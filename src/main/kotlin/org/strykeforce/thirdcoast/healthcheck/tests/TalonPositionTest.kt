@@ -50,7 +50,7 @@ class TalonPositionTest(private val group: TalonGroup) : Test, Reportable {
                 }
                 logger.info { "$name starting" }
                 talon = group.talons.first()
-                startingPosition = talon.selectedSensorPosition
+                startingPosition = talon.selectedSensorPosition.toInt()
                 talon.configOpenloopRamp(0.75 * warmUp)
                 talon.set(ControlMode.PercentOutput, percentOutput)
                 startTime = Timer.getFPGATimestamp()
@@ -62,7 +62,7 @@ class TalonPositionTest(private val group: TalonGroup) : Test, Reportable {
             State.RUNNING -> {
                 supplyCurrents.add(talon.supplyCurrent)
                 statorCurrents.add(talon.statorCurrent)
-                speeds.add(talon.selectedSensorVelocity)
+                speeds.add(talon.selectedSensorVelocity.toInt())
 
                 if ((talon.selectedSensorPosition - startingPosition).absoluteValue > encoderChangeTarget) {
                     logger.info { "reached encoder target $encoderChangeTarget" }
