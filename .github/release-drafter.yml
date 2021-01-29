@@ -31,6 +31,10 @@ template: |
 
   To install, use **Install new libraries (online)** in VS Code or download manually to your project `vendordeps` directory.
 
+  ```
+  $ ./gradlew vendordep --url=http://maven.strykeforce.org/thirdcoast.json
+  ```
+
   ## Changes
 
   $CHANGES
