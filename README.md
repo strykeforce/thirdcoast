@@ -1,7 +1,5 @@
 # Stryke Force Third Coast Java Libraries
 
-[![Build Status](https://travis-ci.org/strykeforce/thirdcoast.svg?branch=master)](https://travis-ci.org/strykeforce/thirdcoast)
-
 This project consists of three libraries that are used by Team 2767 Stryke Force.
 
 -   **Swerve Drive** - software control of [Third Coast swerve drive modules](https://strykeforce.org/resources/#mecanical). This code should generally work with swerve drives that use CTRE motor controllers and a CTRE magnetic encoder for azimuth position.
