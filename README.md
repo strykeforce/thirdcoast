@@ -2,15 +2,22 @@
 
 [![Build Status](https://travis-ci.org/strykeforce/thirdcoast.svg?branch=master)](https://travis-ci.org/strykeforce/thirdcoast)
 
-This project consists of three separate libraries that are reused by Team 2767 Stryke Force.
+This project consists of three libraries that are used by Team 2767 Stryke Force.
 
--   **Swerve Drive** - software control of [Third Coast swerve drive modules](https://strykeforce.org/resources/#mecanical).
+-   **Swerve Drive** - software control of [Third Coast swerve drive modules](https://strykeforce.org/resources/#mecanical). This code should generally work with swerve drives that use CTRE motor controllers and a CTRE magnetic encoder for azimuth position.
 -   **Telemetry** -  provide real-time streaming telemetry information from a robot. Used with our [Grapher](https://github.com/strykeforce/grapher) LabView strip-chart recorder.
--   **Deadeye** - roboRIO-side interface to our [Deadeye](https://github.com/strykeforce/deadeye) vision application.
+-   **Health Check** - configure automated motor health checks for use by pit crew during competitions.
 
-The Talon SRX provision library was removed after the 2018 season. With the additions made to the CTRE Phoenix libraries during the summer of 2018, especially `TalonSRXConfiguration` and friends, we no longer need to maintain our separate library for this.
 
-You can create pre-configured projects that use Third Coast with [cookiecutter-robot](https://github.com/strykeforce/cookiecutter-robot).
+## Installation
+
+The Third Coast `vendordeps` file is at: http://maven.strykeforce.org/thirdcoast.json
+
+To install, use **Install new libraries (online)** in VS Code or download manually to your project `vendordeps` directory.
+
+```
+$ ./gradlew vendordep --url=http://maven.strykeforce.org/thirdcoast.json
+```
 
 See examples of usage in [thirdcoast-examples](https://github.com/strykeforce/thirdcoast-examples) repo and other engineering resources at [strykeforce.org](https://strykeforce.org/resources/).
 
