@@ -28,9 +28,9 @@ Many thanks to 2767 Strykeforce.
 
 ## To Work With This
 1. Clone this repository.
-2. WPILib: Build Robot Code
+2. From VS Code, perform a WPILib: Build Robot Code
 3. Open GitBash to this project's root directory
-4. Run `gradlew publishToMaveLocal`
+4. Run `gradlew publishToMavenLocal`
 5. Run `ls -l ~/.m2/repository/org/strykeforce/2021X_thirdcoast/21.0.0/` to confirm all of the .jar, .module and .pom files published with the correct timestamp.  You will need to do this any time you need to fix a bug in this library for the 2021X_Thrifty_Server_Java project to "see" the fix.
 
 
