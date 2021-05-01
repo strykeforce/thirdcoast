@@ -3,6 +3,7 @@ package org.strykeforce.thirdcoast.swerve;
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.TimedRobot;
 
+@Deprecated
 public class SwerveDriveConfig {
 
   /**

@@ -18,6 +18,7 @@ import org.strykeforce.thirdcoast.talon.Errors;
  * @see Wheel
  */
 @SuppressWarnings("unused")
+@Deprecated
 public class SwerveDrive {
 
   public static final int DEFAULT_ABSOLUTE_AZIMUTH_OFFSET = 200;
