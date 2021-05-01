@@ -28,6 +28,7 @@ import org.strykeforce.thirdcoast.talon.Errors;
  * limits on wheel azimuth rotation. Azimuth Talons have an ID in the range 0-3 with corresponding
  * drive Talon IDs in the range 10-13.
  */
+@Deprecated
 public class Wheel {
   private static final int TICKS = 4096;
 

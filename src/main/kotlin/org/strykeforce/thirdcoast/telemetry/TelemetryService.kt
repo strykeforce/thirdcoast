@@ -117,6 +117,7 @@ class TelemetryService(private val telemetryControllerFactory: Function<Inventor
    *
    * @throws IllegalStateException if TelemetryService is running.
    */
+  @Deprecated(message = "Register swerve drive Talons with register(talon: TalonSRX)")
   fun register(swerveDrive: SwerveDrive) = swerveDrive.wheels.forEach {
     register(TalonSRXItem(it.azimuthTalon))
     if(it.driveTalon is TalonSRX) register(TalonSRXItem(it.driveTalon as TalonSRX))
