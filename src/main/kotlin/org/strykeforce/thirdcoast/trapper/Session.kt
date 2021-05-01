@@ -4,10 +4,13 @@ import com.squareup.moshi.FromJson
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.ToJson
 import okhttp3.*
+import okhttp3.HttpUrl.Companion.toHttpUrl
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.RequestBody.Companion.toRequestBody
 import okio.BufferedSink
 import java.util.*
 
-val JSON = MediaType.get("application/json; charset=utf-8")
+val JSON = "application/json; charset=utf-8".toMediaType()
 
 object Session {
     val client = OkHttpClient()
@@ -15,23 +18,23 @@ object Session {
     var baseUrl = "http://example.com:5000"
         set(value) {
             field = value
-            activityEndpoint = HttpUrl.get("$value/activities")
-            actionEndpoint = HttpUrl.get("$value/actions")
+            activityEndpoint = "$value/activities".toHttpUrl()
+            actionEndpoint = "$value/actions".toHttpUrl()
         }
-    var activityEndpoint: HttpUrl = HttpUrl.get("$baseUrl/activities")
-    var actionEndpoint: HttpUrl = HttpUrl.get("$baseUrl/actions")
+    var activityEndpoint: HttpUrl = "$baseUrl/activities".toHttpUrl()
+    var actionEndpoint: HttpUrl = "$baseUrl/actions".toHttpUrl()
 
 
     fun post(url: HttpUrl, json: String) {
-        val body = RequestBody.create(JSON, json)
+        val body = json.toRequestBody(JSON)
         val request = Request.Builder().url(url).post(body).build()
 
-        client.newCall(request).execute().use { println("response: ${it.body()?.string()}") }
+        client.newCall(request).execute().use { println("response: ${it.body?.string()}") }
     }
 
     fun post(url: HttpUrl, body: RequestBody) {
         val request = Request.Builder().url(url).post(body).build()
-        client.newCall(request).execute().use { println("response: ${it.body()?.string()}") }
+        client.newCall(request).execute().use { println("response: ${it.body?.string()}") }
     }
 
 }
