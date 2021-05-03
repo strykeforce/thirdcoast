@@ -12,8 +12,9 @@ private val moshi = Moshi.Builder().build()
 private val traceJsonAdapter = TraceJsonAdapter(moshi)
 
 @JsonClass(generateAdapter = true)
-data class Trace(val action: Int, val time: Int) {
+data class Trace(val time: Int) {
     var id: Int? = null
+    var action: Int? = null
     var data: List<Double> = mutableListOf()
 
     fun asRequestBody(): RequestBody {
