@@ -1,10 +1,18 @@
 package org.strykeforce.thirdcoast.swerve;
 
+import static com.ctre.phoenix.motorcontrol.ControlMode.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.byLessThan;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
+import static org.mockito.Mockito.*;
+import static org.strykeforce.thirdcoast.swerve.SwerveDrive.DriveMode.*;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.SensorCollection;
 import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 import com.ctre.phoenix.motorcontrol.can.BaseTalon;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -15,15 +23,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.stream.Stream;
-
-import static com.ctre.phoenix.motorcontrol.ControlMode.*;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.byLessThan;
-import static org.junit.jupiter.params.provider.Arguments.arguments;
-import static org.mockito.Mockito.*;
-import static org.strykeforce.thirdcoast.swerve.SwerveDrive.DriveMode.*;
 
 @ExtendWith(MockitoExtension.class)
 class WheelTest {
@@ -44,7 +43,7 @@ class WheelTest {
   @CsvFileSource(resources = "/wheel_set_cases.csv", numLinesToSkip = 1)
   void set(double startPosition, double setpoint, double endPosition, boolean isReversed) {
     Wheel wheel = new Wheel(azimuthTalon, driveTalon, 1.0);
-    double encoderStartingPosition =  Math.round(startPosition * 4096d);
+    double encoderStartingPosition = Math.round(startPosition * 4096d);
     when(azimuthTalon.getSelectedSensorPosition(0)).thenReturn(encoderStartingPosition);
     wheel.set(setpoint, 1.0);
 

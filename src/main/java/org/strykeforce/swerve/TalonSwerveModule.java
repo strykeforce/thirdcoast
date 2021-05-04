@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A swerve module that uses Talons for azimuth and drive motors. Uses a {@link Builder} to
  * construct.
+ *
  * <pre>
  * TalonSwerveModule module =
  *   new TalonSwerveModule.Builder()
@@ -138,11 +139,9 @@ public class TalonSwerveModule implements SwerveModule {
     logger.info("swerve module {}: set azimuth encoder = {}", index, azimuthSetpoint);
   }
 
-
   private int getAzimuthAbsoluteEncoderCounts() {
     return azimuthTalon.getSensorCollection().getPulseWidthPosition() & 0xFFF;
   }
-
 
   private Rotation2d getAzimuthRotation2d() {
     double azimuthCounts = azimuthTalon.getSelectedSensorPosition();
@@ -208,8 +207,7 @@ public class TalonSwerveModule implements SwerveModule {
     private double driveMaximumMetersPerSecond;
     private Translation2d wheelLocationMeters;
 
-    public Builder() {
-    }
+    public Builder() {}
 
     public Builder azimuthTalon(TalonSRX azimuthTalon) {
       this.azimuthTalon = azimuthTalon;
@@ -242,10 +240,10 @@ public class TalonSwerveModule implements SwerveModule {
     }
 
     // we currently only support TalonSRX for azimuth
-//    public Builder azimuthEncoderCountsPerRevolution(int countsPerRev) {
-//      azimuthCountsPerRev = countsPerRev;
-//      return this;
-//    }
+    //    public Builder azimuthEncoderCountsPerRevolution(int countsPerRev) {
+    //      azimuthCountsPerRev = countsPerRev;
+    //      return this;
+    //    }
 
     public Builder driveMaximumMetersPerSecond(double metersPerSecond) {
       driveMaximumMetersPerSecond = metersPerSecond;
@@ -265,7 +263,6 @@ public class TalonSwerveModule implements SwerveModule {
       validateTalonSwerveModuleObject(module);
       return module;
     }
-
 
     private void validateTalonSwerveModuleObject(TalonSwerveModule module) {
       if (module.azimuthTalon == null) {

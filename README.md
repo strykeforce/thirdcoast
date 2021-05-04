@@ -18,4 +18,3 @@ $ ./gradlew vendordep --url=http://maven.strykeforce.org/thirdcoast.json
 ```
 
 See examples of usage in [thirdcoast-examples](https://github.com/strykeforce/thirdcoast-examples) repo and other engineering resources at [strykeforce.org](https://strykeforce.org/resources/).
-

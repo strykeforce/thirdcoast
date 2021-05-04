@@ -1,5 +1,13 @@
 package org.strykeforce.thirdcoast.telemetry;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
+
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 import okio.Buffer;
 import org.json.JSONException;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,15 +19,6 @@ import org.skyscreamer.jsonassert.JSONAssert;
 import org.strykeforce.thirdcoast.telemetry.grapher.ResourceHelper;
 import org.strykeforce.thirdcoast.telemetry.item.Measurable;
 import org.strykeforce.thirdcoast.telemetry.item.Measure;
-
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class RobotInventoryTest {

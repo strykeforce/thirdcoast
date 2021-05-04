@@ -17,9 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Control a Third Coast swerve drive.
- */
+/** Control a Third Coast swerve drive. */
 public class SwerveDrive {
 
   private static final Logger logger = LoggerFactory.getLogger(SwerveDrive.class);
@@ -34,24 +32,27 @@ public class SwerveDrive {
    * Construct a swerve drive object. Along with a gyro, this takes in four configured swerve
    * modules, by convention in left front, right front, left rear, right rear order.
    *
-   * @param gyro          the gyro to use for field-oriented driving
+   * @param gyro the gyro to use for field-oriented driving
    * @param swerveModules the swerve modules
    */
   public SwerveDrive(Gyro gyro, SwerveModule... swerveModules) {
     this.gyro = gyro;
     this.swerveModules = swerveModules;
-    final List<Translation2d> locations = Arrays.stream(swerveModules)
-        .map(SwerveModule::getWheelLocationMeters)
-        .collect(Collectors.toList());
+    final List<Translation2d> locations =
+        Arrays.stream(swerveModules)
+            .map(SwerveModule::getWheelLocationMeters)
+            .collect(Collectors.toList());
 
-    Translation2d[] translation2ds = Arrays.stream(swerveModules)
-        .map(SwerveModule::getWheelLocationMeters)
-        .toArray(Translation2d[]::new);
+    Translation2d[] translation2ds =
+        Arrays.stream(swerveModules)
+            .map(SwerveModule::getWheelLocationMeters)
+            .toArray(Translation2d[]::new);
 
     // verify all swerve modules are set to same max speed
-    Set<Double> maxSpeeds = Arrays.stream(swerveModules)
-        .map(SwerveModule::getMaxSpeedMetersPerSecond)
-        .collect(Collectors.toSet());
+    Set<Double> maxSpeeds =
+        Arrays.stream(swerveModules)
+            .map(SwerveModule::getMaxSpeedMetersPerSecond)
+            .collect(Collectors.toSet());
 
     if (maxSpeeds.size() > 1) {
       throw new IllegalStateException("swerve modules must have same driveMaximumMetersPerSecond");
@@ -110,18 +111,14 @@ public class SwerveDrive {
     odometry.resetPosition(pose, gyro.getRotation2d());
   }
 
-  /**
-   * Resets the drive encoders to currently read a position of 0.
-   */
+  /** Resets the drive encoders to currently read a position of 0. */
   public void resetDriveEncoders() {
     for (int i = 0; i < 4; i++) {
       swerveModules[i].resetDriveEncoder();
     }
   }
 
-  /**
-   * Resets the gyro to a heading of zero.
-   */
+  /** Resets the gyro to a heading of zero. */
   public void resetGyro() {
     gyro.reset();
   }
@@ -131,22 +128,30 @@ public class SwerveDrive {
    * method.
    */
   public void periodic() {
-    odometry.update(gyro.getRotation2d(), swerveModules[0].getState(), swerveModules[1].getState(),
-        swerveModules[2].getState(), swerveModules[3].getState());
+    odometry.update(
+        gyro.getRotation2d(),
+        swerveModules[0].getState(),
+        swerveModules[1].getState(),
+        swerveModules[2].getState(),
+        swerveModules[3].getState());
   }
 
   /**
    * Drive the robot with given x, y, and rotational velocities using open-loop velocity control.
    *
-   * @param vxMetersPerSecond     the desired x velocity component
-   * @param vyMetersPerSecond     the desired y velocity component
+   * @param vxMetersPerSecond the desired x velocity component
+   * @param vyMetersPerSecond the desired y velocity component
    * @param omegaRadiansPerSecond the desired rotational velocity component
-   * @param isFieldOriented       true if driving field-oriented
+   * @param isFieldOriented true if driving field-oriented
    */
-  public void drive(double vxMetersPerSecond, double vyMetersPerSecond,
-      double omegaRadiansPerSecond, boolean isFieldOriented) {
-    SwerveModuleState[] swerveModuleStates = getSwerveModuleStates(
-        vxMetersPerSecond, vyMetersPerSecond, omegaRadiansPerSecond, isFieldOriented);
+  public void drive(
+      double vxMetersPerSecond,
+      double vyMetersPerSecond,
+      double omegaRadiansPerSecond,
+      boolean isFieldOriented) {
+    SwerveModuleState[] swerveModuleStates =
+        getSwerveModuleStates(
+            vxMetersPerSecond, vyMetersPerSecond, omegaRadiansPerSecond, isFieldOriented);
     for (int i = 0; i < 4; i++) {
       swerveModules[i].setDesiredState(swerveModuleStates[i], true);
     }
@@ -155,27 +160,35 @@ public class SwerveDrive {
   /**
    * Move the robot with given x, y, and rotational velocities using closed-loop velocity control.
    *
-   * @param vxMetersPerSecond     the desired x velocity component
-   * @param vyMetersPerSecond     the desired y velocity component
+   * @param vxMetersPerSecond the desired x velocity component
+   * @param vyMetersPerSecond the desired y velocity component
    * @param omegaRadiansPerSecond the desired rotational velocity component
-   * @param isFieldOriented       true if driving field-oriented
+   * @param isFieldOriented true if driving field-oriented
    */
-  public void move(double vxMetersPerSecond, double vyMetersPerSecond,
-      double omegaRadiansPerSecond, boolean isFieldOriented) {
-    SwerveModuleState[] swerveModuleStates = getSwerveModuleStates(
-        vxMetersPerSecond, vyMetersPerSecond, omegaRadiansPerSecond, isFieldOriented);
+  public void move(
+      double vxMetersPerSecond,
+      double vyMetersPerSecond,
+      double omegaRadiansPerSecond,
+      boolean isFieldOriented) {
+    SwerveModuleState[] swerveModuleStates =
+        getSwerveModuleStates(
+            vxMetersPerSecond, vyMetersPerSecond, omegaRadiansPerSecond, isFieldOriented);
     for (int i = 0; i < 4; i++) {
       swerveModules[i].setDesiredState(swerveModuleStates[i], false);
     }
   }
 
   @NotNull
-  private SwerveModuleState[] getSwerveModuleStates(double vxMetersPerSecond,
-      double vyMetersPerSecond, double omegaRadiansPerSecond, boolean isFieldOriented) {
-    ChassisSpeeds chassisSpeeds = isFieldOriented ? ChassisSpeeds
-        .fromFieldRelativeSpeeds(vxMetersPerSecond, vyMetersPerSecond, omegaRadiansPerSecond,
-            gyro.getRotation2d())
-        : new ChassisSpeeds(vxMetersPerSecond, vyMetersPerSecond, omegaRadiansPerSecond);
+  private SwerveModuleState[] getSwerveModuleStates(
+      double vxMetersPerSecond,
+      double vyMetersPerSecond,
+      double omegaRadiansPerSecond,
+      boolean isFieldOriented) {
+    ChassisSpeeds chassisSpeeds =
+        isFieldOriented
+            ? ChassisSpeeds.fromFieldRelativeSpeeds(
+                vxMetersPerSecond, vyMetersPerSecond, omegaRadiansPerSecond, gyro.getRotation2d())
+            : new ChassisSpeeds(vxMetersPerSecond, vyMetersPerSecond, omegaRadiansPerSecond);
 
     var swerveModuleStates = kinematics.toSwerveModuleStates(chassisSpeeds);
     SwerveDriveKinematics.normalizeWheelSpeeds(swerveModuleStates, maxSpeedMetersPerSecond);
@@ -193,5 +206,4 @@ public class SwerveDrive {
       swerveModules[i].setDesiredState(desiredStates[i], true);
     }
   }
-
 }

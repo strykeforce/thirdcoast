@@ -1,5 +1,12 @@
 package org.strykeforce.swerve;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.anyDouble;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.*;
+import static org.strykeforce.swerve.TestConstants.*;
+
 import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.SensorCollection;
@@ -14,15 +21,6 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.ArgumentCaptor;
-import org.strykeforce.swerve.SwerveModule;
-import org.strykeforce.swerve.TalonSwerveModule;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.anyDouble;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.*;
-import static org.strykeforce.swerve.TestConstants.*;
 
 class TalonSwerveModuleTest {
 
@@ -38,6 +36,7 @@ class TalonSwerveModuleTest {
     nti.stopLocal();
     nti.close();
   }
+
   @Test
   @DisplayName("Should reset drive encoder")
   void resetDriveEncoder() {
@@ -81,7 +80,6 @@ class TalonSwerveModuleTest {
       sensorCollection = mock(SensorCollection.class);
       when(azimuthTalon.getSensorCollection()).thenReturn(sensorCollection);
     }
-
 
     @Test
     @DisplayName("should store azimuth zero reference")
@@ -208,13 +206,14 @@ class TalonSwerveModuleTest {
     @Test
     @DisplayName("when talon is null")
     void whenTalonIsNull() {
-      var builder = new TalonSwerveModule.Builder()
-          .azimuthTalon(azimuthTalon)
-          .driveTalon(driveTalon)
-          .driveGearRatio(kDriveGearRatio)
-          .wheelDiameterInches(kWheelDiameterInches)
-          .wheelLocationMeters(new Translation2d(1, 1))
-          .driveMaximumMetersPerSecond(kMaxSpeedMetersPerSecond);
+      var builder =
+          new TalonSwerveModule.Builder()
+              .azimuthTalon(azimuthTalon)
+              .driveTalon(driveTalon)
+              .driveGearRatio(kDriveGearRatio)
+              .wheelDiameterInches(kWheelDiameterInches)
+              .wheelLocationMeters(new Translation2d(1, 1))
+              .driveMaximumMetersPerSecond(kMaxSpeedMetersPerSecond);
 
       assertThrows(IllegalArgumentException.class, builder.azimuthTalon(null)::build);
       assertThrows(IllegalArgumentException.class, builder.driveTalon(null)::build);
@@ -306,13 +305,15 @@ class TalonSwerveModuleTest {
     @ParameterizedTest
     @CsvSource({"2048, 20480, 3.657337448", "4096, 40960, 3.657337448"})
     @DisplayName("drive speed with encoder counts")
-    void speedWithEncoderCounts(int driveEncoderCountsPerRevolution,
-        double driveSelectedSensorVelocity, double expectedMetersPerSecond) {
+    void speedWithEncoderCounts(
+        int driveEncoderCountsPerRevolution,
+        double driveSelectedSensorVelocity,
+        double expectedMetersPerSecond) {
       TalonSwerveModule module =
           new TalonSwerveModule.Builder()
               .azimuthTalon(azimuthTalon)
               .driveTalon(driveTalon)
-//              .azimuthEncoderCountsPerRevolution(4096)
+              //              .azimuthEncoderCountsPerRevolution(4096)
               .driveEncoderCountsPerRevolution(driveEncoderCountsPerRevolution)
               .driveGearRatio(kDriveGearRatio)
               .wheelDiameterInches(kWheelDiameterInches)
@@ -326,48 +327,50 @@ class TalonSwerveModuleTest {
 
     @ParameterizedTest
     @CsvSource({
-        // azimuth counts per rev, azimuth encoder counts, azimuth angle
-        // cardinals
-        "4096, 0, 0",
-        "4096, 1024, 90",
-        "2048, 512, 90",
-        "4096, 2048, 180",
-        "2048, 1024, 180",
-        "4096, 3072, -90",
-        "2048, 1536, -90",
-        // cardinals plus 4096/2048
-        "4096, 4096, 0",
-        "2048, 2048, 0",
-        "4096, 5120, 90",
-        "2048, 2560, 90",
-        "4096, 6144, 180",
-        "2048, 3072, 180",
-        "4096, 7168, -90",
-        // negatives
-        "4096, -0, 0",
-        "2048, -0, 0",
-        "4096, -1024, -90",
-        "2048, -512, -90",
-        "4096, -2048, -180",
-        "2048, -1024, -180",
-        "4096, -3072, 90",
-        "2048, -1536, 90",
-        // negatives minus 4096/2048
-        "4096, -4096, 0",
-        "2048, -2048, 0",
-        "4096, -5120, -90",
-        "2048, -2560, -90",
-        "4096, -6144, -180",
-        "2048, -3072, -180",
-        "4096, -7168, 90",
-        "2048, -3584, 90",
-        // misc
-        "4096, 11.377778, 1", // 4096/360
-        "4096, -11.377778, -1"
+      // azimuth counts per rev, azimuth encoder counts, azimuth angle
+      // cardinals
+      "4096, 0, 0",
+      "4096, 1024, 90",
+      "2048, 512, 90",
+      "4096, 2048, 180",
+      "2048, 1024, 180",
+      "4096, 3072, -90",
+      "2048, 1536, -90",
+      // cardinals plus 4096/2048
+      "4096, 4096, 0",
+      "2048, 2048, 0",
+      "4096, 5120, 90",
+      "2048, 2560, 90",
+      "4096, 6144, 180",
+      "2048, 3072, 180",
+      "4096, 7168, -90",
+      // negatives
+      "4096, -0, 0",
+      "2048, -0, 0",
+      "4096, -1024, -90",
+      "2048, -512, -90",
+      "4096, -2048, -180",
+      "2048, -1024, -180",
+      "4096, -3072, 90",
+      "2048, -1536, 90",
+      // negatives minus 4096/2048
+      "4096, -4096, 0",
+      "2048, -2048, 0",
+      "4096, -5120, -90",
+      "2048, -2560, -90",
+      "4096, -6144, -180",
+      "2048, -3072, -180",
+      "4096, -7168, 90",
+      "2048, -3584, 90",
+      // misc
+      "4096, 11.377778, 1", // 4096/360
+      "4096, -11.377778, -1"
     })
     @DisplayName("azimuth angle with encoder counts")
-    void angleWithEncoderCounts(int azimuthEncoderCountsPerRevolution,
-        double azimuthSelectedSensorPosition, double expectedAngleDeg) {
+    void angleWithEncoderCounts(
+        int azimuthEncoderCountsPerRevolution,
+        double azimuthSelectedSensorPosition,
+        double expectedAngleDeg) {
       // we currently only support TalonSRX for azimuth
       if (azimuthEncoderCountsPerRevolution == 2048) {
         return;
@@ -377,7 +380,7 @@ class TalonSwerveModuleTest {
           new TalonSwerveModule.Builder()
               .azimuthTalon(azimuthTalon)
               .driveTalon(driveTalon)
-//              .azimuthEncoderCountsPerRevolution(azimuthEncoderCountsPerRevolution)
+              //              .azimuthEncoderCountsPerRevolution(azimuthEncoderCountsPerRevolution)
               .driveGearRatio(kDriveGearRatio)
               .wheelDiameterInches(kWheelDiameterInches)
               .driveMaximumMetersPerSecond(kMaxSpeedMetersPerSecond)
@@ -417,7 +420,6 @@ class TalonSwerveModuleTest {
               .build();
       assertEquals(expectedWheelLocation, module.getWheelLocationMeters());
     }
-
   }
 
   @Nested
@@ -436,16 +438,18 @@ class TalonSwerveModuleTest {
 
     @ParameterizedTest
     @CsvSource({
-        // drive counts per rev, drive m/s, percent output
-        "2048, 0, 0",
-        "2048, 0.304778121, 0.079365079",
-        "2048, 3.657337448, 0.9523809525",
-        "4096, 0, 0",
-        "4096, 0.304778121, 0.079365079",
-        "4096, 3.657337448, 0.9523809525",
+      // drive counts per rev, drive m/s, percent output
+      "2048, 0, 0",
+      "2048, 0.304778121, 0.079365079",
+      "2048, 3.657337448, 0.9523809525",
+      "4096, 0, 0",
+      "4096, 0.304778121, 0.079365079",
+      "4096, 3.657337448, 0.9523809525",
     })
     @DisplayName("drive speed when open loop")
-    void driveOpenLoopSpeed(int driveEncoderCountsPerRevolution, double driveMetersPerSecond,
+    void driveOpenLoopSpeed(
+        int driveEncoderCountsPerRevolution,
+        double driveMetersPerSecond,
         double expectedPercentOutput) {
       TalonSwerveModule module =
           new TalonSwerveModule.Builder()
@@ -466,20 +470,22 @@ class TalonSwerveModuleTest {
 
     @ParameterizedTest
     @CsvSource({
-        // drive counts per rev, drive m/s, encoder counts per 100ms
-        "2048, 0, 0",
-        "2048, 0.304778121, 1707",
-        "2048, 0.609556241, 3413",
-        "2048, 1.219112483, 6827",
-        "2048, 3.84020432, 21504",
-        "4096, 0, 0",
-        "4096, 0.304778121, 3414",
-        "4096, 0.609556241, 6826",
-        "4096, 1.219112483, 13654",
-        "4096, 3.84020432, 43008",
+      // drive counts per rev, drive m/s, encoder counts per 100ms
+      "2048, 0, 0",
+      "2048, 0.304778121, 1707",
+      "2048, 0.609556241, 3413",
+      "2048, 1.219112483, 6827",
+      "2048, 3.84020432, 21504",
+      "4096, 0, 0",
+      "4096, 0.304778121, 3414",
+      "4096, 0.609556241, 6826",
+      "4096, 1.219112483, 13654",
+      "4096, 3.84020432, 43008",
     })
     @DisplayName("drive speed when closed loop")
-    void driveClosedLoopSpeed(int driveEncoderCountsPerRevolution, double driveMetersPerSecond,
+    void driveClosedLoopSpeed(
+        int driveEncoderCountsPerRevolution,
+        double driveMetersPerSecond,
         double expectedCountsPer100ms) {
       TalonSwerveModule module =
           new TalonSwerveModule.Builder()
@@ -501,64 +507,68 @@ class TalonSwerveModuleTest {
 
     @ParameterizedTest
     @CsvSource({
-        // drive counts per rev, encoder counts before, azimuth angle, encoder counts after, drive reversed
-        "4096, 0, 0, 0, false",
-        "4096, 0, 10, 114, false",
-        "4096, 0, -10, -114, false",
-        "4096, 0, 90, 1024, false",
-        "4096, 0, -90, -1024, false",
-        "4096, 0, 135, -512, true",
-        "4096, 0, -135, 512, true",
-        "4096, 1024, 180, 2048, false",
-        "4096, 1024, -180, 0, true",
-        "4096, -1024, -180, -2048, false",
-        "4096, -1024, 180, 0, true",
-        "4096, 2048, 180, 2048, false",
-        "4096, 2048, -180, 2048, false",
-        "4096, -2048, -180, -2048, false",
-        "4096, -2048, 180, -2048, false",
-        "2048, 0, 0, 0, false",
-        "2048, 0, 10, 57, false",
-        "2048, 0, -10, -57, false",
-        "2048, 0, 90, 512, false",
-        "2048, 0, -90, -512, false",
-        "2048, 0, 135, -256, true",
-        "2048, 0, -135, 256, true",
-        "2048, 1024, 180, 1024, false",
-        "2048, 1024, -180, 1024, false",
-        "2048, -1024, -180, -1024, false",
-        "2048, -1024, 180, -1024, false",
-        "2048, 2048, 180, 2048, true",
-        "2048, 2048, -180, 2048, true",
-        "2048, -2048, -180, -2048, true",
-        "2048, -2048, 180, -2048, true",
-        // encoder wound up
-        // 12288=0 (3 revs), 13312=90, 11264=-90
-        "4096, 12288, 0, 12288, false",
-        "4096, 12289, 90, 13312, false",
-        "4096, 12287, 90, 11264, true",
-        "4096, 12288, 90, 11264, true",
-        "2048, 12288, 0, 12288, false",
-        "2048, 12289, 90, 12800, false",
-        "2048, 12287, 90, 11776, true",
-        "2048, 12288, 90, 11776, true",
-        // 13369=95, 14336=180, 14393=185, 12356=6
-        "4096, 13369, 95, 13369, false",
-        "4096, 14336, 180, 14336, false",
-        "4096, 14336, -180, 14336, false",
-        "4096, 13369, 180, 14336, false",
-        "4096, 13369, 185, 14393, false",
-        "4096, 13369, 186, 12356, true",
-        "2048, 13369, 95, 13852, true",
-        "2048, 14336, 180, 14336, true",
-        "2048, 14336, -180, 14336, true",
-        "2048, 13369, 180, 13312, false",
-        "2048, 13369, 185, 13340, false",
-        "2048, 13369, 186, 13346, false",
+      // drive counts per rev, encoder counts before, azimuth angle, encoder counts after, drive
+      // reversed
+      "4096, 0, 0, 0, false",
+      "4096, 0, 10, 114, false",
+      "4096, 0, -10, -114, false",
+      "4096, 0, 90, 1024, false",
+      "4096, 0, -90, -1024, false",
+      "4096, 0, 135, -512, true",
+      "4096, 0, -135, 512, true",
+      "4096, 1024, 180, 2048, false",
+      "4096, 1024, -180, 0, true",
+      "4096, -1024, -180, -2048, false",
+      "4096, -1024, 180, 0, true",
+      "4096, 2048, 180, 2048, false",
+      "4096, 2048, -180, 2048, false",
+      "4096, -2048, -180, -2048, false",
+      "4096, -2048, 180, -2048, false",
+      "2048, 0, 0, 0, false",
+      "2048, 0, 10, 57, false",
+      "2048, 0, -10, -57, false",
+      "2048, 0, 90, 512, false",
+      "2048, 0, -90, -512, false",
+      "2048, 0, 135, -256, true",
+      "2048, 0, -135, 256, true",
+      "2048, 1024, 180, 1024, false",
+      "2048, 1024, -180, 1024, false",
+      "2048, -1024, -180, -1024, false",
+      "2048, -1024, 180, -1024, false",
+      "2048, 2048, 180, 2048, true",
+      "2048, 2048, -180, 2048, true",
+      "2048, -2048, -180, -2048, true",
+      "2048, -2048, 180, -2048, true",
+      // encoder wound up
+      // 12288=0 (3 revs), 13312=90, 11264=-90
+      "4096, 12288, 0, 12288, false",
+      "4096, 12289, 90, 13312, false",
+      "4096, 12287, 90, 11264, true",
+      "4096, 12288, 90, 11264, true",
+      "2048, 12288, 0, 12288, false",
+      "2048, 12289, 90, 12800, false",
+      "2048, 12287, 90, 11776, true",
+      "2048, 12288, 90, 11776, true",
+      // 13369=95, 14336=180, 14393=185, 12356=6
+      "4096, 13369, 95, 13369, false",
+      "4096, 14336, 180, 14336, false",
+      "4096, 14336, -180, 14336, false",
+      "4096, 13369, 180, 14336, false",
+      "4096, 13369, 185, 14393, false",
+      "4096, 13369, 186, 12356, true",
+      "2048, 13369, 95, 13852, true",
+      "2048, 14336, 180, 14336, true",
+      "2048, 14336, -180, 14336, true",
+      "2048, 13369, 180, 13312, false",
+      "2048, 13369, 185, 13340, false",
+      "2048, 13369, 186, 13346, false",
     })
     @DisplayName("azimuth angle  when open loop")
-    void azimuthAngleWhenOpenLoop(int azimuthEncoderCountsPerRevolution, double countsBefore,
-        double angleDegrees, double countsExpected,
+    void azimuthAngleWhenOpenLoop(
+        int azimuthEncoderCountsPerRevolution,
+        double countsBefore,
+        double angleDegrees,
+        double countsExpected,
         boolean reversed) {
       // we currently only support TalonSRX for azimuth
       if (azimuthEncoderCountsPerRevolution == 2048) {
@@ -572,15 +582,15 @@ class TalonSwerveModuleTest {
           new TalonSwerveModule.Builder()
               .azimuthTalon(azimuthTalon)
               .driveTalon(driveTalon)
-//              .azimuthEncoderCountsPerRevolution(azimuthEncoderCountsPerRevolution)
+              //              .azimuthEncoderCountsPerRevolution(azimuthEncoderCountsPerRevolution)
               .driveGearRatio(kDriveGearRatio)
               .wheelDiameterInches(kWheelDiameterInches)
               .wheelLocationMeters(new Translation2d())
               .driveMaximumMetersPerSecond(kMaxSpeedMetersPerSecond)
               .build();
 
-      var desiredState = new SwerveModuleState(speedMetersPerSecond,
-          Rotation2d.fromDegrees(angleDegrees));
+      var desiredState =
+          new SwerveModuleState(speedMetersPerSecond, Rotation2d.fromDegrees(angleDegrees));
 
       when(azimuthTalon.getSelectedSensorPosition()).thenReturn(countsBefore);
 
@@ -591,5 +601,4 @@ class TalonSwerveModuleTest {
       assertEquals(reversed ? -drivePercentOutput : drivePercentOutput, captor.getValue(), 1e-6);
     }
   }
-
 }

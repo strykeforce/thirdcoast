@@ -3,9 +3,7 @@ package org.strykeforce.swerve;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.kinematics.SwerveModuleState;
 
-/**
- * Represents a Third Coast swerve module.
- */
+/** Represents a Third Coast swerve module. */
 public interface SwerveModule {
 
   /**
@@ -32,7 +30,7 @@ public interface SwerveModule {
   /**
    * Command the swerve module motors to the desired state.
    *
-   * @param desiredState    the desired swerve module speed and angle
+   * @param desiredState the desired swerve module speed and angle
    * @param isDriveOpenLoop true if drive should set speed using closed-loop velocity control
    */
   void setDesiredState(SwerveModuleState desiredState, boolean isDriveOpenLoop);
@@ -46,9 +44,7 @@ public interface SwerveModule {
     this.setDesiredState(desiredState, false);
   }
 
-  /**
-   * Resets the drive encoders to currently read a position of 0.
-   */
+  /** Resets the drive encoders to currently read a position of 0. */
   void resetDriveEncoder();
 
   /**
@@ -59,8 +55,7 @@ public interface SwerveModule {
   void storeAzimuthZeroReference();
 
   /**
-   * Loads the current azimuth absolute encoder reference position and sets selected sensor
-   * encoder.
+   * Loads the current azimuth absolute encoder reference position and sets selected sensor encoder.
    */
   void loadAndSetAzimuthZeroReference();
 }
