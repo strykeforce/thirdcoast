@@ -9,7 +9,7 @@ plugins {
 }
 
 group = "org.strykeforce"
-version = "21.1.1"
+version = "21.2.0"
 
 sourceCompatibility = JavaVersion.VERSION_11
 targetCompatibility = JavaVersion.VERSION_11
