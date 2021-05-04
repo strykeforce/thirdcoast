@@ -5,10 +5,11 @@ plugins {
     id "org.jetbrains.kotlin.jvm" version "1.4.32"
     id "org.jetbrains.kotlin.kapt" version "1.4.32"
     id "edu.wpi.first.GradleRIO" version "2021.3.1"
+    id 'com.diffplug.spotless' version '5.12.4'
 }
 
 group = "org.strykeforce"
-version = "21.1.0"
+version = "21.1.1"
 
 sourceCompatibility = JavaVersion.VERSION_11
 targetCompatibility = JavaVersion.VERSION_11
@@ -84,5 +85,38 @@ publishing {
                 secretKey "${System.getenv("STRYKEFORCE_AWS_SECRET")}"
             }
         }
+    }
+}
+
+spotless {
+    java {
+        target fileTree('.') {
+            include '**/*.java'
+            exclude '**/build/**', '**/build-*/**'
+        }
+        toggleOffOn()
+        googleJavaFormat()
+        removeUnusedImports()
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
+    groovyGradle {
+        target fileTree('.') {
+            include '**/*.gradle'
+            exclude '**/build/**', '**/build-*/**'
+        }
+        greclipse()
+        indentWithSpaces(4)
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
+    format 'misc', {
+        target fileTree('.') {
+            include '**/*.md', '**/.gitignore'
+            exclude '**/build/**', '**/build-*/**'
+        }
+        trimTrailingWhitespace()
+        indentWithSpaces(2)
+        endWithNewline()
     }
 }
