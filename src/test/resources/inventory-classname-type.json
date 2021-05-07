@@ -1,0 +1,29 @@
+{
+  "items": [
+    {
+      "id": 0,
+      "type": "org.strykeforce.telemetry.RobotInventoryTest$TestMeasurable",
+      "description": "Test Measurable"
+    },
+    {
+      "id": 1,
+      "type": "org.strykeforce.telemetry.RobotInventoryTest$TestMeasurable",
+      "description": "Test Measurable"
+    }
+  ],
+  "measures": [
+    {
+      "deviceType": "org.strykeforce.telemetry.RobotInventoryTest$TestMeasurable",
+      "deviceMeasures": [
+        {
+          "id": "Measure 2",
+          "description": "Measure 2"
+        },
+        {
+          "id": "Measure 1",
+          "description": "Measure 1"
+        }
+      ]
+    }
+  ]
+}

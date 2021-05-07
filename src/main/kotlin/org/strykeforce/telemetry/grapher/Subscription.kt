@@ -6,9 +6,7 @@ import com.squareup.moshi.Moshi
 import mu.KotlinLogging
 import okio.BufferedSink
 import org.strykeforce.telemetry.Inventory
-import org.strykeforce.telemetry.item.Measure
 import java.io.IOException
-import java.util.*
 import java.util.function.DoubleSupplier
 
 private val logger = KotlinLogging.logger {}
@@ -21,11 +19,12 @@ class Subscription(inventory: Inventory, val client: String, requestJson: String
 
     init {
         val request = Subscription_RequestJsonJsonAdapter(moshi).fromJson(requestJson)
-        request?.subscription?.forEach {
-            val item = inventory.itemForId(it.itemId)
-            val measure = Measure(it.measurementId, it.measurementId)
-            measurements += item.measurementFor(measure)
-            descriptions += "${item.description}: ${measure.description}"
+        request?.subscription?.forEach { measurement ->
+            val measurable = inventory.measurableForId(measurement.itemId)
+            // FIXME: add null check
+            val measure = measurable.measures.find { it.name == measurement.measurementId }!!
+            measurements += measure.measurement
+            descriptions += "${measurable.description}: ${measure.description}"
         }
     }
 
@@ -52,9 +51,9 @@ class Subscription(inventory: Inventory, val client: String, requestJson: String
     }
 
     @JsonClass(generateAdapter = true)
-    internal data class Item(val itemId: Int, val measurementId: String)
+    internal data class MeasurableJson(val itemId: Int, val measurementId: String)
 
     @JsonClass(generateAdapter = true)
-    internal data class RequestJson(val type:String, val subscription:List<Item>)
+    internal data class RequestJson(val type: String, val subscription: List<MeasurableJson>)
 
 }

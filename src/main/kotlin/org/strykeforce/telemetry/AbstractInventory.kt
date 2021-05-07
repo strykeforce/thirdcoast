@@ -2,17 +2,17 @@ package org.strykeforce.telemetry
 
 import com.squareup.moshi.JsonWriter
 import okio.BufferedSink
-import org.strykeforce.telemetry.item.Measurable
+import org.strykeforce.telemetry.measurable.Measurable
 import java.io.IOException
 
 /**
  * An abstract base class intended to be subclassed by concrete implementations of [Inventory].
  */
-abstract class AbstractInventory(items: Collection<Measurable>) : Inventory {
+abstract class AbstractInventory(measurableSet: Collection<Measurable>) : Inventory {
 
-    protected val items = items.sorted()
+    protected val measurableList = measurableSet.sorted()
 
-    override fun itemForId(id: Int) = items[id]
+    override fun measurableForId(index: Int) = measurableList[index]
 
     @Throws(IOException::class)
     override fun writeInventory(sink: BufferedSink) {
@@ -20,16 +20,16 @@ abstract class AbstractInventory(items: Collection<Measurable>) : Inventory {
         writer.indent = "  "
         writer.beginObject()
             .name("items")
-            .writeItems(items)
+            .writeMeasurableList(measurableList)
             .name("measures")
-            .writeMeasures(items)
+            .writeMeasures(measurableList)
             .endObject()
     }
 
-    override fun toString() = "AbstractInventory(items=$items)"
+    override fun toString() = "AbstractInventory(items=$measurableList)"
 }
 
-private fun JsonWriter.writeItems(items: List<Measurable>): JsonWriter {
+private fun JsonWriter.writeMeasurableList(items: List<Measurable>): JsonWriter {
     beginArray()
     items.forEachIndexed { index, item ->
         beginObject()

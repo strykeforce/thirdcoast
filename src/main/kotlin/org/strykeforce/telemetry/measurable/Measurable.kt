@@ -1,4 +1,4 @@
-package org.strykeforce.telemetry.item
+package org.strykeforce.telemetry.measurable
 
 import java.util.function.DoubleSupplier
 
@@ -21,6 +21,7 @@ interface Measurable : Comparable<Measurable> {
    * A `String` representing the underlying device type.
    */
   val type: String
+    get() = javaClass.typeName
 
   /**
    * The description of this item.
@@ -31,12 +32,6 @@ interface Measurable : Comparable<Measurable> {
    * `Set` of `Measure` parameters applicable to this item type.
    */
   val measures: Set<Measure>
-
-  /**
-   * Suppliers that implement the measures.
-   * @return the supplier that gives the current measurement.
-   */
-  fun measurementFor(measure: Measure): DoubleSupplier
 
   override fun compareTo(other: Measurable): Int {
     val result = type.compareTo(other.type)

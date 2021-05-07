@@ -1,4 +1,4 @@
-package org.strykeforce.telemetry.item
+package org.strykeforce.telemetry.measurable
 
 import com.ctre.phoenix.CANifier
 import com.ctre.phoenix.CANifier.PWMChannel.*
@@ -20,51 +20,28 @@ internal const val QUAD_POSITION = "QUAD_POSITION"
 internal const val QUAD_VELOCITY = "QUAD_VELOCITY"
 
 /** Represents a `CANifier` telemetry-enable `Measurable` item.  */
-class CanifierItem @JvmOverloads constructor(
+class CanifierMeasurable @JvmOverloads constructor(
   private val canifier: CANifier,
   override val description: String = "CANifier ${canifier.deviceID}"
 ) : Measurable {
 
   override val deviceId = canifier.deviceID
-  override val type = "canifier"
   override val measures = setOf(
-    Measure(PWM0_PULSE_WIDTH, "PWM 0 Pulse Width"),
-    Measure(PWM0_PERIOD, "PWM 0 Period"),
-    Measure(PWM0_PULSE_WIDTH_POSITION, "PWM 0 Pulse Width Position"),
-    Measure(PWM1_PULSE_WIDTH, "PWM 1 Pulse Width"),
-    Measure(PWM1_PERIOD, "PWM 1 Period"),
-    Measure(PWM1_PULSE_WIDTH_POSITION, "PWM 1 Pulse Width Position"),
-    Measure(PWM2_PULSE_WIDTH, "PWM 2 Pulse Width"),
-    Measure(PWM2_PERIOD, "PWM 2 Period"),
-    Measure(PWM2_PULSE_WIDTH_POSITION, "PWM 2 Pulse Width Position"),
-    Measure(PWM3_PULSE_WIDTH, "PWM 3 Pulse Width"),
-    Measure(PWM3_PERIOD, "PWM 3 Period"),
-    Measure(PWM3_PULSE_WIDTH_POSITION, "PWM 3 Pulse Width Position"),
-    Measure(QUAD_POSITION, "Quadrature Position"),
-    Measure(QUAD_VELOCITY, "Quadrature Velocity")
+    Measure(PWM0_PULSE_WIDTH, "PWM 0 Pulse Width"){ pulseWidthFor(PWMChannel0) },
+    Measure(PWM0_PERIOD, "PWM 0 Period"){ periodFor(PWMChannel0) },
+    Measure(PWM0_PULSE_WIDTH_POSITION, "PWM 0 Pulse Width Position"){ pulseWidthPositionFor(PWMChannel0) },
+    Measure(PWM1_PULSE_WIDTH, "PWM 1 Pulse Width"){ pulseWidthFor(PWMChannel1) },
+    Measure(PWM1_PERIOD, "PWM 1 Period"){ periodFor(PWMChannel1) },
+    Measure(PWM1_PULSE_WIDTH_POSITION, "PWM 1 Pulse Width Position"){ pulseWidthPositionFor(PWMChannel1) },
+    Measure(PWM2_PULSE_WIDTH, "PWM 2 Pulse Width"){ pulseWidthFor(PWMChannel2) },
+    Measure(PWM2_PERIOD, "PWM 2 Period"){ periodFor(PWMChannel2) },
+    Measure(PWM2_PULSE_WIDTH_POSITION, "PWM 2 Pulse Width Position"){ pulseWidthPositionFor(PWMChannel2) },
+    Measure(PWM3_PULSE_WIDTH, "PWM 3 Pulse Width"){ pulseWidthFor(PWMChannel3) },
+    Measure(PWM3_PERIOD, "PWM 3 Period"){ periodFor(PWMChannel3) },
+    Measure(PWM3_PULSE_WIDTH_POSITION, "PWM 3 Pulse Width Position"){ pulseWidthPositionFor(PWMChannel3) },
+    Measure(QUAD_POSITION, "Quadrature Position"){ canifier.quadraturePosition.toDouble() },
+    Measure(QUAD_VELOCITY, "Quadrature Velocity"){ canifier.quadratureVelocity.toDouble() }
   )
-
-  override fun measurementFor(measure: Measure): DoubleSupplier {
-
-    return when (measure.name) {
-      PWM0_PULSE_WIDTH -> DoubleSupplier { pulseWidthFor(PWMChannel0) }
-      PWM0_PERIOD -> DoubleSupplier { periodFor(PWMChannel0) }
-      PWM0_PULSE_WIDTH_POSITION -> DoubleSupplier { pulseWidthPositionFor(PWMChannel0) }
-      PWM1_PULSE_WIDTH -> DoubleSupplier { pulseWidthFor(PWMChannel1) }
-      PWM1_PERIOD -> DoubleSupplier { periodFor(PWMChannel1) }
-      PWM1_PULSE_WIDTH_POSITION -> DoubleSupplier { pulseWidthPositionFor(PWMChannel1) }
-      PWM2_PULSE_WIDTH -> DoubleSupplier { pulseWidthFor(PWMChannel2) }
-      PWM2_PERIOD -> DoubleSupplier { periodFor(PWMChannel2) }
-      PWM2_PULSE_WIDTH_POSITION -> DoubleSupplier { pulseWidthPositionFor(PWMChannel2) }
-      PWM3_PULSE_WIDTH -> DoubleSupplier { pulseWidthFor(PWMChannel3) }
-      PWM3_PERIOD -> DoubleSupplier { periodFor(PWMChannel3) }
-      PWM3_PULSE_WIDTH_POSITION -> DoubleSupplier { pulseWidthPositionFor(PWMChannel3) }
-      QUAD_POSITION -> DoubleSupplier { canifier.quadraturePosition.toDouble() }
-      QUAD_VELOCITY -> DoubleSupplier { canifier.quadratureVelocity.toDouble() }
-
-      else -> DoubleSupplier { 2767.0 }
-    }
-  }
 
   private fun pulseWidthFor(channel: CANifier.PWMChannel): Double {
     val pulseWidthAndPeriod = DoubleArray(2)
@@ -88,7 +65,7 @@ class CanifierItem @JvmOverloads constructor(
     if (this === other) return true
     if (javaClass != other?.javaClass) return false
 
-    other as CanifierItem
+    other as CanifierMeasurable
 
     if (deviceId != other.deviceId) return false
 

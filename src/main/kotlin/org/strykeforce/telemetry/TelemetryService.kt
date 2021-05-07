@@ -1,12 +1,13 @@
+@file:Suppress("unused")
+
 package org.strykeforce.telemetry
 
 import com.ctre.phoenix.motorcontrol.can.TalonFX
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import mu.KotlinLogging
-import org.strykeforce.telemetry.item.Measurable
-import org.strykeforce.telemetry.item.TalonSRXItem
-import org.strykeforce.thirdcoast.swerve.SwerveDrive
-import org.strykeforce.thirdcoast.talon.TalonFXItem
+import org.strykeforce.telemetry.measurable.Measurable
+import org.strykeforce.telemetry.measurable.TalonSRXMeasurable
+import org.strykeforce.thirdcoast.talon.TalonFXMeasurable
 import java.util.*
 import java.util.function.Function
 
@@ -31,7 +32,7 @@ class TelemetryService(private val telemetryControllerFactory: Function<Inventor
     // sorts and copies this collection into a List, using its index in this list as the inventory id. This should provide
     // a stable order of measurable items that assists the Grapher client when saving its configuration.
 
-    private val measureableSet = LinkedHashSet<Measurable>()
+    private val measurableSet = LinkedHashSet<Measurable>()
     private var telemetryController: TelemetryController? = null
 
     /**
@@ -44,7 +45,7 @@ class TelemetryService(private val telemetryControllerFactory: Function<Inventor
             return
         }
         telemetryController =
-            telemetryControllerFactory.apply(RobotInventory(measureableSet)).also { it.start() }
+            telemetryControllerFactory.apply(RobotInventory(measurableSet)).also { it.start() }
         logger.info("started telemetry controller")
     }
 
@@ -66,7 +67,7 @@ class TelemetryService(private val telemetryControllerFactory: Function<Inventor
      */
     fun clear() {
         check(telemetryController == null) { "TelemetryService must be stopped to clear registered items." }
-        measureableSet.clear()
+        measurableSet.clear()
         logger.info("item set was cleared")
     }
 
@@ -78,7 +79,7 @@ class TelemetryService(private val telemetryControllerFactory: Function<Inventor
      */
     fun register(measurable: Measurable) {
         check(telemetryController == null) { "TelemetryService must be stopped to register an item." }
-        if (measureableSet.add(measurable)) {
+        if (measurableSet.add(measurable)) {
             logger.info { "registered item ${measurable.description}" }
             return
         }
@@ -100,7 +101,7 @@ class TelemetryService(private val telemetryControllerFactory: Function<Inventor
      * @throws IllegalStateException if TelemetryService is running.
      */
     fun register(talon: TalonSRX) {
-        register(TalonSRXItem(talon))
+        register(TalonSRXMeasurable(talon))
     }
 
     /**
@@ -110,20 +111,7 @@ class TelemetryService(private val telemetryControllerFactory: Function<Inventor
      * @throws IllegalStateException if TelemetryService is running.
      */
     fun register(talon: TalonFX) {
-        register(TalonFXItem(talon))
-    }
-
-    /**
-     * Convenience method to register a [SwerveDrive] for telemetry sending.
-     *
-     * @throws IllegalStateException if TelemetryService is running.
-     */
-    @Deprecated(message = "Register swerve drive Talons with register(talon: TalonSRX)")
-    fun register(swerveDrive: SwerveDrive) = swerveDrive.wheels.forEach {
-        register(TalonSRXItem(it.azimuthTalon))
-        if (it.driveTalon is TalonSRX) register(TalonSRXItem(it.driveTalon as TalonSRX))
-        else if (it.driveTalon is TalonFX) register(TalonFXItem(it.driveTalon as TalonFX))
-        else throw IllegalArgumentException()
+        register(TalonFXMeasurable(talon))
     }
 
     /**
@@ -132,7 +120,7 @@ class TelemetryService(private val telemetryControllerFactory: Function<Inventor
      * @return an unmodifiable Set of Items.
      */
     fun getItems(): Set<Measurable> {
-        return Collections.unmodifiableSet(measureableSet)
+        return Collections.unmodifiableSet(measurableSet)
     }
 
     /**
@@ -142,7 +130,7 @@ class TelemetryService(private val telemetryControllerFactory: Function<Inventor
      */
     fun remove(item: Measurable) {
         check(telemetryController == null) { "TelemetryService must be stopped to remove an item." }
-        if (measureableSet.remove(item)) {
+        if (measurableSet.remove(item)) {
             logger.info { "removed $item" }
             return
         }
