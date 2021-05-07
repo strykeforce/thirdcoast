@@ -9,7 +9,7 @@ plugins {
 }
 
 group = "org.strykeforce"
-version = "21.1.1"
+version = "21.2.0"
 
 sourceCompatibility = JavaVersion.VERSION_11
 targetCompatibility = JavaVersion.VERSION_11
@@ -53,6 +53,17 @@ dependencies {
 
     api "org.jetbrains:annotations:20.1.0"
 }
+
+compileKotlin {
+    kotlinOptions {
+        jvmTarget = "11"
+
+        // For creation of default methods in interfaces
+        freeCompilerArgs += "-Xjvm-default=all"
+    }
+}
+
+
 
 java {
     withSourcesJar()
