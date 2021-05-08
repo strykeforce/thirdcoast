@@ -1,102 +1,108 @@
 package org.strykeforce.telemetry
 
+import com.sun.net.httpserver.HttpExchange
+import com.sun.net.httpserver.HttpHandler
+import com.sun.net.httpserver.HttpServer
 import mu.KotlinLogging
 import okio.Buffer
-import org.eclipse.jetty.server.Request
-import org.eclipse.jetty.server.Server
-import org.eclipse.jetty.server.handler.AbstractHandler
-import org.eclipse.jetty.server.handler.DefaultHandler
-import org.eclipse.jetty.server.handler.HandlerList
 import org.strykeforce.telemetry.grapher.ClientHandler
 import org.strykeforce.telemetry.grapher.Subscription
+import java.io.OutputStream
 import java.net.DatagramSocket
 import java.net.Inet4Address
+import java.net.InetSocketAddress
 import java.net.NetworkInterface
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse
+import java.util.concurrent.Executors
 
 private const val SERVER_PORT = 5800
 private const val CLIENT_PORT = 5801
 private const val JSON = "application/json"
 private const val GRAPHER = "/v1/grapher"
-private const val INVENTORY = "$GRAPHER/inventory"
-private const val SUBSCRIPTION = "$GRAPHER/subscription"
+private const val INVENTORY_ENDPOINT = "$GRAPHER/inventory"
+private const val SUBSCRIPTION_ENDPOINT = "$GRAPHER/subscription"
 
 private val logger = KotlinLogging.logger {}
 
-internal class TelemetryControllerHandler(private val inventory: Inventory, private val clientHandler: ClientHandler) :
-    AbstractHandler() {
+private class InventoryHandler(
+    private val inventory: Inventory,
+) : HttpHandler {
+    override fun handle(exchange: HttpExchange?) {
+        checkNotNull(exchange) { "InventoryHandler handle called with null HttpExchange" }
+        if (exchange.requestMethod.toUpperCase() != "GET") error("InventoryHandler expects GET request method")
 
-    override fun handle(
-        target: String,
-        baseRequest: Request,
-        request: HttpServletRequest,
-        response: HttpServletResponse
-    ) {
-        logger.debug { "${request.method} $target" }
-
-        baseRequest.isHandled = true
-
-        if (target.toLowerCase() == INVENTORY && request.method == "GET") {
-            val buffer = Buffer()
-            inventory.writeInventory(buffer)
-            response.writeJson(buffer)
-            logger.info { "inventory requested from ${request.remoteAddr}" }
-            return
-        }
-
-        if (target.toLowerCase() == SUBSCRIPTION) {
-            if (request.method == "POST") {
-                val sub = Subscription(inventory, request.remoteAddr, request.reader.readText())
-                clientHandler.start(sub)
-                val buffer = Buffer()
-                sub.toJson(buffer)
-                response.writeJson(buffer)
-                logger.info { "subscription started from ${request.remoteAddr}" }
-                return
-            }
-
-            if (request.method == "DELETE") {
-                clientHandler.shutdown()
-                logger.info { "subscription stopped from ${request.remoteAddr}" }
-                return
-            }
-        }
-        baseRequest.isHandled = false
+        val buffer = Buffer()
+        inventory.writeInventory(buffer)
+        exchange.jsonResponse(buffer)
+        buffer.close()
+        logger.info { "inventory requested from ${exchange.remoteAddress}" }
     }
 }
 
-private fun HttpServletResponse.writeJson(buffer: Buffer) {
-    this.contentType = JSON
-    this.status = HttpServletResponse.SC_OK
-    this.writer.print(buffer.readUtf8())
+private class SubscriptionHandler(
+    private val inventory: Inventory,
+    private val clientHandler: ClientHandler
+) : HttpHandler {
+    override fun handle(exchange: HttpExchange?) {
+        checkNotNull(exchange) { "SubscriptionHandler handle called with null HttpExchange" }
+        logger.debug { "${exchange.requestMethod} $SUBSCRIPTION_ENDPOINT" }
+        if (exchange.requestMethod.toUpperCase() == "POST") {
+            val buffer = Buffer()
+            buffer.readFrom(exchange.requestBody)
+            val sub = Subscription(inventory, exchange.remoteAddress.address, buffer.readUtf8())
+            clientHandler.start(sub)
+            buffer.clear()
+            sub.toJson(buffer)
+            exchange.jsonResponse(buffer)
+            buffer.close()
+            logger.info { "subscription started from ${exchange.remoteAddress}" }
+            return
+        }
+
+        if (exchange.requestMethod.toUpperCase() == "DELETE") {
+            clientHandler.shutdown()
+            exchange.sendResponseHeaders(204, -1)
+            logger.info { "subscription stopped from ${exchange.remoteAddress}" }
+            return
+        }
+
+        error("SubscriptionHandler expects POST or DELETE request method")
+    }
+
 }
+
+private fun HttpExchange.jsonResponse(buffer: Buffer) {
+    this.responseHeaders.let {
+        it["Content-Type"] = "application/json; charset=utf-8"
+    }
+    this.sendResponseHeaders(200, buffer.size)
+    val out: OutputStream = this.responseBody
+    buffer.writeTo(out)
+    out.flush()
+    out.close()
+}
+
 
 /** Provides a web service to config telemetry.  */
 class TelemetryController(
-    inventory: Inventory,
+    private val inventory: Inventory,
     private val clientHandler: ClientHandler,
     private val port: Int
 ) {
 
-    constructor(inventory: Inventory) : this(inventory, ClientHandler(CLIENT_PORT, DatagramSocket()), SERVER_PORT)
+    constructor(inventory: Inventory) : this(
+        inventory,
+        ClientHandler(CLIENT_PORT, DatagramSocket()),
+        SERVER_PORT
+    )
 
-    private val server = Server(port).apply {
-        handler = HandlerList().apply {
-            handlers = arrayOf(TelemetryControllerHandler(inventory, clientHandler), DefaultHandler())
-        }
-    }
 
-    private val inventoryEndpoints: List<String>
-        get() {
-            val endpoints = mutableListOf<String>()
-            NetworkInterface.getNetworkInterfaces().iterator().forEach { ni ->
-                ni.inetAddresses.iterator().forEach { addr ->
-                    if (addr is Inet4Address && !addr.isLinkLocalAddress)
-                        endpoints += "http://${addr.hostAddress}:$port$INVENTORY"
-                }
-            }
-            return endpoints
+    /** Create HTTP server. */
+    private val server: HttpServer
+        get() = HttpServer.create().apply {
+            bind(InetSocketAddress("0.0.0.0", SERVER_PORT), 0)
+            executor = Executors.newFixedThreadPool(2)
+            createContext(INVENTORY_ENDPOINT, InventoryHandler(inventory))
+            createContext(SUBSCRIPTION_ENDPOINT, SubscriptionHandler(inventory, clientHandler))
         }
 
     /** Start web service to listen for HTTP commands that control telemetry service. */
@@ -109,7 +115,20 @@ class TelemetryController(
     /** Stop streaming to client and shut down web service. */
     fun shutdown() {
         clientHandler.shutdown()
-        server.stop()
+        server.stop(0)
         logger.info("stopped web service")
     }
+
+    private val inventoryEndpoints: List<String>
+        get() {
+            val endpoints = mutableListOf<String>()
+            NetworkInterface.getNetworkInterfaces().iterator().forEach { ni ->
+                ni.inetAddresses.iterator().forEach { addr ->
+                    if (addr is Inet4Address && !addr.isLinkLocalAddress)
+                        endpoints += "http://${addr.hostAddress}:$port$INVENTORY_ENDPOINT"
+                }
+            }
+            return endpoints
+        }
+
 }

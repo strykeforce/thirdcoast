@@ -4,6 +4,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.nio.charset.Charset;
 import java.util.Set;
 import okio.Buffer;
@@ -47,7 +48,10 @@ class SubscriptionTest {
   void measurementToJson() throws IOException, JSONException {
 
     Subscription subscription =
-        new Subscription(inventory, "unit tests", ResourceHelper.getString("/request.json"));
+        new Subscription(
+            inventory,
+            InetAddress.getByName("localhost"),
+            ResourceHelper.getString("/request.json"));
 
     Buffer buffer = new Buffer();
     subscription.measurementsToJson(buffer);
@@ -61,7 +65,10 @@ class SubscriptionTest {
   @Test
   void toJson() throws IOException, JSONException {
     Subscription subscription =
-        new Subscription(inventory, "unit tests", ResourceHelper.getString("/request.json"));
+        new Subscription(
+            inventory,
+            InetAddress.getByName("localhost"),
+            ResourceHelper.getString("/request.json"));
 
     Buffer buffer = new Buffer();
     subscription.toJson(buffer);

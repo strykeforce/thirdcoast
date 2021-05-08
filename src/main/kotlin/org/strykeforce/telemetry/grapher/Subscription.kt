@@ -7,12 +7,13 @@ import mu.KotlinLogging
 import okio.BufferedSink
 import org.strykeforce.telemetry.Inventory
 import java.io.IOException
+import java.net.InetAddress
 import java.util.function.DoubleSupplier
 
 private val logger = KotlinLogging.logger {}
 
 /** Represents a subscription request for streaming data.  */
-class Subscription(inventory: Inventory, val client: String, requestJson: String) {
+class Subscription(inventory: Inventory, val client: InetAddress, requestJson: String) {
     private val measurements = ArrayList<DoubleSupplier>(16)
     private val descriptions = ArrayList<String>(16)
     private val moshi: Moshi by lazy { Moshi.Builder().build() }
