@@ -1,6 +1,5 @@
 package org.strykeforce.telemetry;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -34,8 +33,7 @@ public class TelemetryControllerTest {
 
   Measurable measurable = new TestMeasurable();
   Inventory inventory = new RobotInventory(Collections.singleton(measurable));
-  @Mock
-  ClientHandler clientHandler;
+  @Mock ClientHandler clientHandler;
   TelemetryController telemetryController;
   int port;
 
@@ -59,8 +57,7 @@ public class TelemetryControllerTest {
     telemetryController.start();
 
     var client = HttpClient.newHttpClient();
-    var uri = new URI("http", null, "127.0.0.1", port,
-        "/v1/grapher/inventory", null, null);
+    var uri = new URI("http", null, "127.0.0.1", port, "/v1/grapher/inventory", null, null);
     var request = HttpRequest.newBuilder(uri).GET().build();
     try {
       HttpResponse<String> response = client.send(request, BodyHandlers.ofString());
@@ -78,11 +75,13 @@ public class TelemetryControllerTest {
   void shouldHandleSubscriptionRequest() throws URISyntaxException {
     telemetryController.start();
     var client = HttpClient.newHttpClient();
-    var uri = new URI("http", null, "127.0.0.1", port,
-        "/v1/grapher/subscription", null, null);
+    var uri = new URI("http", null, "127.0.0.1", port, "/v1/grapher/subscription", null, null);
     var subReq = ResourceHelper.getString("/telemetry-controller-subscription.json");
-    var request = HttpRequest.newBuilder(uri).header("Content-Type", "application/json")
-        .POST(BodyPublishers.ofString(subReq)).build();
+    var request =
+        HttpRequest.newBuilder(uri)
+            .header("Content-Type", "application/json")
+            .POST(BodyPublishers.ofString(subReq))
+            .build();
 
     try {
       HttpResponse<String> response = client.send(request, BodyHandlers.ofString());
