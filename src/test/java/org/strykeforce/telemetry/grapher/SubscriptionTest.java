@@ -77,6 +77,6 @@ class SubscriptionTest {
     actual.put("timestamp", 2767);
 
     JSONAssert.assertEquals(ResourceHelper.getString(
-        "/telemetry-controller-subscription-response.json"), actual, true);
+        "/subscription-subscription-response.json"), actual, true);
   }
 }
