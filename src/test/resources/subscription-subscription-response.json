@@ -1,0 +1,9 @@
+{
+  "type": "subscription",
+  "timestamp": 2767,
+  "descriptions": [
+    "item zero: BASE_ID",
+    "item zero: VALUE",
+    "item one: JERK_EXPECTED"
+  ]
+}

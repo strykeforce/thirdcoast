@@ -76,7 +76,7 @@ class SubscriptionTest {
         (JSONObject) JSONParser.parseJSON(buffer.readString(Charset.defaultCharset()));
     actual.put("timestamp", 2767);
 
-    JSONAssert.assertEquals(ResourceHelper.getString(
-        "/telemetry-controller-subscription-response.json"), actual, true);
+    JSONAssert.assertEquals(
+        ResourceHelper.getString("/subscription-subscription-response.json"), actual, true);
   }
 }
