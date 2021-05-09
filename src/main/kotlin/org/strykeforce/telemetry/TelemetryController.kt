@@ -16,7 +16,6 @@ import java.util.concurrent.Executors
 
 private const val SERVER_PORT = 5800
 private const val CLIENT_PORT = 5801
-private const val JSON = "application/json"
 private const val GRAPHER = "/v1/grapher"
 private const val INVENTORY_ENDPOINT = "$GRAPHER/inventory"
 private const val SUBSCRIPTION_ENDPOINT = "$GRAPHER/subscription"
@@ -86,28 +85,29 @@ private fun HttpExchange.jsonResponse(buffer: Buffer) {
 class TelemetryController(
     private val inventory: Inventory,
     private val clientHandler: ClientHandler,
-    private val port: Int
+    private val socket: InetSocketAddress
 ) {
 
     constructor(inventory: Inventory) : this(
         inventory,
         ClientHandler(CLIENT_PORT, DatagramSocket()),
-        SERVER_PORT
+        InetSocketAddress(SERVER_PORT)
     )
 
 
-    /** Create HTTP server. */
-    private val server: HttpServer
-        get() = HttpServer.create().apply {
-            bind(InetSocketAddress("0.0.0.0", SERVER_PORT), 0)
-            executor = Executors.newFixedThreadPool(2)
-            createContext(INVENTORY_ENDPOINT, InventoryHandler(inventory))
-            createContext(SUBSCRIPTION_ENDPOINT, SubscriptionHandler(inventory, clientHandler))
-        }
+    /** HTTP server. */
+    private var server: HttpServer? = null
 
     /** Start web service to listen for HTTP commands that control telemetry service. */
     fun start() {
-        server.start()
+        check(server == null) { "start called while already started" }
+        server = HttpServer.create().apply {
+            bind(socket, 0)
+            executor = Executors.newSingleThreadExecutor()
+            createContext(INVENTORY_ENDPOINT, InventoryHandler(inventory))
+            createContext(SUBSCRIPTION_ENDPOINT, SubscriptionHandler(inventory, clientHandler))
+        }
+        server?.start()
         logger.info("started web service")
         inventoryEndpoints.forEach(logger::info)
     }
@@ -115,7 +115,8 @@ class TelemetryController(
     /** Stop streaming to client and shut down web service. */
     fun shutdown() {
         clientHandler.shutdown()
-        server.stop(0)
+        server?.stop(0)
+        server = null
         logger.info("stopped web service")
     }
 
@@ -125,7 +126,7 @@ class TelemetryController(
             NetworkInterface.getNetworkInterfaces().iterator().forEach { ni ->
                 ni.inetAddresses.iterator().forEach { addr ->
                     if (addr is Inet4Address && !addr.isLinkLocalAddress)
-                        endpoints += "http://${addr.hostAddress}:$port$INVENTORY_ENDPOINT"
+                        endpoints += "http://${addr.hostAddress}:${socket.port}$INVENTORY_ENDPOINT"
                 }
             }
             return endpoints

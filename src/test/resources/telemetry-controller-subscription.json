@@ -1,0 +1,9 @@
+{
+  "type": "unused",
+  "subscription": [
+    {
+      "itemId": 0,
+      "measurementId": "Measure A"
+    }
+  ]
+}

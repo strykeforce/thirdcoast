@@ -1,0 +1,20 @@
+{
+  "items": [
+    {
+      "id": 0,
+      "type": "org.strykeforce.telemetry.TelemetryControllerTest$TestMeasurable",
+      "description": "Test Measurable"
+    }
+  ],
+  "measures": [
+    {
+      "deviceType": "org.strykeforce.telemetry.TelemetryControllerTest$TestMeasurable",
+      "deviceMeasures": [
+        {
+          "id": "Measure A",
+          "description": "Measure A"
+        }
+      ]
+    }
+  ]
+}
