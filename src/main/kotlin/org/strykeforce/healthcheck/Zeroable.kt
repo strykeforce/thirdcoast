@@ -1,4 +1,4 @@
-package org.strykeforce.thirdcoast.healthcheck
+package org.strykeforce.healthcheck
 
 interface Zeroable {
     fun zero(): Boolean;

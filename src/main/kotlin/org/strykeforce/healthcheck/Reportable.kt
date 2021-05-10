@@ -1,4 +1,4 @@
-package org.strykeforce.thirdcoast.healthcheck
+package org.strykeforce.healthcheck
 
 import kotlinx.html.TagConsumer
 import kotlinx.html.table
