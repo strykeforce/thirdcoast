@@ -1,4 +1,4 @@
-package org.strykeforce.thirdcoast.healthcheck
+package org.strykeforce.healthcheck
 
 import edu.wpi.first.wpilibj.TimedRobot
 import kotlinx.html.*
@@ -59,7 +59,7 @@ class HealthCheck {
                     title { +"Health Check" }
                     style {
                         unsafe {
-                            raw(HealthCheck::class.java.getResource("/healthcheck.css").readText())
+                            raw(javaClass.getResource("/healthcheck.css").readText())
                         }
                     }
                 }

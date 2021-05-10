@@ -1,11 +1,11 @@
-package org.strykeforce.thirdcoast.healthcheck
+package org.strykeforce.healthcheck
 
 import com.ctre.phoenix.motorcontrol.can.BaseTalon
 import kotlinx.html.TagConsumer
 import kotlinx.html.div
 import kotlinx.html.h2
 import kotlinx.html.table
-import org.strykeforce.thirdcoast.healthcheck.tests.*
+import org.strykeforce.healthcheck.tests.*
 
 import mu.KotlinLogging
 

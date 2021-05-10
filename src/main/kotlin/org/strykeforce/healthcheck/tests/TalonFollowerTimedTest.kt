@@ -1,4 +1,4 @@
-package org.strykeforce.thirdcoast.healthcheck.tests
+package org.strykeforce.healthcheck.tests
 
 import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.can.BaseTalon
@@ -8,21 +8,21 @@ import kotlinx.html.td
 import kotlinx.html.th
 import kotlinx.html.tr
 import mu.KotlinLogging
-import org.strykeforce.thirdcoast.healthcheck.Reportable
-import org.strykeforce.thirdcoast.healthcheck.TalonGroup
-import org.strykeforce.thirdcoast.healthcheck.Test
-import org.strykeforce.thirdcoast.healthcheck.statusOf
+import org.strykeforce.healthcheck.Reportable
+import org.strykeforce.healthcheck.TalonGroup
+import org.strykeforce.healthcheck.Test
+import org.strykeforce.healthcheck.statusOf
 import kotlin.math.roundToInt
 
 private val logger = KotlinLogging.logger { }
 
-class TalonTimedTest(private val group: TalonGroup) : Test, Reportable {
-    override var name = "talon timed test"
+class TalonFollowerTimedTest(private val group: TalonGroup) : Test, Reportable {
+    override var name = "talon follower timed test"
     var percentOutput = 0.0
     var supplyCurrentRange = 0.0..0.0
     var statorCurrentRange = 0.0..0.0
     var speedRange = 0..0
-    var warmUp = 0.5
+    var warmUp = 1.0
     var duration = 2.0
 
     private var state = State.STARTING
@@ -36,16 +36,20 @@ class TalonTimedTest(private val group: TalonGroup) : Test, Reportable {
     override fun execute() {
         when (state) {
             State.STARTING -> {
-                name = "timed test at ${percentOutput * 12.0} volts"
+                name = "timed test (follower) at ${percentOutput * 12.0} volts"
+                if (group.talons.size != 2) {
+                    logger.error { "follower timed test valid for two talon, has ${group.talons.size}, skipping" }
+                    state = State.STOPPED
+                    return
+                }
                 logger.info { "$name starting" }
                 iterations = (duration / group.healthCheck.period).roundToInt()
                 talonSupplyCurrents = group.talons.associateWith { mutableListOf<Double>() }
                 talonStatorCurrents = group.talons.associateWith { mutableListOf<Double>() }
                 talonSpeeds = group.talons.associateWith { mutableListOf<Int>() }
-                group.talons.forEach {
-                    it.configOpenloopRamp(0.75 * warmUp)
-                    it.set(ControlMode.PercentOutput, percentOutput)
-                }
+                group.talons.forEach { it.configOpenloopRamp(0.75 * warmUp) }
+                group.talons[1].follow(group.talons[0])
+                group.talons[0].set(ControlMode.PercentOutput, percentOutput)
                 startTime = Timer.getFPGATimestamp()
                 state = State.WARMING
             }
@@ -59,10 +63,9 @@ class TalonTimedTest(private val group: TalonGroup) : Test, Reportable {
                 if (++iteration == iterations) state = State.STOPPING
             }
             State.STOPPING -> {
-                group.talons.forEach {
-                    it.set(ControlMode.PercentOutput, 0.0)
-                    it.configOpenloopRamp(0.0);
-                }
+                group.talons[1].follow(group.talons[0])
+                group.talons[0].set(ControlMode.PercentOutput, 0.0)
+                group.talons.forEach { it.configOpenloopRamp(0.0) }
 
                 talonSupplyCurrents.forEach { talon, supplyCurrents ->
                     logger.info { "talon ${talon.deviceID} average supply current = ${supplyCurrents.average()}" }
@@ -118,6 +121,7 @@ class TalonTimedTest(private val group: TalonGroup) : Test, Reportable {
             }
         }
     }
+
 
     private enum class State {
         STARTING,

@@ -1,11 +1,11 @@
-package org.strykeforce.thirdcoast.healthcheck.tests
+package org.strykeforce.healthcheck.tests
 
 import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.can.BaseTalon
 import kotlinx.html.TagConsumer
 import mu.KotlinLogging
-import org.strykeforce.thirdcoast.healthcheck.TalonGroup
-import org.strykeforce.thirdcoast.healthcheck.Test
+import org.strykeforce.healthcheck.TalonGroup
+import org.strykeforce.healthcheck.Test
 import kotlin.math.absoluteValue
 
 private val logger = KotlinLogging.logger {}

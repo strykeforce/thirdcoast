@@ -1,4 +1,4 @@
-package org.strykeforce.thirdcoast.healthcheck.tests
+package org.strykeforce.healthcheck.tests
 
 import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.can.BaseTalon
@@ -8,10 +8,10 @@ import kotlinx.html.td
 import kotlinx.html.th
 import kotlinx.html.tr
 import mu.KotlinLogging
-import org.strykeforce.thirdcoast.healthcheck.Reportable
-import org.strykeforce.thirdcoast.healthcheck.TalonGroup
-import org.strykeforce.thirdcoast.healthcheck.Test
-import org.strykeforce.thirdcoast.healthcheck.statusOf
+import org.strykeforce.healthcheck.Reportable
+import org.strykeforce.healthcheck.TalonGroup
+import org.strykeforce.healthcheck.Test
+import org.strykeforce.healthcheck.statusOf
 import kotlin.math.absoluteValue
 
 private val logger = KotlinLogging.logger { }
