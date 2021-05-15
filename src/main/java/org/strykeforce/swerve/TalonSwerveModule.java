@@ -5,6 +5,7 @@ import static com.ctre.phoenix.motorcontrol.ControlMode.MotionMagic;
 import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.BaseTalon;
+import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
@@ -68,6 +69,10 @@ public class TalonSwerveModule implements SwerveModule {
   @Override
   public Translation2d getWheelLocationMeters() {
     return wheelLocationMeters;
+  }
+
+  public double getDriveCountsPerRev() {
+    return driveCountsPerRev;
   }
 
   @Override
@@ -216,7 +221,17 @@ public class TalonSwerveModule implements SwerveModule {
 
     public Builder driveTalon(BaseTalon driveTalon) {
       this.driveTalon = driveTalon;
-      return this;
+      if (driveTalon instanceof TalonFX) {
+        driveCountsPerRev = kDefaultTalonFXCountsPerRev;
+        return this;
+      }
+
+      if (driveTalon instanceof TalonSRX) {
+        driveCountsPerRev = kDefaultTalonSRXCountsPerRev;
+        return this;
+      }
+
+      throw new IllegalArgumentException("expect drive talon is TalonFX or TalonSRX");
     }
 
     public Builder driveGearRatio(double ratio) {
@@ -269,10 +284,6 @@ public class TalonSwerveModule implements SwerveModule {
         throw new IllegalArgumentException("azimuth talon must be set.");
       }
 
-      if (module.driveTalon == null) {
-        throw new IllegalArgumentException("drive talon must be set.");
-      }
-
       if (module.driveGearRatio <= 0) {
         throw new IllegalArgumentException("drive gear ratio must be greater than zero.");
       }
@@ -297,6 +308,16 @@ public class TalonSwerveModule implements SwerveModule {
 
       if (module.wheelLocationMeters == null) {
         throw new IllegalArgumentException("wheel location must be set.");
+      }
+
+      if (module.driveTalon instanceof TalonFX
+          && module.driveCountsPerRev != kDefaultTalonFXCountsPerRev) {
+        logger.warn("drive TalonFX counts per rev = {}", module.driveCountsPerRev);
+      }
+
+      if (module.driveTalon instanceof TalonSRX
+          && module.driveCountsPerRev != kDefaultTalonSRXCountsPerRev) {
+        logger.warn("drive TalonSRX counts per rev = {}", module.driveCountsPerRev);
       }
     }
   }
