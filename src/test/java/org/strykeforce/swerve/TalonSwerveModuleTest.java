@@ -1,11 +1,17 @@
 package org.strykeforce.swerve;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.*;
-import static org.strykeforce.swerve.TestConstants.*;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.strykeforce.swerve.TestConstants.kDriveGearRatio;
+import static org.strykeforce.swerve.TestConstants.kMaxSpeedMetersPerSecond;
+import static org.strykeforce.swerve.TestConstants.kWheelDiameterInches;
 
 import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -17,7 +23,12 @@ import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.kinematics.SwerveModuleState;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.ArgumentCaptor;
@@ -35,6 +46,22 @@ class TalonSwerveModuleTest {
   static void afterAll() {
     nti.stopLocal();
     nti.close();
+  }
+
+  @Test
+  @DisplayName("Should set encoder counts per rev")
+  void shouldSetEncoderCountsPerRev() {
+    TalonSRX talonSRX = mock(TalonSRX.class);
+    TalonFX talonFX = mock(TalonFX.class);
+    TalonSwerveModule.Builder builder =
+        new TalonSwerveModule.Builder()
+            .azimuthTalon(talonSRX)
+            .driveGearRatio(kDriveGearRatio)
+            .wheelDiameterInches(kWheelDiameterInches)
+            .driveMaximumMetersPerSecond(kMaxSpeedMetersPerSecond)
+            .wheelLocationMeters(new Translation2d());
+    assertThat(builder.driveTalon(talonFX).build().getDriveCountsPerRev()).isEqualTo(2048);
+    assertThat(builder.driveTalon(talonSRX).build().getDriveCountsPerRev()).isEqualTo(4096);
   }
 
   @Test
@@ -216,7 +243,7 @@ class TalonSwerveModuleTest {
               .driveMaximumMetersPerSecond(kMaxSpeedMetersPerSecond);
 
       assertThrows(IllegalArgumentException.class, builder.azimuthTalon(null)::build);
-      assertThrows(IllegalArgumentException.class, builder.driveTalon(null)::build);
+      assertThrows(IllegalArgumentException.class, () -> builder.driveTalon(null));
     }
 
     @Test
