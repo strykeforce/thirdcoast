@@ -144,6 +144,14 @@ public class TalonSwerveModule implements SwerveModule {
     logger.info("swerve module {}: set azimuth encoder = {}", index, azimuthSetpoint);
   }
 
+  public TalonSRX getAzimuthTalon() {
+    return azimuthTalon;
+  }
+
+  public BaseTalon getDriveTalon() {
+    return driveTalon;
+  }
+
   private int getAzimuthAbsoluteEncoderCounts() {
     return azimuthTalon.getSensorCollection().getPulseWidthPosition() & 0xFFF;
   }
