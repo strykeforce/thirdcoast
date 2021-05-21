@@ -93,12 +93,48 @@ public class SwerveDrive {
 
   /**
    * Returns the current gyro-measured heading of the robot. This will be affected by any gyro drift
-   * that may have accumulated since last gyro recalibration.
+   * that may have accumulated since last gyro recalibration. The angle is continuous, that is it
+   * will continue from 360 to 361 degrees. This allows algorithms that wouldn't want to see a
+   * discontinuity in the gyro output as it sweeps past from 360 to 0 on the second time around. The
+   * angle is expected to increase as the gyro turns counterclockwise when looked at from the top.
    *
-   * @return the angle of the robot relative to gyro zero
+   * @return the Rotation2d of the robot relative to gyro zero
    */
   public Rotation2d getHeading() {
     return gyro.getRotation2d();
+  }
+
+  /**
+   * Returns the current gyro-measured heading of the robot. This will be affected by any gyro drift
+   * that may have accumulated since last gyro recalibration. The angle is continuous, that is it
+   * will continue from 360 to 361 degrees. This allows algorithms that wouldn't want to see a
+   * discontinuity in the gyro output as it sweeps past from 360 to 0 on the second time around. The
+   * angle is expected to increase as the gyro turns clockwise when looked at from the top.
+   *
+   * @return the current heading in degrees of the robot relative to gyro zero
+   */
+  public double getGyroAngle() {
+    return gyro.getAngle();
+  }
+
+  /**
+   * Return the rate of rotation of the gyro. The rate is based on the most recent reading of the
+   * gyro analog value. The rate is expected to be positive as the gyro turns clockwise when looked
+   * at from the top.
+   *
+   * @return the current rate in degrees per second
+   */
+  public double getGyroRate() {
+    return gyro.getRate();
+  }
+
+  /**
+   * Get the configured swerve modules.
+   *
+   * @return array of swerve modules
+   */
+  public SwerveModule[] getSwerveModules() {
+    return swerveModules;
   }
 
   /**
