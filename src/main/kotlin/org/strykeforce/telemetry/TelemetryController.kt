@@ -12,6 +12,7 @@ import java.net.DatagramSocket
 import java.net.Inet4Address
 import java.net.InetSocketAddress
 import java.net.NetworkInterface
+import java.util.*
 import java.util.concurrent.Executors
 
 private const val SERVER_PORT = 5800
@@ -27,7 +28,7 @@ private class InventoryHandler(
 ) : HttpHandler {
     override fun handle(exchange: HttpExchange?) {
         checkNotNull(exchange) { "InventoryHandler handle called with null HttpExchange" }
-        if (exchange.requestMethod.toUpperCase() != "GET") error("InventoryHandler expects GET request method")
+        if (exchange.requestMethod.uppercase() != "GET") error("InventoryHandler expects GET request method")
 
         val buffer = Buffer()
         inventory.writeInventory(buffer)
@@ -44,7 +45,7 @@ private class SubscriptionHandler(
     override fun handle(exchange: HttpExchange?) {
         checkNotNull(exchange) { "SubscriptionHandler handle called with null HttpExchange" }
         logger.debug { "${exchange.requestMethod} $SUBSCRIPTION_ENDPOINT" }
-        if (exchange.requestMethod.toUpperCase() == "POST") {
+        if (exchange.requestMethod.uppercase() == "POST") {
             val buffer = Buffer()
             buffer.readFrom(exchange.requestBody)
             val sub = Subscription(inventory, exchange.remoteAddress.address, buffer.readUtf8())
@@ -57,7 +58,7 @@ private class SubscriptionHandler(
             return
         }
 
-        if (exchange.requestMethod.toUpperCase() == "DELETE") {
+        if (exchange.requestMethod.uppercase() == "DELETE") {
             clientHandler.shutdown()
             exchange.sendResponseHeaders(204, -1)
             logger.info { "subscription stopped from ${exchange.remoteAddress}" }
