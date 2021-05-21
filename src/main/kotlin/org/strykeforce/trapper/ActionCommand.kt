@@ -1,22 +1,28 @@
 package org.strykeforce.trapper
 
 import edu.wpi.first.wpilibj2.command.CommandBase
-import org.strykeforce.trapper.Action
-import org.strykeforce.trapper.Session
-import org.strykeforce.trapper.Trace
 
-abstract class ActionCommand @JvmOverloads constructor(var action: Action = Action()) :
-    CommandBase() {
+abstract class ActionCommand @JvmOverloads constructor(
+    var action: Action = Action(),
+    val trapperSubsystem: TrapperSubsystem
+) : CommandBase() {
 
-    constructor(name: String) : this(Action(name))
+    constructor(name: String, trapperSubsystem: TrapperSubsystem) : this(
+        Action(name),
+        trapperSubsystem
+    )
+
+    init {
+        addRequirements(trapperSubsystem)
+    }
 
     val traces = mutableListOf<Trace>()
 
     abstract val trace: Trace
 
-    override fun execute() {
-        traces += trace
-    }
+    override fun execute() = if (trapperSubsystem.enabled) traces += trace else Unit
 
-    fun postWith(session: Session) = session.post(traces)
+
+    fun postWith(session: OkHttpSession) =
+        if (trapperSubsystem.enabled) session.post(traces) else Unit
 }
