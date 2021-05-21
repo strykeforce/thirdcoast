@@ -9,21 +9,16 @@ plugins {
 }
 
 group = "org.strykeforce"
-version = "21.3.0"
+version = "21.3.0-SNAPSHOT"
 
 sourceCompatibility = JavaVersion.VERSION_11
 targetCompatibility = JavaVersion.VERSION_11
 
-// Set this to true to enable desktop support.
-def includeDesktopSupport = false
-
 repositories {
-    jcenter()
+    mavenCentral()
     maven { url = "https://first.wpi.edu/FRC/roborio/maven/release" }
 }
 
-// Defining my dependencies. In this case, WPILib (+ friends), and vendor libraries.
-// Also defines JUnit 5.
 dependencies {
     implementation wpi.deps.wpilib()
     nativeZip wpi.deps.wpilibJni(wpi.platforms.roborio)
