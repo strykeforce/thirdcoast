@@ -1,8 +1,11 @@
 package org.strykeforce.console
 
+import edu.wpi.first.wpilibj2.command.button.Button
+
 @ExperimentalStdlibApi
-class SSD1306Console : Console {
+class ConsoleImpl : Console {
     val display = SSD1306()
+    val expander = MCP23008()
 
     override fun clear() = display.clear()
 
@@ -13,4 +16,6 @@ class SSD1306Console : Console {
 
     override fun writeStringCentered(string: String, y: Int, on: Boolean) =
         display.drawStringCentered(string, Font.FONT_5X8, y, on)
+
+    override fun getSwitch(switch: Console.Switch) = expander.getSwitch(switch)
 }

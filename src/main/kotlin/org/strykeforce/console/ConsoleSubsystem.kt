@@ -8,7 +8,16 @@ private val logger = KotlinLogging.logger {}
 @ExperimentalStdlibApi
 class ConsoleSubsystem @JvmOverloads constructor(var enabled: Boolean = false) : SubsystemBase() {
 
-    private var console: Console = if (enabled) SSD1306Console() else DummyConsole()
+    init {
+        logger.info {
+            if (enabled) "console display enabled"
+            else "console display disabled"
+        }
+    }
+
+    private var console: Console = if (enabled) ConsoleImpl() else DummyConsole()
+
+    override fun periodic() = console.periodic()
 
     fun clear() = console.clear()
 
@@ -19,5 +28,7 @@ class ConsoleSubsystem @JvmOverloads constructor(var enabled: Boolean = false) :
     @JvmOverloads
     fun writeStringCentered(string: String, y: Int, on: Boolean = true) =
         console.writeStringCentered(string, y, on)
+
+    fun getButton(switch: Console.Switch) = ConsoleButton(console, switch)
 
 }
