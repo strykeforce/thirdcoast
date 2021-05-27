@@ -8,14 +8,13 @@ private val logger = KotlinLogging.logger {}
 @ExperimentalStdlibApi
 class ConsoleSubsystem @JvmOverloads constructor(var enabled: Boolean = false) : SubsystemBase() {
 
+    val console: Console = if (enabled) ConsoleImpl() else DummyConsole()
+
     init {
         logger.info {
-            if (enabled) "console display enabled"
-            else "console display disabled"
+            "console display " + if (enabled) "enabled" else "disabled"
         }
     }
-
-    private var console: Console = if (enabled) ConsoleImpl() else DummyConsole()
 
     override fun periodic() = console.periodic()
 
