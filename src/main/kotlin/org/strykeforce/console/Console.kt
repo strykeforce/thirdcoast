@@ -1,7 +1,7 @@
 package org.strykeforce.console
 
 interface Console {
-    enum class Switch { CENTER, NORTH, SOUTH, EAST, WEST }
+    enum class Switch { CENTER, NORTH, SOUTH, EAST, WEST, ONE, TWO, THREE }
 
     fun clear()
     fun periodic()
