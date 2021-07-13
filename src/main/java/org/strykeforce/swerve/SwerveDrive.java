@@ -27,6 +27,8 @@ public class SwerveDrive {
   private final SwerveDriveOdometry odometry;
   private final Gyro gyro;
   private final double maxSpeedMetersPerSecond;
+  private Rotation2d gyroOffset = new Rotation2d();
+  private boolean hasGyroOffset = false;
 
   /**
    * Construct a swerve drive object. Along with a gyro, this takes in four configured swerve
@@ -129,6 +131,27 @@ public class SwerveDrive {
   }
 
   /**
+   * Get the current gyro offset applied to the IMU gyro angle during field oriented driving.
+   *
+   * @return the gyro offset
+   */
+  public Rotation2d getGyroOffset() {
+    return gyroOffset;
+  }
+
+  /**
+   * Set the current gyro offset applied to the IMU gyro angle during field oriented driving,
+   * defaults to zero.
+   *
+   * @param gyroOffset the desired offset
+   */
+  public void setGyroOffset(Rotation2d gyroOffset) {
+    if (this.gyroOffset.equals(gyroOffset)) return;
+    this.gyroOffset = gyroOffset;
+    hasGyroOffset = true;
+  }
+
+  /**
    * Get the configured swerve modules.
    *
    * @return array of swerve modules
@@ -223,7 +246,10 @@ public class SwerveDrive {
     ChassisSpeeds chassisSpeeds =
         isFieldOriented
             ? ChassisSpeeds.fromFieldRelativeSpeeds(
-                vxMetersPerSecond, vyMetersPerSecond, omegaRadiansPerSecond, gyro.getRotation2d())
+                vxMetersPerSecond,
+                vyMetersPerSecond,
+                omegaRadiansPerSecond,
+                hasGyroOffset ? gyro.getRotation2d().rotateBy(gyroOffset) : gyro.getRotation2d())
             : new ChassisSpeeds(vxMetersPerSecond, vyMetersPerSecond, omegaRadiansPerSecond);
 
     var swerveModuleStates = kinematics.toSwerveModuleStates(chassisSpeeds);
