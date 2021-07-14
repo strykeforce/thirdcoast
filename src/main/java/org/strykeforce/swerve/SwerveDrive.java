@@ -62,7 +62,7 @@ public class SwerveDrive {
     maxSpeedMetersPerSecond = swerveModules[0].getMaxSpeedMetersPerSecond();
 
     kinematics = new SwerveDriveKinematics(translation2ds);
-    odometry = new SwerveDriveOdometry(kinematics, gyro.getRotation2d());
+    odometry = new SwerveDriveOdometry(kinematics, gyro.getRotation2d().rotateBy(gyroOffset));
   }
 
   /**
@@ -103,7 +103,7 @@ public class SwerveDrive {
    * @return the Rotation2d of the robot relative to gyro zero
    */
   public Rotation2d getHeading() {
-    return gyro.getRotation2d();
+    return hasGyroOffset ? gyro.getRotation2d().rotateBy(gyroOffset) : gyro.getRotation2d();
   }
 
   /**
@@ -115,7 +115,8 @@ public class SwerveDrive {
    *
    * @return the current heading in degrees of the robot relative to gyro zero
    */
-  public double getGyroAngle() {
+  double getGyroAngle() {
+    // FIXME: does not have gyro offset
     return gyro.getAngle();
   }
 
@@ -146,7 +147,9 @@ public class SwerveDrive {
    * @param gyroOffset the desired offset
    */
   public void setGyroOffset(Rotation2d gyroOffset) {
-    if (this.gyroOffset.equals(gyroOffset)) return;
+    if (this.gyroOffset.equals(gyroOffset)) {
+      return;
+    }
     this.gyroOffset = gyroOffset;
     hasGyroOffset = true;
   }
@@ -167,7 +170,7 @@ public class SwerveDrive {
    * @param pose The robot's actual position on the field.
    */
   public void resetOdometry(Pose2d pose) {
-    odometry.resetPosition(pose, gyro.getRotation2d());
+    odometry.resetPosition(pose, gyro.getRotation2d().rotateBy(gyroOffset));
   }
 
   /** Resets the drive encoders to currently read a position of 0. */
@@ -188,7 +191,7 @@ public class SwerveDrive {
    */
   public void periodic() {
     odometry.update(
-        gyro.getRotation2d(),
+        hasGyroOffset ? gyro.getRotation2d().rotateBy(gyroOffset) : gyro.getRotation2d(),
         swerveModules[0].getState(),
         swerveModules[1].getState(),
         swerveModules[2].getState(),
