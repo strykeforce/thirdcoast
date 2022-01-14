@@ -16,9 +16,11 @@ import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.strykeforce.telemetry.Registrable;
+import org.strykeforce.telemetry.TelemetryService;
 
 /** Control a Third Coast swerve drive. */
-public class SwerveDrive {
+public class SwerveDrive implements Registrable {
 
   private static final Logger logger = LoggerFactory.getLogger(SwerveDrive.class);
 
@@ -269,6 +271,13 @@ public class SwerveDrive {
     SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, maxSpeedMetersPerSecond);
     for (int i = 0; i < 4; i++) {
       swerveModules[i].setDesiredState(desiredStates[i], true);
+    }
+  }
+
+  @Override
+  public void registerWith(@NotNull TelemetryService telemetryService) {
+    for (SwerveModule swerveModule : swerveModules) {
+      swerveModule.registerWith(telemetryService);
     }
   }
 }

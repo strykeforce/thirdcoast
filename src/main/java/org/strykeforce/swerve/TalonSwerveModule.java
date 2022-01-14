@@ -12,8 +12,10 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Preferences;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.strykeforce.telemetry.TelemetryService;
 
 /**
  * A swerve module that uses Talons for azimuth and drive motors. Uses a {@link Builder} to
@@ -199,6 +201,12 @@ public class TalonSwerveModule implements SwerveModule {
       return 2;
     }
     return 3;
+  }
+
+  @Override
+  public void registerWith(@NotNull TelemetryService telemetryService) {
+    telemetryService.register(azimuthTalon);
+    telemetryService.register(driveTalon);
   }
 
   @Override
