@@ -59,5 +59,4 @@ public interface SwerveModule extends Registrable {
    * Loads the current azimuth absolute encoder reference position and sets selected sensor encoder.
    */
   void loadAndSetAzimuthZeroReference();
-
 }
