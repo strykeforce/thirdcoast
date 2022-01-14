@@ -1,7 +1,6 @@
 package org.strykeforce.telemetry.measurable
 
-import edu.wpi.first.wpilibj.PowerDistributionPanel
-import java.util.function.DoubleSupplier
+import edu.wpi.first.wpilibj.PowerDistribution
 
 internal const val PDP_CURRENT0 = "PDP_CURRENT_00"
 internal const val PDP_CURRENT1 = "PDP_CURRENT_01"
@@ -27,7 +26,7 @@ internal const val PDP_VOLTAGE = "PDP_VOLTAGE"
 
 /** Represents a `PowerDistributionPanel` telemetry-enable `Measurable` item.  */
 class PowerDistributionPanelMeasurable @JvmOverloads constructor(
-    private val pdp: PowerDistributionPanel,
+    private val pdp: PowerDistribution,
     override val description: String = "Power Distribution Panel"
 ) : Measurable {
 
