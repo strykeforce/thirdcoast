@@ -2,9 +2,10 @@ package org.strykeforce.swerve;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import org.strykeforce.telemetry.Registrable;
 
 /** Represents a Third Coast swerve module. */
-public interface SwerveModule {
+public interface SwerveModule extends Registrable {
 
   /**
    * Gets the maximum attainable speed of the drive.
