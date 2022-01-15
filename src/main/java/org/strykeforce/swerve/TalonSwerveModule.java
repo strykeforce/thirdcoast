@@ -115,18 +115,16 @@ public class TalonSwerveModule implements SwerveModule {
   public void storeAzimuthZeroReference() {
     int index = getWheelIndex();
     int position = getAzimuthAbsoluteEncoderCounts();
-    Preferences preferences = Preferences.getInstance();
     String key = String.format("SwerveDrive/wheel.%d", index);
-    preferences.putInt(key, position);
+    Preferences.setInt(key, position);
     logger.info("azimuth {}: saved zero = {}", index, position);
   }
 
   @Override
   public void loadAndSetAzimuthZeroReference() {
     int index = getWheelIndex();
-    Preferences preferences = Preferences.getInstance();
     String key = String.format("SwerveDrive/wheel.%d", index);
-    int reference = preferences.getInt(key, Integer.MIN_VALUE);
+    int reference = Preferences.getInt(key, Integer.MIN_VALUE);
     if (reference == Integer.MIN_VALUE) {
       logger.error("no saved azimuth zero reference for swerve module {}", index);
       throw new IllegalStateException();

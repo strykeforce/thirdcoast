@@ -96,6 +96,15 @@ compileKotlin {
     }
 }
 
+compileTestKotlin {
+    kotlinOptions {
+        jvmTarget = "11"
+
+        // For creation of default methods in interfaces
+        freeCompilerArgs += "-Xjvm-default=all"
+    }
+}
+
 
 java {
     withSourcesJar()

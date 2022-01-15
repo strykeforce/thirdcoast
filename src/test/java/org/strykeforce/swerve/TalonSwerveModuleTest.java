@@ -84,7 +84,7 @@ class TalonSwerveModuleTest {
 
   @Nested
   @DisplayName("When setting azimuth zero")
-  class WhenSettingAzimuthZero {
+  class TestWhenSettingAzimuthZero {
 
     TalonSRX azimuthTalon;
     TalonFX driveTalon;
@@ -119,15 +119,13 @@ class TalonSwerveModuleTest {
               .wheelDiameterInches(kWheelDiameterInches)
               .driveMaximumMetersPerSecond(kMaxSpeedMetersPerSecond);
 
-      Preferences preferences = Preferences.getInstance();
-
       int expectedZeroReference = 27;
       int index = 0; // fixture wheel is LF
       String key = String.format("SwerveDrive/wheel.%d", index);
       module = builder.wheelLocationMeters(new Translation2d(1, 1)).build();
       when(sensorCollection.getPulseWidthPosition()).thenReturn(expectedZeroReference);
       module.storeAzimuthZeroReference();
-      assertEquals(expectedZeroReference, preferences.getInt(key, -1));
+      assertEquals(expectedZeroReference, Preferences.getInt(key, -1));
 
       expectedZeroReference = 67;
       index = 1; // fixture wheel is RF
@@ -135,7 +133,7 @@ class TalonSwerveModuleTest {
       module = builder.wheelLocationMeters(new Translation2d(1, -1)).build();
       when(sensorCollection.getPulseWidthPosition()).thenReturn(expectedZeroReference);
       module.storeAzimuthZeroReference();
-      assertEquals(expectedZeroReference, preferences.getInt(key, -1));
+      assertEquals(expectedZeroReference, Preferences.getInt(key, -1));
 
       expectedZeroReference = 2767;
       index = 2; // fixture wheel is LR
@@ -143,7 +141,7 @@ class TalonSwerveModuleTest {
       module = builder.wheelLocationMeters(new Translation2d(-1, 1)).build();
       when(sensorCollection.getPulseWidthPosition()).thenReturn(expectedZeroReference);
       module.storeAzimuthZeroReference();
-      assertEquals(expectedZeroReference, preferences.getInt(key, -1));
+      assertEquals(expectedZeroReference, Preferences.getInt(key, -1));
 
       expectedZeroReference = 6727;
       index = 3; // fixture wheel is RR
@@ -151,7 +149,7 @@ class TalonSwerveModuleTest {
       module = builder.wheelLocationMeters(new Translation2d(-1, -1)).build();
       when(sensorCollection.getPulseWidthPosition()).thenReturn(expectedZeroReference);
       module.storeAzimuthZeroReference();
-      assertEquals(expectedZeroReference & 0xFFF, preferences.getInt(key, -1));
+      assertEquals(expectedZeroReference & 0xFFF, Preferences.getInt(key, -1));
     }
 
     @ParameterizedTest
@@ -160,8 +158,7 @@ class TalonSwerveModuleTest {
     void shouldSetAzimuthZero(int absoluteEncoderPosition, int zeroReference, double setpoint) {
       int index = 0; // fixture wheel is LF
       String key = String.format("SwerveDrive/wheel.%d", index);
-      Preferences preferences = Preferences.getInstance();
-      preferences.putInt(key, zeroReference);
+      Preferences.setInt(key, zeroReference);
       when(sensorCollection.getPulseWidthPosition()).thenReturn(absoluteEncoderPosition);
       when(azimuthTalon.setSelectedSensorPosition(eq(setpoint), anyInt(), anyInt()))
           .thenReturn(ErrorCode.valueOf(0));
@@ -174,9 +171,8 @@ class TalonSwerveModuleTest {
     void shouldThrowExceptionIfNoNetworkTablesReference() {
       int index = 0; // fixture wheel is LF
       String key = String.format("SwerveDrive/wheel.%d", index);
-      Preferences preferences = Preferences.getInstance();
-      preferences.remove(key);
-      int reference = preferences.getInt(key, Integer.MIN_VALUE);
+      Preferences.remove(key);
+      int reference = Preferences.getInt(key, Integer.MIN_VALUE);
       assertEquals(Integer.MIN_VALUE, reference);
 
       when(sensorCollection.getPulseWidthPosition()).thenReturn(0);
@@ -219,7 +215,7 @@ class TalonSwerveModuleTest {
 
   @Nested
   @DisplayName("Should not validate")
-  class ShouldNotValidate {
+  class TestShouldNotValidate {
 
     private TalonSRX azimuthTalon;
     private TalonFX driveTalon;
@@ -301,7 +297,7 @@ class TalonSwerveModuleTest {
 
   @Nested
   @DisplayName("Should get module state")
-  class ShouldGetModuleState {
+  class TestShouldGetModuleState {
 
     private TalonSRX azimuthTalon;
     private TalonFX driveTalon;
@@ -451,7 +447,7 @@ class TalonSwerveModuleTest {
 
   @Nested
   @DisplayName("Should set module state")
-  class ShouldSetModuleState {
+  class TestShouldSetModuleState {
 
     final ArgumentCaptor<Double> captor = ArgumentCaptor.forClass(Double.class);
     private TalonSRX azimuthTalon;

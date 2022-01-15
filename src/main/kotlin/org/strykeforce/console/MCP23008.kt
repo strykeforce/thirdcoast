@@ -52,7 +52,7 @@ class MCP23008 {
 
     fun getSwitch(switch: Console.Switch): Boolean {
         val buffer = ByteArray(1)
-        if (timer.hasPeriodPassed(POLL_SECONDS)) {
+        if (timer.advanceIfElapsed(POLL_SECONDS)) {
             expander.read(GPIO, buffer.size, buffer)
             switchState = buffer[0].toUByte()
 //            logger.debug { switchState.toUByte().toString(2) }
