@@ -166,20 +166,6 @@ class TalonSwerveModuleTest {
       verify(azimuthTalon).setSelectedSensorPosition(setpoint, 0, 10);
     }
 
-    @Test
-    @DisplayName("should throw exception if no NetworkTables reference")
-    void shouldThrowExceptionIfNoNetworkTablesReference() {
-      int index = 0; // fixture wheel is LF
-      String key = String.format("SwerveDrive/wheel.%d", index);
-      Preferences.remove(key);
-      int reference = Preferences.getInt(key, Integer.MIN_VALUE);
-      assertEquals(Integer.MIN_VALUE, reference);
-
-      when(sensorCollection.getPulseWidthPosition()).thenReturn(0);
-      when(azimuthTalon.setSelectedSensorPosition(anyDouble(), anyInt(), anyInt()))
-          .thenReturn(ErrorCode.valueOf(0));
-      assertThrows(IllegalStateException.class, module::loadAndSetAzimuthZeroReference);
-    }
   }
 
   /*
