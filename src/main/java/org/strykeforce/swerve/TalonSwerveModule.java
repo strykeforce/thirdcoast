@@ -127,7 +127,6 @@ public class TalonSwerveModule implements SwerveModule {
     int reference = Preferences.getInt(key, Integer.MIN_VALUE);
     if (reference == Integer.MIN_VALUE) {
       logger.error("no saved azimuth zero reference for swerve module {}", index);
-      throw new IllegalStateException();
     }
     logger.info("swerve module {}: loaded azimuth zero reference = {}", index, reference);
 

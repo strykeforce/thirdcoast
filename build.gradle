@@ -11,7 +11,7 @@ plugins {
 }
 
 group = "org.strykeforce"
-version = "22.0.0"
+version = "22.0.1"
 
 sourceCompatibility = JavaVersion.VERSION_11
 targetCompatibility = JavaVersion.VERSION_11
@@ -69,7 +69,7 @@ dependencies {
 
     testImplementation wpi.java.deps.wpilibJniDebug(wpi.platforms.desktop)
 
-    implementation 'org.slf4j:slf4j-api:1.7.32'
+    implementation 'org.slf4j:slf4j-api:1.7.33'
     implementation 'io.github.microutils:kotlin-logging:2.1.21'
     implementation 'com.squareup.okhttp3:okhttp:4.9.3'
     implementation "org.jetbrains.kotlinx:kotlinx-html-jvm:0.7.3"
