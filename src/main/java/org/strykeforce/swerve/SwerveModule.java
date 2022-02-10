@@ -1,5 +1,6 @@
 package org.strykeforce.swerve;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import org.strykeforce.telemetry.Registrable;
@@ -44,6 +45,20 @@ public interface SwerveModule extends Registrable {
   default void setDesiredState(SwerveModuleState desiredState) {
     this.setDesiredState(desiredState, false);
   }
+
+  /**
+   * Command the swerve module azimuth rotation to the desired angle.
+   *
+   * @param rotation the desired absolute azimuth angle
+   */
+  void setAzimuthRotation2d(Rotation2d rotation);
+
+  /**
+   * Get the angle of the swerve drive azimuth.
+   *
+   * @return the angle of the azimuth rotation.
+   */
+  Rotation2d getAzimuthRotation2d();
 
   /** Resets the drive encoders to currently read a position of 0. */
   void resetDriveEncoder();

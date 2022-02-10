@@ -91,7 +91,6 @@ public class TalonSwerveModule implements SwerveModule {
     if (desiredState.speedMetersPerSecond < driveDeadbandMetersPerSecond) {
       desiredState = new SwerveModuleState(0.0, previousAngle);
     }
-    previousAngle = desiredState.angle;
 
     Rotation2d currentAngle = getAzimuthRotation2d();
     SwerveModuleState optimizedState = SwerveModuleState.optimize(desiredState, currentAngle);
@@ -155,17 +154,20 @@ public class TalonSwerveModule implements SwerveModule {
     return azimuthTalon.getSensorCollection().getPulseWidthPosition() & 0xFFF;
   }
 
+  @Override
   public Rotation2d getAzimuthRotation2d() {
     double azimuthCounts = azimuthTalon.getSelectedSensorPosition();
     double radians = 2.0 * Math.PI * azimuthCounts / azimuthCountsPerRev;
     return new Rotation2d(radians);
   }
 
+  @Override
   public void setAzimuthRotation2d(Rotation2d angle) {
     double countsBefore = azimuthTalon.getSelectedSensorPosition();
     double countsFromAngle = angle.getRadians() / (2.0 * Math.PI) * azimuthCountsPerRev;
     double countsDelta = Math.IEEEremainder(countsFromAngle - countsBefore, azimuthCountsPerRev);
     azimuthTalon.set(MotionMagic, countsBefore + countsDelta);
+    previousAngle = angle;
   }
 
   private double getDriveMetersPerSecond() {
