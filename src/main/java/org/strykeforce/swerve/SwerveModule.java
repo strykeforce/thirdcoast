@@ -33,7 +33,7 @@ public interface SwerveModule extends Registrable {
    * Command the swerve module motors to the desired state.
    *
    * @param desiredState the desired swerve module speed and angle
-   * @param isDriveOpenLoop true if drive should set speed using closed-loop velocity control
+   * @param isDriveOpenLoop false if drive should set speed using closed-loop velocity control
    */
   void setDesiredState(SwerveModuleState desiredState, boolean isDriveOpenLoop);
 
@@ -47,7 +47,10 @@ public interface SwerveModule extends Registrable {
   }
 
   /**
-   * Command the swerve module azimuth rotation to the desired angle.
+   * Command the swerve module azimuth rotation to the desired angle with a drive speed of zero. If
+   * setting the module to an angle with a non-zero drive speed, use {@link
+   * SwerveModule#setDesiredState(SwerveModuleState)} or {@link
+   * SwerveModule#setDesiredState(SwerveModuleState, boolean)}.
    *
    * @param rotation the desired absolute azimuth angle
    */

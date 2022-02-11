@@ -92,9 +92,8 @@ public class TalonSwerveModule implements SwerveModule {
       desiredState = new SwerveModuleState(0.0, previousAngle);
     }
 
-    Rotation2d currentAngle = getAzimuthRotation2d();
-    SwerveModuleState optimizedState = SwerveModuleState.optimize(desiredState, currentAngle);
-    setAzimuthRotation2d(optimizedState.angle);
+    SwerveModuleState optimizedState = setAzimuthOptimizedState(desiredState);
+
     if (isDriveOpenLoop) {
       setDriveOpenLoopMetersPerSecond(optimizedState.speedMetersPerSecond);
     } else {
@@ -163,11 +162,26 @@ public class TalonSwerveModule implements SwerveModule {
 
   @Override
   public void setAzimuthRotation2d(Rotation2d angle) {
+    setAzimuthOptimizedState(new SwerveModuleState(0.0, angle));
+    logger.info("azimuth {}: set rotation to: {}", azimuthTalon.getDeviceID(), angle);
+  }
+
+  @NotNull
+  private SwerveModuleState setAzimuthOptimizedState(SwerveModuleState desiredState) {
+    // minimize change in heading by potentially reversing the drive direction
+    Rotation2d currentAngle = getAzimuthRotation2d();
+    SwerveModuleState optimizedState = SwerveModuleState.optimize(desiredState, currentAngle);
+
+    // set the azimuth wheel position
     double countsBefore = azimuthTalon.getSelectedSensorPosition();
-    double countsFromAngle = angle.getRadians() / (2.0 * Math.PI) * azimuthCountsPerRev;
+    double countsFromAngle =
+        optimizedState.angle.getRadians() / (2.0 * Math.PI) * azimuthCountsPerRev;
     double countsDelta = Math.IEEEremainder(countsFromAngle - countsBefore, azimuthCountsPerRev);
     azimuthTalon.set(MotionMagic, countsBefore + countsDelta);
-    previousAngle = angle;
+
+    // save previous angle for use if inside deadband in setDesiredState()
+    previousAngle = optimizedState.angle;
+    return optimizedState;
   }
 
   private double getDriveMetersPerSecond() {
