@@ -6,12 +6,12 @@ plugins {
     id "maven-publish"
     id "org.jetbrains.kotlin.jvm" version "1.6.10"
     id "org.jetbrains.kotlin.kapt" version "1.6.10"
-    id "edu.wpi.first.GradleRIO" version "2022.1.1"
+    id "edu.wpi.first.GradleRIO" version "2022.3.1"
     id 'com.diffplug.spotless' version '6.2.0'
 }
 
 group = "org.strykeforce"
-version = "22.0.1"
+version = "22.1.0"
 
 sourceCompatibility = JavaVersion.VERSION_11
 targetCompatibility = JavaVersion.VERSION_11

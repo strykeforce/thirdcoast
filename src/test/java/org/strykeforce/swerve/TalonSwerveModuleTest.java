@@ -3,7 +3,6 @@ package org.strykeforce.swerve;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
@@ -165,7 +164,6 @@ class TalonSwerveModuleTest {
       module.loadAndSetAzimuthZeroReference();
       verify(azimuthTalon).setSelectedSensorPosition(setpoint, 0, 10);
     }
-
   }
 
   /*
