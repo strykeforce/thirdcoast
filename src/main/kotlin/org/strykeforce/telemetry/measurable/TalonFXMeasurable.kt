@@ -34,7 +34,7 @@ class TalonFXMeasurable @JvmOverloads constructor(
     override val measures = setOf(
         Measure(CLOSED_LOOP_TARGET, "Closed-loop Setpoint (PID 0)") { talonFX.closedLoopTarget },
         Measure(STATOR_CURRENT, "Stator Current") { talonFX.statorCurrent },
-        Measure(SUPPLY_CURRENT, "Supply Current") { talonFX.statorCurrent },
+        Measure(SUPPLY_CURRENT, "Supply Current") { talonFX.supplyCurrent },
         Measure(OUTPUT_VOLTAGE, "Output Voltage") { talonFX.motorOutputVoltage },
         Measure(OUTPUT_PERCENT, "Output Percent") { talonFX.motorOutputPercent },
         Measure(
