@@ -6,7 +6,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
 import java.util.Arrays;
@@ -26,7 +25,7 @@ public class SwerveDrive implements Registrable {
 
   private final SwerveModule[] swerveModules;
   private final SwerveDriveKinematics kinematics;
-  private final SwerveDriveOdometry odometry;
+  private OdometryStrategy odometry;
   private final Gyro gyro;
   private final double maxSpeedMetersPerSecond;
   private Rotation2d gyroOffset = new Rotation2d();
@@ -64,7 +63,7 @@ public class SwerveDrive implements Registrable {
     maxSpeedMetersPerSecond = swerveModules[0].getMaxSpeedMetersPerSecond();
 
     kinematics = new SwerveDriveKinematics(translation2ds);
-    odometry = new SwerveDriveOdometry(kinematics, gyro.getRotation2d().rotateBy(gyroOffset));
+    odometry = new KinematicOdometryStrategy(kinematics, gyro.getRotation2d().rotateBy(gyroOffset));
   }
 
   /**
@@ -75,6 +74,20 @@ public class SwerveDrive implements Registrable {
    */
   public SwerveDrive(SwerveModule... swerveModules) {
     this(new AHRS(), swerveModules);
+  }
+
+  /**
+   * Replace the default {@code KinematicOdometryStrategy} with another such as {@code
+   * PoseEstimatorOdometryStrategy}. This is provided as a setter so that the current configured
+   * {@code SwerveDriveKinematics} can be used in constructing the {@code OdometryStrategy}.
+   *
+   * <p><strong>IMPORTANT:</strong> This should be called right after the constructor and before any
+   * use of the drive.
+   *
+   * @param odometry the replacement odometry calculation method
+   */
+  public void setOdometry(OdometryStrategy odometry) {
+    this.odometry = odometry;
   }
 
   /**
@@ -89,7 +102,7 @@ public class SwerveDrive implements Registrable {
   /**
    * Returns the position of the robot on the field.
    *
-   * @return the pose of the robot (x and y ane in meters)
+   * @return the pose of the robot (x and y are in meters)
    */
   public Pose2d getPoseMeters() {
     return odometry.getPoseMeters();
@@ -173,6 +186,7 @@ public class SwerveDrive implements Registrable {
    */
   public void resetOdometry(Pose2d pose) {
     odometry.resetPosition(pose, gyro.getRotation2d().rotateBy(gyroOffset));
+    resetDriveEncoders();
   }
 
   /** Resets the drive encoders to currently read a position of 0. */
