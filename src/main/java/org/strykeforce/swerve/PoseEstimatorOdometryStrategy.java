@@ -100,7 +100,7 @@ public class PoseEstimatorOdometryStrategy implements OdometryStrategy {
    *     timestamp is the same epoch as Timer.getFPGATimestamp.) This means that you should use
    *     Timer.getFPGATimestamp as your time source or sync the epochs.
    */
-  void addVisionMeasurement(Pose2d visionRobotPoseMeters, double timestampSeconds) {
+  public void addVisionMeasurement(Pose2d visionRobotPoseMeters, double timestampSeconds) {
     odometry.addVisionMeasurement(visionRobotPoseMeters, timestampSeconds);
   }
 
@@ -125,7 +125,7 @@ public class PoseEstimatorOdometryStrategy implements OdometryStrategy {
    *     numbers to trust global measurements from vision less. This matrix is in the form [x, y,
    *     theta]ᵀ, with units in meters and radians.
    */
-  void addVisionMeasurement(
+  public void addVisionMeasurement(
       Pose2d visionRobotPoseMeters,
       double timestampSeconds,
       Matrix<N3, N1> visionMeasurementStdDevs) {
@@ -142,7 +142,7 @@ public class PoseEstimatorOdometryStrategy implements OdometryStrategy {
    *     numbers to trust global measurements from vision less. This matrix is in the form [x, y,
    *     theta]ᵀ, with units in meters and radians.
    */
-  void setVisionMeasurementStdDevs(Matrix<N3, N1> visionMeasurementStdDevs) {
+  public void setVisionMeasurementStdDevs(Matrix<N3, N1> visionMeasurementStdDevs) {
     odometry.setVisionMeasurementStdDevs(visionMeasurementStdDevs);
   }
 
