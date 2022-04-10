@@ -34,7 +34,7 @@ public class PoseEstimatorOdometryStrategy implements OdometryStrategy {
    *     theta]ᵀ, with units in meters and radians.
    * @param nominalDtSeconds The time in seconds between each robot loop.
    */
-  PoseEstimatorOdometryStrategy(
+  public PoseEstimatorOdometryStrategy(
       Rotation2d gyroAngle,
       Pose2d initialPoseMeters,
       SwerveDriveKinematics kinematics,
@@ -69,7 +69,7 @@ public class PoseEstimatorOdometryStrategy implements OdometryStrategy {
    *     numbers to trust global measurements from vision less. This matrix is in the form [x, y,
    *     theta]ᵀ, with units in meters and radians.
    */
-  PoseEstimatorOdometryStrategy(
+  public PoseEstimatorOdometryStrategy(
       Rotation2d gyroAngle,
       Pose2d initialPoseMeters,
       SwerveDriveKinematics kinematics,
