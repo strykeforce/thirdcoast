@@ -1,4 +1,4 @@
-package org.strykeforce.healthcheck
+package org.strykeforce.healthcheck.old
 
 import edu.wpi.first.wpilibj.TimedRobot
 import kotlinx.html.*
@@ -11,7 +11,7 @@ import java.util.*
 private const val HTML_PATH = "/var/local/natinst/www/healthcheck/index.html"
 private val logger = KotlinLogging.logger {}
 
-class HealthCheck {
+class HealthCheckRunner {
     var period = TimedRobot.kDefaultPeriod
 
     private val testGroups = mutableListOf<TestGroup>()
@@ -87,5 +87,5 @@ class HealthCheck {
 
 }
 
-fun healthCheck(init: HealthCheck.() -> Unit): HealthCheck = HealthCheck().apply(init)
+fun healthCheck(init: HealthCheckRunner.() -> Unit): HealthCheckRunner = HealthCheckRunner().apply(init)
 

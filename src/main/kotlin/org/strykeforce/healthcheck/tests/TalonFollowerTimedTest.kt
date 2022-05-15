@@ -8,10 +8,10 @@ import kotlinx.html.td
 import kotlinx.html.th
 import kotlinx.html.tr
 import mu.KotlinLogging
-import org.strykeforce.healthcheck.Reportable
-import org.strykeforce.healthcheck.TalonGroup
-import org.strykeforce.healthcheck.Test
-import org.strykeforce.healthcheck.statusOf
+import org.strykeforce.healthcheck.old.Reportable
+import org.strykeforce.healthcheck.old.TalonGroup
+import org.strykeforce.healthcheck.old.Test
+import org.strykeforce.healthcheck.old.statusOf
 import kotlin.math.roundToInt
 
 private val logger = KotlinLogging.logger { }
@@ -43,7 +43,7 @@ class TalonFollowerTimedTest(private val group: TalonGroup) : Test, Reportable {
                     return
                 }
                 logger.info { "$name starting" }
-                iterations = (duration / group.healthCheck.period).roundToInt()
+                iterations = (duration / group.healthCheckRunner.period).roundToInt()
                 talonSupplyCurrents = group.talons.associateWith { mutableListOf<Double>() }
                 talonStatorCurrents = group.talons.associateWith { mutableListOf<Double>() }
                 talonSpeeds = group.talons.associateWith { mutableListOf<Int>() }

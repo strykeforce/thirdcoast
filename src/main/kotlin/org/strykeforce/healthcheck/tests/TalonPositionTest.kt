@@ -8,10 +8,10 @@ import kotlinx.html.td
 import kotlinx.html.th
 import kotlinx.html.tr
 import mu.KotlinLogging
-import org.strykeforce.healthcheck.Reportable
-import org.strykeforce.healthcheck.TalonGroup
-import org.strykeforce.healthcheck.Test
-import org.strykeforce.healthcheck.statusOf
+import org.strykeforce.healthcheck.old.Reportable
+import org.strykeforce.healthcheck.old.TalonGroup
+import org.strykeforce.healthcheck.old.Test
+import org.strykeforce.healthcheck.old.statusOf
 import kotlin.math.absoluteValue
 
 private val logger = KotlinLogging.logger { }

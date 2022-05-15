@@ -4,8 +4,8 @@ import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.can.BaseTalon
 import kotlinx.html.TagConsumer
 import mu.KotlinLogging
-import org.strykeforce.healthcheck.TalonGroup
-import org.strykeforce.healthcheck.Test
+import org.strykeforce.healthcheck.old.TalonGroup
+import org.strykeforce.healthcheck.old.Test
 import kotlin.math.absoluteValue
 
 private val logger = KotlinLogging.logger {}

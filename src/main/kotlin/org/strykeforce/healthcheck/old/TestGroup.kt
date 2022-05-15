@@ -1,4 +1,4 @@
-package org.strykeforce.healthcheck
+package org.strykeforce.healthcheck.old
 
 import com.ctre.phoenix.motorcontrol.can.BaseTalon
 import kotlinx.html.TagConsumer
@@ -11,7 +11,7 @@ import mu.KotlinLogging
 
 private val logger = KotlinLogging.logger {}
 
-abstract class TestGroup(val healthCheck: HealthCheck) : Test {
+abstract class TestGroup(val healthCheckRunner: HealthCheckRunner) : Test {
     override var name = "name not set"
 
     protected val tests = mutableListOf<Test>()
@@ -71,7 +71,7 @@ abstract class TestGroup(val healthCheck: HealthCheck) : Test {
 }
 
 
-class TalonGroup(healthCheck: HealthCheck) : TestGroup(healthCheck) {
+class TalonGroup(healthCheckRunner: HealthCheckRunner) : TestGroup(healthCheckRunner) {
     var talons = emptyList<BaseTalon>()
 
     fun timedTest(init: TalonTimedTest.() -> Unit): Test {

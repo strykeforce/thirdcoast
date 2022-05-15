@@ -1,4 +1,4 @@
-package org.strykeforce.healthcheck
+package org.strykeforce.healthcheck.old
 
 import kotlinx.html.TagConsumer
 import kotlinx.html.table
