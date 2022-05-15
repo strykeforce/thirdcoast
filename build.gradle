@@ -5,13 +5,13 @@ plugins {
     id "idea"
     id "maven-publish"
     id "org.jetbrains.kotlin.jvm" version "1.6.20"
-    id "org.jetbrains.kotlin.kapt" version "1.6.20"
+    id "com.google.devtools.ksp" version "1.6.20-1.0.5"
     id "edu.wpi.first.GradleRIO" version "2022.4.1"
     id 'com.diffplug.spotless' version '6.2.0'
 }
 
 group = "org.strykeforce"
-version = "22.2.1"
+version = "22.3.0-SNAPSHOT"
 
 sourceCompatibility = JavaVersion.VERSION_11
 targetCompatibility = JavaVersion.VERSION_11
@@ -69,22 +69,23 @@ dependencies {
 
     testImplementation wpi.java.deps.wpilibJniDebug(wpi.platforms.desktop)
 
-    implementation 'org.slf4j:slf4j-api:1.7.36'
-    implementation 'io.github.microutils:kotlin-logging:2.1.21'
-    implementation 'com.squareup.okhttp3:okhttp:4.9.3'
-    implementation "org.jetbrains.kotlinx:kotlinx-html-jvm:0.7.3"
-    implementation 'com.squareup.moshi:moshi:1.13.0'
-    kapt 'com.squareup.moshi:moshi-kotlin-codegen:1.13.0'
+    implementation("org.slf4j:slf4j-api:1.7.36")
+    implementation("io.github.microutils:kotlin-logging:2.1.21")
+    implementation("com.squareup.okhttp3:okhttp:4.9.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-html-jvm:0.7.5")
+    implementation("com.squareup.moshi:moshi:1.13.0")
+    ksp("com.squareup.moshi:moshi-kotlin-codegen:1.13.0")
 
     // Testing
     testImplementation platform("org.junit:junit-bom:5.7.1")
-    testImplementation "org.junit.jupiter:junit-jupiter"
-    testImplementation 'org.assertj:assertj-core:3.22.0'
-    testImplementation 'org.mockito:mockito-junit-jupiter:4.3.1'
-    testImplementation 'org.skyscreamer:jsonassert:1.5.0'
-    testRuntimeOnly 'ch.qos.logback:logback-classic:1.2.11'
+    testImplementation("org.junit.jupiter:junit-jupiter")
+    testImplementation("org.assertj:assertj-core:3.22.0")
+    testImplementation('org.mockito:mockito-junit-jupiter:4.5.1')
+    testImplementation("org.mockito.kotlin:mockito-kotlin:4.0.0")
+    testImplementation("org.skyscreamer:jsonassert:1.5.0")
+    testRuntimeOnly("ch.qos.logback:logback-classic:1.2.11")
 
-    api 'org.jetbrains:annotations:23.0.0'
+    api("org.jetbrains:annotations:23.0.0")
 }
 
 compileKotlin {
