@@ -1,6 +1,7 @@
 package org.strykeforce.healthcheck
 
 import com.ctre.phoenix.motorcontrol.can.BaseTalon
+import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj2.command.Subsystem
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 import mu.KotlinLogging
@@ -13,12 +14,13 @@ class SubsystemHealthCheck(subsystem: Subsystem) {
     val name: String =
         if (subsystem is SubsystemBase) subsystem.name else subsystem::class.java.simpleName
 
-    var isFinished: Boolean = false
-        private set
 
     private val diagnostics = subsystem.javaClass.declaredFields
         .filter { it.isAnnotationPresent(HealthCheck::class.java) }
         .map { it.diagnosticFor(talonFromSubsystemField(subsystem, it)) }
+
+    var isFinished: Boolean = diagnostics.isEmpty()
+        private set
 
     private lateinit var diagnosticsIterator: Iterator<Diagnostic>
 
@@ -62,8 +64,8 @@ class SubsystemHealthCheck(subsystem: Subsystem) {
             return
         }
 
-        logger.info { "execute: running health check: $currentDiagnostic" }
-        currentDiagnostic.execute()
+        logger.debug { "execute: running health check: $currentDiagnostic" }
+        currentDiagnostic.execute(Timer.getFPGATimestamp())
     }
 
 }
