@@ -1,7 +1,7 @@
 package org.strykeforce.healthcheck
 
 import com.ctre.phoenix.motorcontrol.can.BaseTalon
-import edu.wpi.first.wpilibj.Timer
+import edu.wpi.first.wpilibj.RobotController
 import edu.wpi.first.wpilibj2.command.Subsystem
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 import mu.KotlinLogging
@@ -65,7 +65,7 @@ class SubsystemHealthCheck(subsystem: Subsystem) {
         }
 
         logger.debug { "execute: running health check: $currentDiagnostic" }
-        currentDiagnostic.execute(Timer.getFPGATimestamp())
+        currentDiagnostic.execute(RobotController.getFPGATime())
     }
 
 }

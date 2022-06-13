@@ -9,7 +9,7 @@ import java.lang.reflect.Field
 private const val MULTIPLE_HEALTHCHECKS_ERR =
     "Only one of @Timed, @Position, or @Follow may be specified."
 
-private const val REVERSING_TIMEOUT = 1.0
+private const val REVERSING_TIMEOUT = 1e6 // µsec
 
 private val logger = KotlinLogging.logger {}
 
@@ -67,7 +67,7 @@ abstract class Diagnostic(val talon: BaseTalon, val limits: DoubleArray?) {
         isFinished = false
     }
 
-    open fun execute(time: Double) {
+    open fun execute(time: Long) {
         isFinished = true
     }
 
@@ -91,7 +91,7 @@ class TimedDiagnostic(
     private val cases: List<Case> = percentOutput.let {
         var previousCase: Case? = null
         it.map { output ->
-            val case = Case(previousCase, output, duration)
+            val case = Case(previousCase, output, (duration * 1e6).toLong()) // duration sec -> µsec
             previousCase = case
             case
         }
@@ -113,7 +113,7 @@ class TimedDiagnostic(
         isFinished = false
     }
 
-    override fun execute(time: Double) {
+    override fun execute(time: Long) {
         if (currentCase.isFinished) {
             logger.debug { "execute:$currentCase is done" }
             if (caseIterator.hasNext()) {
@@ -134,7 +134,7 @@ class TimedDiagnostic(
     }
 
 
-    inner class Case(previousCase: Case?, val percentOutput: Double, val duration: Double) {
+    inner class Case(previousCase: Case?, val percentOutput: Double, val duration: Long) {
         private var state: State = INITIALIZING
         private lateinit var dataSeries: DataSeries
 
@@ -143,16 +143,16 @@ class TimedDiagnostic(
         var isFinished: Boolean = false
             private set
 
-        private var start = 0.0
+        private var start = 0L
 
         fun initialize() {
             state = INITIALIZING
             dataSeries = statistics.newDataSeries(talon.toString())
             isFinished = false
-            start = 0.0
+            start = 0
         }
 
-        fun execute(time: Double) {
+        fun execute(time: Long) {
 
             logger.info { "execute: $this state = $state" }
 
