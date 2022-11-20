@@ -71,10 +71,10 @@ dependencies {
     
     implementation('org.slf4j:slf4j-api:2.0.3')
     implementation('io.github.microutils:kotlin-logging:3.0.4')
-    implementation("com.squareup.okhttp3:okhttp:4.9.3")
+    implementation('com.squareup.okhttp3:okhttp:4.10.0')
     implementation('org.jetbrains.kotlinx:kotlinx-html-jvm:0.8.0')
-    implementation("com.squareup.moshi:moshi:1.13.0")
-    ksp("com.squareup.moshi:moshi-kotlin-codegen:1.13.0")
+    implementation('com.squareup.moshi:moshi:1.14.0')
+    ksp('com.squareup.moshi:moshi-kotlin-codegen:1.14.0')
 
     // Testing
 
