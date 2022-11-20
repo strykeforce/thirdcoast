@@ -143,9 +143,9 @@ publishing {
 
 spotless {
     java {
-        target fileTree('.') {
+        target fileTree('src') {
             include '**/*.java'
-            exclude '**/build/**', '**/build-*/**'
+            exclude '**/build/', '**/build-*/'
         }
         toggleOffOn()
         googleJavaFormat()
@@ -156,7 +156,7 @@ spotless {
     groovyGradle {
         target fileTree('.') {
             include '**/*.gradle'
-            exclude '**/build/**', '**/build-*/**'
+            exclude '**/build/', '**/build-*/'
         }
         greclipse()
         indentWithSpaces(4)
@@ -166,7 +166,7 @@ spotless {
     format 'misc', {
         target fileTree('.') {
             include '**/*.md', '**/.gitignore'
-            exclude '**/build/**', '**/build-*/**'
+            exclude '**/build/', '**/build-*/', '**/.direnv/'
         }
         trimTrailingWhitespace()
         indentWithSpaces(2)
