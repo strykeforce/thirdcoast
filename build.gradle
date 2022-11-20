@@ -68,7 +68,7 @@ dependencies {
     simulationRelease wpi.sim.enableRelease()
 
     testImplementation wpi.java.deps.wpilibJniDebug(wpi.platforms.desktop)
-    
+
     implementation('org.slf4j:slf4j-api:2.0.3')
     implementation('io.github.microutils:kotlin-logging:3.0.4')
     implementation('com.squareup.okhttp3:okhttp:4.10.0')
