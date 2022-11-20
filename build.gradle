@@ -68,13 +68,13 @@ dependencies {
     simulationRelease wpi.sim.enableRelease()
 
     testImplementation wpi.java.deps.wpilibJniDebug(wpi.platforms.desktop)
-
-    implementation 'org.slf4j:slf4j-api:1.7.36'
-    implementation 'io.github.microutils:kotlin-logging:2.1.21'
-    implementation 'com.squareup.okhttp3:okhttp:4.9.3'
-    implementation "org.jetbrains.kotlinx:kotlinx-html-jvm:0.7.3"
-    implementation 'com.squareup.moshi:moshi:1.13.0'
-    kapt 'com.squareup.moshi:moshi-kotlin-codegen:1.13.0'
+    
+    implementation('org.slf4j:slf4j-api:2.0.3')
+    implementation('io.github.microutils:kotlin-logging:3.0.4')
+    implementation("com.squareup.okhttp3:okhttp:4.9.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-html-jvm:0.7.5")
+    implementation("com.squareup.moshi:moshi:1.13.0")
+    ksp("com.squareup.moshi:moshi-kotlin-codegen:1.13.0")
 
     // Testing
     testImplementation platform("org.junit:junit-bom:5.7.1")
