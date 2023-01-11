@@ -6,6 +6,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
 import java.util.Arrays;
@@ -62,8 +63,15 @@ public class SwerveDrive implements Registrable {
     }
     maxSpeedMetersPerSecond = swerveModules[0].getMaxSpeedMetersPerSecond();
 
+    SwerveModulePosition[] modulePositions =
+        Arrays.stream(swerveModules)
+            .map(SwerveModule::getPosition)
+            .toArray(SwerveModulePosition[]::new);
+
     kinematics = new SwerveDriveKinematics(translation2ds);
-    odometry = new KinematicOdometryStrategy(kinematics, gyro.getRotation2d().rotateBy(gyroOffset));
+    odometry =
+        new KinematicOdometryStrategy(
+            kinematics, gyro.getRotation2d().rotateBy(gyroOffset), modulePositions);
   }
 
   /**
@@ -208,10 +216,10 @@ public class SwerveDrive implements Registrable {
   public void periodic() {
     odometry.update(
         hasGyroOffset ? gyro.getRotation2d().rotateBy(gyroOffset) : gyro.getRotation2d(),
-        swerveModules[0].getState(),
-        swerveModules[1].getState(),
-        swerveModules[2].getState(),
-        swerveModules[3].getState());
+        swerveModules[0].getPosition(),
+        swerveModules[1].getPosition(),
+        swerveModules[2].getPosition(),
+        swerveModules[3].getPosition());
   }
 
   /**

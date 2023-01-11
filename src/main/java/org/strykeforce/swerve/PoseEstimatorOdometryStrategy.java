@@ -5,7 +5,7 @@ import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 
@@ -33,6 +33,7 @@ public class PoseEstimatorOdometryStrategy implements OdometryStrategy {
    *     numbers to trust global measurements from vision less. This matrix is in the form [x, y,
    *     theta]ᵀ, with units in meters and radians.
    * @param nominalDtSeconds The time in seconds between each robot loop.
+   * @param modulePositions The current distance and rotation measurements of the swerve modules.
    */
   public PoseEstimatorOdometryStrategy(
       Rotation2d gyroAngle,
@@ -41,16 +42,16 @@ public class PoseEstimatorOdometryStrategy implements OdometryStrategy {
       Matrix<N3, N1> stateStdDevs,
       Matrix<N1, N1> localMeasurementStdDevs,
       Matrix<N3, N1> visionMeasurementStdDevs,
-      double nominalDtSeconds) {
+      double nominalDtSeconds,
+      SwerveModulePosition... modulePositions) {
     odometry =
         new SwerveDrivePoseEstimator(
-            gyroAngle,
-            initialPoseMeters,
             kinematics,
+            gyroAngle,
+            modulePositions,
+            initialPoseMeters,
             stateStdDevs,
-            localMeasurementStdDevs,
-            visionMeasurementStdDevs,
-            nominalDtSeconds);
+            visionMeasurementStdDevs);
   }
 
   /**
@@ -75,7 +76,8 @@ public class PoseEstimatorOdometryStrategy implements OdometryStrategy {
       SwerveDriveKinematics kinematics,
       Matrix<N3, N1> stateStdDevs,
       Matrix<N1, N1> localMeasurementStdDevs,
-      Matrix<N3, N1> visionMeasurementStdDevs) {
+      Matrix<N3, N1> visionMeasurementStdDevs,
+      SwerveModulePosition... modulePositions) {
     this(
         gyroAngle,
         initialPoseMeters,
@@ -83,7 +85,8 @@ public class PoseEstimatorOdometryStrategy implements OdometryStrategy {
         stateStdDevs,
         localMeasurementStdDevs,
         visionMeasurementStdDevs,
-        0.02);
+        0.02,
+        modulePositions);
   }
 
   /**
@@ -152,18 +155,19 @@ public class PoseEstimatorOdometryStrategy implements OdometryStrategy {
   }
 
   @Override
-  public void resetPosition(Pose2d pose, Rotation2d gyroAngle) {
-    odometry.resetPosition(pose, gyroAngle);
+  public void resetPosition(
+      Pose2d pose, Rotation2d gyroAngle, SwerveModulePosition... modulePositions) {
+    odometry.resetPosition(gyroAngle, modulePositions, pose);
   }
 
   @Override
-  public Pose2d update(Rotation2d gyroAngle, SwerveModuleState... moduleStates) {
-    return odometry.update(gyroAngle, moduleStates);
+  public Pose2d update(Rotation2d gyroAngle, SwerveModulePosition... modulePositions) {
+    return odometry.update(gyroAngle, modulePositions);
   }
 
-  @Override
-  public Pose2d updateWithTime(
-      double currentTimeSeconds, Rotation2d gyroAngle, SwerveModuleState... moduleStates) {
-    return odometry.updateWithTime(currentTimeSeconds, gyroAngle, moduleStates);
-  }
+  // @Override
+  // public Pose2d updateWithTime(
+  //     double currentTimeSeconds, Rotation2d gyroAngle, SwerveModuleState... moduleStates) {
+  //   return odometry.updateWithTime(currentTimeSeconds, gyroAngle, moduleStates);
+  // }
 }

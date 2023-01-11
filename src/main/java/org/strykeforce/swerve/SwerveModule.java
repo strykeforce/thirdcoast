@@ -2,6 +2,7 @@ package org.strykeforce.swerve;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import org.strykeforce.telemetry.Registrable;
 
@@ -28,6 +29,13 @@ public interface SwerveModule extends Registrable {
    * @return current state of the swerve module
    */
   SwerveModuleState getState();
+
+  /**
+   * Gets the current position of the swerve module.
+   *
+   * @return current position of the swerve module
+   */
+  SwerveModulePosition getPosition();
 
   /**
    * Command the swerve module motors to the desired state.

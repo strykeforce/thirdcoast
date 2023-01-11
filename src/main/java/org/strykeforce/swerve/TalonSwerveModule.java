@@ -9,6 +9,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Preferences;
@@ -61,6 +62,7 @@ public class TalonSwerveModule implements SwerveModule {
     driveDeadbandMetersPerSecond = builder.driveDeadbandMetersPerSecond;
     driveMaximumMetersPerSecond = builder.driveMaximumMetersPerSecond;
     wheelLocationMeters = builder.wheelLocationMeters;
+    driveTalon.setSelectedSensorPosition(0.0);
   }
 
   @Override
@@ -82,6 +84,13 @@ public class TalonSwerveModule implements SwerveModule {
     double speedMetersPerSecond = getDriveMetersPerSecond();
     Rotation2d angle = getAzimuthRotation2d();
     return new SwerveModuleState(speedMetersPerSecond, angle);
+  }
+
+  @Override
+  public SwerveModulePosition getPosition() {
+    double wheelPositionMeters = getDrivePositionMeters();
+    Rotation2d angle = getAzimuthRotation2d();
+    return new SwerveModulePosition(wheelPositionMeters, angle);
   }
 
   @Override
@@ -190,6 +199,14 @@ public class TalonSwerveModule implements SwerveModule {
     double wheelRotationsPer100ms = motorRotationsPer100ms * driveGearRatio;
     double metersPer100ms = wheelRotationsPer100ms * wheelCircumferenceMeters;
     return metersPer100ms * k100msPerSecond;
+  }
+
+  private double getDrivePositionMeters() {
+    double encoderTicks = driveTalon.getSelectedSensorPosition();
+    double motorPositionTicks = encoderTicks / driveCountsPerRev;
+    double wheelPositionTicks = motorPositionTicks * driveGearRatio;
+    double wheelPositionMeters = wheelPositionTicks * wheelCircumferenceMeters;
+    return wheelPositionMeters;
   }
 
   private void setDriveOpenLoopMetersPerSecond(double metersPerSecond) {
