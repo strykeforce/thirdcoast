@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.strykeforce.swerve.TestConstants.kDriveGearRatio;
@@ -78,7 +79,7 @@ class TalonSwerveModuleTest {
             .build();
     when(driveTalon.setSelectedSensorPosition(0)).thenReturn(ErrorCode.valueOf(0));
     module.resetDriveEncoder();
-    verify(driveTalon).setSelectedSensorPosition(0);
+    verify(driveTalon, times(2)).setSelectedSensorPosition(0);
   }
 
   @Nested

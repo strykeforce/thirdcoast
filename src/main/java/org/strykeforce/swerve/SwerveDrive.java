@@ -193,7 +193,13 @@ public class SwerveDrive implements Registrable {
    * @param pose The robot's actual position on the field.
    */
   public void resetOdometry(Pose2d pose) {
-    odometry.resetPosition(pose, gyro.getRotation2d().rotateBy(gyroOffset));
+    odometry.resetPosition(
+        pose,
+        gyro.getRotation2d().rotateBy(gyroOffset),
+        swerveModules[0].getPosition(),
+        swerveModules[1].getPosition(),
+        swerveModules[2].getPosition(),
+        swerveModules[3].getPosition());
     resetDriveEncoders();
   }
 
