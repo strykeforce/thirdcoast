@@ -62,7 +62,7 @@ public class TalonSwerveModule implements SwerveModule {
     driveDeadbandMetersPerSecond = builder.driveDeadbandMetersPerSecond;
     driveMaximumMetersPerSecond = builder.driveMaximumMetersPerSecond;
     wheelLocationMeters = builder.wheelLocationMeters;
-    driveTalon.setSelectedSensorPosition(0.0);
+    resetDriveEncoder();
   }
 
   @Override

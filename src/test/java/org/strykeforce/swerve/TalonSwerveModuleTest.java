@@ -53,6 +53,8 @@ class TalonSwerveModuleTest {
   void shouldSetEncoderCountsPerRev() {
     TalonSRX talonSRX = mock(TalonSRX.class);
     TalonFX talonFX = mock(TalonFX.class);
+    when(talonSRX.setSelectedSensorPosition(0)).thenReturn(ErrorCode.valueOf(0));
+    when(talonFX.setSelectedSensorPosition(0)).thenReturn(ErrorCode.valueOf(0));
     TalonSwerveModule.Builder builder =
         new TalonSwerveModule.Builder()
             .azimuthTalon(talonSRX)
@@ -68,6 +70,7 @@ class TalonSwerveModuleTest {
   @DisplayName("Should reset drive encoder")
   void resetDriveEncoder() {
     TalonSRX driveTalon = mock(TalonSRX.class);
+    when(driveTalon.setSelectedSensorPosition(0)).thenReturn(ErrorCode.valueOf(0));
     TalonSwerveModule module =
         new TalonSwerveModule.Builder()
             .azimuthTalon(mock(TalonSRX.class))
@@ -77,7 +80,6 @@ class TalonSwerveModuleTest {
             .driveMaximumMetersPerSecond(kMaxSpeedMetersPerSecond)
             .wheelLocationMeters(new Translation2d())
             .build();
-    when(driveTalon.setSelectedSensorPosition(0)).thenReturn(ErrorCode.valueOf(0));
     module.resetDriveEncoder();
     verify(driveTalon, times(2)).setSelectedSensorPosition(0);
   }
@@ -95,6 +97,7 @@ class TalonSwerveModuleTest {
     void setUp() {
       azimuthTalon = mock(TalonSRX.class);
       driveTalon = mock(TalonFX.class);
+      when(driveTalon.setSelectedSensorPosition(0)).thenReturn(ErrorCode.valueOf(0));
       module =
           new TalonSwerveModule.Builder()
               .azimuthTalon(azimuthTalon)
@@ -209,6 +212,7 @@ class TalonSwerveModuleTest {
     void setUp() {
       azimuthTalon = mock(TalonSRX.class);
       driveTalon = mock(TalonFX.class);
+      when(driveTalon.setSelectedSensorPosition(0)).thenReturn(ErrorCode.valueOf(0));
     }
 
     @Test
@@ -291,6 +295,7 @@ class TalonSwerveModuleTest {
     void setUp() {
       azimuthTalon = mock(TalonSRX.class);
       driveTalon = mock(TalonFX.class);
+      when(driveTalon.setSelectedSensorPosition(0)).thenReturn(ErrorCode.valueOf(0));
     }
 
     @Test
@@ -442,6 +447,7 @@ class TalonSwerveModuleTest {
     void setUp() {
       azimuthTalon = mock(TalonSRX.class);
       driveTalon = mock(TalonFX.class);
+      when(driveTalon.setSelectedSensorPosition(0)).thenReturn(ErrorCode.valueOf(0));
     }
 
     @ParameterizedTest
