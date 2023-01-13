@@ -20,6 +20,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Preferences;
@@ -613,6 +614,61 @@ class TalonSwerveModuleTest {
       assertEquals(countsExpected, captor.getValue(), 0.5);
       verify(driveTalon).set(eq(ControlMode.PercentOutput), captor.capture());
       assertEquals(reversed ? -drivePercentOutput : drivePercentOutput, captor.getValue(), 1e-6);
+    }
+  }
+
+  @Nested
+  @DisplayName("Should get module position")
+  class TestShouldGetModulePosition {
+
+    private TalonSRX azimuthTalon;
+    private TalonFX driveTalon;
+
+    @BeforeEach
+    void setUp() {
+      azimuthTalon = mock(TalonSRX.class);
+      driveTalon = mock(TalonFX.class);
+      when(driveTalon.setSelectedSensorPosition(0)).thenReturn(ErrorCode.valueOf(0));
+    }
+
+    @Test
+    @DisplayName("drive position with default encoder counts")
+    void positionWithDefaultEncoderCounts() {
+      TalonSwerveModule module =
+          new TalonSwerveModule.Builder()
+              .azimuthTalon(azimuthTalon)
+              .driveTalon(driveTalon)
+              .driveGearRatio(kDriveGearRatio)
+              .wheelDiameterInches(kWheelDiameterInches)
+              .driveMaximumMetersPerSecond(kMaxSpeedMetersPerSecond)
+              .wheelLocationMeters(new Translation2d())
+              .build();
+      when(driveTalon.getSelectedSensorPosition()).thenReturn(20480.0);
+      SwerveModulePosition position = module.getPosition();
+      assertEquals(0.365733744755412, position.distanceMeters, 1e-9);
+    }
+
+    @ParameterizedTest
+    @CsvSource({"2048, 20480, 0.365733744755412", "4096, 40960, 0.365733744755412"})
+    @DisplayName("drive speed with encoder counts")
+    void positionWithEncoderCounts(
+        int driveEncoderCountsPerRevolution,
+        double driveSelectedSensorPosition,
+        double expectedMeters) {
+      TalonSwerveModule module =
+          new TalonSwerveModule.Builder()
+              .azimuthTalon(azimuthTalon)
+              .driveTalon(driveTalon)
+              //              .azimuthEncoderCountsPerRevolution(4096)
+              .driveEncoderCountsPerRevolution(driveEncoderCountsPerRevolution)
+              .driveGearRatio(kDriveGearRatio)
+              .wheelDiameterInches(kWheelDiameterInches)
+              .driveMaximumMetersPerSecond(kMaxSpeedMetersPerSecond)
+              .wheelLocationMeters(new Translation2d())
+              .build();
+      when(driveTalon.getSelectedSensorPosition()).thenReturn(driveSelectedSensorPosition);
+      SwerveModulePosition position = module.getPosition();
+      assertEquals(expectedMeters, position.distanceMeters, 1e-9);
     }
   }
 }
