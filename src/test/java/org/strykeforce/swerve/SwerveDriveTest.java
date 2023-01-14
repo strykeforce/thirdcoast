@@ -9,6 +9,7 @@ import static org.strykeforce.swerve.TestConstants.kWheelLocations;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,6 +31,7 @@ class SwerveDriveTest {
       swerveModules[i] = mock(SwerveModule.class);
       when(swerveModules[i].getWheelLocationMeters()).thenReturn(kWheelLocations[i]);
       when(swerveModules[i].getMaxSpeedMetersPerSecond()).thenReturn(kMaxSpeedMetersPerSecond);
+      when(swerveModules[i].getPosition()).thenReturn(new SwerveModulePosition());
     }
     gyro = mock(Gyro.class);
   }
@@ -150,7 +152,8 @@ class SwerveDriveTest {
     swerveDrive.periodic();
     verify(gyro, times(2)).getRotation2d();
     for (int i = 0; i < 4; i++) {
-      verify(swerveModules[i]).getState();
+      // verify(swerveModules[i]).getState();
+      verify(swerveModules[i], times(2)).getPosition();
     }
   }
 
