@@ -200,7 +200,6 @@ public class SwerveDrive implements Registrable {
         swerveModules[1].getPosition(),
         swerveModules[2].getPosition(),
         swerveModules[3].getPosition());
-    resetDriveEncoders();
   }
 
   /** Resets the drive encoders to currently read a position of 0. */
