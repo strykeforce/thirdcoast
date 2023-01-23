@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.strykeforce.swerve.TestConstants.kDriveGearRatio;
@@ -19,6 +20,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Preferences;
@@ -52,6 +54,8 @@ class TalonSwerveModuleTest {
   void shouldSetEncoderCountsPerRev() {
     TalonSRX talonSRX = mock(TalonSRX.class);
     TalonFX talonFX = mock(TalonFX.class);
+    when(talonSRX.setSelectedSensorPosition(0)).thenReturn(ErrorCode.valueOf(0));
+    when(talonFX.setSelectedSensorPosition(0)).thenReturn(ErrorCode.valueOf(0));
     TalonSwerveModule.Builder builder =
         new TalonSwerveModule.Builder()
             .azimuthTalon(talonSRX)
@@ -67,6 +71,7 @@ class TalonSwerveModuleTest {
   @DisplayName("Should reset drive encoder")
   void resetDriveEncoder() {
     TalonSRX driveTalon = mock(TalonSRX.class);
+    when(driveTalon.setSelectedSensorPosition(0)).thenReturn(ErrorCode.valueOf(0));
     TalonSwerveModule module =
         new TalonSwerveModule.Builder()
             .azimuthTalon(mock(TalonSRX.class))
@@ -76,9 +81,8 @@ class TalonSwerveModuleTest {
             .driveMaximumMetersPerSecond(kMaxSpeedMetersPerSecond)
             .wheelLocationMeters(new Translation2d())
             .build();
-    when(driveTalon.setSelectedSensorPosition(0)).thenReturn(ErrorCode.valueOf(0));
     module.resetDriveEncoder();
-    verify(driveTalon).setSelectedSensorPosition(0);
+    verify(driveTalon, times(2)).setSelectedSensorPosition(0);
   }
 
   @Nested
@@ -94,6 +98,7 @@ class TalonSwerveModuleTest {
     void setUp() {
       azimuthTalon = mock(TalonSRX.class);
       driveTalon = mock(TalonFX.class);
+      when(driveTalon.setSelectedSensorPosition(0)).thenReturn(ErrorCode.valueOf(0));
       module =
           new TalonSwerveModule.Builder()
               .azimuthTalon(azimuthTalon)
@@ -208,6 +213,7 @@ class TalonSwerveModuleTest {
     void setUp() {
       azimuthTalon = mock(TalonSRX.class);
       driveTalon = mock(TalonFX.class);
+      when(driveTalon.setSelectedSensorPosition(0)).thenReturn(ErrorCode.valueOf(0));
     }
 
     @Test
@@ -290,6 +296,7 @@ class TalonSwerveModuleTest {
     void setUp() {
       azimuthTalon = mock(TalonSRX.class);
       driveTalon = mock(TalonFX.class);
+      when(driveTalon.setSelectedSensorPosition(0)).thenReturn(ErrorCode.valueOf(0));
     }
 
     @Test
@@ -441,6 +448,7 @@ class TalonSwerveModuleTest {
     void setUp() {
       azimuthTalon = mock(TalonSRX.class);
       driveTalon = mock(TalonFX.class);
+      when(driveTalon.setSelectedSensorPosition(0)).thenReturn(ErrorCode.valueOf(0));
     }
 
     @ParameterizedTest
@@ -606,6 +614,61 @@ class TalonSwerveModuleTest {
       assertEquals(countsExpected, captor.getValue(), 0.5);
       verify(driveTalon).set(eq(ControlMode.PercentOutput), captor.capture());
       assertEquals(reversed ? -drivePercentOutput : drivePercentOutput, captor.getValue(), 1e-6);
+    }
+  }
+
+  @Nested
+  @DisplayName("Should get module position")
+  class TestShouldGetModulePosition {
+
+    private TalonSRX azimuthTalon;
+    private TalonFX driveTalon;
+
+    @BeforeEach
+    void setUp() {
+      azimuthTalon = mock(TalonSRX.class);
+      driveTalon = mock(TalonFX.class);
+      when(driveTalon.setSelectedSensorPosition(0)).thenReturn(ErrorCode.valueOf(0));
+    }
+
+    @Test
+    @DisplayName("drive position with default encoder counts")
+    void positionWithDefaultEncoderCounts() {
+      TalonSwerveModule module =
+          new TalonSwerveModule.Builder()
+              .azimuthTalon(azimuthTalon)
+              .driveTalon(driveTalon)
+              .driveGearRatio(kDriveGearRatio)
+              .wheelDiameterInches(kWheelDiameterInches)
+              .driveMaximumMetersPerSecond(kMaxSpeedMetersPerSecond)
+              .wheelLocationMeters(new Translation2d())
+              .build();
+      when(driveTalon.getSelectedSensorPosition()).thenReturn(20480.0);
+      SwerveModulePosition position = module.getPosition();
+      assertEquals(0.365733744755412, position.distanceMeters, 1e-9);
+    }
+
+    @ParameterizedTest
+    @CsvSource({"2048, 20480, 0.365733744755412", "4096, 40960, 0.365733744755412"})
+    @DisplayName("drive speed with encoder counts")
+    void positionWithEncoderCounts(
+        int driveEncoderCountsPerRevolution,
+        double driveSelectedSensorPosition,
+        double expectedMeters) {
+      TalonSwerveModule module =
+          new TalonSwerveModule.Builder()
+              .azimuthTalon(azimuthTalon)
+              .driveTalon(driveTalon)
+              //              .azimuthEncoderCountsPerRevolution(4096)
+              .driveEncoderCountsPerRevolution(driveEncoderCountsPerRevolution)
+              .driveGearRatio(kDriveGearRatio)
+              .wheelDiameterInches(kWheelDiameterInches)
+              .driveMaximumMetersPerSecond(kMaxSpeedMetersPerSecond)
+              .wheelLocationMeters(new Translation2d())
+              .build();
+      when(driveTalon.getSelectedSensorPosition()).thenReturn(driveSelectedSensorPosition);
+      SwerveModulePosition position = module.getPosition();
+      assertEquals(expectedMeters, position.distanceMeters, 1e-9);
     }
   }
 }

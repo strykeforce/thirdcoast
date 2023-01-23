@@ -14,8 +14,8 @@
     {
 
       devShells.aarch64-darwin.default = pkgs.mkShell {
-        nativeBuildInputs = with pkgs-x86; [
-          jdk11_headless
+        nativeBuildInputs = with pkgs; [
+          jdk17_headless
         ];
       };
 

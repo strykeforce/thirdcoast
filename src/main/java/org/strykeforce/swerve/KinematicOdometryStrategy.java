@@ -4,7 +4,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 
 /** The default odometry strategy that wraps a {@code SwerveDriveOdometry}. */
 public class KinematicOdometryStrategy implements OdometryStrategy {
@@ -12,12 +12,19 @@ public class KinematicOdometryStrategy implements OdometryStrategy {
   private final SwerveDriveOdometry odometry;
 
   public KinematicOdometryStrategy(
-      SwerveDriveKinematics kinematics, Rotation2d gyroAngle, Pose2d initialPose) {
-    this.odometry = new SwerveDriveOdometry(kinematics, gyroAngle, initialPose);
+      SwerveDriveKinematics kinematics,
+      Pose2d initialPose,
+      Rotation2d gyroAngle,
+      SwerveModulePosition... swerveModulePositions) {
+    this.odometry =
+        new SwerveDriveOdometry(kinematics, gyroAngle, swerveModulePositions, initialPose);
   }
 
-  public KinematicOdometryStrategy(SwerveDriveKinematics kinematics, Rotation2d gyroAngle) {
-    this(kinematics, gyroAngle, new Pose2d());
+  public KinematicOdometryStrategy(
+      SwerveDriveKinematics kinematics,
+      Rotation2d gyroAngle,
+      SwerveModulePosition... swerveModulePositions) {
+    this(kinematics, new Pose2d(), gyroAngle, swerveModulePositions);
   }
 
   @Override
@@ -26,18 +33,19 @@ public class KinematicOdometryStrategy implements OdometryStrategy {
   }
 
   @Override
-  public void resetPosition(Pose2d pose, Rotation2d gyroAngle) {
-    odometry.resetPosition(pose, gyroAngle);
+  public void resetPosition(
+      Pose2d pose, Rotation2d gyroAngle, SwerveModulePosition... swerveModulePositions) {
+    odometry.resetPosition(gyroAngle, swerveModulePositions, pose);
   }
 
   @Override
-  public Pose2d update(Rotation2d gyroAngle, SwerveModuleState... moduleStates) {
-    return odometry.update(gyroAngle, moduleStates);
+  public Pose2d update(Rotation2d gyroAngle, SwerveModulePosition... modulePositions) {
+    return odometry.update(gyroAngle, modulePositions);
   }
 
-  @Override
-  public Pose2d updateWithTime(
-      double currentTimeSeconds, Rotation2d gyroAngle, SwerveModuleState... moduleStates) {
-    return odometry.updateWithTime(currentTimeSeconds, gyroAngle, moduleStates);
-  }
+  // @Override
+  // public Pose2d updateWithTime(
+  //     double currentTimeSeconds, Rotation2d gyroAngle, SwerveModuleState... moduleStates) {
+  //   return odometry.updateWithTime(currentTimeSeconds, gyroAngle, moduleStates);
+  // }
 }
