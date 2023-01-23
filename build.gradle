@@ -133,7 +133,7 @@ publishing {
 
     repositories {
         maven {
-            url "s3://maven.strykeforce.org/repo"
+            url "s3://packages.strykeforce.org/repo"
             credentials(AwsCredentials) {
                 accessKey "${System.getenv("STRYKEFORCE_AWS_KEY")}"
                 secretKey "${System.getenv("STRYKEFORCE_AWS_SECRET")}"
