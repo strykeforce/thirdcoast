@@ -91,7 +91,7 @@ dependencies {
 
 compileKotlin {
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = "17"
 
         // For creation of default methods in interfaces
         freeCompilerArgs += "-Xjvm-default=all"
@@ -100,7 +100,7 @@ compileKotlin {
 
 compileTestKotlin {
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = "17"
 
         // For creation of default methods in interfaces
         freeCompilerArgs += "-Xjvm-default=all"

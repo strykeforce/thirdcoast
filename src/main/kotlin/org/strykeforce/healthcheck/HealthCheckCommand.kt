@@ -2,54 +2,51 @@ package org.strykeforce.healthcheck
 
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.Subsystem
+import edu.wpi.first.wpilibj2.command.button.InternalButton
 import mu.KotlinLogging
+import org.strykeforce.healthcheck.checks.CommandVisitor
+import org.strykeforce.healthcheck.checks.DumpVisitor
+import org.strykeforce.healthcheck.checks.RobotHealthCheck
+import org.strykeforce.healthcheck.checks.RobotHealthCheckBuilder
+import kotlin.system.exitProcess
 
 private val logger = KotlinLogging.logger {}
 
 class HealthCheckCommand(vararg subsystems: Subsystem) : Command {
 
-    init {
-        require(subsystems.isNotEmpty()) {
-            throw IllegalArgumentException("at least one Subsystem must be provided")
-        }
+    companion object {
+        @JvmField
+        val BUTTON = InternalButton()
     }
 
-    private val subsystemSet = subsystems.toMutableSet()
+
+    private val robotHealthCheck: RobotHealthCheck = RobotHealthCheckBuilder(*subsystems).build()
+
     private var isFinished: Boolean = false
 
-    private val healthChecks: List<SubsystemHealthCheck> =
-        subsystems.map { SubsystemHealthCheck(it) }
+    private var reportServer = ReportServer()
 
-    private lateinit var healthChecksIterator: Iterator<SubsystemHealthCheck>
-
-    private lateinit var currentHealthCheck: SubsystemHealthCheck
-
+    private val subsystemSet = subsystems.toSet()
     override fun getRequirements() = subsystemSet
 
     override fun initialize() {
-        healthChecks.forEach { it.initialize() }
-        healthChecksIterator = healthChecks.iterator()
-        currentHealthCheck = healthChecksIterator.next()
-        isFinished = false
+        DumpVisitor().visit(robotHealthCheck)
+        robotHealthCheck.initialize()
+        BUTTON.setPressed(false)
     }
 
     override fun execute() {
-        logger.debug { "execute: current is $currentHealthCheck, finished = ${currentHealthCheck.isFinished}" }
-        if (currentHealthCheck.isFinished) {
-            logger.debug { "execute: $currentHealthCheck is finished" }
-            if (healthChecksIterator.hasNext()) {
-                currentHealthCheck = healthChecksIterator.next()
-                logger.debug { "execute: iterator has next, current = $currentHealthCheck" }
-            } else {
-                logger.debug { "execute: $this is finished" }
-                isFinished = true
-            }
+        if (robotHealthCheck.isFinished) {
+            isFinished = true
             return
         }
-        currentHealthCheck.execute()
+        robotHealthCheck.execute()
     }
 
     override fun isFinished() = isFinished
 
-    override fun runsWhenDisabled() = true
+    override fun end(interrupted: Boolean) {
+    }
+
+    override fun runsWhenDisabled() = false
 }

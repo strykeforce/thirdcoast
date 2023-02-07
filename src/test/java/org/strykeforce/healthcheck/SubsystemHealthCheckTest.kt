@@ -10,17 +10,17 @@ internal class SubsystemHealthCheckTest {
 
     @Test
     fun `health check on non-talon class throws exception`() {
-        assertThrows(IllegalArgumentException::class.java) { SubsystemHealthCheck(NonTalonSubsystem()) }
+        assertThrows(IllegalArgumentException::class.java) { LegacySubsystemHealthCheck(NonTalonSubsystem()) }
     }
 
     @Test
     fun `health check on null talon throws exception`() {
-        assertThrows(IllegalArgumentException::class.java) { SubsystemHealthCheck(NullTalonSubsystem()) }
+        assertThrows(IllegalArgumentException::class.java) { LegacySubsystemHealthCheck(NullTalonSubsystem()) }
     }
 
     @Test
     fun `health check on empty subsystem is finished`() {
-        val shc = SubsystemHealthCheck(EmptySubsystem())
+        val shc = LegacySubsystemHealthCheck(EmptySubsystem())
         assertTrue(shc.isFinished)
     }
 
