@@ -1,4 +1,4 @@
-package org.strykeforce.healthcheck.checks
+package org.strykeforce.healthcheck.internal
 
 import com.ctre.phoenix.motorcontrol.can.BaseTalon
 import edu.wpi.first.wpilibj2.command.Subsystem

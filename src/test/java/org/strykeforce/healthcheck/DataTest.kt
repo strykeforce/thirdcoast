@@ -2,6 +2,8 @@ package org.strykeforce.healthcheck
 
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
+import org.strykeforce.healthcheck.internal.DiagnosticLimits
+import org.strykeforce.healthcheck.internal.limitsFor
 
 internal class DataTest {
 

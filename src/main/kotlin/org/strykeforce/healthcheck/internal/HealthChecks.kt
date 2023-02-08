@@ -1,10 +1,9 @@
-package org.strykeforce.healthcheck.checks
+package org.strykeforce.healthcheck.internal
 
 import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.can.BaseTalon
 import edu.wpi.first.wpilibj.RobotController
 import mu.KotlinLogging
-import org.strykeforce.healthcheck.DataPoint
 
 interface HealthCheck {
     val name: String
@@ -110,6 +109,8 @@ abstract class TalonHealthCheckCase(
 
     private var start = 0L
 
+    val data = HealthCheckData()
+
     override fun accept(visitor: HealthCheckVisitor) {
         visitor.visit(this)
     }
@@ -125,10 +126,10 @@ abstract class TalonHealthCheckCase(
     abstract fun setTalon(talon: BaseTalon)
 
     fun measure() {
-        val dataPoint = DataPoint(
-            talon.motorOutputVoltage, talon.selectedSensorVelocity, talon.supplyCurrent, talon.statorCurrent,
-        )
-        logger.info { dataPoint.toString() }
+        data.voltage.add(talon.motorOutputVoltage)
+        data.speed.add(talon.selectedSensorVelocity)
+        data.supplyCurrent.add(talon.supplyCurrent)
+        data.statorCurrent.add(talon.statorCurrent)
     }
 
     override fun execute() {

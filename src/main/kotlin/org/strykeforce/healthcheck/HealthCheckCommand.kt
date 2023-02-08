@@ -4,11 +4,7 @@ import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.Subsystem
 import edu.wpi.first.wpilibj2.command.button.InternalButton
 import mu.KotlinLogging
-import org.strykeforce.healthcheck.checks.CommandVisitor
-import org.strykeforce.healthcheck.checks.DumpVisitor
-import org.strykeforce.healthcheck.checks.RobotHealthCheck
-import org.strykeforce.healthcheck.checks.RobotHealthCheckBuilder
-import kotlin.system.exitProcess
+import org.strykeforce.healthcheck.internal.*
 
 private val logger = KotlinLogging.logger {}
 
@@ -30,7 +26,6 @@ class HealthCheckCommand(vararg subsystems: Subsystem) : Command {
     override fun getRequirements() = subsystemSet
 
     override fun initialize() {
-        DumpVisitor().visit(robotHealthCheck)
         robotHealthCheck.initialize()
         BUTTON.setPressed(false)
     }
@@ -46,6 +41,8 @@ class HealthCheckCommand(vararg subsystems: Subsystem) : Command {
     override fun isFinished() = isFinished
 
     override fun end(interrupted: Boolean) {
+        DumpVisitor().visit(robotHealthCheck)
+        isFinished = false
     }
 
     override fun runsWhenDisabled() = false
