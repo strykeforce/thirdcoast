@@ -4,6 +4,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.can.BaseTalon
 import edu.wpi.first.wpilibj.RobotController
 import mu.KotlinLogging
+import kotlin.math.abs
 
 interface HealthCheck {
     val name: String
@@ -24,7 +25,6 @@ abstract class HealthCheckCollection(override val name: String, val healthChecks
     override var isFinished = false
 
     override fun initialize() {
-        healthChecks.forEach(HealthCheck::initialize)
         iterator = healthChecks.iterator()
         if (!iterator.hasNext()) {
             logger.error { "no health checks assigned" }
@@ -32,6 +32,7 @@ abstract class HealthCheckCollection(override val name: String, val healthChecks
             return
         }
         current = iterator.next()
+        current.initialize()
         isFinished = false
     }
 
@@ -39,6 +40,7 @@ abstract class HealthCheckCollection(override val name: String, val healthChecks
         if (current.isFinished) {
             if (iterator.hasNext()) {
                 current = iterator.next()
+                current.initialize()
             } else {
                 isFinished = true
             }
@@ -97,11 +99,26 @@ class TalonTimedHealthCheck(
     }
 }
 
+class TalonPositionHealthCheck(
+    talon: BaseTalon,
+    healthChecks: List<HealthCheck>,
+    val percentOutput: DoubleArray,
+    val encoderChange: Int,
+    val limits: DoubleArray?
+) : TalonHealthCheck(talon, healthChecks) {
+    override fun toString(): String {
+        return "TalonPositionHealthCheck(" +
+                "talon=${talon.deviceID}, " +
+                "encoderChange=$encoderChange, " +
+                "limits=${limits?.contentToString()}" +
+                ")"
+    }
+}
+
 abstract class TalonHealthCheckCase(
     val talon: BaseTalon,
     val isReversing: Boolean
 ) : HealthCheck {
-    private val logger = KotlinLogging.logger {}
 
     override var isFinished = false
 
@@ -119,6 +136,10 @@ abstract class TalonHealthCheckCase(
         state = State.INITIALIZING
         isFinished = false
         start = 0
+    }
+
+    open fun reset() {
+
     }
 
     abstract fun isRunning(elapsed: Long): Boolean
@@ -178,6 +199,7 @@ class TalonTimedHealthCheckCase(
 ) : TalonHealthCheckCase(talon, (previousCase?.percentOutput ?: 0.0) * percentOutput < 0.0) {
 
     override val name = "TalonTimedHealthCheckCase: ${percentOutput * 100} percent output"
+
     override fun isRunning(elapsed: Long) = elapsed > duration
 
     override fun setTalon(talon: BaseTalon) {
@@ -191,6 +213,42 @@ class TalonTimedHealthCheckCase(
                 "isReversing=$isReversing" +
                 ")"
     }
+}
 
 
+class TalonPositionHealthCheckCase(
+    previousCase: TalonPositionHealthCheckCase?,
+    talon: BaseTalon,
+    val percentOutput: Double,
+    val encoderChange: Int
+) : TalonHealthCheckCase(talon, (previousCase?.percentOutput ?: 0.0) * percentOutput < 0.0) {
+
+    private val logger = KotlinLogging.logger {}
+
+    override val name = "TalonPositionHealthCheckCase: ${percentOutput * 100} percent output"
+
+    private var encoderStart: Int = 0
+
+    override fun initialize() {
+        super.initialize()
+        encoderStart = talon.selectedSensorPosition.toInt()
+    }
+
+    override fun isRunning(elapsed: Long):Boolean {
+        val encoderCurrent = talon.selectedSensorPosition.toInt()
+        return abs(encoderCurrent - encoderStart) >= encoderChange
+    }
+
+    override fun setTalon(talon: BaseTalon) {
+        talon.set(ControlMode.PercentOutput, percentOutput)
+    }
+
+
+    override fun toString(): String {
+        return "TalonPositionHealthCheckCase(" +
+                "percentOutput=$percentOutput, " +
+                "encoderChange=$encoderChange, " +
+                "isReversing=$isReversing" +
+                ")"
+    }
 }

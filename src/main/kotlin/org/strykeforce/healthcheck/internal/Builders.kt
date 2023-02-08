@@ -59,15 +59,15 @@ class TalonHealthCheckBuilder(val subsystem: Subsystem, val field: Field) {
             return builder.build()
         }
 
-        /*
+
         if (positionAnnotation != null) {
             val builder = TalonPositionHealthCheckBuilder(talon)
             builder.percentOutput = positionAnnotation.percentOutput
             builder.encoderChange = positionAnnotation.encoderChange
             return builder.build()
         }
-        */
 
+        // default to timed check if not specified
         return TalonTimedHealthCheckBuilder(talon).build()
     }
 }
@@ -87,11 +87,12 @@ class TalonTimedHealthCheckBuilder(val talon: BaseTalon) {
                 case
             }
         }
+
         return TalonTimedHealthCheck(talon, cases, percentOutput, duration, doubleArrayOf())
     }
 }
 
-/*
+
 class TalonPositionHealthCheckBuilder(val talon: BaseTalon) {
     var percentOutput = doubleArrayOf(0.25, -0.25)
     var encoderChange = 0
@@ -99,8 +100,16 @@ class TalonPositionHealthCheckBuilder(val talon: BaseTalon) {
 
     fun build(): TalonHealthCheck {
         if (encoderChange == 0) logger.warn { "Talon ${talon.deviceID}: position health check encoderChange is zero" }
-        return TalonPositionHealthCheck(talon, percentOutput, encoderChange, limits)
+
+        val cases = percentOutput.let {
+            var previousCase: TalonPositionHealthCheckCase? = null
+            it.map { pctOut ->
+                val case = TalonPositionHealthCheckCase(previousCase, talon, pctOut, encoderChange)
+                previousCase = case
+                case
+            }
+        }
+
+        return TalonPositionHealthCheck(talon, cases, percentOutput, encoderChange, limits)
     }
 }
-
- */

@@ -45,5 +45,5 @@ class HealthCheckCommand(vararg subsystems: Subsystem) : Command {
         isFinished = false
     }
 
-    override fun runsWhenDisabled() = false
+    override fun runsWhenDisabled() = true
 }
