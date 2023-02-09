@@ -138,10 +138,6 @@ abstract class TalonHealthCheckCase(
         start = 0
     }
 
-    open fun reset() {
-
-    }
-
     abstract fun isRunning(elapsed: Long): Boolean
 
     abstract fun setTalon(talon: BaseTalon)
@@ -222,8 +218,6 @@ class TalonPositionHealthCheckCase(
     val percentOutput: Double,
     val encoderChange: Int
 ) : TalonHealthCheckCase(talon, (previousCase?.percentOutput ?: 0.0) * percentOutput < 0.0) {
-
-    private val logger = KotlinLogging.logger {}
 
     override val name = "TalonPositionHealthCheckCase: ${percentOutput * 100} percent output"
 
