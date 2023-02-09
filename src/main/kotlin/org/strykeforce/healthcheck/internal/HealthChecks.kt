@@ -89,15 +89,7 @@ class TalonTimedHealthCheck(
     val percentOutput: DoubleArray,
     val duration: Double,
     val limits: DoubleArray?
-) : TalonHealthCheck(talon, healthChecks) {
-    override fun toString(): String {
-        return "TalonTimedHealthCheck(" +
-                "talon=${talon.deviceID}, " +
-                "duration=$duration, " +
-                "limits=${limits?.contentToString()}" +
-                ")"
-    }
-}
+) : TalonHealthCheck(talon, healthChecks)
 
 class TalonPositionHealthCheck(
     talon: BaseTalon,
@@ -105,15 +97,9 @@ class TalonPositionHealthCheck(
     val percentOutput: DoubleArray,
     val encoderChange: Int,
     val limits: DoubleArray?
-) : TalonHealthCheck(talon, healthChecks) {
-    override fun toString(): String {
-        return "TalonPositionHealthCheck(" +
-                "talon=${talon.deviceID}, " +
-                "encoderChange=$encoderChange, " +
-                "limits=${limits?.contentToString()}" +
-                ")"
-    }
-}
+) : TalonHealthCheck(talon, healthChecks)
+
+class TalonFollowerHealthCheck(talon: BaseTalon, val leaderId: Int) : TalonHealthCheck(talon, listOf())
 
 abstract class TalonHealthCheckCase(
     val talon: BaseTalon,
@@ -126,7 +112,9 @@ abstract class TalonHealthCheckCase(
 
     private var start = 0L
 
-    val data = HealthCheckData()
+    val data = mutableListOf(TalonHealthCheckData(talon))
+
+    fun addFollowerTalon(talon: BaseTalon) = data.add(TalonHealthCheckData(talon))
 
     override fun accept(visitor: HealthCheckVisitor) {
         visitor.visit(this)
@@ -142,12 +130,7 @@ abstract class TalonHealthCheckCase(
 
     abstract fun setTalon(talon: BaseTalon)
 
-    fun measure() {
-        data.voltage.add(talon.motorOutputVoltage)
-        data.speed.add(talon.selectedSensorVelocity)
-        data.supplyCurrent.add(talon.supplyCurrent)
-        data.statorCurrent.add(talon.statorCurrent)
-    }
+    fun measure() = data.forEach { it.measure() }
 
     override fun execute() {
         val time = RobotController.getFPGATime()
@@ -228,7 +211,7 @@ class TalonPositionHealthCheckCase(
         encoderStart = talon.selectedSensorPosition.toInt()
     }
 
-    override fun isRunning(elapsed: Long):Boolean {
+    override fun isRunning(elapsed: Long): Boolean {
         val encoderCurrent = talon.selectedSensorPosition.toInt()
         return abs(encoderCurrent - encoderStart) >= encoderChange
     }

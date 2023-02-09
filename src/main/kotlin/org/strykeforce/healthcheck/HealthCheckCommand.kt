@@ -4,7 +4,10 @@ import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.Subsystem
 import edu.wpi.first.wpilibj2.command.button.InternalButton
 import mu.KotlinLogging
-import org.strykeforce.healthcheck.internal.*
+import org.strykeforce.healthcheck.internal.DumpVisitor
+import org.strykeforce.healthcheck.internal.ReportServer
+import org.strykeforce.healthcheck.internal.RobotHealthCheck
+import org.strykeforce.healthcheck.internal.RobotHealthCheckBuilder
 
 private val logger = KotlinLogging.logger {}
 

@@ -36,10 +36,12 @@ class DumpVisitor : HealthCheckVisitor {
 
     override fun visit(healthCheck: TalonHealthCheckCase) {
         buffer.appendLine("                $healthCheck")
-        buffer.appendLine( "                    avg. voltage        = ${healthCheck.data.averageVoltage.format()} volts" )
-        buffer.appendLine( "                    avg. speed          = ${healthCheck.data.averageSpeed.format()} ticks/100ms" )
-        buffer.appendLine( "                    avg. supply current = ${healthCheck.data.averageSupplyCurrent.format()} amps" )
-        buffer.appendLine( "                    avg. stator current = ${healthCheck.data.averageStatorCurrent.format()} amps" )
+        healthCheck.data.forEach {
+            buffer.appendLine("                    talon ${it.id} avg. voltage        = ${it.averageVoltage.format()} volts")
+            buffer.appendLine("                    talon ${it.id} avg. speed          = ${it.averageSpeed.format()} ticks/100ms")
+            buffer.appendLine("                    talon ${it.id} avg. supply current = ${it.averageSupplyCurrent.format()} amps")
+            buffer.appendLine("                    talon ${it.id} avg. stator current = ${it.averageStatorCurrent.format()} amps")
+        }
     }
 }
 

@@ -1,5 +1,7 @@
 package org.strykeforce.healthcheck
 
+import com.ctre.phoenix.motorcontrol.can.BaseTalon
+
 @Target(AnnotationTarget.FIELD)
 annotation class HealthCheck
 
@@ -10,7 +12,7 @@ annotation class Position(val percentOutput: DoubleArray, val encoderChange: Int
 annotation class Timed(val percentOutput: DoubleArray, val duration: Double)
 
 @Target(AnnotationTarget.FIELD)
-annotation class Follow
+annotation class Follow(val leader: Int)
 
 @Target(AnnotationTarget.FIELD)
 annotation class Limits(val value: DoubleArray)

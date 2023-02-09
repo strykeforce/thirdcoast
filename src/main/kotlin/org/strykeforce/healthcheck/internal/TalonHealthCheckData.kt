@@ -1,19 +1,26 @@
 package org.strykeforce.healthcheck.internal
 
-import edu.wpi.first.wpilibj.DataLogManager
-import java.time.LocalDateTime
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
+import com.ctre.phoenix.motorcontrol.can.BaseTalon
 
 data class DiagnosticLimits(
     val currentMin: Double = 0.0, val currentMax: Double = 0.0, val speedMin: Double = 0.0, val speedMax: Double = 0.0
 )
 
-class HealthCheckData() {
+class TalonHealthCheckData(private val talon:BaseTalon) {
     val voltage: MutableList<Double> = mutableListOf()
     val speed: MutableList<Double> = mutableListOf()
     val supplyCurrent: MutableList<Double> = mutableListOf()
     val statorCurrent: MutableList<Double> = mutableListOf()
+
+    fun measure() {
+        voltage.add(talon.motorOutputVoltage)
+        speed.add(talon.selectedSensorVelocity)
+        supplyCurrent.add(talon.supplyCurrent)
+        statorCurrent.add(talon.statorCurrent)
+    }
+
+    val id
+        get() = talon.deviceID
 
     val averageVoltage
         get() = voltage.average()
