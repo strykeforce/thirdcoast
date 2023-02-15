@@ -11,7 +11,7 @@ plugins {
 }
 
 group = "org.strykeforce"
-version = "23.0.1"
+version = "23.1.0"
 
 sourceCompatibility = JavaVersion.VERSION_17
 targetCompatibility = JavaVersion.VERSION_17
@@ -91,7 +91,7 @@ dependencies {
 
 compileKotlin {
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = "17"
 
         // For creation of default methods in interfaces
         freeCompilerArgs += "-Xjvm-default=all"
@@ -100,7 +100,7 @@ compileKotlin {
 
 compileTestKotlin {
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = "17"
 
         // For creation of default methods in interfaces
         freeCompilerArgs += "-Xjvm-default=all"
