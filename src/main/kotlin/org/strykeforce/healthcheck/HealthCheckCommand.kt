@@ -23,7 +23,7 @@ class HealthCheckCommand(vararg subsystems: Subsystem) : Command {
 
     private var isFinished: Boolean = false
 
-    private var reportServer = ReportServer()
+    private var reportServer = ReportServer(robotHealthCheck)
 
     private val subsystemSet = subsystems.toSet()
     override fun getRequirements() = subsystemSet

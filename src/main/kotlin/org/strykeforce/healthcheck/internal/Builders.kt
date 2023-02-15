@@ -107,7 +107,7 @@ class TalonTimedHealthCheckBuilder(val talon: BaseTalon) {
             }
         }
 
-        return TalonTimedHealthCheck(talon, cases, percentOutput, duration, doubleArrayOf())
+        return TalonTimedHealthCheck(talon, cases, percentOutput, /*duration, doubleArrayOf()*/)
     }
 }
 
@@ -129,6 +129,6 @@ class TalonPositionHealthCheckBuilder(val talon: BaseTalon) {
             }
         }
 
-        return TalonPositionHealthCheck(talon, cases, percentOutput, encoderChange, limits)
+        return TalonPositionHealthCheck(talon, cases, percentOutput, /*encoderChange, limits*/)
     }
 }

@@ -87,24 +87,31 @@ class TalonTimedHealthCheck(
     talon: BaseTalon,
     healthChecks: List<HealthCheck>,
     val percentOutput: DoubleArray,
-    val duration: Double,
-    val limits: DoubleArray?
+//    val duration: Double,
+//    val limits: DoubleArray?
 ) : TalonHealthCheck(talon, healthChecks)
 
 class TalonPositionHealthCheck(
     talon: BaseTalon,
     healthChecks: List<HealthCheck>,
     val percentOutput: DoubleArray,
-    val encoderChange: Int,
-    val limits: DoubleArray?
+//    val encoderChange: Int,
+//    val limits: DoubleArray?
 ) : TalonHealthCheck(talon, healthChecks)
 
 class TalonFollowerHealthCheck(talon: BaseTalon, val leaderId: Int) : TalonHealthCheck(talon, listOf())
 
+var caseId = 0
+
 abstract class TalonHealthCheckCase(
     val talon: BaseTalon,
-    val isReversing: Boolean
+    val isReversing: Boolean,
+    val type: String,
+    val output: Double,
+    val duration: Long
 ) : HealthCheck {
+
+    val case = caseId++
 
     override var isFinished = false
 
@@ -112,15 +119,20 @@ abstract class TalonHealthCheckCase(
 
     private var start = 0L
 
-    val data = mutableListOf(TalonHealthCheckData(talon))
+    val data: MutableList<TalonHealthCheckData> = mutableListOf(TalonHealthCheckData(case, talon))
 
-    fun addFollowerTalon(talon: BaseTalon) = data.add(TalonHealthCheckData(talon))
+//    abstract fun addFollowerTalon(talon: BaseTalon)
+
+    fun addFollowerTalon(talon: BaseTalon) {
+        data.add(TalonHealthCheckData(case, talon))
+    }
 
     override fun accept(visitor: HealthCheckVisitor) {
         visitor.visit(this)
     }
 
     override fun initialize() {
+        data.forEach(TalonHealthCheckData::reset)
         state = State.INITIALIZING
         isFinished = false
         start = 0
@@ -130,7 +142,7 @@ abstract class TalonHealthCheckCase(
 
     abstract fun setTalon(talon: BaseTalon)
 
-    fun measure() = data.forEach { it.measure() }
+    fun measure(timestamp: Long) = data.forEach { it.measure(timestamp) }
 
     override fun execute() {
         val time = RobotController.getFPGATime()
@@ -151,6 +163,8 @@ abstract class TalonHealthCheckCase(
                 setTalon(talon)
                 start = time
                 state = State.RUNNING
+                val elapsed = time - start
+                measure(elapsed)
             }
 
             State.RUNNING -> {
@@ -159,7 +173,7 @@ abstract class TalonHealthCheckCase(
                     state = State.STOPPING
                     return
                 }
-                measure()
+                measure(elapsed)
             }
 
             State.STOPPING -> {
@@ -174,10 +188,21 @@ class TalonTimedHealthCheckCase(
     previousCase: TalonTimedHealthCheckCase?,
     talon: BaseTalon,
     val percentOutput: Double,
-    val duration: Long
-) : TalonHealthCheckCase(talon, (previousCase?.percentOutput ?: 0.0) * percentOutput < 0.0) {
+    duration: Long
+) : TalonHealthCheckCase(
+    talon,
+    (previousCase?.percentOutput ?: 0.0) * percentOutput < 0.0,
+    "time",
+    percentOutput,
+    duration
+) {
 
     override val name = "TalonTimedHealthCheckCase: ${percentOutput * 100} percent output"
+//    override val data = mutableListOf(TalonHealthCheckData(case, talon))
+
+//    override fun addFollowerTalon(talon: BaseTalon) {
+//        data.add(TalonHealthCheckData(case, talon))
+//    }
 
     override fun isRunning(elapsed: Long) = elapsed > duration
 
@@ -199,10 +224,21 @@ class TalonPositionHealthCheckCase(
     previousCase: TalonPositionHealthCheckCase?,
     talon: BaseTalon,
     val percentOutput: Double,
-    val encoderChange: Int
-) : TalonHealthCheckCase(talon, (previousCase?.percentOutput ?: 0.0) * percentOutput < 0.0) {
+    private val encoderChange: Int
+) : TalonHealthCheckCase(
+    talon,
+    (previousCase?.percentOutput ?: 0.0) * percentOutput < 0.0,
+    "position",
+    percentOutput,
+    encoderChange.toLong()
+) {
 
     override val name = "TalonPositionHealthCheckCase: ${percentOutput * 100} percent output"
+//    override val data = mutableListOf(TalonHealthCheckData(case, talon))
+
+//    override fun addFollowerTalon(talon: BaseTalon) {
+//        data.add(TalonHealthCheckData(case, talon))
+//    }
 
     private var encoderStart: Int = 0
 

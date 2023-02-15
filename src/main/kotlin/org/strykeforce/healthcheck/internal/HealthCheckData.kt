@@ -6,17 +6,31 @@ data class DiagnosticLimits(
     val currentMin: Double = 0.0, val currentMax: Double = 0.0, val speedMin: Double = 0.0, val speedMax: Double = 0.0
 )
 
-class TalonHealthCheckData(private val talon:BaseTalon) {
+class TalonHealthCheckData(val case: Int, private val talon: BaseTalon) {
+    val deviceId = talon.deviceID
+    val timestamp: MutableList<Long> = mutableListOf()
     val voltage: MutableList<Double> = mutableListOf()
+    val position: MutableList<Double> = mutableListOf()
     val speed: MutableList<Double> = mutableListOf()
     val supplyCurrent: MutableList<Double> = mutableListOf()
     val statorCurrent: MutableList<Double> = mutableListOf()
 
-    fun measure() {
+    fun measure(ts: Long) {
+        timestamp.add(ts)
         voltage.add(talon.motorOutputVoltage)
+        position.add(talon.selectedSensorPosition)
         speed.add(talon.selectedSensorVelocity)
         supplyCurrent.add(talon.supplyCurrent)
         statorCurrent.add(talon.statorCurrent)
+    }
+
+    fun reset() {
+        timestamp.clear()
+        voltage.clear()
+        position.clear()
+        speed.clear()
+        supplyCurrent.clear()
+        statorCurrent.clear()
     }
 
     val id
