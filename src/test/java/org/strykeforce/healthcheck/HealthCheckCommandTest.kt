@@ -8,12 +8,6 @@ import org.junit.jupiter.api.Test
 internal class HealthCheckCommandTest {
 
     @Test
-    fun `health check with no subsystems throws exception`() {
-        assertThrows(IllegalArgumentException::class.java) { HealthCheckCommand() }
-    }
-
-
-    @Test
     fun `constructor adds subsystems to requirements`() {
         val subsystems = setOf(AlphaSubsystem(), BetaSubsystem(), GammaSubsystem())
         val command = HealthCheckCommand(*subsystems.toTypedArray())

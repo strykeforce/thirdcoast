@@ -7,20 +7,20 @@ class AnnotationsTest {
     val fieldOne = "One"
 
     @HealthCheck
-    @Timed(percentOutput = doubleArrayOf(0.5), duration = 1.0)
+    @Timed(percentOutput = [0.5], duration = 1.0)
     val fieldTwo = "Two"
 
     @HealthCheck
-    @Position(percentOutput = doubleArrayOf(0.5), encoderChange = 1000)
+    @Position(percentOutput = [0.5], encoderChange = 1000)
     val fieldThree = "Three"
 
     @HealthCheck
-    @Follow
+    @Follow(leader = 0)
     val fieldFour = "Four"
 
     @HealthCheck
-    @Timed(percentOutput = doubleArrayOf(0.5), duration = 1.0)
-    @Position(percentOutput = doubleArrayOf(0.5), encoderChange = 1000)
+    @Timed(percentOutput = [0.5], duration = 1.0)
+    @Position(percentOutput = [0.5], encoderChange = 1000)
     val fieldFive = "Five"
 
 

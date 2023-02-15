@@ -33,7 +33,7 @@ internal class TestSubsystem : Subsystem {
 
     // follower - just take measurements
     @HealthCheck
-    @Follow
+    @Follow(leader = 0)
     @Limits([0.5, 1.5, 1000.0, 2500.0])
     private val talonSix = mock<BaseTalon>()
 

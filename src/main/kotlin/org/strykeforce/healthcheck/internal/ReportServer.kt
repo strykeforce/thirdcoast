@@ -46,6 +46,7 @@ class ReportServer(private val healthCheck: RobotHealthCheck) {
 class JsonVisitor : HealthCheckVisitor {
 
     private val metaCase = StringBuilder()
+    private val metaName = StringBuilder()
     private val metaTalon = StringBuilder()
     private val metaType = StringBuilder()
     private val metaOutput = StringBuilder()
@@ -60,6 +61,8 @@ class JsonVisitor : HealthCheckVisitor {
     private val supplyCurrent = StringBuilder()
     private val statorCurrent = StringBuilder()
 
+    private var name = ""
+
     private var metaIndex = 0
     private var index = 0
     override fun visit(healthCheck: RobotHealthCheck) {
@@ -67,6 +70,7 @@ class JsonVisitor : HealthCheckVisitor {
 
         // remove trailing commas, grr json
         metaCase.deleteCharAt(metaCase.lastIndex)
+        metaName.deleteCharAt(metaName.lastIndex)
         metaTalon.deleteCharAt(metaTalon.lastIndex)
         metaType.deleteCharAt(metaType.lastIndex)
         metaOutput.deleteCharAt(metaOutput.lastIndex)
@@ -83,6 +87,7 @@ class JsonVisitor : HealthCheckVisitor {
     }
 
     override fun visit(healthCheck: SubsystemHealthCheck) {
+        name = healthCheck.name
         healthCheck.healthChecks.forEach { it.accept(this) }
     }
 
@@ -92,6 +97,7 @@ class JsonVisitor : HealthCheckVisitor {
 
     override fun visit(healthCheck: TalonHealthCheckCase) {
         metaCase.append("\"${metaIndex}\":${healthCheck.case},")
+        metaName.append("\"${metaIndex}\":\"$name\",")
         metaTalon.append("\"${metaIndex}\":${healthCheck.talon.deviceID},")
         metaType.append("\"${metaIndex}\":\"${healthCheck.type}\",")
         metaOutput.append("\"${metaIndex}\":${healthCheck.output},")
@@ -132,6 +138,7 @@ class JsonVisitor : HealthCheckVisitor {
         writer.write(
             "{" +
                     "\"case\":{$metaCase}," +
+                    "\"name\":{$metaName}," +
                     "\"talon\":{$metaTalon}," +
                     "\"type\":{$metaType}," +
                     "\"output\":{$metaOutput}," +
