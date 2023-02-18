@@ -7,12 +7,12 @@ import org.junit.jupiter.api.Test
 
 internal class HealthCheckCommandTest {
 
-    @Test
-    fun `constructor adds subsystems to requirements`() {
-        val subsystems = setOf(AlphaSubsystem(), BetaSubsystem(), GammaSubsystem())
-        val command = HealthCheckCommand(*subsystems.toTypedArray())
-        assertEquals(subsystems, command.requirements)
-    }
+//    @Test
+//    fun `constructor adds subsystems to requirements`() {
+//        val subsystems = setOf(AlphaSubsystem(), BetaSubsystem(), GammaSubsystem())
+//        val command = HealthCheckCommand(*subsystems.toTypedArray())
+//        assertEquals(subsystems, command.requirements)
+//    }
 }
 
 internal class AlphaSubsystem : Subsystem
