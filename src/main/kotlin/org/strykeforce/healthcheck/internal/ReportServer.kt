@@ -4,7 +4,6 @@ import com.sun.net.httpserver.HttpServer
 import mu.KotlinLogging
 import org.strykeforce.healthcheck.HealthCheckCommand
 import java.io.OutputStream
-import java.io.Writer
 import java.net.InetSocketAddress
 
 private val logger = KotlinLogging.logger {}
@@ -45,21 +44,26 @@ class ReportServer(private val healthCheck: RobotHealthCheck) {
 
 class JsonVisitor : HealthCheckVisitor {
 
-    private val metaCase = StringBuilder()
-    private val metaName = StringBuilder()
-    private val metaTalon = StringBuilder()
-    private val metaType = StringBuilder()
-    private val metaOutput = StringBuilder()
-    private val metaDuration = StringBuilder()
+    private val meta = mapOf(
+        "case" to StringBuilder(),
+        "case_uuid" to StringBuilder(),
+        "name" to StringBuilder(),
+        "talon" to StringBuilder(),
+        "type" to StringBuilder(),
+        "output" to StringBuilder(),
+        "duration" to StringBuilder(),
+    )
 
-    private val timestamp = StringBuilder()
-    private val talon = StringBuilder()
-    private val case = StringBuilder()
-    private val voltage = StringBuilder()
-    private val position = StringBuilder()
-    private val speed = StringBuilder()
-    private val supplyCurrent = StringBuilder()
-    private val statorCurrent = StringBuilder()
+    private val data = mutableMapOf(
+        "msec_elapsed" to StringBuilder(),
+        "talon" to StringBuilder(),
+        "case" to StringBuilder(),
+        "voltage" to StringBuilder(),
+        "position" to StringBuilder(),
+        "speed" to StringBuilder(),
+        "supplyCurrent" to StringBuilder(),
+        "statorCurrent" to StringBuilder(),
+    )
 
     private var name = ""
 
@@ -69,21 +73,8 @@ class JsonVisitor : HealthCheckVisitor {
         healthCheck.healthChecks.forEach { it.accept(this) }
 
         // remove trailing commas, grr json
-        metaCase.deleteCharAt(metaCase.lastIndex)
-        metaName.deleteCharAt(metaName.lastIndex)
-        metaTalon.deleteCharAt(metaTalon.lastIndex)
-        metaType.deleteCharAt(metaType.lastIndex)
-        metaOutput.deleteCharAt(metaOutput.lastIndex)
-        metaDuration.deleteCharAt(metaDuration.lastIndex)
-
-        timestamp.deleteCharAt(timestamp.lastIndex)
-        talon.deleteCharAt(talon.lastIndex)
-        case.deleteCharAt(case.lastIndex)
-        voltage.deleteCharAt(voltage.lastIndex)
-        position.deleteCharAt(position.lastIndex)
-        speed.deleteCharAt(speed.lastIndex)
-        supplyCurrent.deleteCharAt(supplyCurrent.lastIndex)
-        statorCurrent.deleteCharAt(statorCurrent.lastIndex)
+        meta.values.forEach { it.deleteCharAt(it.lastIndex) }
+        data.values.forEach { it.deleteCharAt(it.lastIndex) }
     }
 
     override fun visit(healthCheck: SubsystemHealthCheck) {
@@ -96,64 +87,46 @@ class JsonVisitor : HealthCheckVisitor {
     }
 
     override fun visit(healthCheck: TalonHealthCheckCase) {
-        metaCase.append("\"${metaIndex}\":${healthCheck.case},")
-        metaName.append("\"${metaIndex}\":\"$name\",")
-        metaTalon.append("\"${metaIndex}\":${healthCheck.talon.deviceID},")
-        metaType.append("\"${metaIndex}\":\"${healthCheck.type}\",")
-        metaOutput.append("\"${metaIndex}\":${healthCheck.output},")
-        metaDuration.append("\"${metaIndex}\":${healthCheck.duration},")
+        meta.getValue("case").append("\"${metaIndex}\":${healthCheck.case},")
+        meta.getValue("case_uuid").append("\"${metaIndex}\":\"${healthCheck.uuid}\",")
+        meta.getValue("name").append("\"${metaIndex}\":\"$name\",")
+        meta.getValue("talon").append("\"${metaIndex}\":${healthCheck.talon.deviceID},")
+        meta.getValue("type").append("\"${metaIndex}\":\"${healthCheck.type}\",")
+        meta.getValue("output").append("\"${metaIndex}\":${healthCheck.output},")
+        meta.getValue("duration").append("\"${metaIndex}\":${healthCheck.duration},")
         metaIndex++
 
-        healthCheck.data.forEach { data ->
-            data.timestamp.forEachIndexed { i, v ->
-                timestamp.append("\"${index + i}\":$v,")
-                talon.append("\"${index + i}\":${data.deviceId},")
-                case.append("\"${index + i}\":${data.case},")
-                voltage.append("\"${index + i}\":${data.voltage[i]},")
-                position.append("\"${index + i}\":${data.position[i]},")
-                speed.append("\"${index + i}\":${data.speed[i]},")
-                supplyCurrent.append("\"${index + i}\":${data.supplyCurrent[i]},")
-                statorCurrent.append("\"${index + i}\":${data.statorCurrent[i]},")
+        healthCheck.data.forEach { healthCheckData ->
+            healthCheckData.timestamp.forEachIndexed { i, v ->
+                data.getValue("msec_elapsed").append("\"${index + i}\":$v,")
+                data.getValue("talon").append("\"${index + i}\":${healthCheckData.deviceId},")
+                data.getValue("case").append("\"${index + i}\":${healthCheckData.case},")
+                data.getValue("voltage").append("\"${index + i}\":${healthCheckData.voltage[i]},")
+                data.getValue("position").append("\"${index + i}\":${healthCheckData.position[i]},")
+                data.getValue("speed").append("\"${index + i}\":${healthCheckData.speed[i]},")
+                data.getValue("supplyCurrent").append("\"${index + i}\":${healthCheckData.supplyCurrent[i]},")
+                data.getValue("statorCurrent").append("\"${index + i}\":${healthCheckData.statorCurrent[i]},")
             }
-            index += data.timestamp.size
+            index += healthCheckData.timestamp.size
         }
-    }
-
-    private fun sendData(writer: Writer) {
-        writer.write(
-            "{" +
-                    "\"case\":{$case}," +
-                    "\"msec_elapsed\":{$timestamp}," +
-                    "\"talon\":{$talon}," +
-                    "\"voltage\":{$voltage}," +
-                    "\"position\":{$position}," +
-                    "\"speed\":{$speed}," +
-                    "\"supply_current\":{$supplyCurrent}," +
-                    "\"stator_current\":{$statorCurrent}" +
-                    "}"
-        )
-    }
-
-    private fun sendMeta(writer: Writer) {
-        writer.write(
-            "{" +
-                    "\"case\":{$metaCase}," +
-                    "\"name\":{$metaName}," +
-                    "\"talon\":{$metaTalon}," +
-                    "\"type\":{$metaType}," +
-                    "\"output\":{$metaOutput}," +
-                    "\"duration\":{$metaDuration}" +
-                    "}"
-        )
     }
 
     fun sendHealthCheck(os: OutputStream) {
         val writer = os.writer()
-        writer.write("{\"meta\":")
-        sendMeta(writer)
-        writer.write(",\"data\":")
-        sendData(writer)
-        writer.write("}")
+
+        writer.write("{\"meta\":{")
+        for ((i, key) in meta.keys.withIndex()) {
+            writer.write("\"$key\":{${meta[key]}}")
+            if (i < meta.size - 1) writer.write(",")
+        }
+
+        writer.write("},\"data\":{")
+        for ((i, key) in data.keys.withIndex()) {
+            writer.write("\"$key\":{${data[key]}}")
+            if (i < data.size - 1) writer.write(",")
+        }
+
+        writer.write("}}")
         writer.flush()
     }
 }

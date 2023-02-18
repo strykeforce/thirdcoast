@@ -4,6 +4,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.can.BaseTalon
 import edu.wpi.first.wpilibj.RobotController
 import mu.KotlinLogging
+import java.util.*
 import kotlin.math.abs
 
 interface HealthCheck {
@@ -112,6 +113,7 @@ abstract class TalonHealthCheckCase(
 ) : HealthCheck {
 
     val case = caseId++
+    var uuid: UUID = UUID.randomUUID()
 
     override var isFinished = false
 
@@ -132,6 +134,7 @@ abstract class TalonHealthCheckCase(
     }
 
     override fun initialize() {
+        uuid = UUID.randomUUID()
         data.forEach(TalonHealthCheckData::reset)
         state = State.INITIALIZING
         isFinished = false
