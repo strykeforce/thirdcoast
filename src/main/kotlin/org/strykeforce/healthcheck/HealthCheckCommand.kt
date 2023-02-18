@@ -18,17 +18,18 @@ class HealthCheckCommand(vararg subsystems: Subsystem) : Command {
         val BUTTON = InternalButton()
     }
 
-
-    private val robotHealthCheck: RobotHealthCheck = RobotHealthCheckBuilder(*subsystems).build()
+    private val robotHealthCheckBuilder = RobotHealthCheckBuilder(*subsystems)
+    private lateinit var robotHealthCheck: RobotHealthCheck
 
     private var isFinished: Boolean = false
 
-    private var reportServer = ReportServer(robotHealthCheck)
+    private var reportServer: ReportServer? = null
 
     private val subsystemSet = subsystems.toSet()
     override fun getRequirements() = subsystemSet
 
     override fun initialize() {
+        robotHealthCheck = robotHealthCheckBuilder.build()
         robotHealthCheck.initialize()
         BUTTON.setPressed(false)
     }
@@ -44,6 +45,7 @@ class HealthCheckCommand(vararg subsystems: Subsystem) : Command {
     override fun isFinished() = isFinished
 
     override fun end(interrupted: Boolean) {
+        reportServer = ReportServer(robotHealthCheck)
         DumpVisitor().visit(robotHealthCheck)
         isFinished = false
     }
