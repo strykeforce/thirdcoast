@@ -61,8 +61,8 @@ class JsonVisitor : HealthCheckVisitor {
         "voltage" to StringBuilder(),
         "position" to StringBuilder(),
         "speed" to StringBuilder(),
-        "supplyCurrent" to StringBuilder(),
-        "statorCurrent" to StringBuilder(),
+        "supply_current" to StringBuilder(),
+        "stator_current" to StringBuilder(),
     )
 
     private var name = ""
@@ -104,8 +104,8 @@ class JsonVisitor : HealthCheckVisitor {
                 data.getValue("voltage").append("\"${index + i}\":${healthCheckData.voltage[i]},")
                 data.getValue("position").append("\"${index + i}\":${healthCheckData.position[i]},")
                 data.getValue("speed").append("\"${index + i}\":${healthCheckData.speed[i]},")
-                data.getValue("supplyCurrent").append("\"${index + i}\":${healthCheckData.supplyCurrent[i]},")
-                data.getValue("statorCurrent").append("\"${index + i}\":${healthCheckData.statorCurrent[i]},")
+                data.getValue("supply_current").append("\"${index + i}\":${healthCheckData.supplyCurrent[i]},")
+                data.getValue("stator_current").append("\"${index + i}\":${healthCheckData.statorCurrent[i]},")
             }
             index += healthCheckData.timestamp.size
         }
