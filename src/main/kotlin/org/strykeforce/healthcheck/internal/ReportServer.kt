@@ -39,6 +39,7 @@ class ReportServer(private val healthCheck: RobotHealthCheck) {
         start()
     }
 
+    fun stop() = httpServer.stop(0)
 
 }
 
@@ -81,6 +82,8 @@ class JsonVisitor : HealthCheckVisitor {
         name = healthCheck.name
         healthCheck.healthChecks.forEach { it.accept(this) }
     }
+
+    override fun visit(healthCheck: BeforeHealthCheck) = Unit
 
     override fun visit(healthCheck: TalonHealthCheck) {
         healthCheck.healthChecks.forEach { it.accept(this) }
