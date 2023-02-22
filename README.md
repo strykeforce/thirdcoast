@@ -240,7 +240,7 @@ j = r.json()
 meta = pd.DataFrame(j["meta"])
 data = pd.DataFrame(j["data"])
 df = pd.merge(meta, data, on="case", suffixes=('_set', '_measured'))
-df. head(3)
+df.head(3)
 ```
 
 <div>
