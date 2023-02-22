@@ -39,6 +39,7 @@ class ReportServer(private val healthCheck: RobotHealthCheck) {
         start()
     }
 
+    fun stop() = httpServer.stop(0)
 
 }
 
@@ -61,8 +62,8 @@ class JsonVisitor : HealthCheckVisitor {
         "voltage" to StringBuilder(),
         "position" to StringBuilder(),
         "speed" to StringBuilder(),
-        "supplyCurrent" to StringBuilder(),
-        "statorCurrent" to StringBuilder(),
+        "supply_current" to StringBuilder(),
+        "stator_current" to StringBuilder(),
     )
 
     private var name = ""
@@ -81,6 +82,8 @@ class JsonVisitor : HealthCheckVisitor {
         name = healthCheck.name
         healthCheck.healthChecks.forEach { it.accept(this) }
     }
+
+    override fun visit(healthCheck: LifecycleHealthCheck) = Unit
 
     override fun visit(healthCheck: TalonHealthCheck) {
         healthCheck.healthChecks.forEach { it.accept(this) }
@@ -104,8 +107,8 @@ class JsonVisitor : HealthCheckVisitor {
                 data.getValue("voltage").append("\"${index + i}\":${healthCheckData.voltage[i]},")
                 data.getValue("position").append("\"${index + i}\":${healthCheckData.position[i]},")
                 data.getValue("speed").append("\"${index + i}\":${healthCheckData.speed[i]},")
-                data.getValue("supplyCurrent").append("\"${index + i}\":${healthCheckData.supplyCurrent[i]},")
-                data.getValue("statorCurrent").append("\"${index + i}\":${healthCheckData.statorCurrent[i]},")
+                data.getValue("supply_current").append("\"${index + i}\":${healthCheckData.supplyCurrent[i]},")
+                data.getValue("stator_current").append("\"${index + i}\":${healthCheckData.statorCurrent[i]},")
             }
             index += healthCheckData.timestamp.size
         }

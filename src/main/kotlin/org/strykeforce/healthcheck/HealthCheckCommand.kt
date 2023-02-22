@@ -45,7 +45,9 @@ class HealthCheckCommand(vararg subsystems: Subsystem) : Command {
     override fun isFinished() = isFinished
 
     override fun end(interrupted: Boolean) {
+        reportServer?.stop()
         reportServer = ReportServer(robotHealthCheck)
+
         DumpVisitor().visit(robotHealthCheck)
         isFinished = false
     }

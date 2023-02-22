@@ -3,7 +3,10 @@ package org.strykeforce.healthcheck.internal
 import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.can.BaseTalon
 import edu.wpi.first.wpilibj.RobotController
+import edu.wpi.first.wpilibj2.command.Subsystem
+import edu.wpi.first.wpilibj2.command.SubsystemBase
 import mu.KotlinLogging
+import java.lang.reflect.Method
 import java.util.*
 import kotlin.math.abs
 
@@ -88,19 +91,36 @@ class TalonTimedHealthCheck(
     talon: BaseTalon,
     healthChecks: List<HealthCheck>,
     val percentOutput: DoubleArray,
-//    val duration: Double,
-//    val limits: DoubleArray?
 ) : TalonHealthCheck(talon, healthChecks)
 
 class TalonPositionHealthCheck(
     talon: BaseTalon,
     healthChecks: List<HealthCheck>,
     val percentOutput: DoubleArray,
-//    val encoderChange: Int,
-//    val limits: DoubleArray?
 ) : TalonHealthCheck(talon, healthChecks)
 
 class TalonFollowerHealthCheck(talon: BaseTalon, val leaderId: Int) : TalonHealthCheck(talon, listOf())
+
+class LifecycleHealthCheck(private val subsystem: Subsystem, private val method: Method) : HealthCheck {
+
+    override val name = subsystem.let {
+        val subsystemName = (it as? SubsystemBase)?.name ?: it.toString()
+        "$subsystemName.${method.name}"
+    }
+
+    override var isFinished = false
+
+    override fun accept(visitor: HealthCheckVisitor) = visitor.visit(this)
+
+    override fun initialize() {
+        isFinished = false
+    }
+
+    override fun execute() {
+        // @BeforeHealthCheck annotated methods will return true when finished
+        isFinished = method.invoke(subsystem) as Boolean
+    }
+}
 
 var caseId = 0
 
@@ -129,9 +149,7 @@ abstract class TalonHealthCheckCase(
         data.add(TalonHealthCheckData(case, talon))
     }
 
-    override fun accept(visitor: HealthCheckVisitor) {
-        visitor.visit(this)
-    }
+    override fun accept(visitor: HealthCheckVisitor) = visitor.visit(this)
 
     override fun initialize() {
         uuid = UUID.randomUUID()

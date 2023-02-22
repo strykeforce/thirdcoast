@@ -7,6 +7,8 @@ interface HealthCheckVisitor {
     fun visit(healthCheck: SubsystemHealthCheck)
     fun visit(healthCheck: TalonHealthCheck)
     fun visit(healthCheck: TalonHealthCheckCase)
+
+    fun visit(healthCheck: LifecycleHealthCheck)
 }
 
 class DumpVisitor : HealthCheckVisitor {
@@ -27,6 +29,10 @@ class DumpVisitor : HealthCheckVisitor {
     override fun visit(healthCheck: SubsystemHealthCheck) {
         buffer.appendLine("    ${healthCheck.name}")
         healthCheck.healthChecks.forEach { it.accept(this) }
+    }
+
+    override fun visit(healthCheck: LifecycleHealthCheck) {
+        buffer.appendLine("        BeforeHealthCheck(${healthCheck.name})")
     }
 
     override fun visit(healthCheck: TalonHealthCheck) {

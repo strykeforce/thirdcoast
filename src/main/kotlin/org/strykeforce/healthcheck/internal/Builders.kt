@@ -11,6 +11,7 @@ import org.strykeforce.healthcheck.Timed
 import org.strykeforce.swerve.SwerveDrive
 import org.strykeforce.swerve.TalonSwerveModule
 import java.lang.reflect.Field
+import java.lang.reflect.Method
 
 private val logger = KotlinLogging.logger {}
 
@@ -25,15 +26,42 @@ class RobotHealthCheckBuilder(vararg subsystems: Subsystem) {
 }
 
 private val kHealthCheckAnnotationClass = org.strykeforce.healthcheck.HealthCheck::class.java
+private val kBeforeHealthCheckAnnotationClass = org.strykeforce.healthcheck.BeforeHealthCheck::class.java
+private val kAfterHealthCheckAnnotationClass = org.strykeforce.healthcheck.AfterHealthCheck::class.java
+
+/** Get fields in subsystem that are annotated with `@HealthCheck`. The fields are sorted in order
+ * of the `@HealthCheck` annotation's `order` parameter.  */
+private fun Subsystem.healthCheckAnnotatedFields() =
+    this.javaClass.declaredFields.filter { it.isAnnotationPresent(kHealthCheckAnnotationClass) }
+        .sortedBy { it.getAnnotation(kHealthCheckAnnotationClass).order }
+        .toMutableList()
+
+/** Get methods in subsystem that are annotated with `@BeforeHealthCheck`. The methods are sorted in order
+ * of the method's name. */
+private fun Subsystem.beforeHealthCheckAnnotatedMethods() =
+    this.javaClass.declaredMethods.filter { it.isAnnotationPresent(kBeforeHealthCheckAnnotationClass) }
+        .sortedBy { it.getAnnotation(kBeforeHealthCheckAnnotationClass).order }
+
+/** Get methods in subsystem that are annotated with `@AfterHealthCheck`. The methods are sorted in order
+ * of the method's name. */
+private fun Subsystem.afterHealthCheckAnnotatedMethods() =
+    this.javaClass.declaredMethods.filter { it.isAnnotationPresent(kAfterHealthCheckAnnotationClass) }
+        .sortedBy { it.getAnnotation(kAfterHealthCheckAnnotationClass).order }
 
 class SubsystemHealthCheckBuilder(private val subsystem: Subsystem) {
 
     fun build(): SubsystemHealthCheck {
 
-        // get all fields from this subsystem that are annotated with HealthCheck
-        val healthCheckFields =
-            subsystem.javaClass.declaredFields.filter { it.isAnnotationPresent(kHealthCheckAnnotationClass) }
-                .toMutableList()
+        val healthChecks = mutableListOf<HealthCheck>()
+
+        // get all methods from this subsystem that are annotated with @BeforeHealthCheck
+        val beforeHealthCheckMethods = subsystem.beforeHealthCheckAnnotatedMethods()
+
+        // create LifecycleHealthChecks from annotated methods and prepend them to health checks for this subsystem
+        healthChecks.addAll(beforeHealthCheckMethods.map { LifecycleHealthCheckBuilder(subsystem, it).build() })
+
+        // get all fields from this subsystem that are annotated with @HealthCheck
+        val healthCheckFields = subsystem.healthCheckAnnotatedFields()
 
         // will remove non-talon field(s), only expect SwerveDrive field
         val fieldsToRemove = mutableSetOf<Field>()
@@ -47,29 +75,27 @@ class SubsystemHealthCheckBuilder(private val subsystem: Subsystem) {
         }
         healthCheckFields.removeAll(fieldsToRemove)
 
-        val talonHealthChecks = mutableListOf<TalonHealthCheck>()
-
         // if a SwerveDrive field is annotated with HealthCheck,
         // create a TalonHealthCheck for each azimuth and drive talon and add to talonHealthChecks list
         // queue the SwerveDrive field for removal in fieldsToRemove
         healthCheckFields.forEach {
             if (it.type == SwerveDrive::class.java) {
-                talonHealthChecks.addAll(SwerveDriveHealthCheckBuilder(subsystem, it).build())
+                healthChecks.addAll(SwerveDriveHealthCheckBuilder(subsystem, it).build())
                 fieldsToRemove.add(it)
             }
         }
 
         // remove all non-talon fields and create TalonHealthChecks from the remaining talon fields
         healthCheckFields.removeAll(fieldsToRemove)
-        talonHealthChecks.addAll(healthCheckFields.map { TalonHealthCheckBuilder(subsystem, it).build() })
-        if (talonHealthChecks.isEmpty()) logger.warn { "$subsystem: no health checks found" }
+        healthChecks.addAll(healthCheckFields.map { TalonHealthCheckBuilder(subsystem, it).build() })
+        if (healthChecks.isEmpty()) logger.warn { "$subsystem: no health checks found" }
 
         // find any follower talon health checks and
         // add their talon to be measured to their associated leader health check
         // remove the follower health check since they will be run during leader health check
-        val followerHealthChecks = talonHealthChecks.mapNotNull { it as? TalonFollowerHealthCheck }
+        val followerHealthChecks = healthChecks.mapNotNull { it as? TalonFollowerHealthCheck }
         for (fhc in followerHealthChecks) {
-            val lhc = talonHealthChecks.find { it.talon.deviceID == fhc.leaderId }
+            val lhc = healthChecks.mapNotNull { it as? TalonHealthCheck }.find { it.talon.deviceID == fhc.leaderId }
             if (lhc == null) {
                 logger.error { "$subsystem: no leader (id = ${fhc.leaderId}) found for follower (id = ${fhc.talon.deviceID})" }
                 continue
@@ -78,10 +104,49 @@ class SubsystemHealthCheckBuilder(private val subsystem: Subsystem) {
             // add follower talon to each of its child cases
             lhc.healthChecks.map { it as TalonHealthCheckCase }.forEach { it.addFollowerTalon(fhc.talon) }
         }
-        talonHealthChecks.removeAll(followerHealthChecks)
+        healthChecks.removeAll(followerHealthChecks)
+
+
+        // get all methods from this subsystem that are annotated with @AfterHealthCheck
+        val afterHealthCheckMethods = subsystem.afterHealthCheckAnnotatedMethods()
+
+        // create LifecycleHealthChecks from annotated methods and append them to health checks for this subsystem
+        healthChecks.addAll(afterHealthCheckMethods.map { LifecycleHealthCheckBuilder(subsystem, it).build() })
 
         val name = (subsystem as? SubsystemBase)?.name ?: subsystem.toString()
-        return SubsystemHealthCheck(name, talonHealthChecks.toImmutableList())
+        return SubsystemHealthCheck(name, healthChecks.toImmutableList())
+    }
+}
+
+class LifecycleHealthCheckBuilder(private val subsystem: Subsystem, private val method: Method) {
+    fun build(): HealthCheck {
+        val subsystemName = (subsystem as? SubsystemBase)?.name ?: subsystem.toString()
+
+        // this will throw an exception if the method annotated with @BeforeHealthCheck is
+        // inaccessible. We would rather crash the robot program than run a health check that
+        // is not set up properly.
+        if (!method.trySetAccessible()) {
+            val msg =
+                "$subsystemName.${method.name}: inaccessible, crashing to prevent health check running without setup"
+            logger.error { msg }
+            throw IllegalStateException(msg)
+        }
+
+        // methods annotated with @BeforeHealthCheck should have no parameters and should
+        // return boolean
+        if (method.parameterCount != 0) {
+            val msg = "$subsystemName.${method.name}: should have no parameters"
+            logger.error { msg }
+            throw IllegalArgumentException(msg)
+        }
+
+        if (method.returnType != Boolean::class.java) {
+            val msg = "$subsystemName.${method.name}: should return a boolean"
+            logger.error { msg }
+            throw IllegalArgumentException(msg)
+        }
+
+        return LifecycleHealthCheck(subsystem, method)
     }
 }
 
