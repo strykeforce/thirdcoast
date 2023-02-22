@@ -140,9 +140,9 @@ with the press of a button. It is intended for use with subsystems that contain 
 Subsystems that contain motors to be health checked are annotated with `@HealthCheck` and optionally, annotations that
 define the health check in more detail. There are three possible ways to configure a talon for testing:
 
-* `@Timed` - runs the motor at the specified output for the specified amount of time.
-* `@Position` - runs the motor at the specified output until the specified amount of encoder ticks have occurred.
-* `@Follower` - the motor is configured to follow another Talon and therefor is not commanded, only measured.
+- `@Timed` - runs the motor at the specified output for the specified amount of time.
+- `@Position` - runs the motor at the specified output until the specified amount of encoder ticks have occurred.
+- `@Follower` - the motor is configured to follow another Talon and therefor is not commanded, only measured.
 
 This subsystem has some examples of Talons being tested in various ways.
 
@@ -178,15 +178,18 @@ public class ExampleSubsystem extends SubsystemBase {
 
     @BeforeHealthCheck
     private boolean beforeHealthCheck() {
-        // perform any set-up such as positioning subsystems on the robot to allow clear running, or override Talon configurations
-        // temporarily while testing. Called periodically by the robot loop while running, return true when finished.
+        // perform any set-up such as positioning subsystems on the robot to
+        // allow clear running, or override Talon configurations temporarily
+        // while testing. Called periodically by the robot loop while running,
+        // return true when finished.
         return true;
     }
 
     @AfterHealthCheck
     private boolean afterHealthCheck() {
-        // perform any tear-down such as position subsystems, or resetting Talon configurations.
-        // Called periodically by the robot loop while running, return true when finished.
+        // perform any tear-down such as position subsystems, or resetting
+        // Talon configurations. Called periodically by the robot loop while
+        // running, return true when finished.
         return true;
     }
 
@@ -241,19 +244,6 @@ df. head(3)
 ```
 
 <div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
 <table border="1" class="dataframe">
   <thead>
     <tr style="text-align: right;">
@@ -333,5 +323,3 @@ df. head(3)
   </tbody>
 </table>
 </div>
-
-
