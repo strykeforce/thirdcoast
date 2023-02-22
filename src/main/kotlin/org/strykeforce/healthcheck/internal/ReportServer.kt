@@ -83,7 +83,7 @@ class JsonVisitor : HealthCheckVisitor {
         healthCheck.healthChecks.forEach { it.accept(this) }
     }
 
-    override fun visit(healthCheck: BeforeHealthCheck) = Unit
+    override fun visit(healthCheck: LifecycleHealthCheck) = Unit
 
     override fun visit(healthCheck: TalonHealthCheck) {
         healthCheck.healthChecks.forEach { it.accept(this) }

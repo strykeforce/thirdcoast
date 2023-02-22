@@ -27,6 +27,7 @@ class RobotHealthCheckBuilder(vararg subsystems: Subsystem) {
 
 private val kHealthCheckAnnotationClass = org.strykeforce.healthcheck.HealthCheck::class.java
 private val kBeforeHealthCheckAnnotationClass = org.strykeforce.healthcheck.BeforeHealthCheck::class.java
+private val kAfterHealthCheckAnnotationClass = org.strykeforce.healthcheck.AfterHealthCheck::class.java
 
 /** Get fields in subsystem that are annotated with `@HealthCheck`. The fields are sorted in order
  * of the `@HealthCheck` annotation's `order` parameter.  */
@@ -41,6 +42,12 @@ private fun Subsystem.beforeHealthCheckAnnotatedMethods() =
     this.javaClass.declaredMethods.filter { it.isAnnotationPresent(kBeforeHealthCheckAnnotationClass) }
         .sortedBy { it.getAnnotation(kBeforeHealthCheckAnnotationClass).order }
 
+/** Get methods in subsystem that are annotated with `@AfterHealthCheck`. The methods are sorted in order
+ * of the method's name. */
+private fun Subsystem.afterHealthCheckAnnotatedMethods() =
+    this.javaClass.declaredMethods.filter { it.isAnnotationPresent(kAfterHealthCheckAnnotationClass) }
+        .sortedBy { it.getAnnotation(kAfterHealthCheckAnnotationClass).order }
+
 class SubsystemHealthCheckBuilder(private val subsystem: Subsystem) {
 
     fun build(): SubsystemHealthCheck {
@@ -50,8 +57,8 @@ class SubsystemHealthCheckBuilder(private val subsystem: Subsystem) {
         // get all methods from this subsystem that are annotated with @BeforeHealthCheck
         val beforeHealthCheckMethods = subsystem.beforeHealthCheckAnnotatedMethods()
 
-        // create BeforeHealthChecks from annotated methods
-        healthChecks.addAll(beforeHealthCheckMethods.map { BeforeHealthCheckBuilder(subsystem, it).build() })
+        // create LifecycleHealthChecks from annotated methods and prepend them to health checks for this subsystem
+        healthChecks.addAll(beforeHealthCheckMethods.map { LifecycleHealthCheckBuilder(subsystem, it).build() })
 
         // get all fields from this subsystem that are annotated with @HealthCheck
         val healthCheckFields = subsystem.healthCheckAnnotatedFields()
@@ -99,12 +106,19 @@ class SubsystemHealthCheckBuilder(private val subsystem: Subsystem) {
         }
         healthChecks.removeAll(followerHealthChecks)
 
+
+        // get all methods from this subsystem that are annotated with @AfterHealthCheck
+        val afterHealthCheckMethods = subsystem.afterHealthCheckAnnotatedMethods()
+
+        // create LifecycleHealthChecks from annotated methods and append them to health checks for this subsystem
+        healthChecks.addAll(afterHealthCheckMethods.map { LifecycleHealthCheckBuilder(subsystem, it).build() })
+
         val name = (subsystem as? SubsystemBase)?.name ?: subsystem.toString()
         return SubsystemHealthCheck(name, healthChecks.toImmutableList())
     }
 }
 
-class BeforeHealthCheckBuilder(private val subsystem: Subsystem, private val method: Method) {
+class LifecycleHealthCheckBuilder(private val subsystem: Subsystem, private val method: Method) {
     fun build(): HealthCheck {
         val subsystemName = (subsystem as? SubsystemBase)?.name ?: subsystem.toString()
 
@@ -132,7 +146,7 @@ class BeforeHealthCheckBuilder(private val subsystem: Subsystem, private val met
             throw IllegalArgumentException(msg)
         }
 
-        return BeforeHealthCheck(subsystem, method)
+        return LifecycleHealthCheck(subsystem, method)
     }
 }
 

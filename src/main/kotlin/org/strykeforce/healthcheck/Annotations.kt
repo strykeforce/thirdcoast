@@ -24,7 +24,7 @@ annotation class LimitsSource(val value: String)
 annotation class BeforeHealthCheck(val order: Int = 0)
 
 @Target(AnnotationTarget.FUNCTION)
-annotation class AfterHealthCheck
+annotation class AfterHealthCheck(val order: Int = 0)
 
 /*
 // will implement these later if needed

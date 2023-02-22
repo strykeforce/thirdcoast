@@ -101,7 +101,7 @@ class TalonPositionHealthCheck(
 
 class TalonFollowerHealthCheck(talon: BaseTalon, val leaderId: Int) : TalonHealthCheck(talon, listOf())
 
-class BeforeHealthCheck(private val subsystem: Subsystem, private val method: Method) : HealthCheck {
+class LifecycleHealthCheck(private val subsystem: Subsystem, private val method: Method) : HealthCheck {
 
     override val name = subsystem.let {
         val subsystemName = (it as? SubsystemBase)?.name ?: it.toString()

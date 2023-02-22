@@ -8,7 +8,7 @@ interface HealthCheckVisitor {
     fun visit(healthCheck: TalonHealthCheck)
     fun visit(healthCheck: TalonHealthCheckCase)
 
-    fun visit(healthCheck: BeforeHealthCheck)
+    fun visit(healthCheck: LifecycleHealthCheck)
 }
 
 class DumpVisitor : HealthCheckVisitor {
@@ -31,7 +31,7 @@ class DumpVisitor : HealthCheckVisitor {
         healthCheck.healthChecks.forEach { it.accept(this) }
     }
 
-    override fun visit(healthCheck: BeforeHealthCheck) {
+    override fun visit(healthCheck: LifecycleHealthCheck) {
         buffer.appendLine("        BeforeHealthCheck(${healthCheck.name})")
     }
 
