@@ -26,9 +26,12 @@ annotation class BeforeHealthCheck(val order: Int = 0)
 @Target(AnnotationTarget.FUNCTION)
 annotation class AfterHealthCheck
 
+/*
+// will implement these later if needed
+
 @Target(AnnotationTarget.FUNCTION)
 annotation class BeforeEachHealthCheck
 
 @Target(AnnotationTarget.FUNCTION)
 annotation class AfterEachHealthCheck
-
+*/
