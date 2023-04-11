@@ -240,8 +240,8 @@ class TalonHealthCheckBuilder(private val subsystem: Subsystem, private val fiel
 
 class TalonTimedHealthCheckBuilder(val talon: BaseTalon) {
 
-    var percentOutput = doubleArrayOf(0.25, 0.5, 0.75, -0.25, -0.5, -0.75)
-    var duration = 5.0
+    var percentOutput = doubleArrayOf(0.2, 1.0, -0.2, -1.0)
+    var duration = 2.0
     var limits: DoubleArray? = null
 
     fun build(): TalonHealthCheck {
