@@ -13,7 +13,7 @@ interface HealthCheckVisitor {
 
 class DumpVisitor : HealthCheckVisitor {
 
-    private val buffer = StringBuilder()
+    val buffer = StringBuilder()
 
     private val logger = KotlinLogging.logger {}
     override fun visit(healthCheck: RobotHealthCheck) {
@@ -41,7 +41,7 @@ class DumpVisitor : HealthCheckVisitor {
     }
 
     override fun visit(healthCheck: TalonHealthCheckCase) {
-        buffer.appendLine("                $healthCheck")
+        buffer.appendLine("                $healthCheck: ${healthCheck.data.size} measurements")
         healthCheck.data.forEach {
             buffer.appendLine("                    talon ${it.id} avg. voltage        = ${it.averageVoltage.format()} volts")
             buffer.appendLine("                    talon ${it.id} avg. speed          = ${it.averageSpeed.format()} ticks/100ms")

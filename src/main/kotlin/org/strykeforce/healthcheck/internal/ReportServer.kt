@@ -4,6 +4,7 @@ import com.sun.net.httpserver.HttpServer
 import mu.KotlinLogging
 import org.strykeforce.healthcheck.HealthCheckCommand
 import java.io.OutputStream
+import java.lang.Exception
 import java.net.InetSocketAddress
 
 private val logger = KotlinLogging.logger {}
@@ -26,14 +27,21 @@ class ReportServer(private val healthCheck: RobotHealthCheck) {
         }
 
         createContext("/data") { httpExchange ->
-            val jsonVisitor = JsonVisitor()
-            jsonVisitor.visit(healthCheck)
 
             httpExchange.responseHeaders.let { headers ->
                 headers["Content-Type"] = "application/json"
             }
             httpExchange.sendResponseHeaders(200, 0)
-            httpExchange.responseBody.use { jsonVisitor.sendHealthCheck(it) }
+
+            httpExchange.responseBody.use {
+                try {
+                    val jsonVisitor = JsonVisitor(it)
+                    jsonVisitor.visit(healthCheck)
+                } catch (e: Exception) {
+                    logger.error(e) { "error creating healthcheck JSON report" }
+                }
+            }
+
         }
 
         start()
@@ -43,7 +51,9 @@ class ReportServer(private val healthCheck: RobotHealthCheck) {
 
 }
 
-class JsonVisitor : HealthCheckVisitor {
+class JsonVisitor(outputStream: OutputStream) : HealthCheckVisitor {
+
+    private val writer = outputStream.bufferedWriter()
 
     private val meta = mapOf(
         "case" to StringBuilder(),
@@ -55,27 +65,26 @@ class JsonVisitor : HealthCheckVisitor {
         "duration" to StringBuilder(),
     )
 
-    private val data = mutableMapOf(
-        "msec_elapsed" to StringBuilder(),
-        "talon" to StringBuilder(),
-        "case" to StringBuilder(),
-        "voltage" to StringBuilder(),
-        "position" to StringBuilder(),
-        "speed" to StringBuilder(),
-        "supply_current" to StringBuilder(),
-        "stator_current" to StringBuilder(),
-    )
 
     private var name = ""
 
     private var metaIndex = 0
     private var index = 0
+    private var isFirst = true
+
     override fun visit(healthCheck: RobotHealthCheck) {
+        writer.write("{\"data\":[")
         healthCheck.healthChecks.forEach { it.accept(this) }
 
-        // remove trailing commas, grr json
         meta.values.forEach { it.deleteCharAt(it.lastIndex) }
-        data.values.forEach { it.deleteCharAt(it.lastIndex) }
+
+        writer.write("],\"meta\":{")
+        for ((i, key) in meta.keys.withIndex()) {
+            writer.write("\"$key\":{${meta[key]}}")
+            if (i < meta.size - 1) writer.write(",")
+        }
+        writer.write("}}")
+        writer.flush()
     }
 
     override fun visit(healthCheck: SubsystemHealthCheck) {
@@ -99,6 +108,17 @@ class JsonVisitor : HealthCheckVisitor {
         meta.getValue("duration").append("\"${metaIndex}\":${healthCheck.duration},")
         metaIndex++
 
+        val data = mapOf(
+            "msec_elapsed" to StringBuilder(),
+            "talon" to StringBuilder(),
+            "case" to StringBuilder(),
+            "voltage" to StringBuilder(),
+            "position" to StringBuilder(),
+            "speed" to StringBuilder(),
+            "supply_current" to StringBuilder(),
+            "stator_current" to StringBuilder(),
+        )
+
         healthCheck.data.forEach { healthCheckData ->
             healthCheckData.timestamp.forEachIndexed { i, v ->
                 data.getValue("msec_elapsed").append("\"${index + i}\":$v,")
@@ -112,24 +132,20 @@ class JsonVisitor : HealthCheckVisitor {
             }
             index += healthCheckData.timestamp.size
         }
-    }
 
-    fun sendHealthCheck(os: OutputStream) {
-        val writer = os.writer()
-
-        writer.write("{\"meta\":{")
-        for ((i, key) in meta.keys.withIndex()) {
-            writer.write("\"$key\":{${meta[key]}}")
-            if (i < meta.size - 1) writer.write(",")
+        data.values.forEach { if (it.lastIndex > 0) it.deleteCharAt(it.lastIndex) }
+        if (isFirst) {
+            writer.write("{")
+            isFirst = false
+        } else {
+            writer.write(",{")
         }
 
-        writer.write("},\"data\":{")
         for ((i, key) in data.keys.withIndex()) {
             writer.write("\"$key\":{${data[key]}}")
             if (i < data.size - 1) writer.write(",")
         }
-
-        writer.write("}}")
-        writer.flush()
+        writer.write("}")
     }
+
 }
