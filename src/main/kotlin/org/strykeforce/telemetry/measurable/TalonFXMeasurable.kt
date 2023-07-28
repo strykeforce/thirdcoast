@@ -27,7 +27,7 @@ internal const val TEMPERATURE = "TEMPERATURE"
 
 class TalonFXMeasurable @JvmOverloads constructor(
     private val talonFX: TalonFX,
-    override val description: String = "TalonFX ${talonFX.deviceID}"
+    override val description: String = "Old TalonFX ${talonFX.deviceID}"
 ) : Measurable {
 
     override val deviceId = talonFX.deviceID
