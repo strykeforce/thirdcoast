@@ -1,7 +1,6 @@
 package org.strykeforce.swerve;
 
 import edu.wpi.first.math.Matrix;
-import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -9,14 +8,23 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 
+import org.jetbrains.annotations.NotNull;
+import org.strykeforce.telemetry.Registrable;
+import org.strykeforce.telemetry.TelemetryService;
+
 /**
  * An optional odometry strategy that wraps {@code SwerveDrivePoseEstimator}, for use when vision
  * measurements are used to update odometry.
  */
-public class PoseEstimatorOdometryStrategy implements OdometryStrategy {
+public class PoseEstimatorOdometryStrategy implements OdometryStrategy, Registrable {
 
   private final SwerveDrivePoseEstimator odometry;
 
+  @Override
+  public void registerWith(@NotNull TelemetryService telemetryService) {
+    telemetryService.register(odometry);
+  }
+  
   /**
    * Constructs a PoseEstimatorOdometryStrategy.
    *
