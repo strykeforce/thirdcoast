@@ -3,13 +3,14 @@
 package org.strykeforce.telemetry
 
 import com.ctre.phoenix.motorcontrol.can.BaseTalon
-import com.ctre.phoenix.motorcontrol.can.TalonFX
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
+import com.ctre.phoenix6.hardware.TalonFX
 import mu.KotlinLogging
 import org.strykeforce.telemetry.measurable.BaseTalonMeasurable
 import org.strykeforce.telemetry.measurable.Measurable
 import org.strykeforce.telemetry.measurable.TalonSRXMeasurable
-import org.strykeforce.thirdcoast.talon.TalonFXMeasurable
+import org.strykeforce.telemetry.talon.TalonFXMeasureable
+import org.strykeforce.thirdcoast.talon.LegacyTalonFXMeasurable
 import java.util.*
 import java.util.function.Function
 
@@ -117,13 +118,23 @@ class TelemetryService(private val telemetryControllerFactory: Function<Inventor
     }
 
     /**
-     * Convenience method to register a [TalonFX] for telemetry sending.
+     * Convenience method to register a [com.ctre.phoenix.motorcontrol.can.TalonFX] for telemetry sending.
      *
-     * @param talon the TalonSRX to register for data collection
+     * @param talon the Legacy TalonFX to register for data collection
      * @throws IllegalStateException if TelemetryService is running.
      */
+    fun register(talon: com.ctre.phoenix.motorcontrol.can.TalonFX) {
+        register(LegacyTalonFXMeasurable(talon))
+    }
+
+    /**
+     * Convenience method to register a [] for telemetry sending
+     *
+     * @param talon teh TalonFX to register for data collection
+     * @throws IllegalStateException if TelemetryService is running
+     */
     fun register(talon: TalonFX) {
-        register(TalonFXMeasurable(talon))
+        register(TalonFXMeasureable(talon))
     }
 
     /**

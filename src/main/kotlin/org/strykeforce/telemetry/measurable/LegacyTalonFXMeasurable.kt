@@ -25,7 +25,7 @@ internal const val FORWARD_LIMIT_SWITCH_CLOSED = "FORWARD_LIMIT_SWITCH_CLOSED"
 internal const val REVERSE_LIMIT_SWITCH_CLOSED = "REVERSE_LIMIT_SWITCH_CLOSED"
 internal const val TEMPERATURE = "TEMPERATURE"
 
-class TalonFXMeasurable @JvmOverloads constructor(
+class LegacyTalonFXMeasurable @JvmOverloads constructor(
     private val talonFX: TalonFX,
     override val description: String = "Old TalonFX ${talonFX.deviceID}"
 ) : Measurable {
@@ -93,7 +93,7 @@ class TalonFXMeasurable @JvmOverloads constructor(
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
-        other as TalonFXMeasurable
+        other as LegacyTalonFXMeasurable
         if (deviceId != other.deviceId) return false
         return true
     }

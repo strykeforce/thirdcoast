@@ -1,7 +1,9 @@
-package org.strykeforce.telemetry.measurable
+package org.strykeforce.telemetry.talon
 
 import com.ctre.phoenix6.hardware.TalonFX
-import jdk.jfr.Description
+import org.strykeforce.telemetry.measurable.Measurable
+import org.strykeforce.telemetry.measurable.Measure
+import org.strykeforce.telemetry.measurable.toDouble
 
 internal const val APPLIED_ROTOR_POLARITY = "APPLIED_ROTOR_POLARITY"
 internal const val BRIDGE_OUTPUT_COAST = "BRIDGE_OUTPUT_COAST"
@@ -13,6 +15,7 @@ internal const val BRIDGE_OUTPUT_FOC_EASY = "BRIDGE_OUTPUT_FOC_EASY"
 internal const val BRIDGE_OUTPUT_FAULT_BRAKE = "BRIDGE_OUTPUT_FAULT_BRAKE"
 internal const val BRIDGE_OUTPUT_FAULT_COAST = "BRIDGE_OUTPUT_FAULT_COAST"
 internal const val CLOSED_LOOP_DERIVATIVE_OUTPUT = "CLOSED_LOOP_DERIVATIVE_OUTPUT"
+internal const val CLOSED_LOOP_ERROR = "CLOSED_LOOP_ERROR"
 internal const val CLOSED_LOOP_FEED_FWD = "CLOSED_LOOP_FEED_FWD"
 internal const val CLOSED_LOOP_INTEGRATED_OUTPUT = "CLOSED_LOOP_INTEGRATED_OUTPUT"
 internal const val CLOSED_LOOP_OUTPUT = "CLOSED_LOOP_OUTPUT"
@@ -43,10 +46,13 @@ internal const val FAULT_UNSTABLE_SUPPV = "FAULT_UNSTABLE_SUPPV"
 internal const val FAULT_FUSED_NO_LIC = "FAULT_FUSED_NO_LIC"
 internal const val FWD_LIM = "FWD_LIM"
 internal const val MOTION_MAGIC_RUNNING = "MOTION_MAGIC_RUNNING"
+internal const val POSITION = "POSITION"
 internal const val PROCESSOR_TEMP = "PROCESSOR_TEMP"
 internal const val REV_LIM = "REV_LIM"
 internal const val ROTOR_POS = "ROTOR_POS"
 internal const val ROTOR_VEL = "ROTOR_VEL"
+internal const val STATOR_CURRENT = "STATOR_CURRENT"
+internal const val SUPPLY_CURRENT = "SUPPLY_CURRENT"
 internal const val SIM_STATE = "SIM_STATE"
 internal const val STICKY_FAULT_BOOT_EN = "STICKY_FAULT_BOOT_EN"
 internal const val STICKY_FAULT_TEMP = "STICKY_FAULT_TEMP"
@@ -78,25 +84,27 @@ internal const val APPLIED_CONTROL = "APPLIED_CONTROL"
 internal const val IS_INVERTED = "IS_INVERTED"
 internal const val IS_ALIVE = "IS_ALIVE"
 internal const val IS_SAFETY_ENABLED = "IS_SAFETY_ENABLED"
+internal const val CLOSED_LOOP_TARGET = "CLOSED_LOOP_TARGET"
 
 
 
-class TalonFX6Measureable @JvmOverloads constructor(
+class TalonFXMeasureable @JvmOverloads constructor(
     private val talonFX: TalonFX,
     override val description: String = "TalonFX ${talonFX.deviceID}"
 ): Measurable {
 
+
     override val deviceId = talonFX.deviceID
     override val measures = setOf(
         Measure(APPLIED_ROTOR_POLARITY, "Applied Rotor Polarity Clockwise") {talonFX.appliedRotorPolarity.value.value.toDouble()},
-        Measure(BRIDGE_OUTPUT_COAST, "Bridge Output Coast"){if (talonFX.bridgeOuput.value.value == 0) 1.0 else 0.0 },
-        Measure(BRIDGE_OUTPUT_BRAKE, "Bridge Output Brake"){if (talonFX.bridgeOuput.value.value == 1) 1.0 else 0.0},
-        Measure(BRIDGE_OUTPUT_TRAPZ, "Bridge Output Trapeezoidal"){if (talonFX.bridgeOuput.value.value == 6) 1.0 else 0.0},
-        Measure(BRIDGE_OUTPUT_FOC_TORQE, "Bridge Output FOC Torque"){if (talonFX.bridgeOuput.value.value == 7) 1.0 else 0.0},
-        Measure(BRIDGE_OUTPUT_MUSIC, "Bridge Output Music Tone"){if (talonFX.bridgeOuput.value.value == 8) 1.0 else 0.0},
-        Measure(BRIDGE_OUTPUT_FOC_EASY, "Bridge Output FOC Easy"){if (talonFX.bridgeOuput.value.value == 9) 1.0 else 0.0},
-        Measure(BRIDGE_OUTPUT_FAULT_BRAKE, "Bridge Output Fault Brake"){if (talonFX.bridgeOuput.value.value == 12) 1.0 else 0.0},
-        Measure(BRIDGE_OUTPUT_FAULT_COAST, "Bridge Output Fault Coast"){if (talonFX.bridgeOuput.value.value == 13) 1.0 else 0.0},
+//        Measure(BRIDGE_OUTPUT_COAST, "Bridge Output Coast"){if (talonFX.bridgeOuput.value.value == 0) 1.0 else 0.0 },
+//        Measure(BRIDGE_OUTPUT_BRAKE, "Bridge Output Brake"){if (talonFX.bridgeOuput.value.value == 1) 1.0 else 0.0},
+//        Measure(BRIDGE_OUTPUT_TRAPZ, "Bridge Output Trapeezoidal"){if (talonFX.bridgeOuput.value.value == 6) 1.0 else 0.0},
+//        Measure(BRIDGE_OUTPUT_FOC_TORQE, "Bridge Output FOC Torque"){if (talonFX.bridgeOuput.value.value == 7) 1.0 else 0.0},
+//        Measure(BRIDGE_OUTPUT_MUSIC, "Bridge Output Music Tone"){if (talonFX.bridgeOuput.value.value == 8) 1.0 else 0.0},
+//        Measure(BRIDGE_OUTPUT_FOC_EASY, "Bridge Output FOC Easy"){if (talonFX.bridgeOuput.value.value == 9) 1.0 else 0.0},
+//        Measure(BRIDGE_OUTPUT_FAULT_BRAKE, "Bridge Output Fault Brake"){if (talonFX.bridgeOuput.value.value == 12) 1.0 else 0.0},
+//        Measure(BRIDGE_OUTPUT_FAULT_COAST, "Bridge Output Fault Coast"){if (talonFX.bridgeOuput.value.value == 13) 1.0 else 0.0},
         Measure(CLOSED_LOOP_DERIVATIVE_OUTPUT, "Closed Loop Derivative Output"){talonFX.closedLoopDerivativeOutput.value},
         Measure(CLOSED_LOOP_ERROR, "Closed Loop Error"){talonFX.closedLoopError.value},
         Measure(CLOSED_LOOP_FEED_FWD, "Closed Loop Feed Forward"){talonFX.closedLoopFeedForward.value},
@@ -109,23 +117,22 @@ class TalonFX6Measureable @JvmOverloads constructor(
         Measure(DEVICE_ENABLE, "Device Enabled"){talonFX.deviceEnable.value.value.toDouble()},
         Measure(DEVICE_TEMP, "Device Temperature C"){talonFX.deviceTemp.value},
         Measure(DUTY_CYCLE, "Applied Duty Cycle"){talonFX.dutyCycle.value},
-        Measure(FAULT_BOOT_DURING_EN, "Fault: Boot During Enable"){talonFX.fault_BootDuringEnable.value.toDouble()},
-        Measure(FAULT_DEVICE_TEMP, "Fault: Device Temp"){talonFX.fault_DeviceTemp.value.toDouble()},
-        Measure(FAULT_FWD_HARD_LIM, "Fault: FWD Hard Limit"){talonFX.fault_ForwardHardLimit.value.toDouble()},
-        Measure(FAULT_FWD_SOFT_LIM, "Fault: FWD Soft Limit"){talonFX.fault_ForwardSoftLimit.value.toDouble()},
-        Measure(FAULT_FUSED_SENSE_SYNC, "Fault: Fused Sensor Out of Sync"){talonFX.fault_FusedSensorOutOfSync.value.toDouble()},
-        Measure(FAULT_HARDWARE, "Fault: Hardware"){talonFX.fault_Hardware.value.toDouble()},
-        Measure(FAULT_MISSING_REMOTE, "Fault: Missing Remote Sensor"){talonFX.fault_MissingRemoteSensor.value.toDouble()},
-        Measure(FAULT_OVERVOLT_SUPP, "Fault: Overvoltage Suppply"){talonFX.fault_OverSupplyV.value.toDouble()},
-        Measure(FAULT_PROC_TEMP, "Fault: Processor Temperature"){talonFX.fault_ProcTemp.value.toDouble()},
-        Measure(FAULT_REV_HARD_LIM, "Fault: REV Hard Limit"){talonFX.fault_ReverseHardLimit.value.toDouble()},
-        Measure(FAULT_REV_SOFT_LIM, "Fault: REV Soft Limit"){talonFX.fault_ReverseSoftLimit.value.toDouble()},
-        Measure(FAULT_STATOR_CURR_LIM, "Fault: Stator Current Limit"){talonFX.fault_StatorCurrLimit.value.toDouble()},
-        Measure(FAULT_SUPPLY_CURR_LIM, "Fault: Supply Current Limit"){talonFX.fault_SupplyCurrLimit.value.toDouble()},
-        Measure(FAULT_UNDERVOLT_SUPP, "Fault: Undervoltage Supply"){talonFX.fault_Undervoltage.value.toDouble()},
-        Measure(FAULT_UNLICENSED, "Fault: Unlicensed Feature"){talonFX.fault_UnlicensedFeatureInUse.value.toDouble()},
-        Measure(FAULT_UNSTABLE_SUPPV, "Fault: Unstable Supply Voltage"){talonFX.fault_UnstableSupplyV.value.toDouble()},
-        Measure(FAULT_FUSED_NO_LIC, "Fault: Fused CANcoder No License"){talonFX.fault_UsingFusedCANcoderWhileUnlicensed.value.toDouble()},
+        Measure(FAULT_BOOT_DURING_EN, "Fault: Boot During Enable"){talonFX.fault_BootDuringEnable.valueAsDouble},
+        Measure(FAULT_DEVICE_TEMP, "Fault: Device Temp"){talonFX.fault_DeviceTemp.valueAsDouble},
+        Measure(FAULT_FWD_HARD_LIM, "Fault: FWD Hard Limit"){talonFX.fault_ForwardHardLimit.valueAsDouble},
+        Measure(FAULT_FWD_SOFT_LIM, "Fault: FWD Soft Limit"){talonFX.fault_ForwardSoftLimit.valueAsDouble},
+        Measure(FAULT_FUSED_SENSE_SYNC, "Fault: Fused Sensor Out of Sync"){talonFX.fault_FusedSensorOutOfSync.valueAsDouble},
+        Measure(FAULT_HARDWARE, "Fault: Hardware"){talonFX.fault_Hardware.valueAsDouble},
+        Measure(FAULT_OVERVOLT_SUPP, "Fault: Overvoltage Suppply"){talonFX.fault_OverSupplyV.valueAsDouble},
+        Measure(FAULT_PROC_TEMP, "Fault: Processor Temperature"){talonFX.fault_ProcTemp.valueAsDouble},
+        Measure(FAULT_REV_HARD_LIM, "Fault: REV Hard Limit"){talonFX.fault_ReverseHardLimit.valueAsDouble},
+        Measure(FAULT_REV_SOFT_LIM, "Fault: REV Soft Limit"){talonFX.fault_ReverseSoftLimit.valueAsDouble},
+        Measure(FAULT_STATOR_CURR_LIM, "Fault: Stator Current Limit"){talonFX.fault_StatorCurrLimit.valueAsDouble},
+        Measure(FAULT_SUPPLY_CURR_LIM, "Fault: Supply Current Limit"){talonFX.fault_SupplyCurrLimit.valueAsDouble},
+        Measure(FAULT_UNDERVOLT_SUPP, "Fault: Undervoltage Supply"){talonFX.fault_Undervoltage.valueAsDouble},
+        Measure(FAULT_UNLICENSED, "Fault: Unlicensed Feature"){talonFX.fault_UnlicensedFeatureInUse.valueAsDouble},
+        Measure(FAULT_UNSTABLE_SUPPV, "Fault: Unstable Supply Voltage"){talonFX.fault_UnstableSupplyV.valueAsDouble},
+        Measure(FAULT_FUSED_NO_LIC, "Fault: Fused CANcoder No License"){talonFX.fault_UsingFusedCANcoderWhileUnlicensed.valueAsDouble},
         Measure(FWD_LIM, "Forward Limit Switch Closed"){if(talonFX.forwardLimit.value.value == 0) 1.0 else 0.0},
         Measure(MOTION_MAGIC_RUNNING, "Motion Magic Running"){talonFX.motionMagicIsRunning.value.value.toDouble()},
         Measure(POSITION, "Position"){talonFX.position.value},
@@ -144,24 +151,24 @@ class TalonFX6Measureable @JvmOverloads constructor(
         Measure(IS_SAFETY_ENABLED, "Is Safety Enabled"){talonFX.isSafetyEnabled.toDouble()},
         Measure(CLOSED_LOOP_TARGET, "Closed Loop Target"){
             var mode = talonFX.controlMode.value
-            when(mode) {
-                4 -> talonFX.appliedControl.controlInfo.nameValues.get("position").toDouble()//Position
-                5 -> talonFX.appliedControl.controlInfo.nameValues.get("velocity").toDouble()//Velocity
-                6 -> talonFX.appliedControl.controlInfo.nameValues.get("position").toDouble()//Motion Magic
-                8 -> talonFX.appliedControl.controlInfo.nameValues.get("position").toDouble()//FOC Position DC
-                9 -> talonFX.appliedControl.controlInfo.nameValues.get("velocity").toDouble()//FOC Velocity DC
-                10 -> talonFX.appliedControl.controlInfo.nameValues.get("position").toDouble()//FOC Motion Magic DC
-                12 -> talonFX.appliedControl.controlInfo.nameValues.get("position").toDouble()//Position V
-                13 -> talonFX.appliedControl.controlInfo.nameValues.get("velocity").toDouble()//Velocity V
-                14 -> talonFX.appliedControl.controlInfo.nameValues.get("position").toDouble()//Motion Magic V
-                15 -> talonFX.appliedControl.controlInfo.nameValues.get("output").toDouble()//FOC V
-                16 -> talonFX.appliedControl.controlInfo.nameValues.get("position").toDouble()//FOC Pos V
-                17 -> talonFX.appliedControl.controlInfo.nameValues.get("velocity").toDouble()//FOC Vel V
-                18 -> talonFX.appliedControl.controlInfo.nameValues.get("position").toDouble()//FOC Motion Magic V
-                19 -> talonFX.appliedControl.controlInfo.nameValues.get("output").toDouble()//FOC Torque I
-                20 -> talonFX.appliedControl.controlInfo.nameValues.get("position").toDouble()//FOC Pos Torque I
-                21 -> talonFX.appliedControl.controlInfo.nameValues.get("velocity").toDouble()//FOC Vel Torque I
-                22 -> talonFX.appliedControl.controlInfo.nameValues.get("position").toDouble()//FOC Motion Magic Torque I
+            when(mode.value) {
+                4 -> talonFX.appliedControl.controlInfo.nameValues.get("position")?.toDouble() ?: 2767.0//Position
+                5 -> talonFX.appliedControl.controlInfo.nameValues.get("velocity")?.toDouble() ?: 2767.0//Velocity
+                6 -> talonFX.appliedControl.controlInfo.nameValues.get("position")?.toDouble() ?: 2767.0//Motion Magic
+                8 -> talonFX.appliedControl.controlInfo.nameValues.get("position")?.toDouble() ?: 2767.0//FOC Position DC
+                9 -> talonFX.appliedControl.controlInfo.nameValues.get("velocity")?.toDouble() ?: 2767.0//FOC Velocity DC
+                10 -> talonFX.appliedControl.controlInfo.nameValues.get("position")?.toDouble() ?: 2767.0//FOC Motion Magic DC
+                12 -> talonFX.appliedControl.controlInfo.nameValues.get("position")?.toDouble() ?: 2767.0//Position V
+                13 -> talonFX.appliedControl.controlInfo.nameValues.get("velocity")?.toDouble() ?: 2767.0//Velocity V
+                14 -> talonFX.appliedControl.controlInfo.nameValues.get("position")?.toDouble() ?: 2767.0//Motion Magic V
+                15 -> talonFX.appliedControl.controlInfo.nameValues.get("output")?.toDouble() ?: 2767.0//FOC V
+                16 -> talonFX.appliedControl.controlInfo.nameValues.get("position")?.toDouble() ?: 2767.0//FOC Pos V
+                17 -> talonFX.appliedControl.controlInfo.nameValues.get("velocity")?.toDouble() ?: 2767.0//FOC Vel V
+                18 -> talonFX.appliedControl.controlInfo.nameValues.get("position")?.toDouble() ?: 2767.0//FOC Motion Magic V
+                19 -> talonFX.appliedControl.controlInfo.nameValues.get("output")?.toDouble() ?: 2767.0//FOC Torque I
+                20 -> talonFX.appliedControl.controlInfo.nameValues.get("position")?.toDouble() ?: 2767.0//FOC Pos Torque I
+                21 -> talonFX.appliedControl.controlInfo.nameValues.get("velocity")?.toDouble() ?: 2767.0//FOC Vel Torque I
+                22 -> talonFX.appliedControl.controlInfo.nameValues.get("position")?.toDouble() ?: 2767.0//FOC Motion Magic Torque I
                 else -> 2767.0
             }
         }
