@@ -124,6 +124,12 @@ class LifecycleHealthCheck(private val subsystem: Subsystem, private val method:
 
 var caseId = 0
 
+class ResetCaseNum() {
+    fun resetCaseId() {
+        caseId = 0;
+    }
+}
+
 abstract class TalonHealthCheckCase(
     val talon: BaseTalon,
     val isReversing: Boolean,
