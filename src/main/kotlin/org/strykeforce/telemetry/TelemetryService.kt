@@ -9,6 +9,7 @@ import mu.KotlinLogging
 import org.strykeforce.telemetry.measurable.BaseTalonMeasurable
 import org.strykeforce.telemetry.measurable.Measurable
 import org.strykeforce.telemetry.measurable.TalonSRXMeasurable
+import org.strykeforce.telemetry.talon.TalonFXFaultMeasureable
 import org.strykeforce.telemetry.talon.TalonFXMeasureable
 import org.strykeforce.thirdcoast.talon.LegacyTalonFXMeasurable
 import java.util.*
@@ -128,12 +129,16 @@ class TelemetryService(private val telemetryControllerFactory: Function<Inventor
     }
 
     /**
-     * Convenience method to register a [] for telemetry sending
+     * Convenience method to register faults for a [com.ctre.phoenix6.hardware.TalonFX] for telemetry sending
      *
-     * @param talon teh TalonFX to register for data collection
+     * @param talon the TalonFX to register for data collection
+     * @param faults boolean to indicate fault registering
      * @throws IllegalStateException if TelemetryService is running
      */
-    fun register(talon: TalonFX) {
+    fun register(talon: TalonFX, faults: Boolean) {
+        if(faults) {
+            register(TalonFXFaultMeasureable(talon))
+        }
         register(TalonFXMeasureable(talon))
     }
 

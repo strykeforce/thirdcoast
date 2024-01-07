@@ -1,6 +1,5 @@
 package org.strykeforce.swerve;
 
-import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -8,7 +7,6 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.wpilibj.interfaces.Gyro;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -16,6 +14,8 @@ import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.strykeforce.gyro.Gyro;
+import org.strykeforce.gyro.SF_AHRS;
 import org.strykeforce.telemetry.Registrable;
 import org.strykeforce.telemetry.TelemetryService;
 
@@ -81,7 +81,7 @@ public class SwerveDrive implements Registrable {
    * @param swerveModules the swerve modules
    */
   public SwerveDrive(SwerveModule... swerveModules) {
-    this(new AHRS(), swerveModules);
+    this(new SF_AHRS(), swerveModules);
   }
 
   /**
