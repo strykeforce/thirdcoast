@@ -11,7 +11,7 @@ import org.strykeforce.healthcheck.internal.RobotHealthCheckBuilder
 
 private val logger = KotlinLogging.logger {}
 
-class HealthCheckCommand(vararg subsystems: Subsystem) : Command {
+class HealthCheckCommand(vararg subsystems: Subsystem) : Command() {
 
     companion object {
         @JvmField

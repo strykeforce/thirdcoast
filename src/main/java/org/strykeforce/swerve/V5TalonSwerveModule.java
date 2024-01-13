@@ -24,7 +24,7 @@ import org.strykeforce.telemetry.TelemetryService;
  *
  * <pre>
  * TalonSwerveModule module =
- *   new TalonSwerveModule.Builder()
+ *   new V5TalonSwerveModule.Builder()
  *       .azimuthTalon(azimuthTalon)
  *       .driveTalon(driveTalon)
  *       .driveGearRatio(kDriveGearRatio)
@@ -34,9 +34,9 @@ import org.strykeforce.telemetry.TelemetryService;
  *       .build();
  * </pre>
  */
-public class TalonSwerveModule implements SwerveModule {
+public class V5TalonSwerveModule implements SwerveModule {
 
-  private static final Logger logger = LoggerFactory.getLogger(TalonSwerveModule.class);
+  private static final Logger logger = LoggerFactory.getLogger(V5TalonSwerveModule.class);
 
   final int k100msPerSecond = 10;
 
@@ -52,7 +52,7 @@ public class TalonSwerveModule implements SwerveModule {
 
   private Rotation2d previousAngle = new Rotation2d();
 
-  private TalonSwerveModule(Builder builder) {
+  private V5TalonSwerveModule(Builder builder) {
     azimuthTalon = builder.azimuthTalon;
     driveTalon = builder.driveTalon;
     azimuthCountsPerRev = builder.azimuthCountsPerRev;
@@ -316,16 +316,16 @@ public class TalonSwerveModule implements SwerveModule {
       return this;
     }
 
-    public TalonSwerveModule build() {
+    public V5TalonSwerveModule build() {
       if (driveDeadbandMetersPerSecond < 0) {
         driveDeadbandMetersPerSecond = 0.01 * driveMaximumMetersPerSecond;
       }
-      var module = new TalonSwerveModule(this);
+      var module = new V5TalonSwerveModule(this);
       validateTalonSwerveModuleObject(module);
       return module;
     }
 
-    private void validateTalonSwerveModuleObject(TalonSwerveModule module) {
+    private void validateTalonSwerveModuleObject(V5TalonSwerveModule module) {
       if (module.azimuthTalon == null) {
         throw new IllegalArgumentException("azimuth talon must be set.");
       }

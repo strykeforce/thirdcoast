@@ -1,13 +1,13 @@
 package org.strykeforce.trapper
 
-import edu.wpi.first.wpilibj2.command.CommandBase
+import edu.wpi.first.wpilibj2.command.Command
 import java.util.function.Consumer
 
 class PostCommand(
     val trapperSubsystem: TrapperSubsystem,
     val onInit: Runnable,
     val onEnd: Consumer<Boolean>
-) : CommandBase() {
+) : Command() {
 
     init {
         addRequirements(trapperSubsystem)
