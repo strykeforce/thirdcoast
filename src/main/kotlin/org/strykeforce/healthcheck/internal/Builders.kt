@@ -9,7 +9,7 @@ import org.strykeforce.healthcheck.Follow
 import org.strykeforce.healthcheck.Position
 import org.strykeforce.healthcheck.Timed
 import org.strykeforce.swerve.SwerveDrive
-import org.strykeforce.swerve.TalonSwerveModule
+import org.strykeforce.swerve.V5TalonSwerveModule
 import java.lang.reflect.Field
 import java.lang.reflect.Method
 
@@ -172,7 +172,7 @@ class SwerveDriveHealthCheckBuilder(private val subsystem: Subsystem, private va
         // follow associated leaders
         swerveDrive.swerveModules.forEach {
             val module =
-                it as? TalonSwerveModule ?: throw IllegalArgumentException("$subsystem: $it is not TalonSwerveModule")
+                it as? V5TalonSwerveModule ?: throw IllegalArgumentException("$subsystem: $it is not TalonSwerveModule")
             val azimuth = module.azimuthTalon
             val drive = module.driveTalon
 
