@@ -47,6 +47,7 @@ internal const val DIFF_CLOSED_LOOP_I_OUT = "DIFF_CLOSED_LOOP_I_OUT"
 internal const val DIFF_CLOSED_LOOP_OUT = "DIFF_CLOSED_LOOP_OUT"
 internal const val DIFF_CLOSED_LOOP_P_OUT = "DIFF_CLOSED_LOOP_P_OUT"
 internal const val DIFF_CLOSED_LOOP_REF = "DIFF_CLOSED_LOOP_REF"
+internal const val DIFF_CLOSED_LOOP_REF_SLOPE = "DIFF_CLOSED_LOOP_REF_SLOPE"
 internal const val DIFF_CLOSED_LOOP_SLOT = "DIFF_CLOSED_LOOP_SLOT"
 
 
@@ -126,6 +127,7 @@ class TalonFXMeasureable @JvmOverloads constructor(
         Measure(DIFF_CLOSED_LOOP_OUT, "Differential Closed Loop Output"){talonFX.differentialClosedLoopOutput.valueAsDouble},
         Measure(DIFF_CLOSED_LOOP_P_OUT, "Differential Closed Loop P Output"){talonFX.differentialClosedLoopProportionalOutput.valueAsDouble},
         Measure(DIFF_CLOSED_LOOP_REF, "Differential Closed Loop Reference"){talonFX.differentialClosedLoopReference.valueAsDouble},
+        Measure(DIFF_CLOSED_LOOP_REF_SLOPE, "Differential Closed Loop Reference Slope"){talonFX.differentialClosedLoopReferenceSlope.valueAsDouble},
         Measure(DIFF_CLOSED_LOOP_SLOT, "Differential Closed Loop Slot"){talonFX.differentialClosedLoopSlot.valueAsDouble},
     )
 }
