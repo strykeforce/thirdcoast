@@ -4,31 +4,41 @@ import com.ctre.phoenix6.hardware.TalonFX
 import org.strykeforce.telemetry.measurable.Measurable
 import org.strykeforce.telemetry.measurable.Measure
 import org.strykeforce.telemetry.measurable.toDouble
+import kotlin.concurrent.timerTask
 
 //Device Status
 internal const val ACCELERATION = "ACCELERATION"
+internal const val ACCEL_SCALE = "ACCEL_SCALE"
 internal const val BRIDGE_OUTPUT = "BRIDGE_OUTPUT"
 internal const val DEVICE_TEMP = "DEVICE_TEMP"
 internal const val DIFF_AVG_POS = "DIFF_AVG_POS"
+internal const val DIFF_AVG_POS_SCALE = "DIFF_AVG_POS_SCALE"
 internal const val DIFF_AVG_VEL = "DIFF_AVG_VEL"
+internal const val DIFF_AVG_VEL_SCALE = "DIFF_AVG_VEL_SCALE"
 internal const val DIFF_DIFF_POS = "DIFF_DIFF_POS"
+internal const val DIFF_DIFF_POS_SCALE = "DIFF_DIFF_POS_SCALE"
 internal const val DIFF_DIFF_VEL = "DIFF_DIFF_VEL"
+internal const val DIFF_DIFF_VEL_SCALE = "DIFF_DIFF_VEL_SCALE"
 internal const val DUTY_CYCLE = "DUTY_CYCLE"
 internal const val FWD_LIM = "FWD_LIM"
 internal const val IS_PRO_LIC = "IS_PRO_LIC"
 internal const val IS_MM_RUNNING = "IS_MM_RUNNING"
 internal const val MOTOR_VOLTAGE = "MOTOR_VOLTAGE"
 internal const val POSITION = "POSITION"
+internal const val POS_SCALE = "POS_SCALE"
 internal const val PROCESSOR_TEMP = "PROCESSOR_TEMP"
 internal const val HAS_RESET_OCCURRED = "HAS_RESET_OCCURRED"
 internal const val REV_LIM = "REV_LIM"
 internal const val ROTOR_POS = "ROTOR_POS"
+internal const val ROTOR_POS_SCALE = "ROTOR_POS_SCALE"
 internal const val ROTOR_VEL = "ROTOR_VEL"
+internal const val ROTOR_VEL_SCALE = "ROTOR_VEL_SCALE"
 internal const val STATOR_CURRENT = "STATOR_CURRENT"
 internal const val SUPPLY_CURRENT = "SUPPLY_CURRENT"
 internal const val SUPPLY_VOLTAGE = "SUPPLY_VOLTAGE"
 internal const val TORQUE_CURRENT = "TORQUE_CURRENT"
 internal const val VELOCITY = "VELOCITY"
+internal const val VEL_SCALE = "VEL_SCALE"
 
 //PID
 internal const val CLOSED_LOOP_D_OUTPUT = "CLOSED_LOOP_D_OUTPUT"
@@ -83,32 +93,41 @@ class TalonFXMeasureable @JvmOverloads constructor(
     override val description: String = "TalonFX ${talonFX.deviceID}"
 ): Measurable {
 
-
+    val scaleFactor = 1000.0;
     override val deviceId = talonFX.deviceID
     override val measures = setOf(
         Measure(ACCELERATION, "Acceleration") {talonFX.acceleration.valueAsDouble},
+        Measure(ACCEL_SCALE, "Accel. scaled") {talonFX.acceleration.valueAsDouble  * scaleFactor},
         Measure(BRIDGE_OUTPUT, "Bridge Output") {talonFX.bridgeOutput.valueAsDouble},
         Measure(DEVICE_TEMP, "Device Temperature C"){talonFX.deviceTemp.valueAsDouble},
         Measure(DIFF_AVG_POS, "Differential Avg Position") {talonFX.differentialAveragePosition.valueAsDouble},
+        Measure(DIFF_AVG_POS_SCALE,"Diff Avg Pos scaled"){talonFX.differentialAveragePosition.valueAsDouble * scaleFactor},
         Measure(DIFF_AVG_VEL, "Differential Avg Velocity") {talonFX.differentialAverageVelocity.valueAsDouble},
+        Measure(DIFF_AVG_VEL_SCALE, "Diff Avg Vel scaled"){talonFX.differentialAverageVelocity.valueAsDouble * scaleFactor},
         Measure(DIFF_DIFF_POS, "Differential Difference Position"){talonFX.differentialDifferencePosition.valueAsDouble},
+        Measure(DIFF_DIFF_POS_SCALE, "Diff Diff Pos scaled"){talonFX.differentialDifferencePosition.valueAsDouble * scaleFactor},
         Measure(DIFF_DIFF_VEL, "Differential Difference Velocity"){talonFX.differentialDifferenceVelocity.valueAsDouble},
+        Measure(DIFF_DIFF_VEL_SCALE, "Diff Diff Vel scale"){talonFX.differentialDifferenceVelocity.valueAsDouble * scaleFactor},
         Measure(DUTY_CYCLE, "Applied Duty Cycle"){talonFX.dutyCycle.value},
         Measure(FWD_LIM, "Forward Limit Switch Closed"){talonFX.forwardLimit.valueAsDouble},
         Measure(IS_PRO_LIC, "Is Pro Licensed"){talonFX.isProLicensed.valueAsDouble},
         Measure(IS_MM_RUNNING, "Motion Magic Running"){talonFX.motionMagicIsRunning.valueAsDouble},
         Measure(MOTOR_VOLTAGE, "Motor Voltage"){talonFX.motorVoltage.valueAsDouble},
         Measure(POSITION, "Position"){talonFX.position.valueAsDouble},
+        Measure(POS_SCALE, "Pos. scaled"){talonFX.position.valueAsDouble * scaleFactor},
         Measure(PROCESSOR_TEMP, "Processor Temp"){talonFX.processorTemp.valueAsDouble},
         Measure(HAS_RESET_OCCURRED, "Has Reset Occurred"){talonFX.hasResetOccurred().toDouble()},
         Measure(REV_LIM, "Reverse Limit Switch Closed"){talonFX.reverseLimit.valueAsDouble},
         Measure(ROTOR_POS, "Rotor Position"){talonFX.rotorPosition.valueAsDouble},
+        Measure(ROTOR_POS_SCALE, "Rotor Pos scaled"){ talonFX.rotorPosition.valueAsDouble * scaleFactor},
         Measure(ROTOR_VEL, "Rotor Velocity"){talonFX.rotorVelocity.valueAsDouble},
+        Measure(ROTOR_VEL_SCALE, "Rotor Vel scaled"){talonFX.rotorVelocity.valueAsDouble * scaleFactor},
         Measure(STATOR_CURRENT, "Stator Current"){talonFX.statorCurrent.valueAsDouble},
         Measure(SUPPLY_CURRENT, "Supply Current"){talonFX.supplyCurrent.valueAsDouble},
         Measure(SUPPLY_VOLTAGE, "Supply Voltage"){talonFX.supplyVoltage.valueAsDouble},
         Measure(TORQUE_CURRENT, "Torque Current"){talonFX.torqueCurrent.valueAsDouble},
         Measure(VELOCITY, "Velocity"){talonFX.velocity.valueAsDouble},
+        Measure(VEL_SCALE, "Vel. scaled"){talonFX.velocity.valueAsDouble * scaleFactor},
         Measure(IS_INVERTED, "Is Inverted"){talonFX.inverted.toDouble()},
 
         Measure(CLOSED_LOOP_D_OUTPUT, "Closed Loop Derivative Output"){talonFX.closedLoopDerivativeOutput.valueAsDouble},
