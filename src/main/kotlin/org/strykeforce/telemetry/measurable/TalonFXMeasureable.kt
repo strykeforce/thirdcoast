@@ -149,4 +149,15 @@ class TalonFXMeasureable @JvmOverloads constructor(
         Measure(DIFF_CLOSED_LOOP_REF_SLOPE, "Differential Closed Loop Reference Slope"){talonFX.differentialClosedLoopReferenceSlope.valueAsDouble},
         Measure(DIFF_CLOSED_LOOP_SLOT, "Differential Closed Loop Slot"){talonFX.differentialClosedLoopSlot.valueAsDouble},
     )
+
+    override fun equals(other: Any?) : Boolean {
+        if(this === other) return  true
+        if(javaClass != other?.javaClass) return  false
+
+        other as TalonFXMeasureable
+        if(deviceId != other.deviceId) return false
+        return true
+    }
+
+    override fun hashCode() = deviceId
 }
