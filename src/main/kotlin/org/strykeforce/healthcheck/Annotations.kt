@@ -6,7 +6,7 @@ import com.ctre.phoenix.motorcontrol.can.BaseTalon
 annotation class HealthCheck(val order: Int = 0)
 
 @Target(AnnotationTarget.FIELD)
-annotation class Position(val percentOutput: DoubleArray, val encoderChange: Int)
+annotation class Position(val percentOutput: DoubleArray, val encoderChange: Double)
 
 @Target(AnnotationTarget.FIELD)
 annotation class Timed(val percentOutput: DoubleArray, val duration: Double = 5.0)

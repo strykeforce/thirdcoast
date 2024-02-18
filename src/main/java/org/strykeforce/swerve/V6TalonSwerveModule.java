@@ -68,6 +68,8 @@ public class V6TalonSwerveModule implements SwerveModule {
 
   private int closedLoopSlot;
 
+  private boolean compensateLatency;
+
   private V6TalonSwerveModule(V6Builder builder) {
 
     azimuthTalon = builder.azimuthTalon;
@@ -82,6 +84,7 @@ public class V6TalonSwerveModule implements SwerveModule {
     units = builder.units;
     enableFOC = builder.enableFOC;
     closedLoopSlot = builder.closedLoopSlot;
+    compensateLatency = builder.compensateLatency;
     resetDriveEncoder();
   }
 
@@ -223,11 +226,14 @@ public class V6TalonSwerveModule implements SwerveModule {
   }
 
   private double getDrivePositionMeters() {
+    double latency = driveTalon.getPosition().getTimestamp().getLatency();
     double shaftPosition = driveTalon.getPosition().getValue(); // rotations
     double motorPosition = shaftPosition / driveCountsPerRev; // default = 1.0 for counts
     double wheelPosition = motorPosition * driveGearRatio;
     double wheelPositionMeters = wheelPosition * wheelCircumferenceMeters;
-    return wheelPositionMeters;
+    double velocityMetersPerSecond = getDriveMetersPerSecond();
+    double wheelPositionMetersComp = wheelPositionMeters + latency * velocityMetersPerSecond;
+    return compensateLatency ? wheelPositionMetersComp : wheelPositionMeters;
   }
 
   private void setDriveClosedLoopMetersPerSecond(double metersPerSecond) {
@@ -303,6 +309,8 @@ public class V6TalonSwerveModule implements SwerveModule {
 
     private int closedLoopSlot = 0;
 
+    private boolean compensateLatency = false;
+
     public V6Builder() {}
 
     public V6Builder azimuthTalon(TalonSRX azimuthTalon) {
@@ -362,6 +370,11 @@ public class V6TalonSwerveModule implements SwerveModule {
 
     public V6Builder closedLoopSlot(int slot) {
       this.closedLoopSlot = slot;
+      return this;
+    }
+
+    public V6Builder latencyCompensation(boolean compensate) {
+      this.compensateLatency = compensate;
       return this;
     }
 
