@@ -1,6 +1,7 @@
 package org.strykeforce.healthcheck.internal
 
 import com.ctre.phoenix.motorcontrol.can.BaseTalon
+import com.ctre.phoenix6.hardware.TalonFX
 
 data class DiagnosticLimits(
     val currentMin: Double = 0.0, val currentMax: Double = 0.0, val speedMin: Double = 0.0, val speedMax: Double = 0.0
@@ -48,6 +49,49 @@ class TalonHealthCheckData(val case: Int, private val talon: BaseTalon) {
     val averageStatorCurrent
         get() = statorCurrent.average()
 
+}
+
+class P6TalonHealthCheckData(val case: Int, private val talonFx: TalonFX) {
+    val deviceId = talonFx.deviceID
+    val timestamp : MutableList<Long> = mutableListOf()
+    val voltage: MutableList<Double> = mutableListOf()
+    val position: MutableList<Double> = mutableListOf()
+    val speed: MutableList<Double> = mutableListOf()
+    val supplyCurrent: MutableList<Double> = mutableListOf()
+    val statorCurrent: MutableList<Double> = mutableListOf()
+
+    fun measure(ts: Long) {
+        timestamp.add(ts)
+        voltage.add(talonFx.motorVoltage.valueAsDouble)
+        position.add(talonFx.position.valueAsDouble)
+        speed.add(talonFx.velocity.valueAsDouble)
+        supplyCurrent.add(talonFx.supplyCurrent.valueAsDouble)
+        statorCurrent.add(talonFx.statorCurrent.valueAsDouble)
+    }
+
+    fun reset() {
+        timestamp.clear()
+        voltage.clear()
+        position.clear()
+        speed.clear()
+        supplyCurrent.clear()
+        statorCurrent.clear()
+    }
+
+    val id
+        get() = talonFx.deviceID
+
+    val averageVoltage
+        get() = voltage.average()
+
+    val averageSpeed
+        get() = speed.average()
+
+    val averageSupplyCurrent
+        get() = supplyCurrent.average()
+
+    val averageStatorCurrent
+        get() = statorCurrent.average()
 }
 
 internal fun DoubleArray.limitsFor(iteration: Int): DiagnosticLimits {

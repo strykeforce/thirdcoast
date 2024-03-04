@@ -16,7 +16,7 @@ internal class TestSubsystem : Subsystem {
 
     // position tests - no current or speed limits
     @HealthCheck
-    @Position(percentOutput = [0.25, -0.25], encoderChange = 20000)
+    @Position(percentOutput = [0.25, -0.25], encoderChange = 20000.0)
     private val talonThree = mock<BaseTalon>()
 
     // timed tests - specify limits: currentMin, currentMax, speedMin, speedMax
@@ -27,7 +27,7 @@ internal class TestSubsystem : Subsystem {
 
     // position test - specify limits
     @HealthCheck
-    @Position(percentOutput = [0.25], encoderChange = 20000)
+    @Position(percentOutput = [0.25], encoderChange = 20000.0)
     @Limits([0.75, 2.0, 1500.0, 3500.0])
     private val talonFive = mock<BaseTalon>()
 

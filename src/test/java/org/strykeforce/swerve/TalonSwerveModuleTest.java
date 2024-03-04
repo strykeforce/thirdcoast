@@ -20,6 +20,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.Timestamp;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.VelocityDutyCycle;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -1215,12 +1216,18 @@ class TalonSwerveModuleTest {
 
     private StatusSignal positionStatusSig;
 
+    private Timestamp timestamp;
+
+    private StatusSignal velocityStatusSig;
+
     @BeforeEach
     void setTup() {
       azimuthTalon = mock(TalonSRX.class);
       driveTalon = mock(com.ctre.phoenix6.hardware.TalonFX.class);
       when(driveTalon.setPosition(0)).thenReturn(StatusCode.OK);
       positionStatusSig = mock(StatusSignal.class);
+      timestamp = mock(Timestamp.class);
+      velocityStatusSig = mock(StatusSignal.class);
     }
 
     @Test
@@ -1237,6 +1244,10 @@ class TalonSwerveModuleTest {
               .build();
       when(driveTalon.getPosition()).thenReturn(positionStatusSig);
       when(positionStatusSig.getValue()).thenReturn(10.0);
+      when(positionStatusSig.getTimestamp()).thenReturn(timestamp);
+      when(timestamp.getLatency()).thenReturn(0.0);
+      when(driveTalon.getVelocity()).thenReturn(velocityStatusSig);
+      when(velocityStatusSig.getValue()).thenReturn(0.0);
       SwerveModulePosition position = module.getPosition();
       assertEquals(0.365733744755412, position.distanceMeters, 1e-9);
     }
@@ -1258,6 +1269,11 @@ class TalonSwerveModuleTest {
               .build();
       when(driveTalon.getPosition()).thenReturn(positionStatusSig);
       when(positionStatusSig.getValue()).thenReturn(driveTalonPosition);
+
+      when(positionStatusSig.getTimestamp()).thenReturn(timestamp);
+      when(timestamp.getLatency()).thenReturn(0.0);
+      when(driveTalon.getVelocity()).thenReturn(velocityStatusSig);
+      when(velocityStatusSig.getValue()).thenReturn(0.0);
       SwerveModulePosition position = module.getPosition();
       assertEquals(expectedMeters, position.distanceMeters, 1e-9);
     }

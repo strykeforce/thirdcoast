@@ -100,4 +100,15 @@ class TalonFXFaultMeasureable @JvmOverloads constructor(
         Measure(STICKY_FAULT_UNSTABLE_SUPPV, "Sticky: Unstable Supply Voltage"){talonFX.stickyFault_UnstableSupplyV.valueAsDouble},
         Measure(STICKY_FAULT_FUSED_NO_LIC, "Sticky: Fused Sensor No License"){talonFX.stickyFault_UsingFusedCANcoderWhileUnlicensed.valueAsDouble}
     )
+
+    override fun equals(other: Any?) : Boolean {
+        if(this === other) return  true
+        if(javaClass != other?.javaClass) return  false
+
+        other as TalonFXFaultMeasureable
+        if(deviceId != other.deviceId) return false
+        return true
+    }
+
+    override fun hashCode() = deviceId
 }
