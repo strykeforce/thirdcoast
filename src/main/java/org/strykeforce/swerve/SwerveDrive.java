@@ -32,16 +32,25 @@ public class SwerveDrive implements Registrable {
   private Rotation2d gyroOffset = new Rotation2d();
   private boolean hasGyroOffset = false;
 
+  private boolean discretizeSpeeds = false;
+
+  private double timestep = 0.02; // seconds
+
   /**
    * Construct a swerve drive object. Along with a gyro, this takes in four configured swerve
    * modules, by convention in left front, right front, left rear, right rear order.
    *
+   * @param discretizeSpeeds indicates whether to discretize chassisSpeeds calculations
+   * @param timestep time interval at which updates are fed to swervve drive
    * @param gyro the gyro to use for field-oriented driving
    * @param swerveModules the swerve modules
    */
-  public SwerveDrive(Gyro gyro, SwerveModule... swerveModules) {
+  public SwerveDrive(
+      Boolean discretizeSpeeds, Double timestep, Gyro gyro, SwerveModule... swerveModules) {
     this.gyro = gyro;
     this.swerveModules = swerveModules;
+    this.discretizeSpeeds = discretizeSpeeds;
+    this.timestep = timestep;
     final List<Translation2d> locations =
         Arrays.stream(swerveModules)
             .map(SwerveModule::getWheelLocationMeters)
@@ -72,6 +81,17 @@ public class SwerveDrive implements Registrable {
     odometry =
         new KinematicOdometryStrategy(
             kinematics, gyro.getRotation2d().rotateBy(gyroOffset), modulePositions);
+  }
+
+  /**
+   * Construct a swerve drive object without discritized speeds. This takes in a Gyro and four
+   * configured swerve modules in the following order: left front, left right, left rear, right rear
+   *
+   * @param gyro
+   * @param swerveModules
+   */
+  public SwerveDrive(Gyro gyro, SwerveModule... swerveModules) {
+    this(false, 0.02, gyro, swerveModules);
   }
 
   /**
@@ -275,6 +295,7 @@ public class SwerveDrive implements Registrable {
       double vyMetersPerSecond,
       double omegaRadiansPerSecond,
       boolean isFieldOriented) {
+
     ChassisSpeeds chassisSpeeds =
         isFieldOriented
             ? ChassisSpeeds.fromFieldRelativeSpeeds(
@@ -284,7 +305,10 @@ public class SwerveDrive implements Registrable {
                 hasGyroOffset ? gyro.getRotation2d().rotateBy(gyroOffset) : gyro.getRotation2d())
             : new ChassisSpeeds(vxMetersPerSecond, vyMetersPerSecond, omegaRadiansPerSecond);
 
-    var swerveModuleStates = kinematics.toSwerveModuleStates(chassisSpeeds);
+    ChassisSpeeds discreteSpeeds = ChassisSpeeds.discretize(chassisSpeeds, timestep);
+
+    var swerveModuleStates =
+        kinematics.toSwerveModuleStates(discretizeSpeeds ? chassisSpeeds : discreteSpeeds);
     SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, maxSpeedMetersPerSecond);
     return swerveModuleStates;
   }
