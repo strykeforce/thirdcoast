@@ -14,7 +14,7 @@ public class SF_AHRS extends AHRS implements Gyro {
   }
 
   public SF_AHRS(SPI.Port spi_port_id, int spi_bitrate, byte update_rate_hz) {
-    ahrs = new SF_AHRS(spi_port_id, spi_bitrate, update_rate_hz);
+    ahrs = new AHRS(spi_port_id, spi_bitrate, update_rate_hz);
   }
 
   public SF_AHRS(I2C.Port i2c_port_id, byte update_rate_hz) {
