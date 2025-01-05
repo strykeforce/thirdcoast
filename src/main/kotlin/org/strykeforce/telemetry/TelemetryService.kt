@@ -5,12 +5,10 @@ package org.strykeforce.telemetry
 import com.ctre.phoenix.motorcontrol.can.BaseTalon
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import com.ctre.phoenix6.hardware.CANcoder
+import com.ctre.phoenix6.hardware.Pigeon2
 import com.ctre.phoenix6.hardware.TalonFX
 import mu.KotlinLogging
-import org.strykeforce.telemetry.measurable.BaseTalonMeasurable
-import org.strykeforce.telemetry.measurable.CancoderMeasureable
-import org.strykeforce.telemetry.measurable.Measurable
-import org.strykeforce.telemetry.measurable.TalonSRXMeasurable
+import org.strykeforce.telemetry.measurable.*
 import org.strykeforce.telemetry.talon.TalonFXFaultMeasureable
 import org.strykeforce.telemetry.talon.TalonFXMeasureable
 import org.strykeforce.thirdcoast.talon.LegacyTalonFXMeasurable
@@ -145,13 +143,23 @@ class TelemetryService(private val telemetryControllerFactory: Function<Inventor
     }
 
     /**
-     * Convenience method to register faults for a [com.ctre.phoenix6.hardware.CANcoder] for telemetry sending
+     * Convenience method to register a [com.ctre.phoenix6.hardware.CANcoder] for telemetry sending
      *
      * @param cancoder the CANcoder to register for data collection
      * @throws IllegalStateException if TelemetryService is running
      */
     fun register(cancoder: CANcoder) {
         register(CancoderMeasureable(cancoder))
+    }
+
+    /**
+     * Convenience method to register a [com.ctre.phoenix6.hardware.Pigeon2] for telemetry sending
+     *
+     * @param pigeon2 the Pigeon2 to register for data collection
+     * @throws IllegalStateException if TelemetryService is running
+     */
+    fun register(pigeon2: Pigeon2) {
+        register(Pigeon2Measureable(pigeon2))
     }
 
     /**
