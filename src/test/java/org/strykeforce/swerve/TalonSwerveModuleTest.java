@@ -28,6 +28,8 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.Preferences;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -128,91 +130,91 @@ class TalonSwerveModuleTest {
     verify(driveTalon, times(2)).setPosition(0);
   }
 
-//  @Nested
-//  @DisplayName("When setting azimuth zero")
-//  class TestWhenSettingAzimuthZero {
-//
-//    TalonSRX azimuthTalon;
-//    TalonFX driveTalon;
-//    SwerveModule module;
-//    SensorCollection sensorCollection;
-//
-//    @BeforeEach
-//    void setUp() {
-//      azimuthTalon = mock(TalonSRX.class);
-//      driveTalon = mock(TalonFX.class);
-//      when(driveTalon.setPosition(0.0)).thenReturn(StatusCode.valueOf(0));
-//      module =
-//          new V6TalonSwerveModule.V6Builder()
-//              .azimuthTalon(azimuthTalon)
-//              .driveTalon(driveTalon)
-//              .driveGearRatio(kDriveGearRatio)
-//              .wheelDiameterInches(kWheelDiameterInches)
-//              .wheelLocationMeters(new Translation2d(1, 1))
-//              .driveMaximumMetersPerSecond(kMaxSpeedMetersPerSecond)
-//              .build();
-//      sensorCollection = mock(SensorCollection.class);
-//      when(azimuthTalon.getSensorCollection()).thenReturn(sensorCollection);
-//    }
-//
-//    @Test
-//    @DisplayName("should store azimuth zero reference")
-//    void storeAzimuthZeroReference() {
-//      V6TalonSwerveModule.V6Builder builder =
-//          new V6TalonSwerveModule.V6Builder()
-//              .azimuthTalon(azimuthTalon)
-//              .driveTalon(driveTalon)
-//              .driveGearRatio(kDriveGearRatio)
-//              .wheelDiameterInches(kWheelDiameterInches)
-//              .driveMaximumMetersPerSecond(kMaxSpeedMetersPerSecond);
-//
-//      int expectedZeroReference = 27;
-//      int index = 0; // fixture wheel is LF
-//      String key = String.format("SwerveDrive/wheel.%d", index);
-//      module = builder.wheelLocationMeters(new Translation2d(1, 1)).build();
-//      when(sensorCollection.getPulseWidthPosition()).thenReturn(expectedZeroReference);
-//      module.storeAzimuthZeroReference();
-//      assertEquals(expectedZeroReference, Preferences.getInt(key, -1));
-//
-//      expectedZeroReference = 67;
-//      index = 1; // fixture wheel is RF
-//      key = String.format("SwerveDrive/wheel.%d", index);
-//      module = builder.wheelLocationMeters(new Translation2d(1, -1)).build();
-//      when(sensorCollection.getPulseWidthPosition()).thenReturn(expectedZeroReference);
-//      module.storeAzimuthZeroReference();
-//      assertEquals(expectedZeroReference, Preferences.getInt(key, -1));
-//
-//      expectedZeroReference = 2767;
-//      index = 2; // fixture wheel is LR
-//      key = String.format("SwerveDrive/wheel.%d", index);
-//      module = builder.wheelLocationMeters(new Translation2d(-1, 1)).build();
-//      when(sensorCollection.getPulseWidthPosition()).thenReturn(expectedZeroReference);
-//      module.storeAzimuthZeroReference();
-//      assertEquals(expectedZeroReference, Preferences.getInt(key, -1));
-//
-//      expectedZeroReference = 6727;
-//      index = 3; // fixture wheel is RR
-//      key = String.format("SwerveDrive/wheel.%d", index);
-//      module = builder.wheelLocationMeters(new Translation2d(-1, -1)).build();
-//      when(sensorCollection.getPulseWidthPosition()).thenReturn(expectedZeroReference);
-//      module.storeAzimuthZeroReference();
-//      assertEquals(expectedZeroReference & 0xFFF, Preferences.getInt(key, -1));
-//    }
-//
-//    @ParameterizedTest
-//    @CsvSource({"0, 0, 0", "4096, 0, 0", "4097, 1, 0", "4097, 0, 1", "0, 2767, -2767"})
-//    @DisplayName("should set azimuth zero")
-//    void shouldSetAzimuthZero(int absoluteEncoderPosition, int zeroReference, double setpoint) {
-//      int index = 0; // fixture wheel is LF
-//      String key = String.format("SwerveDrive/wheel.%d", index);
-//      Preferences.setInt(key, zeroReference);
-//      when(sensorCollection.getPulseWidthPosition()).thenReturn(absoluteEncoderPosition);
-//      when(azimuthTalon.setSelectedSensorPosition(eq(setpoint), anyInt(), anyInt()))
-//          .thenReturn(ErrorCode.valueOf(0));
-//      module.loadAndSetAzimuthZeroReference();
-//      verify(azimuthTalon).setSelectedSensorPosition(setpoint, 0, 10);
-//    }
-//  }
+  //  @Nested
+  //  @DisplayName("When setting azimuth zero")
+  //  class TestWhenSettingAzimuthZero {
+  //
+  //    TalonSRX azimuthTalon;
+  //    TalonFX driveTalon;
+  //    SwerveModule module;
+  //    SensorCollection sensorCollection;
+  //
+  //    @BeforeEach
+  //    void setUp() {
+  //      azimuthTalon = mock(TalonSRX.class);
+  //      driveTalon = mock(TalonFX.class);
+  //      when(driveTalon.setPosition(0.0)).thenReturn(StatusCode.valueOf(0));
+  //      module =
+  //          new V6TalonSwerveModule.V6Builder()
+  //              .azimuthTalon(azimuthTalon)
+  //              .driveTalon(driveTalon)
+  //              .driveGearRatio(kDriveGearRatio)
+  //              .wheelDiameterInches(kWheelDiameterInches)
+  //              .wheelLocationMeters(new Translation2d(1, 1))
+  //              .driveMaximumMetersPerSecond(kMaxSpeedMetersPerSecond)
+  //              .build();
+  //      sensorCollection = mock(SensorCollection.class);
+  //      when(azimuthTalon.getSensorCollection()).thenReturn(sensorCollection);
+  //    }
+  //
+  //    @Test
+  //    @DisplayName("should store azimuth zero reference")
+  //    void storeAzimuthZeroReference() {
+  //      V6TalonSwerveModule.V6Builder builder =
+  //          new V6TalonSwerveModule.V6Builder()
+  //              .azimuthTalon(azimuthTalon)
+  //              .driveTalon(driveTalon)
+  //              .driveGearRatio(kDriveGearRatio)
+  //              .wheelDiameterInches(kWheelDiameterInches)
+  //              .driveMaximumMetersPerSecond(kMaxSpeedMetersPerSecond);
+  //
+  //      int expectedZeroReference = 27;
+  //      int index = 0; // fixture wheel is LF
+  //      String key = String.format("SwerveDrive/wheel.%d", index);
+  //      module = builder.wheelLocationMeters(new Translation2d(1, 1)).build();
+  //      when(sensorCollection.getPulseWidthPosition()).thenReturn(expectedZeroReference);
+  //      module.storeAzimuthZeroReference();
+  //      assertEquals(expectedZeroReference, Preferences.getInt(key, -1));
+  //
+  //      expectedZeroReference = 67;
+  //      index = 1; // fixture wheel is RF
+  //      key = String.format("SwerveDrive/wheel.%d", index);
+  //      module = builder.wheelLocationMeters(new Translation2d(1, -1)).build();
+  //      when(sensorCollection.getPulseWidthPosition()).thenReturn(expectedZeroReference);
+  //      module.storeAzimuthZeroReference();
+  //      assertEquals(expectedZeroReference, Preferences.getInt(key, -1));
+  //
+  //      expectedZeroReference = 2767;
+  //      index = 2; // fixture wheel is LR
+  //      key = String.format("SwerveDrive/wheel.%d", index);
+  //      module = builder.wheelLocationMeters(new Translation2d(-1, 1)).build();
+  //      when(sensorCollection.getPulseWidthPosition()).thenReturn(expectedZeroReference);
+  //      module.storeAzimuthZeroReference();
+  //      assertEquals(expectedZeroReference, Preferences.getInt(key, -1));
+  //
+  //      expectedZeroReference = 6727;
+  //      index = 3; // fixture wheel is RR
+  //      key = String.format("SwerveDrive/wheel.%d", index);
+  //      module = builder.wheelLocationMeters(new Translation2d(-1, -1)).build();
+  //      when(sensorCollection.getPulseWidthPosition()).thenReturn(expectedZeroReference);
+  //      module.storeAzimuthZeroReference();
+  //      assertEquals(expectedZeroReference & 0xFFF, Preferences.getInt(key, -1));
+  //    }
+  //
+  //    @ParameterizedTest
+  //    @CsvSource({"0, 0, 0", "4096, 0, 0", "4097, 1, 0", "4097, 0, 1", "0, 2767, -2767"})
+  //    @DisplayName("should set azimuth zero")
+  //    void shouldSetAzimuthZero(int absoluteEncoderPosition, int zeroReference, double setpoint) {
+  //      int index = 0; // fixture wheel is LF
+  //      String key = String.format("SwerveDrive/wheel.%d", index);
+  //      Preferences.setInt(key, zeroReference);
+  //      when(sensorCollection.getPulseWidthPosition()).thenReturn(absoluteEncoderPosition);
+  //      when(azimuthTalon.setSelectedSensorPosition(eq(setpoint), anyInt(), anyInt()))
+  //          .thenReturn(ErrorCode.valueOf(0));
+  //      module.loadAndSetAzimuthZeroReference();
+  //      verify(azimuthTalon).setSelectedSensorPosition(setpoint, 0, 10);
+  //    }
+  //  }
 
   @Nested
   @DisplayName("When setting V6 azimuth zero")
@@ -330,88 +332,88 @@ class TalonSwerveModuleTest {
     }
   */
 
-//  @Nested
-//  @DisplayName("Should not validate")
-//  class TestShouldNotValidate {
-//
-//    private TalonSRX azimuthTalon;
-//    private TalonFX driveTalon;
-//
-//    @BeforeEach
-//    void setUp() {
-//      azimuthTalon = mock(TalonSRX.class);
-//      driveTalon = mock(TalonFX.class);
-//      when(driveTalon.setPosition(0.0)).thenReturn(StatusCode.valueOf(0));
-//    }
-//
-//    @Test
-//    @DisplayName("when talon is null")
-//    void whenTalonIsNull() {
-//      var builder =
-//          new V6TalonSwerveModule.V6Builder()
-//              .azimuthTalon(azimuthTalon)
-//              .driveTalon(driveTalon)
-//              .driveGearRatio(kDriveGearRatio)
-//              .wheelDiameterInches(kWheelDiameterInches)
-//              .wheelLocationMeters(new Translation2d(1, 1))
-//              .driveMaximumMetersPerSecond(kMaxSpeedMetersPerSecond);
-//
-//      assertThrows(IllegalArgumentException.class, builder.azimuthTalon(null)::build);
-//      assertThrows(IllegalArgumentException.class, () -> builder.driveTalon(null));
-//    }
-//
-//    @Test
-//    @DisplayName("when drive gear ratio lte zero")
-//    void whenDriveGearRatioLteZero() {
-//      V6TalonSwerveModule.V6Builder builder =
-//          new V6TalonSwerveModule.V6Builder()
-//              .azimuthTalon(azimuthTalon)
-//              .driveTalon(driveTalon)
-//              .wheelDiameterInches(kWheelDiameterInches)
-//              .wheelLocationMeters(new Translation2d())
-//              .driveMaximumMetersPerSecond(kMaxSpeedMetersPerSecond);
-//      assertThrows(IllegalArgumentException.class, builder::build);
-//    }
-//
-//    @Test
-//    @DisplayName("when wheel diameter lte zero")
-//    void whenWheelDiameterLteZero() {
-//      V6TalonSwerveModule.V6Builder builder =
-//          new V6TalonSwerveModule.V6Builder()
-//              .azimuthTalon(azimuthTalon)
-//              .driveTalon(driveTalon)
-//              .driveGearRatio(kDriveGearRatio)
-//              .wheelLocationMeters(new Translation2d())
-//              .driveMaximumMetersPerSecond(kMaxSpeedMetersPerSecond);
-//      assertThrows(IllegalArgumentException.class, builder::build);
-//    }
-//
-//    @Test
-//    @DisplayName("when drive maximum meters per second lte zero")
-//    void whenDriveMaximumMetersPerSecondLteZero() {
-//      V6TalonSwerveModule.V6Builder builder =
-//          new V6TalonSwerveModule.V6Builder()
-//              .azimuthTalon(azimuthTalon)
-//              .driveTalon(driveTalon)
-//              .driveGearRatio(kDriveGearRatio)
-//              .wheelLocationMeters(new Translation2d())
-//              .wheelDiameterInches(kWheelDiameterInches);
-//      assertThrows(IllegalArgumentException.class, builder::build);
-//    }
-//
-//    @Test
-//    @DisplayName("when wheel location not set")
-//    void whenWheelLocationNotSet() {
-//      V6TalonSwerveModule.V6Builder builder =
-//          new V6TalonSwerveModule.V6Builder()
-//              .azimuthTalon(azimuthTalon)
-//              .driveTalon(driveTalon)
-//              .driveGearRatio(kDriveGearRatio)
-//              .wheelDiameterInches(kWheelDiameterInches)
-//              .driveMaximumMetersPerSecond(kMaxSpeedMetersPerSecond);
-//      assertThrows(IllegalArgumentException.class, builder::build);
-//    }
-//  }
+  //  @Nested
+  //  @DisplayName("Should not validate")
+  //  class TestShouldNotValidate {
+  //
+  //    private TalonSRX azimuthTalon;
+  //    private TalonFX driveTalon;
+  //
+  //    @BeforeEach
+  //    void setUp() {
+  //      azimuthTalon = mock(TalonSRX.class);
+  //      driveTalon = mock(TalonFX.class);
+  //      when(driveTalon.setPosition(0.0)).thenReturn(StatusCode.valueOf(0));
+  //    }
+  //
+  //    @Test
+  //    @DisplayName("when talon is null")
+  //    void whenTalonIsNull() {
+  //      var builder =
+  //          new V6TalonSwerveModule.V6Builder()
+  //              .azimuthTalon(azimuthTalon)
+  //              .driveTalon(driveTalon)
+  //              .driveGearRatio(kDriveGearRatio)
+  //              .wheelDiameterInches(kWheelDiameterInches)
+  //              .wheelLocationMeters(new Translation2d(1, 1))
+  //              .driveMaximumMetersPerSecond(kMaxSpeedMetersPerSecond);
+  //
+  //      assertThrows(IllegalArgumentException.class, builder.azimuthTalon(null)::build);
+  //      assertThrows(IllegalArgumentException.class, () -> builder.driveTalon(null));
+  //    }
+  //
+  //    @Test
+  //    @DisplayName("when drive gear ratio lte zero")
+  //    void whenDriveGearRatioLteZero() {
+  //      V6TalonSwerveModule.V6Builder builder =
+  //          new V6TalonSwerveModule.V6Builder()
+  //              .azimuthTalon(azimuthTalon)
+  //              .driveTalon(driveTalon)
+  //              .wheelDiameterInches(kWheelDiameterInches)
+  //              .wheelLocationMeters(new Translation2d())
+  //              .driveMaximumMetersPerSecond(kMaxSpeedMetersPerSecond);
+  //      assertThrows(IllegalArgumentException.class, builder::build);
+  //    }
+  //
+  //    @Test
+  //    @DisplayName("when wheel diameter lte zero")
+  //    void whenWheelDiameterLteZero() {
+  //      V6TalonSwerveModule.V6Builder builder =
+  //          new V6TalonSwerveModule.V6Builder()
+  //              .azimuthTalon(azimuthTalon)
+  //              .driveTalon(driveTalon)
+  //              .driveGearRatio(kDriveGearRatio)
+  //              .wheelLocationMeters(new Translation2d())
+  //              .driveMaximumMetersPerSecond(kMaxSpeedMetersPerSecond);
+  //      assertThrows(IllegalArgumentException.class, builder::build);
+  //    }
+  //
+  //    @Test
+  //    @DisplayName("when drive maximum meters per second lte zero")
+  //    void whenDriveMaximumMetersPerSecondLteZero() {
+  //      V6TalonSwerveModule.V6Builder builder =
+  //          new V6TalonSwerveModule.V6Builder()
+  //              .azimuthTalon(azimuthTalon)
+  //              .driveTalon(driveTalon)
+  //              .driveGearRatio(kDriveGearRatio)
+  //              .wheelLocationMeters(new Translation2d())
+  //              .wheelDiameterInches(kWheelDiameterInches);
+  //      assertThrows(IllegalArgumentException.class, builder::build);
+  //    }
+  //
+  //    @Test
+  //    @DisplayName("when wheel location not set")
+  //    void whenWheelLocationNotSet() {
+  //      V6TalonSwerveModule.V6Builder builder =
+  //          new V6TalonSwerveModule.V6Builder()
+  //              .azimuthTalon(azimuthTalon)
+  //              .driveTalon(driveTalon)
+  //              .driveGearRatio(kDriveGearRatio)
+  //              .wheelDiameterInches(kWheelDiameterInches)
+  //              .driveMaximumMetersPerSecond(kMaxSpeedMetersPerSecond);
+  //      assertThrows(IllegalArgumentException.class, builder::build);
+  //    }
+  //  }
 
   @Nested
   @DisplayName(("V6 Should not Validate"))
@@ -652,14 +654,14 @@ class TalonSwerveModuleTest {
     private TalonSRX azimuthTalon;
     private TalonFX driveTalon;
 
-    private StatusSignal velocityStatusSig;
+    private StatusSignal<AngularVelocity> velocityStatusSig;
 
     @BeforeEach
     void setUp() {
       azimuthTalon = mock(TalonSRX.class);
       driveTalon = mock(TalonFX.class);
       when(driveTalon.setPosition(0)).thenReturn(StatusCode.OK);
-      velocityStatusSig = mock(StatusSignal.class);
+      velocityStatusSig = (StatusSignal<AngularVelocity>) mock(StatusSignal.class);
     }
 
     @Test
@@ -675,7 +677,7 @@ class TalonSwerveModuleTest {
               .wheelLocationMeters(new Translation2d())
               .build();
       when(driveTalon.getVelocity()).thenReturn(velocityStatusSig);
-      when(velocityStatusSig.getValue()).thenReturn(100.0);
+      when(velocityStatusSig.getValueAsDouble()).thenReturn(100.0);
       SwerveModuleState state = module.getState();
       assertEquals(3.657337448, state.speedMetersPerSecond, 1e-9);
     }
@@ -696,7 +698,7 @@ class TalonSwerveModuleTest {
               .wheelLocationMeters(new Translation2d())
               .build();
       when(driveTalon.getVelocity()).thenReturn(velocityStatusSig);
-      when(velocityStatusSig.getValue()).thenReturn(driveRotationsPerSec);
+      when(velocityStatusSig.getValueAsDouble()).thenReturn(driveRotationsPerSec);
       SwerveModuleState state = module.getState();
       assertEquals(expectedMetersPerSecond, state.speedMetersPerSecond, 1e-9);
     }
@@ -758,7 +760,7 @@ class TalonSwerveModuleTest {
               .wheelLocationMeters(new Translation2d())
               .build();
       when(driveTalon.getVelocity()).thenReturn(velocityStatusSig);
-      when(velocityStatusSig.getValue()).thenReturn(0.0);
+      when(velocityStatusSig.getValueAsDouble()).thenReturn(0.0);
       when(azimuthTalon.getSelectedSensorPosition()).thenReturn(azimuthSelectedSensorPosition);
       SwerveModuleState state = module.getState();
       var expectedRotation = Rotation2d.fromDegrees(expectedAngleDeg);
@@ -1217,20 +1219,20 @@ class TalonSwerveModuleTest {
     private TalonSRX azimuthTalon;
     private TalonFX driveTalon;
 
-    private StatusSignal positionStatusSig;
+    private StatusSignal<Angle> positionStatusSig;
 
     private Timestamp timestamp;
 
-    private StatusSignal velocityStatusSig;
+    private StatusSignal<AngularVelocity> velocityStatusSig;
 
     @BeforeEach
     void setTup() {
       azimuthTalon = mock(TalonSRX.class);
       driveTalon = mock(TalonFX.class);
       when(driveTalon.setPosition(0)).thenReturn(StatusCode.OK);
-      positionStatusSig = mock(StatusSignal.class);
+      positionStatusSig = (StatusSignal<Angle>) mock(StatusSignal.class);
       timestamp = mock(Timestamp.class);
-      velocityStatusSig = mock(StatusSignal.class);
+      velocityStatusSig = (StatusSignal<AngularVelocity>) mock(StatusSignal.class);
     }
 
     @Test
@@ -1246,11 +1248,11 @@ class TalonSwerveModuleTest {
               .wheelLocationMeters(new Translation2d())
               .build();
       when(driveTalon.getPosition()).thenReturn(positionStatusSig);
-      when(positionStatusSig.getValue()).thenReturn(10.0);
+      when(positionStatusSig.getValueAsDouble()).thenReturn(10.0);
       when(positionStatusSig.getTimestamp()).thenReturn(timestamp);
       when(timestamp.getLatency()).thenReturn(0.0);
       when(driveTalon.getVelocity()).thenReturn(velocityStatusSig);
-      when(velocityStatusSig.getValue()).thenReturn(0.0);
+      when(velocityStatusSig.getValueAsDouble()).thenReturn(0.0);
       SwerveModulePosition position = module.getPosition();
       assertEquals(0.365733744755412, position.distanceMeters, 1e-9);
     }
@@ -1271,12 +1273,12 @@ class TalonSwerveModuleTest {
               .wheelLocationMeters(new Translation2d())
               .build();
       when(driveTalon.getPosition()).thenReturn(positionStatusSig);
-      when(positionStatusSig.getValue()).thenReturn(driveTalonPosition);
+      when(positionStatusSig.getValueAsDouble()).thenReturn(driveTalonPosition);
 
       when(positionStatusSig.getTimestamp()).thenReturn(timestamp);
       when(timestamp.getLatency()).thenReturn(0.0);
       when(driveTalon.getVelocity()).thenReturn(velocityStatusSig);
-      when(velocityStatusSig.getValue()).thenReturn(0.0);
+      when(velocityStatusSig.getValueAsDouble()).thenReturn(0.0);
       SwerveModulePosition position = module.getPosition();
       assertEquals(expectedMeters, position.distanceMeters, 1e-9);
     }

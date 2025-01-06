@@ -219,8 +219,7 @@ public class V6TalonSwerveModule implements SwerveModule {
   }
 
   private double getDriveMetersPerSecond() {
-    double shaftVelocity =
-        driveTalon.getVelocity().getValue().in(Units.RotationsPerSecond); // rotations per second
+    double shaftVelocity = driveTalon.getVelocity().getValueAsDouble(); // rotations per second
     double motorRotations = shaftVelocity / driveCountsPerRev; // default = 1.0 for counts
     double wheelRotations = motorRotations * driveGearRatio;
     double metersPerSecond = wheelRotations * wheelCircumferenceMeters;
@@ -229,7 +228,7 @@ public class V6TalonSwerveModule implements SwerveModule {
 
   private double getDrivePositionMeters() {
     double latency = driveTalon.getPosition().getTimestamp().getLatency();
-    double shaftPosition = driveTalon.getPosition().getValue().in(Units.Rotations); // rotations
+    double shaftPosition = driveTalon.getPosition().getValueAsDouble(); // rotations
     double motorPosition = shaftPosition / driveCountsPerRev; // default = 1.0 for counts
     double wheelPosition = motorPosition * driveGearRatio;
     double wheelPositionMeters = wheelPosition * wheelCircumferenceMeters;
