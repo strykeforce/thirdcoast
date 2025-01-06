@@ -12,10 +12,10 @@ class BaseTalonMeasurable @JvmOverloads constructor(
         CLOSED_LOOP_TARGET, "Closed-loop Setpoint (PID 0)"
     ) { talon.getClosedLoopTarget(0) },
         Measure(
-            org.strykeforce.thirdcoast.talon.STATOR_CURRENT, "Stator Current"
+            STATOR_CURRENT, "Stator Current"
         ) { talon.statorCurrent },
         Measure(
-            org.strykeforce.thirdcoast.talon.SUPPLY_CURRENT, "Supply Current"
+            SUPPLY_CURRENT, "Supply Current"
         ) { talon.supplyCurrent },
         Measure(OUTPUT_VOLTAGE, "Output Voltage") { talon.motorOutputVoltage },
         Measure(OUTPUT_PERCENT, "Output Percentage") { talon.motorOutputPercent },

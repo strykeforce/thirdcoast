@@ -1,14 +1,19 @@
 package org.strykeforce.gyro;
 
+import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.configs.Pigeon2Configurator;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
 import org.strykeforce.telemetry.TelemetryService;
 
 public class SF_PIGEON2 implements Gyro {
   private Pigeon2 pigeon2;
   private Pigeon2Configurator configurator;
+  private StatusSignal<Angle> yawGetter;
+  private StatusSignal<AngularVelocity> yawRateGetter;
 
   public SF_PIGEON2(int deviceId) {
     pigeon2 = new Pigeon2(deviceId);
@@ -18,6 +23,8 @@ public class SF_PIGEON2 implements Gyro {
   public SF_PIGEON2(int deviceId, String canbus) {
     pigeon2 = new Pigeon2(deviceId, canbus);
     configurator = pigeon2.getConfigurator();
+    yawGetter = pigeon2.getYaw();
+    yawRateGetter = pigeon2.getAngularVelocityZWorld();
   }
 
   @Override
@@ -27,12 +34,12 @@ public class SF_PIGEON2 implements Gyro {
 
   @Override
   public double getAngle() {
-    return pigeon2.getAngle();
+    return -yawGetter.refresh().getValueAsDouble();
   }
 
   @Override
   public double getRate() {
-    return pigeon2.getRate();
+    return -yawRateGetter.refresh().getValueAsDouble();
   }
 
   @Override
@@ -49,15 +56,15 @@ public class SF_PIGEON2 implements Gyro {
   }
 
   public Double getRoll() {
-    return pigeon2.getRoll().getValue();
+    return pigeon2.getRoll().getValueAsDouble();
   }
 
   public Double getPitch() {
-    return pigeon2.getPitch().getValue();
+    return pigeon2.getPitch().getValueAsDouble();
   }
 
   public Double getYaw() {
-    return pigeon2.getYaw().getValue();
+    return pigeon2.getYaw().getValueAsDouble();
   }
 
   public void registerWith(TelemetryService telemetryService) {

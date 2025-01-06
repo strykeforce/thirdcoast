@@ -9,7 +9,6 @@ import mu.KotlinLogging
 import okhttp3.internal.toImmutableList
 import org.strykeforce.healthcheck.*
 import org.strykeforce.swerve.SwerveDrive
-import org.strykeforce.swerve.V5TalonSwerveModule
 import org.strykeforce.swerve.V6TalonSwerveModule
 import java.lang.reflect.Field
 import java.lang.reflect.Method
