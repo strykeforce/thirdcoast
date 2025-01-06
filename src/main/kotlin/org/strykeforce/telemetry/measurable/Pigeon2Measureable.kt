@@ -76,8 +76,8 @@ class Pigeon2Measureable @JvmOverloads constructor(
         Measure(MAG_Y, "Mag Field Y") {pigeon2.magneticFieldY.valueAsDouble},
         Measure(MAG_Z, "Mag Field Z") {pigeon2.magneticFieldZ.valueAsDouble},
         Measure(IS_PRO, "Is Pro Lic") {pigeon2.isProLicensed.valueAsDouble},
-        Measure(RATE, "Rate") {pigeon2.rate},
-        Measure(ANGLE, "Angle") {pigeon2.angle},
+        Measure(RATE, "Rate") {-pigeon2.angularVelocityZWorld.valueAsDouble},
+        Measure(ANGLE, "Angle") {-pigeon2.yaw.valueAsDouble},
         Measure(ROTATION2D, "Rotation2d Deg") {pigeon2.rotation2d.degrees}
     )
 
