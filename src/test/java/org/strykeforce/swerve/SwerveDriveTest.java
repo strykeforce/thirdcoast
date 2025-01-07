@@ -49,7 +49,7 @@ class SwerveDriveTest {
     assertThrows(
         IllegalStateException.class,
         () -> {
-          SwerveDrive swerveDrive = new SwerveDrive(swerveModules);
+          SwerveDrive swerveDrive = new SwerveDrive(gyro, swerveModules);
         });
   }
 

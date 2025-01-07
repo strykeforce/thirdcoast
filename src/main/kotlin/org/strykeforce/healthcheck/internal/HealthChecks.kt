@@ -4,6 +4,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.can.BaseTalon
 import com.ctre.phoenix6.controls.DutyCycleOut
 import com.ctre.phoenix6.hardware.TalonFX
+import edu.wpi.first.units.Units
 import edu.wpi.first.wpilibj.RobotController
 import edu.wpi.first.wpilibj2.command.Subsystem
 import edu.wpi.first.wpilibj2.command.SubsystemBase
@@ -471,11 +472,11 @@ class P6TalonPositionHealthCheckCase(
 
     override fun initialize() {
         super.initialize()
-        encoderStart = talonFx.position.value
+        encoderStart = talonFx.position.value.`in`(Units.Rotations)
     }
 
     override fun isRunning(elapsed: Long): Boolean {
-        val encoderCurrent = talonFx.position.value
+        val encoderCurrent = talonFx.position.value.`in`(Units.Rotations)
         return abs(encoderCurrent - encoderStart) >= encoderChange
     }
 

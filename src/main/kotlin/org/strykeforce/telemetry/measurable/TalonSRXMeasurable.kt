@@ -42,11 +42,11 @@ class TalonSRXMeasurable @JvmOverloads constructor(
             "Closed-loop Setpoint (PID 0)"
         ) { talon.getClosedLoopTarget(0) },
         Measure(
-            org.strykeforce.thirdcoast.talon.STATOR_CURRENT,
+           STATOR_CURRENT,
             "Stator Current"
         ) { talon.statorCurrent },
         Measure(
-            org.strykeforce.thirdcoast.talon.SUPPLY_CURRENT,
+            SUPPLY_CURRENT,
             "Supply Current"
         ) { talon.supplyCurrent },
         Measure(OUTPUT_VOLTAGE, "Output Voltage") { talon.motorOutputVoltage },

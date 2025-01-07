@@ -14,7 +14,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.Preferences;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -77,7 +77,8 @@ public class V6TalonSwerveModule implements SwerveModule {
     azimuthCountsPerRev = builder.azimuthCountsPerRev;
     driveCountsPerRev = builder.driveCountsPerRev;
     driveGearRatio = builder.driveGearRatio;
-    wheelCircumferenceMeters = Math.PI * Units.inchesToMeters(builder.wheelDiameterInches);
+    wheelCircumferenceMeters =
+        Math.PI * Units.Inches.of(builder.wheelDiameterInches).in(Units.Meters);
     driveDeadbandMetersPerSecond = builder.driveDeadbandMetersPerSecond;
     driveMaximumMetersPerSecond = builder.driveMaximumMetersPerSecond;
     wheelLocationMeters = builder.wheelLocationMeters;
@@ -218,7 +219,7 @@ public class V6TalonSwerveModule implements SwerveModule {
   }
 
   private double getDriveMetersPerSecond() {
-    double shaftVelocity = driveTalon.getVelocity().getValue(); // rotations per second
+    double shaftVelocity = driveTalon.getVelocity().getValueAsDouble(); // rotations per second
     double motorRotations = shaftVelocity / driveCountsPerRev; // default = 1.0 for counts
     double wheelRotations = motorRotations * driveGearRatio;
     double metersPerSecond = wheelRotations * wheelCircumferenceMeters;
@@ -227,7 +228,7 @@ public class V6TalonSwerveModule implements SwerveModule {
 
   private double getDrivePositionMeters() {
     double latency = driveTalon.getPosition().getTimestamp().getLatency();
-    double shaftPosition = driveTalon.getPosition().getValue(); // rotations
+    double shaftPosition = driveTalon.getPosition().getValueAsDouble(); // rotations
     double motorPosition = shaftPosition / driveCountsPerRev; // default = 1.0 for counts
     double wheelPosition = motorPosition * driveGearRatio;
     double wheelPositionMeters = wheelPosition * wheelCircumferenceMeters;

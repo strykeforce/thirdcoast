@@ -4,17 +4,19 @@ plugins {
     id "java"
     id "idea"
     id "maven-publish"
-    id "org.jetbrains.kotlin.jvm" version "1.7.21"
-    id "com.google.devtools.ksp" version "1.7.21-1.0.8"
-    id "edu.wpi.first.GradleRIO" version "2024.2.1"
+    id "org.jetbrains.kotlin.jvm" version "1.9.0" //1.7.21
+    id "com.google.devtools.ksp" version "1.9.0-1.0.13" //1.7.21-1.0.8
+    id "edu.wpi.first.GradleRIO" version "2025.1.1"
     id "com.diffplug.spotless" version "6.12.1"
 }
 
 group = "org.strykeforce"
-version = "24.0.6"
+version = "25.0.0"
 
-sourceCompatibility = JavaVersion.VERSION_17
-targetCompatibility = JavaVersion.VERSION_17
+java {
+    targetCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_17
+}
 
 deploy {
     targets {
@@ -82,7 +84,7 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter")
     testImplementation('org.assertj:assertj-core:3.23.1')
     testImplementation('org.mockito:mockito-junit-jupiter:4.8.0')
-    testImplementation("org.mockito.kotlin:mockito-kotlin:4.0.0")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:5.4.0") //4.0.0
     testImplementation('org.skyscreamer:jsonassert:1.5.1')
     testRuntimeOnly('ch.qos.logback:logback-classic:1.4.4')
 
