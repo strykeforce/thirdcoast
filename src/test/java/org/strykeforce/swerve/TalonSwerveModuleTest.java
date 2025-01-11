@@ -1,5 +1,6 @@
 package org.strykeforce.swerve;
 
+import static edu.wpi.first.units.Units.Rotations;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -31,6 +32,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.Preferences;
+import java.lang.reflect.Field;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,6 +41,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.platform.commons.util.ReflectionUtils;
 import org.mockito.ArgumentCaptor;
 
 class TalonSwerveModuleTest {
@@ -655,6 +658,7 @@ class TalonSwerveModuleTest {
     private TalonFX driveTalon;
 
     private StatusSignal<AngularVelocity> velocityStatusSig;
+    private StatusSignal<Angle> positionStatusSig;
 
     @BeforeEach
     void setUp() {
@@ -662,6 +666,7 @@ class TalonSwerveModuleTest {
       driveTalon = mock(TalonFX.class);
       when(driveTalon.setPosition(0)).thenReturn(StatusCode.OK);
       velocityStatusSig = (StatusSignal<AngularVelocity>) mock(StatusSignal.class);
+      positionStatusSig = (StatusSignal<Angle>) mock(StatusSignal.class);
     }
 
     @Test
@@ -676,7 +681,19 @@ class TalonSwerveModuleTest {
               .driveMaximumMetersPerSecond(kMaxSpeedMetersPerSecond)
               .wheelLocationMeters(new Translation2d())
               .build();
-      when(driveTalon.getVelocity()).thenReturn(velocityStatusSig);
+      //      when(driveTalon.getVelocity()).thenReturn(velocityStatusSig);
+      Field driveVelField =
+          ReflectionUtils.findFields(
+                  V6TalonSwerveModule.class,
+                  f -> f.getName().equals("driveVelocity"),
+                  ReflectionUtils.HierarchyTraversalMode.TOP_DOWN)
+              .get(0);
+      driveVelField.setAccessible(true);
+      try {
+        driveVelField.set(module, velocityStatusSig);
+      } catch (Exception e) {
+        throw new IllegalArgumentException("Error: " + e);
+      }
       when(velocityStatusSig.getValueAsDouble()).thenReturn(100.0);
       SwerveModuleState state = module.getState();
       assertEquals(3.657337448, state.speedMetersPerSecond, 1e-9);
@@ -697,6 +714,18 @@ class TalonSwerveModuleTest {
               .driveMaximumMetersPerSecond(kMaxSpeedMetersPerSecond)
               .wheelLocationMeters(new Translation2d())
               .build();
+      Field driveVelField =
+          ReflectionUtils.findFields(
+                  V6TalonSwerveModule.class,
+                  f -> f.getName().equals("driveVelocity"),
+                  ReflectionUtils.HierarchyTraversalMode.TOP_DOWN)
+              .get(0);
+      driveVelField.setAccessible(true);
+      try {
+        driveVelField.set(module, velocityStatusSig);
+      } catch (Exception e) {
+        throw new IllegalArgumentException("Error: " + e);
+      }
       when(driveTalon.getVelocity()).thenReturn(velocityStatusSig);
       when(velocityStatusSig.getValueAsDouble()).thenReturn(driveRotationsPerSec);
       SwerveModuleState state = module.getState();
@@ -759,6 +788,18 @@ class TalonSwerveModuleTest {
               .driveMaximumMetersPerSecond(kMaxSpeedMetersPerSecond)
               .wheelLocationMeters(new Translation2d())
               .build();
+      Field driveVelField =
+          ReflectionUtils.findFields(
+                  V6TalonSwerveModule.class,
+                  f -> f.getName().equals("driveVelocity"),
+                  ReflectionUtils.HierarchyTraversalMode.TOP_DOWN)
+              .get(0);
+      driveVelField.setAccessible(true);
+      try {
+        driveVelField.set(module, velocityStatusSig);
+      } catch (Exception e) {
+        throw new IllegalArgumentException("Error: " + e);
+      }
       when(driveTalon.getVelocity()).thenReturn(velocityStatusSig);
       when(velocityStatusSig.getValueAsDouble()).thenReturn(0.0);
       when(azimuthTalon.getSelectedSensorPosition()).thenReturn(azimuthSelectedSensorPosition);
@@ -1247,8 +1288,36 @@ class TalonSwerveModuleTest {
               .driveMaximumMetersPerSecond(kMaxSpeedMetersPerSecond)
               .wheelLocationMeters(new Translation2d())
               .build();
+      Field drivePosField =
+          ReflectionUtils.findFields(
+                  V6TalonSwerveModule.class,
+                  f -> f.getName().equals("drivePosition"),
+                  ReflectionUtils.HierarchyTraversalMode.TOP_DOWN)
+              .get(0);
+      Field driveVelField =
+          ReflectionUtils.findFields(
+                  V6TalonSwerveModule.class,
+                  f -> f.getName().equals("driveVelocity"),
+                  ReflectionUtils.HierarchyTraversalMode.TOP_DOWN)
+              .get(0);
+
+      drivePosField.setAccessible(true);
+      driveVelField.setAccessible(true);
+      try {
+        drivePosField.set(module, positionStatusSig);
+      } catch (Exception e) {
+        throw new IllegalArgumentException("Error: " + e);
+      }
+      try {
+        driveVelField.set(module, velocityStatusSig);
+      } catch (Exception e) {
+        throw new IllegalArgumentException("Error: " + e);
+      }
+      //      field.set(module, positionStatusSig);
       when(driveTalon.getPosition()).thenReturn(positionStatusSig);
+      //      when(drivePosition.getLatency()).thenReturn(0.0);
       when(positionStatusSig.getValueAsDouble()).thenReturn(10.0);
+      when(positionStatusSig.getValue()).thenReturn(Rotations.of(10.0));
       when(positionStatusSig.getTimestamp()).thenReturn(timestamp);
       when(timestamp.getLatency()).thenReturn(0.0);
       when(driveTalon.getVelocity()).thenReturn(velocityStatusSig);
@@ -1272,7 +1341,36 @@ class TalonSwerveModuleTest {
               .driveMaximumMetersPerSecond(kMaxSpeedMetersPerSecond)
               .wheelLocationMeters(new Translation2d())
               .build();
+      Field drivePosField =
+          ReflectionUtils.findFields(
+                  V6TalonSwerveModule.class,
+                  f -> f.getName().equals("drivePosition"),
+                  ReflectionUtils.HierarchyTraversalMode.TOP_DOWN)
+              .get(0);
+      Field driveVelField =
+          ReflectionUtils.findFields(
+                  V6TalonSwerveModule.class,
+                  f -> f.getName().equals("driveVelocity"),
+                  ReflectionUtils.HierarchyTraversalMode.TOP_DOWN)
+              .get(0);
+
+      drivePosField.setAccessible(true);
+      driveVelField.setAccessible(true);
+
+      try {
+        drivePosField.set(module, positionStatusSig);
+      } catch (Exception e) {
+        throw new IllegalArgumentException("Error: " + e);
+      }
+
+      try {
+        driveVelField.set(module, velocityStatusSig);
+      } catch (Exception e) {
+        throw new IllegalArgumentException("Error: " + e);
+      }
+
       when(driveTalon.getPosition()).thenReturn(positionStatusSig);
+      when(positionStatusSig.getValue()).thenReturn(Rotations.of(driveTalonPosition));
       when(positionStatusSig.getValueAsDouble()).thenReturn(driveTalonPosition);
 
       when(positionStatusSig.getTimestamp()).thenReturn(timestamp);

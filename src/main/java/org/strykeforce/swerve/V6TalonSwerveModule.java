@@ -1,10 +1,15 @@
 package org.strykeforce.swerve;
 
+import static com.ctre.phoenix6.BaseStatusSignal.refreshAll;
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+
 import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix6.StatusCode;
+import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.VelocityDutyCycle;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
@@ -15,6 +20,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.units.Units;
+import edu.wpi.first.units.measure.*;
 import edu.wpi.first.wpilibj.Preferences;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -70,6 +76,10 @@ public class V6TalonSwerveModule implements SwerveModule {
 
   private boolean compensateLatency;
 
+  // Status Signals
+  private StatusSignal<AngularVelocity> driveVelocity;
+  private StatusSignal<Angle> drivePosition;
+
   private V6TalonSwerveModule(V6Builder builder) {
 
     azimuthTalon = builder.azimuthTalon;
@@ -77,8 +87,7 @@ public class V6TalonSwerveModule implements SwerveModule {
     azimuthCountsPerRev = builder.azimuthCountsPerRev;
     driveCountsPerRev = builder.driveCountsPerRev;
     driveGearRatio = builder.driveGearRatio;
-    wheelCircumferenceMeters =
-        Math.PI * Units.Inches.of(builder.wheelDiameterInches).in(Units.Meters);
+    wheelCircumferenceMeters = Math.PI * Units.Inches.of(builder.wheelDiameterInches).in(Meters);
     driveDeadbandMetersPerSecond = builder.driveDeadbandMetersPerSecond;
     driveMaximumMetersPerSecond = builder.driveMaximumMetersPerSecond;
     wheelLocationMeters = builder.wheelLocationMeters;
@@ -87,6 +96,13 @@ public class V6TalonSwerveModule implements SwerveModule {
     closedLoopSlot = builder.closedLoopSlot;
     compensateLatency = builder.compensateLatency;
     resetDriveEncoder();
+    drivePosition = driveTalon.getPosition();
+    driveVelocity = driveTalon.getVelocity();
+  }
+
+  @Override
+  public void refreshMotorControllers() {
+    refreshAll(drivePosition, driveVelocity);
   }
 
   @Override
@@ -105,14 +121,14 @@ public class V6TalonSwerveModule implements SwerveModule {
 
   @Override
   public SwerveModuleState getState() {
-    double speedMetersPerSecond = getDriveMetersPerSecond();
+    double speedMetersPerSecond = getDriveMetersPerSecond().in(MetersPerSecond);
     Rotation2d angle = getAzimuthRotation2d();
     return new SwerveModuleState(speedMetersPerSecond, angle);
   }
 
   @Override
   public SwerveModulePosition getPosition() {
-    double wheelPositionMeters = getDrivePositionMeters();
+    double wheelPositionMeters = getDrivePositionMeters().in(Meters);
     Rotation2d angle = getAzimuthRotation2d();
     return new SwerveModulePosition(wheelPositionMeters, angle);
   }
@@ -218,23 +234,23 @@ public class V6TalonSwerveModule implements SwerveModule {
     return optimizedState;
   }
 
-  private double getDriveMetersPerSecond() {
-    double shaftVelocity = driveTalon.getVelocity().getValueAsDouble(); // rotations per second
+  private LinearVelocity getDriveMetersPerSecond() {
+    double shaftVelocity = driveVelocity.getValueAsDouble(); // rotations per second
     double motorRotations = shaftVelocity / driveCountsPerRev; // default = 1.0 for counts
     double wheelRotations = motorRotations * driveGearRatio;
     double metersPerSecond = wheelRotations * wheelCircumferenceMeters;
-    return metersPerSecond;
+    return MetersPerSecond.of(metersPerSecond);
   }
 
-  private double getDrivePositionMeters() {
-    double latency = driveTalon.getPosition().getTimestamp().getLatency();
-    double shaftPosition = driveTalon.getPosition().getValueAsDouble(); // rotations
+  private Distance getDrivePositionMeters() {
+    double latency = drivePosition.getTimestamp().getLatency();
+    double shaftPosition = drivePosition.getValueAsDouble(); // rotations
     double motorPosition = shaftPosition / driveCountsPerRev; // default = 1.0 for counts
     double wheelPosition = motorPosition * driveGearRatio;
     double wheelPositionMeters = wheelPosition * wheelCircumferenceMeters;
-    double velocityMetersPerSecond = getDriveMetersPerSecond();
+    double velocityMetersPerSecond = getDriveMetersPerSecond().in(MetersPerSecond);
     double wheelPositionMetersComp = wheelPositionMeters + latency * velocityMetersPerSecond;
-    return compensateLatency ? wheelPositionMetersComp : wheelPositionMeters;
+    return compensateLatency ? Meters.of(wheelPositionMetersComp) : Meters.of(wheelPositionMeters);
   }
 
   private void setDriveClosedLoopMetersPerSecond(double metersPerSecond) {
