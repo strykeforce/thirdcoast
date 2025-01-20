@@ -242,15 +242,22 @@ public class SwerveDrive implements Registrable {
    * method.
    */
   public void periodic() {
-    for (int i = 0; i < 4; i++) {
-      swerveModules[i].refreshMotorControllers();
-    }
     odometry.update(
         hasGyroOffset ? gyro.getRotation2d().rotateBy(gyroOffset) : gyro.getRotation2d(),
         swerveModules[0].getPosition(),
         swerveModules[1].getPosition(),
         swerveModules[2].getPosition(),
         swerveModules[3].getPosition());
+  }
+
+  /**
+   * Update any hardware signals. Call this from the {@code updateInputs()} or {@code periodic()}
+   * method.
+   */
+  public void updateInputs() {
+    for (int i = 0; i < 4; i++) {
+      swerveModules[i].refreshMotorControllers();
+    }
   }
 
   /**
