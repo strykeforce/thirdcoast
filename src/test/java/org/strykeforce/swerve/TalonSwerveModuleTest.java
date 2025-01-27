@@ -123,10 +123,11 @@ class TalonSwerveModuleTest {
   @DisplayName("FX Should reset drive encoder")
   void FXResetDriveEncoder() {
     TalonFX driveTalon = mock(com.ctre.phoenix6.hardware.TalonFX.class);
+    TalonFXS azimuthTalon = mock(TalonFXS.class);
     when(driveTalon.setPosition(0)).thenReturn(StatusCode.OK);
     FXSwerveModule module =
         new FXSwerveModule.FXBuilder()
-            .azimuthTalon(mock(TalonFXS.class))
+            .azimuthTalon(azimuthTalon)
             .driveTalon(driveTalon)
             .driveGearRatio(kDriveGearRatio)
             .wheelDiameterInches(kWheelDiameterInches)
@@ -283,7 +284,7 @@ class TalonSwerveModuleTest {
       when(azimuthTalon.getPosition()).thenReturn(azimuthPositionStatusSig);
       when(azimuthPositionStatusSig.getValueAsDouble()).thenReturn(expectedZeroReference);
       module.storeAzimuthZeroReference();
-      assertEquals(expectedZeroReference, Preferences.getDouble(key, -1));
+      assertEquals((int) (expectedZeroReference * 4096.0) & 0xFFF, Preferences.getDouble(key, -1));
 
       expectedZeroReference = 67.0 / 4096.0;
       index = 1; // Front Right
@@ -291,7 +292,7 @@ class TalonSwerveModuleTest {
       module = builder.wheelLocationMeters(new Translation2d(1, -1)).build();
       when(azimuthPositionStatusSig.getValueAsDouble()).thenReturn(expectedZeroReference);
       module.storeAzimuthZeroReference();
-      assertEquals(expectedZeroReference, Preferences.getDouble(key, -1));
+      assertEquals((int) (expectedZeroReference * 4096.0) & 0xFFF, Preferences.getDouble(key, -1));
 
       expectedZeroReference = -6767.0 / 4096.0;
       index = 2; // Back Left
@@ -299,8 +300,7 @@ class TalonSwerveModuleTest {
       module = builder.wheelLocationMeters(new Translation2d(-1, 1)).build();
       when(azimuthPositionStatusSig.getValueAsDouble()).thenReturn(expectedZeroReference);
       module.storeAzimuthZeroReference();
-      assertEquals(
-          expectedZeroReference - Math.ceil(expectedZeroReference), Preferences.getDouble(key, -1));
+      assertEquals((int) (expectedZeroReference * 4096.0) & 0xFFF, Preferences.getDouble(key, -1));
 
       expectedZeroReference = 6727.0 / 4096.0;
       index = 3; // Back Right
@@ -308,13 +308,11 @@ class TalonSwerveModuleTest {
       module = builder.wheelLocationMeters(new Translation2d(-1, -1)).build();
       when(azimuthPositionStatusSig.getValueAsDouble()).thenReturn(expectedZeroReference);
       module.storeAzimuthZeroReference();
-      assertEquals(
-          expectedZeroReference - Math.floor(expectedZeroReference),
-          Preferences.getDouble(key, -1));
+      assertEquals((int) (expectedZeroReference * 4096.0) & 0xFFF, Preferences.getDouble(key, -1));
     }
 
     @ParameterizedTest
-    @CsvSource({"0, 0, 0", "1, 0, 0", "1.00024, 0, 0.00024", "0, 0.67554, 0.67554"})
+    @CsvSource({"0, 0, 0", "1, 0, 0", "1.00024, 0, 0.00024", "0, 2767, 0.67554"})
     @DisplayName("should set FX azimuth zero")
     void shouldSetFXAzimuthZero(
         double absoluteEncoderPosition, double zeroReference, double setpoint) {

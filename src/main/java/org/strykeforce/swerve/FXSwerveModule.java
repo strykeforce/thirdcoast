@@ -41,6 +41,7 @@ public class FXSwerveModule implements SwerveModule {
   private final TalonFX driveTalon;
   private final double azimuthCountsPerRev;
   private final double driveCountsPerRev;
+  private final double azimuthPulseWidthCPR;
   private final double driveGearRatio;
   private final double wheelCircumferenceMeters;
   private final double driveDeadbandMetersPerSecond;
@@ -52,7 +53,7 @@ public class FXSwerveModule implements SwerveModule {
   private int closedLoopSlot;
   private int azimuthSlot;
   private boolean compensateLatency;
-  private double azimuthPositionOffset;
+  private double azimuthPositionOffset = 0.0;
 
   // Status Signals
   private StatusSignal<Angle> drivePosition;
@@ -64,6 +65,7 @@ public class FXSwerveModule implements SwerveModule {
     driveTalon = builder.driveTalon;
     azimuthCountsPerRev = builder.azimuthCountsPerRev;
     driveCountsPerRev = builder.driveCountsPerRev;
+    azimuthPulseWidthCPR = builder.azimuthPulseWidthCPR;
     driveGearRatio = builder.driveGearRatio;
     wheelCircumferenceMeters = Math.PI * Inches.of(builder.wheelDiameterInches).in(Meters);
     driveDeadbandMetersPerSecond = builder.driveDeadbandMetersPerSecond;
@@ -169,7 +171,7 @@ public class FXSwerveModule implements SwerveModule {
         index,
         azimuthAbsoluteCounts - reference);
 
-    azimuthPositionOffset = reference;
+    azimuthPositionOffset = reference / azimuthPulseWidthCPR;
     setAzimuthPosition(azimuthAbsoluteCounts);
   }
 
@@ -182,15 +184,21 @@ public class FXSwerveModule implements SwerveModule {
   }
 
   private double getAzimuthAbsoluteEncoderCounts() {
-    double extraRotations =
-        azimuthPosition.getValueAsDouble() > 0
-            ? Math.floor(azimuthPosition.getValueAsDouble())
-            : Math.ceil(azimuthPosition.getValueAsDouble());
-    return azimuthPosition.getValueAsDouble() - extraRotations; // correct to within one rotation
+    //    double extraRotations =
+    //        azimuthPosition.getValueAsDouble() > 0
+    //            ? Math.floor(azimuthPosition.getValueAsDouble())
+    //            : Math.ceil(azimuthPosition.getValueAsDouble());
+    //    return azimuthPosition.getValueAsDouble() - extraRotations; // correct to within one
+    // rotation
+    return ((int) (azimuthPosition.getValueAsDouble() * azimuthPulseWidthCPR)) & 0xFFF;
   }
 
   private double getAzimuthEcoderPosition() {
     return azimuthPosition.getValueAsDouble() - azimuthPositionOffset;
+  }
+
+  public double getAzimuthPositionOffset() {
+    return azimuthPositionOffset;
   }
 
   @Override
@@ -312,6 +320,7 @@ public class FXSwerveModule implements SwerveModule {
     public static final double kDefaultTalonFXCountsPerRev = 1.0;
     private double azimuthCountsPerRev = kDefaultTalonFXCountsPerRev;
     private double driveCountsPerRev = kDefaultTalonFXCountsPerRev;
+    private double azimuthPulseWidthCPR = 4096.0;
 
     private TalonFXS azimuthTalon;
     private TalonFX driveTalon;
@@ -354,6 +363,11 @@ public class FXSwerveModule implements SwerveModule {
 
     public FXBuilder azimuthEncoderCountsPerRevolution(double countsPerRev) {
       this.azimuthCountsPerRev = countsPerRev;
+      return this;
+    }
+
+    public FXBuilder azimuthPulseWidthCPR(double azimuthPulseWidthCPR) {
+      this.azimuthPulseWidthCPR = azimuthPulseWidthCPR;
       return this;
     }
 
@@ -416,7 +430,13 @@ public class FXSwerveModule implements SwerveModule {
       if (module.azimuthCountsPerRev <= 0)
         throw new IllegalArgumentException(
             "azimuth encoder counts per revolution must be greater than zero.");
-
+      if (module.azimuthPulseWidthCPR <= 0)
+        throw new IllegalArgumentException("azimuth pulse width cpr must be greater than zero");
+      //      TalonFXSConfiguration azimuthConfig = new TalonFXSConfiguration();
+      //      module.azimuthTalon.getConfigurator().refresh(azimuthConfig);
+      //      if (azimuthConfig.ExternalFeedback.ExternalFeedbackSensorSource
+      //          != ExternalFeedbackSensorSourceValue.PulseWidth)
+      //        throw new IllegalArgumentException("Azimuth must use Pulse Width Feedback");
       if (module.driveCountsPerRev <= 0)
         throw new IllegalArgumentException(
             "drive encoder counts per revolution must be greater than zero.");

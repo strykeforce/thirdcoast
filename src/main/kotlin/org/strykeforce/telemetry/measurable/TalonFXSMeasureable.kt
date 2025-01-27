@@ -118,6 +118,7 @@ class TalonFXSMeasureable @JvmOverloads constructor(
         Measure(DIFF_CLOSED_LOOP_REF, "Differential Closed Loop Reference"){talonFXS.differentialClosedLoopReference.valueAsDouble},
         Measure(DIFF_CLOSED_LOOP_REF_SLOPE, "Differential Closed Loop Reference Slope"){talonFXS.differentialClosedLoopReferenceSlope.valueAsDouble},
         Measure(DIFF_CLOSED_LOOP_SLOT, "Differential Closed Loop Slot"){talonFXS.differentialClosedLoopSlot.valueAsDouble},
+        Measure(PULSE_WIDTH_POSITION, "Pulse Width Position") {((talonFXS.position.valueAsDouble * 4096.0).toInt() and 0xFFF).toDouble()}
     )
 
     override fun equals(other: Any?): Boolean {
