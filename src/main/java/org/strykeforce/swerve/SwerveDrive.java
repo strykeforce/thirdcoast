@@ -213,6 +213,9 @@ public class SwerveDrive implements Registrable {
    * @param pose The robot's actual position on the field.
    */
   public void resetOdometry(Pose2d pose) {
+    for (int i = 0; i < 4; i++) {
+      swerveModules[0].refreshMotorControllers();
+    }
     odometry.resetPosition(
         pose,
         gyro.getRotation2d().rotateBy(gyroOffset),
@@ -245,6 +248,16 @@ public class SwerveDrive implements Registrable {
         swerveModules[1].getPosition(),
         swerveModules[2].getPosition(),
         swerveModules[3].getPosition());
+  }
+
+  /**
+   * Update any hardware signals. Call this from the {@code updateInputs()} or {@code periodic()}
+   * method.
+   */
+  public void updateInputs() {
+    for (int i = 0; i < 4; i++) {
+      swerveModules[i].refreshMotorControllers();
+    }
   }
 
   /**

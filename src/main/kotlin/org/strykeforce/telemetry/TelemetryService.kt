@@ -7,6 +7,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import com.ctre.phoenix6.hardware.CANcoder
 import com.ctre.phoenix6.hardware.Pigeon2
 import com.ctre.phoenix6.hardware.TalonFX
+import com.ctre.phoenix6.hardware.TalonFXS
 import mu.KotlinLogging
 import org.strykeforce.telemetry.measurable.*
 import org.strykeforce.telemetry.talon.TalonFXFaultMeasureable
@@ -129,6 +130,20 @@ class TelemetryService(private val telemetryControllerFactory: Function<Inventor
             register(TalonFXFaultMeasureable(talon))
         }
         register(TalonFXMeasureable(talon))
+    }
+
+    /**
+     * Convenience method to register faults for a [com.ctre.phoenix6.hardware.TalonFXS] for telemetry sending
+     *
+     * @param talon the TalonFXS to register for data collection
+     * @param faults boolean to indicate fault registering
+     * @throws IllegalStateException if TelemetryService is running
+     */
+    fun register(talon: TalonFXS, faults: Boolean) {
+        if(faults) {
+            register(TalonFXSFaultMeasureable(talon))
+        }
+        register(TalonFXSMeasureable(talon))
     }
 
     /**
