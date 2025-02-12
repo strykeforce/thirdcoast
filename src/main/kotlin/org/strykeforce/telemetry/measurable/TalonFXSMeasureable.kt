@@ -1,6 +1,7 @@
 package org.strykeforce.telemetry.measurable
 
 import com.ctre.phoenix6.hardware.TalonFXS
+import edu.wpi.first.math.MathUtil
 import org.strykeforce.telemetry.talon.*
 import org.strykeforce.telemetry.talon.ACCELERATION
 import org.strykeforce.telemetry.talon.ACCEL_SCALE
@@ -126,7 +127,7 @@ class TalonFXSMeasureable @JvmOverloads constructor(
         Measure(DIFF_CLOSED_LOOP_REF, "Differential Closed Loop Reference"){talonFXS.differentialClosedLoopReference.valueAsDouble},
         Measure(DIFF_CLOSED_LOOP_REF_SLOPE, "Differential Closed Loop Reference Slope"){talonFXS.differentialClosedLoopReferenceSlope.valueAsDouble},
         Measure(DIFF_CLOSED_LOOP_SLOT, "Differential Closed Loop Slot"){talonFXS.differentialClosedLoopSlot.valueAsDouble},
-        Measure(PULSE_WIDTH_POSITION, "Pulse Width Position") {((talonFXS.rawPulseWidthPosition.valueAsDouble).toInt() and 0xFFF).toDouble()}
+        Measure(PULSE_WIDTH_POSITION, "Pulse Width Position") {((MathUtil.inputModulus(talonFXS.rawPulseWidthPosition.valueAsDouble,0.0, 1.0))}
     )
 
     override fun equals(other: Any?): Boolean {
