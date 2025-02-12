@@ -56,6 +56,10 @@ import org.strykeforce.telemetry.talon.VEL_SCALE
 
 internal const val ANCILLARY_DEVICE_TEMP = "ANCILLARY_DEVICE_TEMP"
 internal const val EXT_MOTOR_TEMP = "EXT_MOTOR_TEMP"
+internal const val RAW_PULSE_WIDTH_POS = "Raw Pulse Width Pos"
+internal const val RAW_QUADRATURE_POS = "Raw Quadrature Pos"
+internal const val RAW_PULSE_WIDTH_VEL = "Raw Pulse Width Vel"
+internal const val RAW_QUAD_VEL = "Raw Quadrature Vel"
 
 class TalonFXSMeasureable @JvmOverloads constructor(
     private val talonFXS: TalonFXS,
@@ -86,6 +90,8 @@ class TalonFXSMeasureable @JvmOverloads constructor(
         Measure(MOTOR_VOLTAGE, "Motor Voltage"){talonFXS.motorVoltage.valueAsDouble},
         Measure(POSITION, "Position"){talonFXS.position.valueAsDouble},
         Measure(POS_SCALE, "Pos. scaled"){talonFXS.position.valueAsDouble * scaleFactor},
+        Measure(RAW_PULSE_WIDTH_POS, "Raw Pulse Width Pos"){talonFXS.rawPulseWidthPosition.valueAsDouble},
+        Measure(RAW_QUADRATURE_POS, "Raw Quad Pos"){talonFXS.rawQuadraturePosition.valueAsDouble},
         Measure(PROCESSOR_TEMP, "Processor Temp"){talonFXS.processorTemp.valueAsDouble},
         Measure(HAS_RESET_OCCURRED, "Has Reset Occurred"){talonFXS.hasResetOccurred().toDouble()},
         Measure(REV_LIM, "Reverse Limit Switch Closed"){talonFXS.reverseLimit.valueAsDouble},
@@ -99,6 +105,8 @@ class TalonFXSMeasureable @JvmOverloads constructor(
         Measure(TORQUE_CURRENT, "Torque Current"){talonFXS.torqueCurrent.valueAsDouble},
         Measure(VELOCITY, "Velocity"){talonFXS.velocity.valueAsDouble},
         Measure(VEL_SCALE, "Vel. scaled"){talonFXS.velocity.valueAsDouble * scaleFactor},
+        Measure(RAW_PULSE_WIDTH_VEL, "Raw Pulse Width Vel"){talonFXS.rawPulseWidthVelocity.valueAsDouble},
+        Measure(RAW_QUAD_VEL, "Raw Quad Vel"){talonFXS.rawQuadratureVelocity.valueAsDouble},
 
         Measure(CLOSED_LOOP_D_OUTPUT, "Closed Loop Derivative Output"){talonFXS.closedLoopDerivativeOutput.valueAsDouble},
         Measure(CLOSED_LOOP_ERROR, "Closed Loop Error"){talonFXS.closedLoopError.valueAsDouble},
@@ -118,7 +126,7 @@ class TalonFXSMeasureable @JvmOverloads constructor(
         Measure(DIFF_CLOSED_LOOP_REF, "Differential Closed Loop Reference"){talonFXS.differentialClosedLoopReference.valueAsDouble},
         Measure(DIFF_CLOSED_LOOP_REF_SLOPE, "Differential Closed Loop Reference Slope"){talonFXS.differentialClosedLoopReferenceSlope.valueAsDouble},
         Measure(DIFF_CLOSED_LOOP_SLOT, "Differential Closed Loop Slot"){talonFXS.differentialClosedLoopSlot.valueAsDouble},
-        Measure(PULSE_WIDTH_POSITION, "Pulse Width Position") {((talonFXS.position.valueAsDouble * 4096.0).toInt() and 0xFFF).toDouble()}
+        Measure(PULSE_WIDTH_POSITION, "Pulse Width Position") {((talonFXS.rawPulseWidthPosition.valueAsDouble).toInt() and 0xFFF).toDouble()}
     )
 
     override fun equals(other: Any?): Boolean {

@@ -18,6 +18,8 @@ public class SF_PIGEON2 implements Gyro {
   public SF_PIGEON2(int deviceId) {
     pigeon2 = new Pigeon2(deviceId);
     configurator = pigeon2.getConfigurator();
+    yawGetter = pigeon2.getYaw();
+    yawRateGetter = pigeon2.getAngularVelocityZWorld();
   }
 
   public SF_PIGEON2(int deviceId, String canbus) {
