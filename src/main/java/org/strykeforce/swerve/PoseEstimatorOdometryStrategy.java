@@ -165,6 +165,10 @@ public class PoseEstimatorOdometryStrategy implements OdometryStrategy {
     return odometry.update(gyroAngle, modulePositions);
   }
 
+  public Pose2d getSample(double timestampSeconds) {
+    return odometry.sampleAt(timestampSeconds).get();
+  }
+
   // @Override
   // public Pose2d updateWithTime(
   //     double currentTimeSeconds, Rotation2d gyroAngle, SwerveModuleState... moduleStates) {
