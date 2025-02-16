@@ -26,6 +26,7 @@ import com.ctre.phoenix6.controls.MotionMagicDutyCycle;
 import com.ctre.phoenix6.controls.VelocityDutyCycle;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.hardware.TalonFXS;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -231,6 +232,7 @@ class TalonSwerveModuleTest {
     FXSwerveModule module;
 
     StatusSignal<Angle> azimuthPositionStatusSig;
+    StatusSignal<Angle> rawPulseWidthStatusSig;
     final ArgumentCaptor<MotionMagicDutyCycle> posDutyCycleCaptor =
         ArgumentCaptor.forClass(MotionMagicDutyCycle.class);
 
@@ -249,6 +251,7 @@ class TalonSwerveModuleTest {
               .driveMaximumMetersPerSecond(kMaxSpeedMetersPerSecond)
               .build();
       azimuthPositionStatusSig = (StatusSignal<Angle>) mock(StatusSignal.class);
+      rawPulseWidthStatusSig = (StatusSignal<Angle>) mock(StatusSignal.class);
       Field azimuthPosField =
           ReflectionUtils.findFields(
                   FXSwerveModule.class,
@@ -261,7 +264,6 @@ class TalonSwerveModuleTest {
       } catch (Exception e) {
         throw new IllegalArgumentException("Error: " + e);
       }
-
       when(azimuthTalon.getPosition()).thenReturn(azimuthPositionStatusSig);
       when(azimuthPositionStatusSig.getValueAsDouble()).thenReturn(0.0);
     }
@@ -283,36 +285,46 @@ class TalonSwerveModuleTest {
       module = builder.wheelLocationMeters(new Translation2d(1, 1)).build();
       when(azimuthTalon.getPosition()).thenReturn(azimuthPositionStatusSig);
       when(azimuthPositionStatusSig.getValueAsDouble()).thenReturn(expectedZeroReference);
+      when(azimuthTalon.getRawPulseWidthPosition()).thenReturn(rawPulseWidthStatusSig);
+      when(rawPulseWidthStatusSig.getValueAsDouble()).thenReturn(expectedZeroReference);
       module.storeAzimuthZeroReference();
-      assertEquals((int) (expectedZeroReference * 4096.0) & 0xFFF, Preferences.getDouble(key, -1));
+      assertEquals(expectedZeroReference, Preferences.getDouble(key, -1));
 
       expectedZeroReference = 67.0 / 4096.0;
       index = 1; // Front Right
       key = String.format("SwerveDrive/wheel.%d", index);
       module = builder.wheelLocationMeters(new Translation2d(1, -1)).build();
       when(azimuthPositionStatusSig.getValueAsDouble()).thenReturn(expectedZeroReference);
+      when(azimuthTalon.getRawPulseWidthPosition()).thenReturn(rawPulseWidthStatusSig);
+      when(rawPulseWidthStatusSig.getValueAsDouble()).thenReturn(expectedZeroReference);
       module.storeAzimuthZeroReference();
-      assertEquals((int) (expectedZeroReference * 4096.0) & 0xFFF, Preferences.getDouble(key, -1));
+      assertEquals(expectedZeroReference, Preferences.getDouble(key, -1));
 
       expectedZeroReference = -6767.0 / 4096.0;
       index = 2; // Back Left
       key = String.format("SwerveDrive/wheel.%d", index);
       module = builder.wheelLocationMeters(new Translation2d(-1, 1)).build();
       when(azimuthPositionStatusSig.getValueAsDouble()).thenReturn(expectedZeroReference);
+      when(azimuthTalon.getRawPulseWidthPosition()).thenReturn(rawPulseWidthStatusSig);
+      when(rawPulseWidthStatusSig.getValueAsDouble()).thenReturn(expectedZeroReference);
       module.storeAzimuthZeroReference();
-      assertEquals((int) (expectedZeroReference * 4096.0) & 0xFFF, Preferences.getDouble(key, -1));
+      assertEquals(
+          MathUtil.inputModulus(expectedZeroReference, 0.0, 1.0), Preferences.getDouble(key, -1));
 
       expectedZeroReference = 6727.0 / 4096.0;
       index = 3; // Back Right
       key = String.format("SwerveDrive/wheel.%d", index);
       module = builder.wheelLocationMeters(new Translation2d(-1, -1)).build();
       when(azimuthPositionStatusSig.getValueAsDouble()).thenReturn(expectedZeroReference);
+      when(azimuthTalon.getRawPulseWidthPosition()).thenReturn(rawPulseWidthStatusSig);
+      when(rawPulseWidthStatusSig.getValueAsDouble()).thenReturn(expectedZeroReference);
       module.storeAzimuthZeroReference();
-      assertEquals((int) (expectedZeroReference * 4096.0) & 0xFFF, Preferences.getDouble(key, -1));
+      assertEquals(
+          MathUtil.inputModulus(expectedZeroReference, 0.0, 1.0), Preferences.getDouble(key, -1));
     }
 
     @ParameterizedTest
-    @CsvSource({"0, 0, 0", "1, 0, 0", "1.00024, 0, 0.00024", "0, 2767, 0.67554"})
+    @CsvSource({"1e-6, 0, 1e-6", "1, 0, 1", "1.00024, 0, 0.00024", "1e-6, 0.67554, -0.67554"})
     @DisplayName("should set FX azimuth zero")
     void shouldSetFXAzimuthZero(
         double absoluteEncoderPosition, double zeroReference, double setpoint) {
@@ -322,6 +334,8 @@ class TalonSwerveModuleTest {
 
       when(azimuthTalon.getPosition()).thenReturn(azimuthPositionStatusSig);
       when(azimuthPositionStatusSig.getValueAsDouble()).thenReturn(absoluteEncoderPosition);
+      when(azimuthTalon.getRawPulseWidthPosition()).thenReturn(rawPulseWidthStatusSig);
+      when(rawPulseWidthStatusSig.getValueAsDouble()).thenReturn(absoluteEncoderPosition);
       module.loadAndSetAzimuthZeroReference();
       verify(azimuthTalon).setControl(posDutyCycleCaptor.capture());
       assertEquals(setpoint, posDutyCycleCaptor.getValue().Position, 0.01);

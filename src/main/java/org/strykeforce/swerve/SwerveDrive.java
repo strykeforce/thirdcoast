@@ -214,7 +214,7 @@ public class SwerveDrive implements Registrable {
    */
   public void resetOdometry(Pose2d pose) {
     for (int i = 0; i < 4; i++) {
-      swerveModules[0].refreshMotorControllers();
+      swerveModules[i].refreshMotorControllers();
     }
     odometry.resetPosition(
         pose,

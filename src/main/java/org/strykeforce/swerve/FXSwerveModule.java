@@ -8,6 +8,7 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.*;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.hardware.TalonFXS;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -41,7 +42,6 @@ public class FXSwerveModule implements SwerveModule {
   private final TalonFX driveTalon;
   private final double azimuthCountsPerRev;
   private final double driveCountsPerRev;
-  private final double azimuthPulseWidthCPR;
   private final double driveGearRatio;
   private final double wheelCircumferenceMeters;
   private final double driveDeadbandMetersPerSecond;
@@ -53,7 +53,6 @@ public class FXSwerveModule implements SwerveModule {
   private int closedLoopSlot;
   private int azimuthSlot;
   private boolean compensateLatency;
-  private double azimuthPositionOffset = 0.0;
 
   // Status Signals
   private StatusSignal<Angle> drivePosition;
@@ -65,7 +64,6 @@ public class FXSwerveModule implements SwerveModule {
     driveTalon = builder.driveTalon;
     azimuthCountsPerRev = builder.azimuthCountsPerRev;
     driveCountsPerRev = builder.driveCountsPerRev;
-    azimuthPulseWidthCPR = builder.azimuthPulseWidthCPR;
     driveGearRatio = builder.driveGearRatio;
     wheelCircumferenceMeters = Math.PI * Inches.of(builder.wheelDiameterInches).in(Meters);
     driveDeadbandMetersPerSecond = builder.driveDeadbandMetersPerSecond;
@@ -166,13 +164,11 @@ public class FXSwerveModule implements SwerveModule {
 
     double azimuthAbsoluteCounts = getAzimuthAbsoluteEncoderCounts();
     logger.info("swerve module {}: azimuth absolute position = {}", index, azimuthAbsoluteCounts);
-    logger.info(
-        "swerve module {}: current azimuth endocder position = {}",
-        index,
-        azimuthAbsoluteCounts - reference);
+    double azimuthSetpoint = azimuthAbsoluteCounts - reference;
+    azimuthTalon.setPosition(azimuthSetpoint);
+    logger.info("swerve module {}: set azimuth encoder = {}", index, azimuthSetpoint);
 
-    azimuthPositionOffset = reference / azimuthPulseWidthCPR;
-    setAzimuthPosition(azimuthAbsoluteCounts);
+    setAzimuthPosition(azimuthSetpoint);
   }
 
   public TalonFXS getAzimuthTalon() {
@@ -184,21 +180,12 @@ public class FXSwerveModule implements SwerveModule {
   }
 
   private double getAzimuthAbsoluteEncoderCounts() {
-    //    double extraRotations =
-    //        azimuthPosition.getValueAsDouble() > 0
-    //            ? Math.floor(azimuthPosition.getValueAsDouble())
-    //            : Math.ceil(azimuthPosition.getValueAsDouble());
-    //    return azimuthPosition.getValueAsDouble() - extraRotations; // correct to within one
-    // rotation
-    return ((int) (azimuthPosition.getValueAsDouble() * azimuthPulseWidthCPR)) & 0xFFF;
+    return MathUtil.inputModulus(
+        azimuthTalon.getRawPulseWidthPosition().getValueAsDouble(), 0.0, 1.0);
   }
 
   private double getAzimuthEcoderPosition() {
-    return azimuthPosition.getValueAsDouble() - azimuthPositionOffset;
-  }
-
-  public double getAzimuthPositionOffset() {
-    return azimuthPositionOffset;
+    return azimuthPosition.getValueAsDouble();
   }
 
   @Override
@@ -234,19 +221,15 @@ public class FXSwerveModule implements SwerveModule {
   private void setAzimuthPosition(double position) {
     if (units == V6TalonSwerveModule.ClosedLoopUnits.DUTY_CYCLE) {
       MotionMagicDutyCycle controlRequest =
-          new MotionMagicDutyCycle(position + azimuthPositionOffset)
-              .withEnableFOC(false)
-              .withSlot(azimuthSlot);
+          new MotionMagicDutyCycle(position).withEnableFOC(false).withSlot(azimuthSlot);
       azimuthTalon.setControl(controlRequest);
     } else if (units == V6TalonSwerveModule.ClosedLoopUnits.VOLTAGE) {
       MotionMagicVoltage controlReqest =
-          new MotionMagicVoltage(position + azimuthPositionOffset)
-              .withEnableFOC(false)
-              .withSlot(azimuthSlot);
+          new MotionMagicVoltage(position).withEnableFOC(false).withSlot(azimuthSlot);
       azimuthTalon.setControl(controlReqest);
     } else {
       MotionMagicTorqueCurrentFOC controlRequest =
-          new MotionMagicTorqueCurrentFOC(position + azimuthPositionOffset).withSlot(azimuthSlot);
+          new MotionMagicTorqueCurrentFOC(position).withSlot(azimuthSlot);
       azimuthTalon.setControl(controlRequest);
     }
   }
@@ -320,7 +303,6 @@ public class FXSwerveModule implements SwerveModule {
     public static final double kDefaultTalonFXCountsPerRev = 1.0;
     private double azimuthCountsPerRev = kDefaultTalonFXCountsPerRev;
     private double driveCountsPerRev = kDefaultTalonFXCountsPerRev;
-    private double azimuthPulseWidthCPR = 4096.0;
 
     private TalonFXS azimuthTalon;
     private TalonFX driveTalon;
@@ -363,11 +345,6 @@ public class FXSwerveModule implements SwerveModule {
 
     public FXBuilder azimuthEncoderCountsPerRevolution(double countsPerRev) {
       this.azimuthCountsPerRev = countsPerRev;
-      return this;
-    }
-
-    public FXBuilder azimuthPulseWidthCPR(double azimuthPulseWidthCPR) {
-      this.azimuthPulseWidthCPR = azimuthPulseWidthCPR;
       return this;
     }
 
@@ -430,13 +407,6 @@ public class FXSwerveModule implements SwerveModule {
       if (module.azimuthCountsPerRev <= 0)
         throw new IllegalArgumentException(
             "azimuth encoder counts per revolution must be greater than zero.");
-      if (module.azimuthPulseWidthCPR <= 0)
-        throw new IllegalArgumentException("azimuth pulse width cpr must be greater than zero");
-      //      TalonFXSConfiguration azimuthConfig = new TalonFXSConfiguration();
-      //      module.azimuthTalon.getConfigurator().refresh(azimuthConfig);
-      //      if (azimuthConfig.ExternalFeedback.ExternalFeedbackSensorSource
-      //          != ExternalFeedbackSensorSourceValue.PulseWidth)
-      //        throw new IllegalArgumentException("Azimuth must use Pulse Width Feedback");
       if (module.driveCountsPerRev <= 0)
         throw new IllegalArgumentException(
             "drive encoder counts per revolution must be greater than zero.");
