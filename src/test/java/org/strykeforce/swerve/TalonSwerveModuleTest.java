@@ -96,7 +96,8 @@ class TalonSwerveModuleTest {
             .driveGearRatio(kDriveGearRatio)
             .wheelDiameterInches(kWheelDiameterInches)
             .driveMaximumMetersPerSecond(kMaxSpeedMetersPerSecond)
-            .wheelLocationMeters(new Translation2d());
+            .wheelLocationMeters(new Translation2d())
+            .encoderOpposed(false);
     assertThat(builder.build().getDriveCountsPerRev()).isEqualTo(1);
     assertThat(builder.driveEncoderCountsPerRevolution(2).build().getDriveCountsPerRev())
         .isEqualTo(2);
@@ -134,6 +135,7 @@ class TalonSwerveModuleTest {
             .wheelDiameterInches(kWheelDiameterInches)
             .driveMaximumMetersPerSecond(kMaxSpeedMetersPerSecond)
             .wheelLocationMeters(new Translation2d())
+            .encoderOpposed(false)
             .build();
     module.resetDriveEncoder();
     verify(driveTalon, times(2)).setPosition(0);
@@ -249,6 +251,7 @@ class TalonSwerveModuleTest {
               .wheelDiameterInches(kWheelDiameterInches)
               .wheelLocationMeters(new Translation2d(1, 1))
               .driveMaximumMetersPerSecond(kMaxSpeedMetersPerSecond)
+              .encoderOpposed(false)
               .build();
       azimuthPositionStatusSig = (StatusSignal<Angle>) mock(StatusSignal.class);
       rawPulseWidthStatusSig = (StatusSignal<Angle>) mock(StatusSignal.class);
@@ -277,7 +280,8 @@ class TalonSwerveModuleTest {
               .driveTalon(driveTalon)
               .driveGearRatio(kDriveGearRatio)
               .wheelDiameterInches(kWheelDiameterInches)
-              .driveMaximumMetersPerSecond(kMaxSpeedMetersPerSecond);
+              .driveMaximumMetersPerSecond(kMaxSpeedMetersPerSecond)
+              .encoderOpposed(false);
 
       double expectedZeroReference = 27.0 / 4096.0;
       int index = 0; // Front Left
@@ -446,7 +450,8 @@ class TalonSwerveModuleTest {
               .driveGearRatio(kDriveGearRatio)
               .wheelDiameterInches(kWheelDiameterInches)
               .wheelLocationMeters(new Translation2d(1, 1))
-              .driveDeadbandMetersPerSecond(kMaxSpeedMetersPerSecond);
+              .driveDeadbandMetersPerSecond(kMaxSpeedMetersPerSecond)
+              .encoderOpposed(false);
 
       assertThrows(IllegalArgumentException.class, builder.azimuthTalon(null)::build);
     }
@@ -460,7 +465,8 @@ class TalonSwerveModuleTest {
               .driveTalon(driveTalon)
               .wheelDiameterInches(kWheelDiameterInches)
               .wheelLocationMeters(new Translation2d())
-              .driveMaximumMetersPerSecond(kMaxSpeedMetersPerSecond);
+              .driveMaximumMetersPerSecond(kMaxSpeedMetersPerSecond)
+              .encoderOpposed(false);
       assertThrows(IllegalArgumentException.class, builder::build);
     }
 
@@ -473,7 +479,8 @@ class TalonSwerveModuleTest {
               .driveTalon(driveTalon)
               .driveGearRatio(kDriveGearRatio)
               .wheelLocationMeters(new Translation2d())
-              .driveMaximumMetersPerSecond(kMaxSpeedMetersPerSecond);
+              .driveMaximumMetersPerSecond(kMaxSpeedMetersPerSecond)
+              .encoderOpposed(false);
       assertThrows(IllegalArgumentException.class, builder::build);
     }
 
@@ -486,7 +493,8 @@ class TalonSwerveModuleTest {
               .driveTalon(driveTalon)
               .driveGearRatio(kDriveGearRatio)
               .wheelLocationMeters(new Translation2d())
-              .wheelDiameterInches(kWheelDiameterInches);
+              .wheelDiameterInches(kWheelDiameterInches)
+              .encoderOpposed(false);
       assertThrows(IllegalArgumentException.class, builder::build);
     }
 
@@ -499,7 +507,8 @@ class TalonSwerveModuleTest {
               .driveTalon(driveTalon)
               .driveGearRatio(kDriveGearRatio)
               .wheelDiameterInches(kWheelDiameterInches)
-              .driveMaximumMetersPerSecond(kMaxSpeedMetersPerSecond);
+              .driveMaximumMetersPerSecond(kMaxSpeedMetersPerSecond)
+              .encoderOpposed(false);
       assertThrows(IllegalArgumentException.class, builder::build);
     }
   }
@@ -722,6 +731,7 @@ class TalonSwerveModuleTest {
               .wheelDiameterInches(kWheelDiameterInches)
               .driveMaximumMetersPerSecond(kMaxSpeedMetersPerSecond)
               .wheelLocationMeters(new Translation2d())
+              .encoderOpposed(false)
               .build();
       //      when(driveTalon.getVelocity()).thenReturn(velocityStatusSig);
       Field driveVelField =
@@ -768,6 +778,7 @@ class TalonSwerveModuleTest {
               .wheelDiameterInches(kWheelDiameterInches)
               .driveMaximumMetersPerSecond(kMaxSpeedMetersPerSecond)
               .wheelLocationMeters(new Translation2d())
+              .encoderOpposed(false)
               .build();
       Field driveVelField =
           ReflectionUtils.findFields(
@@ -855,6 +866,7 @@ class TalonSwerveModuleTest {
               .wheelDiameterInches(kWheelDiameterInches)
               .driveMaximumMetersPerSecond(kMaxSpeedMetersPerSecond)
               .wheelLocationMeters(new Translation2d())
+              .encoderOpposed(false)
               .build();
       Field driveVelField =
           ReflectionUtils.findFields(
@@ -899,6 +911,7 @@ class TalonSwerveModuleTest {
               .wheelDiameterInches(kWheelDiameterInches)
               .driveMaximumMetersPerSecond(kMaxSpeedMetersPerSecond)
               .wheelLocationMeters(new Translation2d())
+              .encoderOpposed(false)
               .build();
       assertEquals(kMaxSpeedMetersPerSecond, module.getMaxSpeedMetersPerSecond());
     }
@@ -914,6 +927,7 @@ class TalonSwerveModuleTest {
               .wheelDiameterInches(kWheelDiameterInches)
               .driveMaximumMetersPerSecond(kMaxSpeedMetersPerSecond)
               .wheelLocationMeters(expectedWheelLocation)
+              .encoderOpposed(false)
               .build();
       assertEquals(expectedWheelLocation, module.getWheelLocationMeters());
     }
@@ -1143,6 +1157,7 @@ class TalonSwerveModuleTest {
               .wheelDiameterInches(kWheelDiameterInches)
               .wheelLocationMeters(new Translation2d())
               .driveMaximumMetersPerSecond(kMaxSpeedMetersPerSecond)
+              .encoderOpposed(false)
               .build();
       Field azimuthPosField =
           ReflectionUtils.findFields(
@@ -1187,6 +1202,7 @@ class TalonSwerveModuleTest {
               .wheelDiameterInches(kWheelDiameterInches)
               .wheelLocationMeters(new Translation2d())
               .driveMaximumMetersPerSecond(kMaxSpeedMetersPerSecond)
+              .encoderOpposed(false)
               .build();
       Field azimuthPosField =
           ReflectionUtils.findFields(
@@ -1285,6 +1301,7 @@ class TalonSwerveModuleTest {
               .wheelDiameterInches(kWheelDiameterInches)
               .wheelLocationMeters(new Translation2d())
               .driveMaximumMetersPerSecond(kMaxSpeedMetersPerSecond)
+              .encoderOpposed(false)
               .build();
       var desiredState =
           new SwerveModuleState(speedMetersPerSecond, Rotation2d.fromDegrees(angleDegrees));
@@ -1478,6 +1495,7 @@ class TalonSwerveModuleTest {
               .wheelDiameterInches(kWheelDiameterInches)
               .driveMaximumMetersPerSecond(kMaxSpeedMetersPerSecond)
               .wheelLocationMeters(new Translation2d())
+              .encoderOpposed(false)
               .build();
       Field drivePosField =
           ReflectionUtils.findFields(
@@ -1544,6 +1562,7 @@ class TalonSwerveModuleTest {
               .wheelDiameterInches(kWheelDiameterInches)
               .driveMaximumMetersPerSecond(kMaxSpeedMetersPerSecond)
               .wheelLocationMeters(new Translation2d())
+              .encoderOpposed(false)
               .build();
       Field drivePosField =
           ReflectionUtils.findFields(

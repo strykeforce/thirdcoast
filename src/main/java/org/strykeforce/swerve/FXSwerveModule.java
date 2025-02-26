@@ -53,6 +53,7 @@ public class FXSwerveModule implements SwerveModule {
   private int closedLoopSlot;
   private int azimuthSlot;
   private boolean compensateLatency;
+  private boolean encoderOpposed;
 
   // Status Signals
   private StatusSignal<Angle> drivePosition;
@@ -74,6 +75,7 @@ public class FXSwerveModule implements SwerveModule {
     closedLoopSlot = builder.closedLoopSlot;
     azimuthSlot = builder.azimuthSlot;
     compensateLatency = builder.compensateLatency;
+    encoderOpposed = builder.encoderOpposed;
     resetDriveEncoder();
   }
 
@@ -164,7 +166,8 @@ public class FXSwerveModule implements SwerveModule {
 
     double azimuthAbsoluteCounts = getAzimuthAbsoluteEncoderCounts();
     logger.info("swerve module {}: azimuth absolute position = {}", index, azimuthAbsoluteCounts);
-    double azimuthSetpoint = azimuthAbsoluteCounts - reference;
+    double azimuthSetpoint =
+        encoderOpposed ? reference - azimuthAbsoluteCounts : azimuthAbsoluteCounts - reference;
     azimuthTalon.setPosition(azimuthSetpoint);
     logger.info("swerve module {}: set azimuth encoder = {}", index, azimuthSetpoint);
 
@@ -184,13 +187,13 @@ public class FXSwerveModule implements SwerveModule {
         azimuthTalon.getRawPulseWidthPosition().getValueAsDouble(), 0.0, 1.0);
   }
 
-  private double getAzimuthEcoderPosition() {
+  private double getAzimuthEncoderPosition() {
     return azimuthPosition.getValueAsDouble();
   }
 
   @Override
   public Rotation2d getAzimuthRotation2d() {
-    double azimuthCounts = getAzimuthEcoderPosition();
+    double azimuthCounts = getAzimuthEncoderPosition();
     double radians = 2.0 * Math.PI * azimuthCounts / azimuthCountsPerRev;
     return new Rotation2d(radians);
   }
@@ -208,7 +211,7 @@ public class FXSwerveModule implements SwerveModule {
     desiredState.optimize(currentAngle);
 
     // setPosition
-    double countsBefore = getAzimuthEcoderPosition();
+    double countsBefore = getAzimuthEncoderPosition();
     double countsFromAngle =
         desiredState.angle.getRadians() / (2.0 * Math.PI) * azimuthCountsPerRev;
     double countsDelta = Math.IEEEremainder(countsFromAngle - countsBefore, azimuthCountsPerRev);
@@ -224,9 +227,9 @@ public class FXSwerveModule implements SwerveModule {
           new MotionMagicDutyCycle(position).withEnableFOC(false).withSlot(azimuthSlot);
       azimuthTalon.setControl(controlRequest);
     } else if (units == V6TalonSwerveModule.ClosedLoopUnits.VOLTAGE) {
-      MotionMagicVoltage controlReqest =
+      MotionMagicVoltage controlRequest =
           new MotionMagicVoltage(position).withEnableFOC(false).withSlot(azimuthSlot);
-      azimuthTalon.setControl(controlReqest);
+      azimuthTalon.setControl(controlRequest);
     } else {
       MotionMagicTorqueCurrentFOC controlRequest =
           new MotionMagicTorqueCurrentFOC(position).withSlot(azimuthSlot);
@@ -317,6 +320,7 @@ public class FXSwerveModule implements SwerveModule {
     private int closedLoopSlot = 0;
     private int azimuthSlot = 0;
     private boolean compensateLatency = false;
+    private boolean encoderOpposed = true;
 
     public FXBuilder azimuthTalon(TalonFXS azimuthTalon) {
       this.azimuthTalon = azimuthTalon;
@@ -385,6 +389,11 @@ public class FXSwerveModule implements SwerveModule {
 
     public FXBuilder latencyCompensation(boolean compensate) {
       this.compensateLatency = compensate;
+      return this;
+    }
+
+    public FXBuilder encoderOpposed(boolean encoderOpposed) {
+      this.encoderOpposed = encoderOpposed;
       return this;
     }
 
