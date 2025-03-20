@@ -4,6 +4,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.can.BaseTalon
 import com.ctre.phoenix6.controls.DutyCycleOut
 import com.ctre.phoenix6.hardware.TalonFX
+import com.ctre.phoenix6.hardware.TalonFXS
 import edu.wpi.first.units.Units
 import edu.wpi.first.wpilibj.RobotController
 import edu.wpi.first.wpilibj2.command.Subsystem
@@ -103,6 +104,13 @@ abstract class P6TalonHealthCheck(val talonFx: TalonFX, healthChecks: List<Healt
     }
     }
 
+abstract class FXSTalonHealthCheck(val talonFxs: TalonFXS, healthChecks: List<HealthCheck>) :
+    HealthCheckCollection("TalonFX ${talonFxs.deviceID}", healthChecks) {
+    override fun accept(visitor: HealthCheckVisitor) {
+        visitor.visit(this)
+    }
+}
+
 enum class State {
     INITIALIZING,
     REVERSING,
@@ -125,6 +133,12 @@ class P6TalonTimedHealthCheck(
     val percentOutput: DoubleArray,
 ): P6TalonHealthCheck(talonFx, healthChecks)
 
+class FXSTalonTimedHealthCheck(
+    talonFxs: TalonFXS,
+    healthChecks: List<HealthCheck>,
+    val percentOutput: DoubleArray,
+): FXSTalonHealthCheck(talonFxs, healthChecks)
+
 class TalonPositionHealthCheck(
     talon: BaseTalon,
     healthChecks: List<HealthCheck>,
@@ -137,9 +151,17 @@ class P6TalonPositionHealthCheck(
     val percentOutput: DoubleArray,
 ): P6TalonHealthCheck(talonFx, healthChecks)
 
+class FXSTalonPositionHealthCheck(
+    talonFxs: TalonFXS,
+    healthChecks: List<HealthCheck>,
+    val percentOutput: DoubleArray,
+): FXSTalonHealthCheck(talonFxs, healthChecks)
+
 class TalonFollowerHealthCheck(talon: BaseTalon, val leaderId: Int) : TalonHealthCheck(talon, listOf())
 
 class P6TalonFollowerHealthCheck(talonFX: TalonFX, val leaderId: Int) : P6TalonHealthCheck(talonFX, listOf())
+
+class FXSTalonFollowerHealthCheck(talonFXS: TalonFXS, val leaderId: Int) : FXSTalonHealthCheck(talonFXS, listOf())
 
 class LifecycleHealthCheck(private val subsystem: Subsystem, private val method: Method) : HealthCheck {
 
@@ -348,6 +370,84 @@ abstract class P6TalonHealthCheckCase(
     }
 }
 
+abstract class FXSTalonHealthCheckCase(
+    val talonFxs: TalonFXS,
+    val isReversing: Boolean,
+    val type: String,
+    val output: Double,
+    val duration: Long
+) : HealthCheck {
+    val case = caseId++
+    var uuid: UUID = UUID.randomUUID()
+
+    override var isFinished = false
+
+    private var state = State.INITIALIZING
+
+    private var start = 0L
+
+    val data: MutableList<FXSTalonHealthCheckData> = mutableListOf(FXSTalonHealthCheckData(case, talonFxs))
+
+    fun addFollowerTalon(talonFxs: TalonFXS) {
+        data.add(FXSTalonHealthCheckData(case, talonFxs))
+    }
+
+    override fun accept(visitor: HealthCheckVisitor) = visitor.visit(this)
+
+    override fun initialize() {
+        uuid = UUID.randomUUID()
+        data.forEach(FXSTalonHealthCheckData::reset)
+        state = State.INITIALIZING
+        isFinished = false
+        start = 0
+    }
+
+    abstract fun isRunning(elapsed: Long) : Boolean
+
+    abstract fun setTalon(talonFxs: TalonFXS)
+
+    fun measure(timestamp: Long) = data.forEach { it.measure(timestamp) }
+
+    override fun execute() {
+        val time = RobotController.getFPGATime()
+
+        when(state) {
+            State.INITIALIZING -> {
+                talonFxs.setControl(DutyCycleOut(0.0))
+                start = time
+                state = if(isReversing) State.REVERSING else State.STARTING
+            }
+
+            State.REVERSING -> {
+                val elapsed = time - start
+                state = if(elapsed > REVERSING_DURATION) State.STARTING else State.REVERSING
+            }
+
+            State.STARTING -> {
+                setTalon(talonFxs)
+                start = time
+                state = State.RUNNING
+                val elapsed = time - start
+                measure(elapsed)
+            }
+
+            State.RUNNING -> {
+                val elapsed = time - start
+                if(isRunning(elapsed)) {
+                    state = State.STOPPING
+                    return
+                }
+                measure(elapsed)
+            }
+
+            State.STOPPING -> {
+                talonFxs.setControl(DutyCycleOut(0.0))
+                isFinished = true
+            }
+        }
+    }
+}
+
 class TalonTimedHealthCheckCase(
     previousCase: TalonTimedHealthCheckCase?,
     talon: BaseTalon,
@@ -407,6 +507,29 @@ class P6TalonTimedHealthCheckCase(
 
 }
 
+class FXSTalonTimedHealthCheckCase(
+    previousCase: FXSTalonTimedHealthCheckCase?,
+    talonFxs :TalonFXS,
+    val percentOutput: Double,
+    duration: Long
+) : FXSTalonHealthCheckCase(talonFxs, (previousCase?.percentOutput ?: 0.0) * percentOutput < 0.0, "time", percentOutput, duration) {
+    override val name = "FXSTalonTimedHealthCheckCase: ${percentOutput * 100} percent output"
+
+    override fun isRunning(elapsed: Long) = elapsed > duration
+
+    override fun setTalon(talonFxs: TalonFXS) {
+        talonFxs.setControl(DutyCycleOut(percentOutput))
+    }
+
+    override fun toString(): String {
+        return "FXSTalonTimedHealthCheckCase(" +
+                "percentOutput=$percentOutput, " +
+                "duration=$duration, " +
+                "isReversing=$isReversing" +
+                ")"
+    }
+
+}
 
 class TalonPositionHealthCheckCase(
     previousCase: TalonPositionHealthCheckCase?,
@@ -486,6 +609,45 @@ class P6TalonPositionHealthCheckCase(
 
     override fun toString(): String {
         return "P6TalonPositionHealthCheckCase(" +
+                "percentOutput=$percentOutput, " +
+                "encoderChange=$encoderChange, " +
+                "isReversing=$isReversing" +
+                ")"
+    }
+}
+
+class FXSTalonPositionHealthCheckCase(
+    previousCase: FXSTalonPositionHealthCheckCase?,
+    talonFxs: TalonFXS,
+    val percentOutput: Double,
+    private val encoderChange: Double
+): FXSTalonHealthCheckCase(
+    talonFxs,
+    (previousCase?.percentOutput ?: 0.0) * percentOutput < 0.0,
+    "position",
+    percentOutput,
+    encoderChange.toLong()
+) {
+    override val name = "FXSTalonPositionHeathCheckCase: ${percentOutput * 100} percent output"
+
+    private var encoderStart: Double = 0.0
+
+    override fun initialize() {
+        super.initialize()
+        encoderStart = talonFxs.position.value.`in`(Units.Rotations)
+    }
+
+    override fun isRunning(elapsed: Long): Boolean {
+        val encoderCurrent = talonFxs.position.value.`in`(Units.Rotations)
+        return abs(encoderCurrent - encoderStart) >= encoderChange
+    }
+
+    override fun setTalon(talonFxs: TalonFXS) {
+        talonFxs.setControl(DutyCycleOut(percentOutput))
+    }
+
+    override fun toString(): String {
+        return "FXSTalonPositionHealthCheckCase(" +
                 "percentOutput=$percentOutput, " +
                 "encoderChange=$encoderChange, " +
                 "isReversing=$isReversing" +

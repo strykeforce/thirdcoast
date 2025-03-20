@@ -10,9 +10,11 @@ interface HealthCheckVisitor {
     fun visit(healthCheck: TalonHealthCheck)
 
     fun visit(healthCheck: P6TalonHealthCheck)
+    fun visit(healthCheck: FXSTalonHealthCheck)
     fun visit(healthCheck: TalonHealthCheckCase)
 
     fun visit(healthCheck: P6TalonHealthCheckCase)
+    fun visit(healthCheck: FXSTalonHealthCheckCase)
 
     fun visit(healthCheck: LifecycleHealthCheck)
     fun visit(healthCheck: LifecycleIOHealthCheck)
@@ -71,6 +73,11 @@ class DumpVisitor : HealthCheckVisitor {
         healthCheck.healthChecks.forEach { it.accept(this) }
     }
 
+    override fun visit(healthCheck: FXSTalonHealthCheck) {
+        buffer.appendLine("        FXSTalonHealthCheck(${healthCheck.name})")
+        healthCheck.healthChecks.forEach { it.accept(this) }
+    }
+
     override fun visit(healthCheck: TalonHealthCheckCase) {
         buffer.appendLine("                $healthCheck: ${healthCheck.data.size} measurements")
         healthCheck.data.forEach {
@@ -82,6 +89,13 @@ class DumpVisitor : HealthCheckVisitor {
     }
 
     override fun visit(healthCheck: P6TalonHealthCheckCase) {
+        buffer.appendLine("                $healthCheck: ${healthCheck.data.size} measurements")
+        healthCheck.data.forEach {
+
+        }
+    }
+
+    override fun visit(healthCheck: FXSTalonHealthCheckCase) {
         buffer.appendLine("                $healthCheck: ${healthCheck.data.size} measurements")
         healthCheck.data.forEach {
 

@@ -3,11 +3,13 @@ package org.strykeforce.healthcheck.internal
 import com.ctre.phoenix.motorcontrol.can.BaseTalon
 import com.ctre.phoenix6.controls.Follower
 import com.ctre.phoenix6.hardware.TalonFX
+import com.ctre.phoenix6.hardware.TalonFXS
 import edu.wpi.first.wpilibj2.command.Subsystem
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 import mu.KotlinLogging
 import okhttp3.internal.toImmutableList
 import org.strykeforce.healthcheck.*
+import org.strykeforce.swerve.FXSwerveModule
 import org.strykeforce.swerve.SwerveDrive
 import org.strykeforce.swerve.V6TalonSwerveModule
 import java.lang.reflect.Field
@@ -178,7 +180,7 @@ class IOHealthCheckBuilder(private val io: Checkable) {
         //queue the swerveDrive field for removal in fieldsToRemove
         healthCheckFields.forEach {
             if(it.type == SwerveDrive::class.java) {
-                healthChecks.addAll(SwerveDriveHealthCheckIOBuilder(io, it).build())
+                healthChecks.addAll(FXSwerveDriveHealthCheckIOBuilder(io, it).build())
                 fieldsToRemove.add(it)
             }
         }
@@ -188,7 +190,10 @@ class IOHealthCheckBuilder(private val io: Checkable) {
         healthCheckFields.forEach {
             if(it.type == TalonFX::class.java) {
                 healthChecks.add(P6TalonHealthCheckIOBuilder(io, it).build())
-            } else {
+            } else if(it.type == TalonFXS::class.java) {
+                healthChecks.add(FXSTalonHealthCheckIOBuilder(io, it).build())
+            }
+            else {
                 healthChecks.add(TalonHealthCheckIOBuilder(io, it).build())
             }
         }
@@ -199,6 +204,7 @@ class IOHealthCheckBuilder(private val io: Checkable) {
         // remove the follower check since run during leader
         val followerHealthChecks = healthChecks.mapNotNull { it as? TalonFollowerHealthCheck }
         val p6FollowerHealthChecks = healthChecks.mapNotNull { it as? P6TalonFollowerHealthCheck }
+        val fxsFollowerHealthChecks = healthChecks.mapNotNull { it as? FXSTalonFollowerHealthCheck }
         for(fhc in followerHealthChecks) {
             val lhc = healthChecks.mapNotNull { it as? TalonHealthCheck }.find { it.talon.deviceID == fhc.leaderId }
             if(lhc == null) {
@@ -221,6 +227,17 @@ class IOHealthCheckBuilder(private val io: Checkable) {
             lhc.healthChecks.map { it as P6TalonHealthCheckCase }.forEach{it.addFollowerTalon(fhc.talonFx)}
         }
         healthChecks.removeAll(p6FollowerHealthChecks)
+
+        for(fhc in fxsFollowerHealthChecks) {
+            val lhc = healthChecks.mapNotNull { it as? FXSTalonHealthCheck }.find { it.talonFxs.deviceID == fhc.leaderId }
+            if(lhc == null) {
+                logger.error { "$io: no leader (id = ${fhc.leaderId}) found for follower (id = ${fhc.talonFxs.deviceID})" }
+                continue
+            }
+            //leader is timed or position check, add follower to each child case
+            lhc.healthChecks.map { it as FXSTalonHealthCheckCase }.forEach{it.addFollowerTalon(fhc.talonFxs)}
+        }
+        healthChecks.removeAll(fxsFollowerHealthChecks)
 
         //gget all methods from subsystem annotated with @AfterHealthCHeck
         val afterHealthCheckMethods = io.afterHealthCheckAnnotatedMethods()
@@ -399,6 +416,57 @@ class SwerveDriveHealthCheckIOBuilder(private val io: Checkable, private  val fi
     }
 }
 
+class FXSwerveDriveHealthCheckIOBuilder(private val io: Checkable, private  val field: Field) {
+    private val swerveDrive = field.get(io) as? SwerveDrive ?: throw IllegalArgumentException("$io: field '${field.name}' is not a SwerveDrive")
+
+    fun build(): List<HealthCheck> {
+        val talonHealthChecks = mutableListOf<HealthCheck>()
+
+        var azimuthLeader: TalonFXS? = null
+        var driveLeader: TalonFX? = null
+        var driveLeaderId: Int ?= null
+        var azimuthLeaderId: Int ?= null
+        val azimuthFollowers = mutableListOf<TalonFXS>()
+        val driveFollowers = mutableListOf<TalonFX>()
+
+        // extract talons from swerve drive modules and
+        // create TalonTimedHealthChecks for leader azimuth and drive talons
+        // create TalonFollowerHealthCheck for remainder
+        // follow associated leaders
+        swerveDrive.swerveModules.forEach {
+            val module =
+                it as? FXSwerveModule ?: throw IllegalArgumentException("$io: $it is not FXTalonSwerveModule")
+            val azimuth = module.azimuthTalon
+            val drive = module.driveTalon
+
+            if (azimuth.deviceID == AZIMUTH_LEADER_ID) {
+                talonHealthChecks.add(FXSTalonTimedHealthCheckBuilder(azimuth).build())
+                azimuthLeader = azimuth
+            } else {
+                talonHealthChecks.add(FXSTalonFollowerHealthCheck(azimuth, AZIMUTH_LEADER_ID))
+                azimuthFollowers.add(azimuth)
+            }
+
+            if (drive.deviceID == DRIVE_LEADER_ID) {
+                talonHealthChecks.add(P6TalonTimedHealthCheckBuilder(drive).build())
+                driveLeader = drive
+                driveLeaderId = drive.deviceID
+            } else {
+                talonHealthChecks.add(P6TalonFollowerHealthCheck(drive, DRIVE_LEADER_ID))
+                driveFollowers.add(drive)
+            }
+        }
+
+        requireNotNull(azimuthLeader) { "$io: swerve azimuth talon with id $AZIMUTH_LEADER_ID not found" }
+        requireNotNull(driveLeader) { "$io: swerve drive talon with id $DRIVE_LEADER_ID not found" }
+
+        azimuthFollowers.forEach { it.setControl(Follower(azimuthLeaderId ?: AZIMUTH_LEADER_ID, false))}
+        driveFollowers.forEach { it.setControl(Follower(driveLeaderId ?: DRIVE_LEADER_ID,false) )}
+
+        return talonHealthChecks
+    }
+}
+
 class TalonHealthCheckBuilder(private val subsystem: Subsystem, private val field: Field) {
 
     val talon = field.get(subsystem) as? BaseTalon
@@ -529,6 +597,38 @@ class P6TalonHealthCheckIOBuilder(private val io: Checkable, private val field: 
     }
 }
 
+class FXSTalonHealthCheckIOBuilder(private val io: Checkable, private val field: Field) {
+    val talonFxs = field.get(io) as? TalonFXS?: throw java.lang.IllegalArgumentException("$io: field '${field.name}' is not subclass of TalonFXS")
+
+    fun build(): FXSTalonHealthCheck {
+        val timedAnnotation = field.getAnnotation(Timed::class.java)
+        val positionAnnotation = field.getAnnotation(Position::class.java)
+        val followAnnotation = field.getAnnotation(Follow::class.java)
+
+        if(arrayListOf(timedAnnotation, positionAnnotation, followAnnotation).filterNotNull().count() > 1)
+            throw IllegalArgumentException("$io: only one of @Timed, @Position, or @Follow may be specified.")
+
+        if(timedAnnotation != null) {
+            val builder = FXSTalonTimedHealthCheckBuilder(talonFxs)
+            builder.percentOutput = timedAnnotation.percentOutput
+            builder.duration = timedAnnotation.duration
+            return  builder.build()
+        }
+
+        if(positionAnnotation != null) {
+            val builder = FXSTalonPositionHealthCheckBuilder(talonFxs)
+            builder.percentOutput = positionAnnotation.percentOutput
+            builder.encoderChange = positionAnnotation.encoderChange
+            return  builder.build()
+        }
+
+        if(followAnnotation != null) return FXSTalonFollowerHealthCheck(talonFxs, followAnnotation.leader)
+
+        //Default to timed if not specified
+        return FXSTalonTimedHealthCheckBuilder(talonFxs).build()
+    }
+}
+
 class TalonTimedHealthCheckBuilder(val talon: BaseTalon) {
 
     var percentOutput = doubleArrayOf(0.2, 1.0, -0.2, -1.0)
@@ -565,6 +665,25 @@ class P6TalonTimedHealthCheckBuilder(val talonFx: TalonFX) {
         }
 
         return P6TalonTimedHealthCheck(talonFx, cases, percentOutput)
+    }
+}
+
+class FXSTalonTimedHealthCheckBuilder(val talonFxs: TalonFXS) {
+    var percentOutput = doubleArrayOf(0.2, 1.0, -0.2, -1.0)
+    var duration = 2.0
+    var limits: DoubleArray? = null
+
+    fun build(): FXSTalonHealthCheck {
+        val cases = percentOutput.let {
+            var previousCase: FXSTalonTimedHealthCheckCase? = null
+            it.map { pctOut ->
+                val case = FXSTalonTimedHealthCheckCase(previousCase, talonFxs, pctOut, (duration * 1e6).toLong())
+                previousCase = case
+                case
+            }
+        }
+
+        return FXSTalonTimedHealthCheck(talonFxs, cases, percentOutput)
     }
 }
 
@@ -608,5 +727,26 @@ class P6TalonPositionHealthCheckBuilder(var talonFx: TalonFX) {
         }
 
         return P6TalonPositionHealthCheck(talonFx, cases, percentOutput)
+    }
+}
+
+class FXSTalonPositionHealthCheckBuilder(var talonFxs: TalonFXS) {
+    var percentOutput = doubleArrayOf(0.25, -0.25)
+    var encoderChange = 0.0
+    var limits: DoubleArray? = null
+
+    fun build(): FXSTalonHealthCheck {
+        if(encoderChange == 0.0) logger.warn { "Talon ${talonFxs.deviceID}: position health check encoderChange is zero" }
+
+        val cases = percentOutput.let {
+            var previousCase: FXSTalonPositionHealthCheckCase? = null
+            it.map { pctOut ->
+                val case = FXSTalonPositionHealthCheckCase(previousCase, talonFxs, pctOut, encoderChange)
+                previousCase = case
+                case
+            }
+        }
+
+        return FXSTalonPositionHealthCheck(talonFxs, cases, percentOutput)
     }
 }
