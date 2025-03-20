@@ -168,10 +168,47 @@ public class FXSwerveModule implements SwerveModule {
     logger.info("swerve module {}: azimuth absolute position = {}", index, azimuthAbsoluteCounts);
     double azimuthSetpoint =
         encoderOpposed ? reference - azimuthAbsoluteCounts : azimuthAbsoluteCounts - reference;
-    azimuthTalon.setPosition(azimuthSetpoint);
-    logger.info("swerve module {}: set azimuth encoder = {}", index, azimuthSetpoint);
+    StatusCode error = azimuthTalon.setPosition(azimuthSetpoint, 0.5);
+    if (error != StatusCode.OK) {
+      azimuthTalon.setPosition(azimuthSetpoint, 0.5);
+    }
+    double position = azimuthTalon.getPosition().getValueAsDouble();
+    logger.info(
+        "swerve module {}: set azimuth encoder = {}, actual = {}",
+        index,
+        azimuthSetpoint,
+        position);
 
     setAzimuthPosition(azimuthSetpoint);
+  }
+
+  public boolean zeroAndCheck() {
+    int index = getWheelIndex();
+    String key = String.format("SwerveDrive/wheel.%d", index);
+    double reference = Preferences.getDouble(key, Double.MIN_VALUE);
+    if (reference == Double.MIN_VALUE) {
+      logger.error("no saved azimuth zero reference for swerve module {}", index);
+    }
+    logger.info("swerve module {}: loaded azimuth zero reference = {}", index, reference);
+
+    double azimuthAbsoluteCounts = getAzimuthAbsoluteEncoderCounts();
+    logger.info("swerve module {}: azimuth absolute position = {}", index, azimuthAbsoluteCounts);
+    double azimuthSetpoint =
+        encoderOpposed ? reference - azimuthAbsoluteCounts : azimuthAbsoluteCounts - reference;
+    StatusCode error = azimuthTalon.setPosition(azimuthSetpoint, 0.5);
+    if (error != StatusCode.OK) {
+      azimuthTalon.setPosition(azimuthSetpoint, 0.5);
+    }
+    double position = azimuthTalon.getPosition().getValueAsDouble();
+    logger.info(
+        "swerve module {}: set azimuth encoder = {}, actual = {}",
+        index,
+        azimuthSetpoint,
+        position);
+
+    setAzimuthPosition(azimuthSetpoint);
+    return !(azimuthAbsoluteCounts == 1.0
+        || Math.abs(position - azimuthSetpoint) > azimuthAbsoluteCounts / 100);
   }
 
   public TalonFXS getAzimuthTalon() {

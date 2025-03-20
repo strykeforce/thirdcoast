@@ -166,6 +166,10 @@ class JsonVisitor(outputStream: OutputStream) : HealthCheckVisitor {
         healthCheck.healthChecks.forEach { it.accept(this) }
     }
 
+    override fun visit(healthCheck: FXSTalonHealthCheck) {
+        healthCheck.healthChecks.forEach { it.accept(this) }
+    }
+
     override fun visit(healthCheck: TalonHealthCheckCase) {
         meta.getValue("case").append("\"${metaIndex}\":${healthCheck.case},")
         meta.getValue("case_uuid").append("\"${metaIndex}\":\"${healthCheck.uuid}\",")
@@ -221,6 +225,56 @@ class JsonVisitor(outputStream: OutputStream) : HealthCheckVisitor {
         meta.getValue("case_uuid").append("\"${metaIndex}\":\"${healthCheck.uuid}\",")
         meta.getValue("name").append("\"${metaIndex}\":\"$name\",")
         meta.getValue("talon").append("\"${metaIndex}\":${healthCheck.talonFx.deviceID},")
+        meta.getValue("type").append("\"${metaIndex}\":\"${healthCheck.type}\",")
+        meta.getValue("output").append("\"${metaIndex}\":${healthCheck.output},")
+        meta.getValue("duration").append("\"${metaIndex}\":${healthCheck.duration},")
+        metaIndex++
+
+        val data = mapOf(
+            "msec_elapsed" to StringBuilder(),
+            "talon" to StringBuilder(),
+            "case" to StringBuilder(),
+            "voltage" to StringBuilder(),
+            "position" to StringBuilder(),
+            "speed" to StringBuilder(),
+            "supply_current" to StringBuilder(),
+            "stator_current" to StringBuilder(),
+        )
+
+        healthCheck.data.forEach { healthCheckData ->
+            healthCheckData.timestamp.forEachIndexed { i, v ->
+                data.getValue("msec_elapsed").append("\"${index + i}\":$v,")
+                data.getValue("talon").append("\"${index + i}\":${healthCheckData.deviceId},")
+                data.getValue("case").append("\"${index + i}\":${healthCheckData.case},")
+                data.getValue("voltage").append("\"${index + i}\":${healthCheckData.voltage[i]},")
+                data.getValue("position").append("\"${index + i}\":${healthCheckData.position[i]},")
+                data.getValue("speed").append("\"${index + i}\":${healthCheckData.speed[i]},")
+                data.getValue("supply_current").append("\"${index + i}\":${healthCheckData.supplyCurrent[i]},")
+                data.getValue("stator_current").append("\"${index + i}\":${healthCheckData.statorCurrent[i]},")
+            }
+            index += healthCheckData.timestamp.size
+        }
+
+        data.values.forEach { if (it.lastIndex > 0) it.deleteCharAt(it.lastIndex) }
+        if (isFirst) {
+            writer.write("{")
+            isFirst = false
+        } else {
+            writer.write(",{")
+        }
+
+        for ((i, key) in data.keys.withIndex()) {
+            writer.write("\"$key\":{${data[key]}}")
+            if (i < data.size - 1) writer.write(",")
+        }
+        writer.write("}")
+    }
+
+    override fun visit(healthCheck: FXSTalonHealthCheckCase) {
+        meta.getValue("case").append("\"${metaIndex}\":${healthCheck.case},")
+        meta.getValue("case_uuid").append("\"${metaIndex}\":\"${healthCheck.uuid}\",")
+        meta.getValue("name").append("\"${metaIndex}\":\"$name\",")
+        meta.getValue("talon").append("\"${metaIndex}\":${healthCheck.talonFxs.deviceID},")
         meta.getValue("type").append("\"${metaIndex}\":\"${healthCheck.type}\",")
         meta.getValue("output").append("\"${metaIndex}\":${healthCheck.output},")
         meta.getValue("duration").append("\"${metaIndex}\":${healthCheck.duration},")
