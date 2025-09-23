@@ -36,6 +36,9 @@ public class SwerveDrive implements Registrable {
 
   private double timestep = 0.02; // seconds
 
+  public record SwerveDriveStates(
+      SwerveModuleState[] desiredStates, SwerveModuleState[] currStates) {}
+
   /**
    * Construct a swerve drive object. Along with a gyro, this takes in four configured swerve
    * modules, by convention in left front, right front, left rear, right rear order.
@@ -268,17 +271,21 @@ public class SwerveDrive implements Registrable {
    * @param omegaRadiansPerSecond the desired rotational velocity component
    * @param isFieldOriented true if driving field-oriented
    */
-  public void drive(
+  public SwerveDriveStates drive(
       double vxMetersPerSecond,
       double vyMetersPerSecond,
       double omegaRadiansPerSecond,
       boolean isFieldOriented) {
+    SwerveModuleState[] currStates = new SwerveModuleState[4];
     SwerveModuleState[] swerveModuleStates =
         getSwerveModuleStates(
             vxMetersPerSecond, vyMetersPerSecond, omegaRadiansPerSecond, isFieldOriented);
     for (int i = 0; i < 4; i++) {
+      currStates[i] = swerveModules[i].getState();
       swerveModules[i].setDesiredState(swerveModuleStates[i], true);
     }
+
+    return new SwerveDriveStates(swerveModuleStates, currStates);
   }
 
   /**
@@ -289,17 +296,21 @@ public class SwerveDrive implements Registrable {
    * @param omegaRadiansPerSecond the desired rotational velocity component
    * @param isFieldOriented true if driving field-oriented
    */
-  public void move(
+  public SwerveDriveStates move(
       double vxMetersPerSecond,
       double vyMetersPerSecond,
       double omegaRadiansPerSecond,
       boolean isFieldOriented) {
+    SwerveModuleState[] currStates = new SwerveModuleState[4];
     SwerveModuleState[] swerveModuleStates =
         getSwerveModuleStates(
             vxMetersPerSecond, vyMetersPerSecond, omegaRadiansPerSecond, isFieldOriented);
     for (int i = 0; i < 4; i++) {
+      currStates[i] = swerveModules[i].getState();
       swerveModules[i].setDesiredState(swerveModuleStates[i], false);
     }
+
+    return new SwerveDriveStates(swerveModuleStates, currStates);
   }
 
   @NotNull
