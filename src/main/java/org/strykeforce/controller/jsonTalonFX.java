@@ -45,7 +45,7 @@ public class jsonTalonFX {
   private int feedbackRemoteSensorID = 0;
   private String feedbackSensorSource = "RotorSensor";
   private double rotorToSensorRatio = 1;
-  private double velocityVilterTimeConstant = 0; // seconds
+  private double velocityFilterTimeConstant = 0; // seconds
 
   // Future Proof
   private boolean futureProofConfigs = true;
@@ -152,7 +152,7 @@ public class jsonTalonFX {
   //    private String setpointType = "Open_Loop";
   //    private String differentialType = "Open_Loop";
   //    private String activeNeutralOut = "Coast";
-  //    private boolean activeOverrideNeutral = false;
+  //    private boolean activSeOverrideNeutral = false;
   //    private boolean limitFwdMotion = false;
   //    private boolean limitRevMotion = false;
   //    private double grapherStatusFrameHz = 20;
@@ -165,7 +165,7 @@ public class jsonTalonFX {
   private String followerConfig = "Standard";
   private String differentialType = "Open_Loop";
   private String closedLoopType = "Velocity";
-  private String setpointType = "OpenLoop";
+//  private String setpointType = "Open_Loop";
   private int leaderID = 0;
   private int activeSlot = 0;
   private int differentialSlot = 0;
@@ -273,7 +273,7 @@ public class jsonTalonFX {
         .withFeedbackRemoteSensorID(feedbackRemoteSensorID)
         .withFeedbackSensorSource(sensorSource)
         .withRotorToSensorRatio(rotorToSensorRatio)
-        .withVelocityFilterTimeConstant(velocityVilterTimeConstant);
+        .withVelocityFilterTimeConstant(velocityFilterTimeConstant);
   }
 
   public boolean getFutureProofConfigs() {

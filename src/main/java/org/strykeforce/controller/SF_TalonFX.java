@@ -6,32 +6,81 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.*;
 import com.ctre.phoenix6.controls.*;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.BridgeOutputValue;
-import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.signals.*;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
-import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.AngularAcceleration;
-import edu.wpi.first.units.measure.Temperature;
+import edu.wpi.first.units.measure.*;
 import edu.wpi.first.wpilibj.DriverStation;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 
 public class SF_TalonFX {
   private TalonFX talonFX;
   private jsonTalonFX config;
   private TalonFXConfiguration talonConfig;
   private TalonFXConfigurator configurator;
-  private BaseStatusSignal[] watchedStatusSignals = new BaseStatusSignal[0];
+  private BaseStatusSignal[] registeredStatusSignals = new BaseStatusSignal[0];
 
-  //Status Signals
-  StatusSignal<AngularAcceleration> acceleration;
+  // Status Signals
   StatusSignal<BridgeOutputValue> bridgeOutput;
+  StatusSignal<Double> dutyCycle;
+  StatusSignal<Voltage> motorVolt;
+  StatusSignal<Voltage> supplyVolt;
+  StatusSignal<Angle> position;
+  StatusSignal<Angle> rotorPos;
+  StatusSignal<AngularVelocity> velocity;
+  StatusSignal<AngularVelocity> rotorVelocity;
+  StatusSignal<AngularAcceleration> acceleration;
+
+  // Temperature
   StatusSignal<Temperature> ancillaryTemp;
   StatusSignal<Temperature> deviceTemp;
-  StatusSignal<Angle> position;
+  StatusSignal<Temperature> processorTemp;
+
+  // Differential
+  StatusSignal<Angle> diffAvgPos;
+  StatusSignal<AngularVelocity> diffAvgVel;
+  StatusSignal<Angle> diffDiffPos;
+  StatusSignal<AngularVelocity> diffDiffVel;
+  StatusSignal<Double> diffOutput;
+
+  // Feedback
+  StatusSignal<ForwardLimitValue> fwdLim;
+  StatusSignal<ReverseLimitValue> revLim;
+  StatusSignal<Current> statorCurrent;
+  StatusSignal<Current> supplyCurrent;
+  StatusSignal<Current> torqueCurrent;
+
+  // Closed Loop Output
+  StatusSignal<Double> closedLoopError;
+  StatusSignal<Double> closedLoopPout;
+  StatusSignal<Double> closedLoopIout;
+  StatusSignal<Double> closedLoopDout;
+  StatusSignal<Double> closedLoopFF;
+  StatusSignal<Double> closedLoopOut;
+  StatusSignal<Double> closedLoopRef;
+  StatusSignal<Double> closedLoopRefSlope;
+  StatusSignal<Integer> closedLoopSlot;
+
+  // Differential Closed Loop
+  StatusSignal<Double> closedLoopDiffError;
+  StatusSignal<Double> closedLoopDiffPout;
+  StatusSignal<Double> closedLoopDiffIout;
+  StatusSignal<Double> closedLoopDiffDout;
+  StatusSignal<Double> closedLoopDiffFF;
+  StatusSignal<Double> closedLoopDiffOut;
+  StatusSignal<Double> closedLoopDiffRef;
+  StatusSignal<Double> closedLoopDiffRefSlope;
+  StatusSignal<Integer> closedLoopDiffSlot;
+
+  // Booleans
+  StatusSignal<Boolean> isProLic;
+  StatusSignal<MotionMagicIsRunningValue> mmIsRunning;
+
+  // Other
+  StatusSignal<ControlModeValue> controlMode;
+  StatusSignal<DifferentialControlModeValue> diffControlMode;
 
   // Control Requests
 
@@ -57,38 +106,52 @@ public class SF_TalonFX {
   // Standard Motion Magic
   private MotionMagicDutyCycle motionMagicDutyCycle = new MotionMagicDutyCycle(0.0);
   private MotionMagicVoltage motionMagicVoltage = new MotionMagicVoltage(0.0);
-  private MotionMagicTorqueCurrentFOC motionMagicTorqueCurrentFOC = new MotionMagicTorqueCurrentFOC(0.0);
+  private MotionMagicTorqueCurrentFOC motionMagicTorqueCurrentFOC =
+      new MotionMagicTorqueCurrentFOC(0.0);
 
   // Velocity Motion Magic
-  private MotionMagicVelocityDutyCycle motionMagicVelocityDutyCycle = new MotionMagicVelocityDutyCycle(0.0);
-  private MotionMagicVelocityVoltage motionMagicVelocityVoltage = new MotionMagicVelocityVoltage(0.0);
-  private MotionMagicVelocityTorqueCurrentFOC motionMagicVelocityTorqueCurrentFOC = new MotionMagicVelocityTorqueCurrentFOC(0.0);
+  private MotionMagicVelocityDutyCycle motionMagicVelocityDutyCycle =
+      new MotionMagicVelocityDutyCycle(0.0);
+  private MotionMagicVelocityVoltage motionMagicVelocityVoltage =
+      new MotionMagicVelocityVoltage(0.0);
+  private MotionMagicVelocityTorqueCurrentFOC motionMagicVelocityTorqueCurrentFOC =
+      new MotionMagicVelocityTorqueCurrentFOC(0.0);
 
   // Expo Motion Magic
   private MotionMagicExpoDutyCycle motionMagicExpoDutyCycle = new MotionMagicExpoDutyCycle(0.0);
   private MotionMagicExpoVoltage motionMagicExpoVoltage = new MotionMagicExpoVoltage(0.0);
-  private MotionMagicExpoTorqueCurrentFOC motionMagicExpoTorqueCurrentFOC = new MotionMagicExpoTorqueCurrentFOC(0.0);
+  private MotionMagicExpoTorqueCurrentFOC motionMagicExpoTorqueCurrentFOC =
+      new MotionMagicExpoTorqueCurrentFOC(0.0);
 
   // Dynamic Motion Magic
-  private DynamicMotionMagicDutyCycle dynamicMotionMagicDutyCycle = new DynamicMotionMagicDutyCycle(0.0, 0.0, 0.0, 0.0);
-  private DynamicMotionMagicVoltage dynamicMotionMagicVoltage = new DynamicMotionMagicVoltage(0.0, 0.0, 0.0, 0.0);
-  private DynamicMotionMagicTorqueCurrentFOC dynamicMotionMagicTorqueCurrentFOC = new DynamicMotionMagicTorqueCurrentFOC(0.0, 0.0, 0.0, 0.0);
+  private DynamicMotionMagicDutyCycle dynamicMotionMagicDutyCycle =
+      new DynamicMotionMagicDutyCycle(0.0, 0.0, 0.0, 0.0);
+  private DynamicMotionMagicVoltage dynamicMotionMagicVoltage =
+      new DynamicMotionMagicVoltage(0.0, 0.0, 0.0, 0.0);
+  private DynamicMotionMagicTorqueCurrentFOC dynamicMotionMagicTorqueCurrentFOC =
+      new DynamicMotionMagicTorqueCurrentFOC(0.0, 0.0, 0.0, 0.0);
 
   // Differential
   private DifferentialDutyCycle differentialDutyCycle = new DifferentialDutyCycle(0.0, 0.0);
   private DifferentialVoltage differentialVoltage = new DifferentialVoltage(0.0, 0.0);
 
   // Differential Position
-  private DifferentialPositionDutyCycle differentialPositionDutyCycle = new DifferentialPositionDutyCycle(0.0, 0.0);
-  private DifferentialPositionVoltage differentialPositionVoltage = new DifferentialPositionVoltage(0.0, 0.0);
+  private DifferentialPositionDutyCycle differentialPositionDutyCycle =
+      new DifferentialPositionDutyCycle(0.0, 0.0);
+  private DifferentialPositionVoltage differentialPositionVoltage =
+      new DifferentialPositionVoltage(0.0, 0.0);
 
   // Differential Velocity
-  private DifferentialVelocityDutyCycle differentialVelocityDutyCycle = new DifferentialVelocityDutyCycle(0.0, 0.0);
-  private DifferentialVelocityVoltage differentialVelocityVoltage = new DifferentialVelocityVoltage(0.0, 0.0);
+  private DifferentialVelocityDutyCycle differentialVelocityDutyCycle =
+      new DifferentialVelocityDutyCycle(0.0, 0.0);
+  private DifferentialVelocityVoltage differentialVelocityVoltage =
+      new DifferentialVelocityVoltage(0.0, 0.0);
 
   // Differential Motion Magic
-  private DifferentialMotionMagicDutyCycle differentialMotionMagicDutyCycle = new DifferentialMotionMagicDutyCycle(0.0, 0.0);
-  private DifferentialMotionMagicVoltage differentialMotionMagicVoltage = new DifferentialMotionMagicVoltage(0.0, 0.0);
+  private DifferentialMotionMagicDutyCycle differentialMotionMagicDutyCycle =
+      new DifferentialMotionMagicDutyCycle(0.0, 0.0);
+  private DifferentialMotionMagicVoltage differentialMotionMagicVoltage =
+      new DifferentialMotionMagicVoltage(0.0, 0.0);
 
   // Differential Follower
   private DifferentialFollower differentialFollower = new DifferentialFollower(0, false);
@@ -624,16 +687,20 @@ public class SF_TalonFX {
     switch (closedLoopType) {
       case Position -> {
         switch (closedLoopUnits) {
-          case Percent -> talonFX.setControl(positionDutyCycle.withPosition(setpoint).withSlot(activeSlot));
-          case Voltage -> talonFX.setControl(positionVoltage.withPosition(setpoint).withSlot(activeSlot));
+          case Percent -> talonFX.setControl(
+              positionDutyCycle.withPosition(setpoint).withSlot(activeSlot));
+          case Voltage -> talonFX.setControl(
+              positionVoltage.withPosition(setpoint).withSlot(activeSlot));
           case Torque_Current -> talonFX.setControl(
               positionTorqueCurrentFOC.withPosition(setpoint).withSlot(activeSlot));
         }
       }
       case Velocity -> {
         switch (closedLoopUnits) {
-          case Percent -> talonFX.setControl(velocityDutyCycle.withVelocity(setpoint).withSlot(activeSlot));
-          case Voltage -> talonFX.setControl(velocityVoltage.withVelocity(setpoint).withSlot(activeSlot));
+          case Percent -> talonFX.setControl(
+              velocityDutyCycle.withVelocity(setpoint).withSlot(activeSlot));
+          case Voltage -> talonFX.setControl(
+              velocityVoltage.withVelocity(setpoint).withSlot(activeSlot));
           case Torque_Current -> talonFX.setControl(
               velocityTorqueCurrentFOC.withVelocity(setpoint).withSlot(activeSlot));
         }
@@ -642,8 +709,10 @@ public class SF_TalonFX {
         switch (motionMagicType) {
           case Standard -> {
             switch (closedLoopUnits) {
-              case Percent -> talonFX.setControl(motionMagicDutyCycle.withPosition(setpoint).withSlot(activeSlot));
-              case Voltage -> talonFX.setControl(motionMagicVoltage.withPosition(setpoint).withSlot(activeSlot));
+              case Percent -> talonFX.setControl(
+                  motionMagicDutyCycle.withPosition(setpoint).withSlot(activeSlot));
+              case Voltage -> talonFX.setControl(
+                  motionMagicVoltage.withPosition(setpoint).withSlot(activeSlot));
               case Torque_Current -> talonFX.setControl(
                   motionMagicTorqueCurrentFOC.withPosition(setpoint).withSlot(activeSlot));
             }
@@ -652,15 +721,18 @@ public class SF_TalonFX {
             switch (closedLoopUnits) {
               case Percent -> talonFX.setControl(
                   motionMagicVelocityDutyCycle.withVelocity(setpoint).withSlot(activeSlot));
-              case Voltage -> talonFX.setControl(motionMagicVelocityVoltage.withVelocity(setpoint).withSlot(activeSlot));
+              case Voltage -> talonFX.setControl(
+                  motionMagicVelocityVoltage.withVelocity(setpoint).withSlot(activeSlot));
               case Torque_Current -> talonFX.setControl(
                   motionMagicVelocityTorqueCurrentFOC.withVelocity(setpoint).withSlot(activeSlot));
             }
           }
           case Exponential -> {
             switch (closedLoopUnits) {
-              case Percent -> talonFX.setControl(motionMagicExpoDutyCycle.withPosition(setpoint).withSlot(activeSlot));
-              case Voltage -> talonFX.setControl(motionMagicExpoVoltage.withPosition(setpoint).withSlot(activeSlot));
+              case Percent -> talonFX.setControl(
+                  motionMagicExpoDutyCycle.withPosition(setpoint).withSlot(activeSlot));
+              case Voltage -> talonFX.setControl(
+                  motionMagicExpoVoltage.withPosition(setpoint).withSlot(activeSlot));
               case Torque_Current -> talonFX.setControl(
                   motionMagicExpoTorqueCurrentFOC.withPosition(setpoint).withSlot(activeSlot));
             }
@@ -671,7 +743,8 @@ public class SF_TalonFX {
             switch (closedLoopUnits) {
               case Percent -> talonFX.setControl(
                   dynamicMotionMagicDutyCycle.withPosition(setpoint));
-              case Voltage -> talonFX.setControl(dynamicMotionMagicVoltage.withPosition(setpoint).withSlot(activeSlot));
+              case Voltage -> talonFX.setControl(
+                  dynamicMotionMagicVoltage.withPosition(setpoint).withSlot(activeSlot));
               case Torque_Current -> talonFX.setControl(
                   dynamicMotionMagicTorqueCurrentFOC.withPosition(setpoint).withSlot(activeSlot));
             }
@@ -689,19 +762,22 @@ public class SF_TalonFX {
               .withPosition(position)
               .withVelocity(velocity)
               .withAcceleration(acceleration)
-              .withJerk(jerk).withSlot(activeSlot));
+              .withJerk(jerk)
+              .withSlot(activeSlot));
       case Voltage -> talonFX.setControl(
           dynamicMotionMagicVoltage
               .withPosition(position)
               .withVelocity(velocity)
               .withAcceleration(acceleration)
-              .withJerk(jerk).withSlot(activeSlot));
+              .withJerk(jerk)
+              .withSlot(activeSlot));
       case Torque_Current -> talonFX.setControl(
           dynamicMotionMagicTorqueCurrentFOC
               .withPosition(position)
               .withVelocity(velocity)
               .withAcceleration(acceleration)
-              .withJerk(jerk).withSlot(activeSlot));
+              .withJerk(jerk)
+              .withSlot(activeSlot));
     }
   }
 
@@ -709,40 +785,79 @@ public class SF_TalonFX {
     switch (differentialType) {
       case Follower -> {
         switch (followerType) {
-          case Standard -> talonFX.setControl(differentialFollower.withMasterID(leaderID).withOpposeMasterDirection(opposeMain));
+          case Standard -> talonFX.setControl(
+              differentialFollower.withMasterID(leaderID).withOpposeMasterDirection(opposeMain));
           case Strict -> talonFX.setControl(differentialStrictFollower.withMasterID(leaderID));
         }
       }
       case Open_Loop -> {
         switch (openLoopUnits) {
-          case Percent -> talonFX.setControl(differentialDutyCycle.withTargetOutput(target).withDifferentialPosition(offset).withDifferentialSlot(differentialSlot));
-          case Voltage -> talonFX.setControl(differentialVoltage.withTargetOutput(target).withDifferentialPosition(offset).withDifferentialSlot(differentialSlot));
+          case Percent -> talonFX.setControl(
+              differentialDutyCycle
+                  .withTargetOutput(target)
+                  .withDifferentialPosition(offset)
+                  .withDifferentialSlot(differentialSlot));
+          case Voltage -> talonFX.setControl(
+              differentialVoltage
+                  .withTargetOutput(target)
+                  .withDifferentialPosition(offset)
+                  .withDifferentialSlot(differentialSlot));
           case Torque_Current -> DriverStation.reportError(
-                  "Invalid Control Type: Differential Torque Current FOC", false);
+              "Invalid Control Type: Differential Torque Current FOC", false);
         }
       }
       case Position -> {
         switch (closedLoopUnits) {
-          case Percent -> talonFX.setControl(differentialPositionDutyCycle.withTargetPosition(target).withDifferentialPosition(offset).withDifferentialSlot(differentialSlot).withTargetSlot(activeSlot));
-          case Voltage -> talonFX.setControl(differentialPositionVoltage.withTargetPosition(target).withDifferentialPosition(offset).withDifferentialSlot(differentialSlot).withTargetSlot(activeSlot));
+          case Percent -> talonFX.setControl(
+              differentialPositionDutyCycle
+                  .withTargetPosition(target)
+                  .withDifferentialPosition(offset)
+                  .withDifferentialSlot(differentialSlot)
+                  .withTargetSlot(activeSlot));
+          case Voltage -> talonFX.setControl(
+              differentialPositionVoltage
+                  .withTargetPosition(target)
+                  .withDifferentialPosition(offset)
+                  .withDifferentialSlot(differentialSlot)
+                  .withTargetSlot(activeSlot));
           case Torque_Current -> DriverStation.reportError(
-                  "Invalid Control Type: Differential Position Torque Current FOC", false);
+              "Invalid Control Type: Differential Position Torque Current FOC", false);
         }
       }
       case Velocity -> {
         switch (openLoopUnits) {
-          case Percent -> talonFX.setControl(differentialVelocityDutyCycle.withTargetVelocity(target).withDifferentialPosition(offset).withDifferentialSlot(differentialSlot).withTargetSlot(activeSlot));
-          case Voltage -> talonFX.setControl(differentialVelocityVoltage.withTargetVelocity(target).withDifferentialPosition(offset).withDifferentialSlot(differentialSlot).withTargetSlot(activeSlot));
+          case Percent -> talonFX.setControl(
+              differentialVelocityDutyCycle
+                  .withTargetVelocity(target)
+                  .withDifferentialPosition(offset)
+                  .withDifferentialSlot(differentialSlot)
+                  .withTargetSlot(activeSlot));
+          case Voltage -> talonFX.setControl(
+              differentialVelocityVoltage
+                  .withTargetVelocity(target)
+                  .withDifferentialPosition(offset)
+                  .withDifferentialSlot(differentialSlot)
+                  .withTargetSlot(activeSlot));
           case Torque_Current -> DriverStation.reportError(
-                  "Invalid Control Type: Differential Velocity Torque Current FOC", false);
+              "Invalid Control Type: Differential Velocity Torque Current FOC", false);
         }
       }
       case Motion_Magic -> {
         switch (openLoopUnits) {
-          case Percent -> talonFX.setControl(differentialMotionMagicDutyCycle.withTargetPosition(target).withDifferentialPosition(offset).withDifferentialSlot(differentialSlot).withTargetSlot(activeSlot));
-          case Voltage -> talonFX.setControl(differentialMotionMagicVoltage.withTargetPosition(target).withDifferentialPosition(offset).withDifferentialSlot(differentialSlot).withTargetSlot(activeSlot));
+          case Percent -> talonFX.setControl(
+              differentialMotionMagicDutyCycle
+                  .withTargetPosition(target)
+                  .withDifferentialPosition(offset)
+                  .withDifferentialSlot(differentialSlot)
+                  .withTargetSlot(activeSlot));
+          case Voltage -> talonFX.setControl(
+              differentialMotionMagicVoltage
+                  .withTargetPosition(target)
+                  .withDifferentialPosition(offset)
+                  .withDifferentialSlot(differentialSlot)
+                  .withTargetSlot(activeSlot));
           case Torque_Current -> DriverStation.reportError(
-                  "Invalid Control Type: Differential Motion Magic Torque Current FOC", false);
+              "Invalid Control Type: Differential Motion Magic Torque Current FOC", false);
         }
       }
     }
@@ -752,11 +867,11 @@ public class SF_TalonFX {
     talonFX.setControl(new CoastOut());
   }
 
-  public void forceBrake(){
+  public void forceBrake() {
     talonFX.setControl(new StaticBrake());
   }
 
-  public void setupFollower(int leaderID){
+  public void setupFollower(int leaderID) {
     this.leaderID = leaderID;
     switch (followerType) {
       case Standard -> talonFX.setControl(follower.withMasterID(leaderID));
@@ -776,7 +891,7 @@ public class SF_TalonFX {
     talonFX.setControl(new MusicTone(freq));
   }
 
-  //Setters
+  // Setters
   public void setDifferentialSlot(int slot) {
     this.differentialSlot = slot;
   }
@@ -792,9 +907,14 @@ public class SF_TalonFX {
     configurator.apply(current);
   }
 
-  public void setSupplyCurrentLimit(boolean enable, double limit, double lowerLimit, double lowerTime) {
+  public void setSupplyCurrentLimit(
+      boolean enable, double limit, double lowerLimit, double lowerTime) {
     CurrentLimitsConfigs current = talonConfig.CurrentLimits;
-    current.withSupplyCurrentLimit(limit).withSupplyCurrentLimitEnable(enable).withSupplyCurrentLowerLimit(lowerLimit).withSupplyCurrentLowerTime(lowerTime);
+    current
+        .withSupplyCurrentLimit(limit)
+        .withSupplyCurrentLimitEnable(enable)
+        .withSupplyCurrentLowerLimit(lowerLimit)
+        .withSupplyCurrentLowerTime(lowerTime);
     talonConfig.withCurrentLimits(current);
     configurator.apply(current);
   }
@@ -846,91 +966,381 @@ public class SF_TalonFX {
     talonFX.setPosition(position);
   }
 
-  //Getters
+  // Getters
   public TalonFX getTalonFX() {
     return talonFX;
   }
 
-  //Watchers
-  public void refreshWatchedSignals(){
-    BaseStatusSignal.refreshAll(watchedStatusSignals);
+  // Watchers
+  public void refreshRegisteredSignals() {
+    BaseStatusSignal.refreshAll(registeredStatusSignals);
   }
 
   public BaseStatusSignal[] getRegisteredSignals() {
-    return watchedStatusSignals;
+    return registeredStatusSignals;
   }
 
   private void registerSignal(BaseStatusSignal... signals) {
-    BaseStatusSignal[] newSignals = new BaseStatusSignal[watchedStatusSignals.length + signals.length];
-    System.arraycopy(watchedStatusSignals, 0, newSignals, 0, watchedStatusSignals.length);
-    System.arraycopy(signals, 0, newSignals, watchedStatusSignals.length, signals.length);
-    watchedStatusSignals = newSignals;
+    BaseStatusSignal[] newSignals =
+        new BaseStatusSignal[registeredStatusSignals.length + signals.length];
+    System.arraycopy(registeredStatusSignals, 0, newSignals, 0, registeredStatusSignals.length);
+    System.arraycopy(signals, 0, newSignals, registeredStatusSignals.length, signals.length);
+    registeredStatusSignals = newSignals;
   }
 
-  public void watchAcceleration(){
-    acceleration = talonFX.getAcceleration();
-    registerSignal(acceleration);
+  private boolean isRegistered(BaseStatusSignal signal) {
+    for (int i = 0; i < registeredStatusSignals.length; i++) {
+      if (registeredStatusSignals[i].getName() == signal.getName()) return true;
+    }
+    return false;
   }
 
-  public void watchBridgeOutput() {
+  public void registerBridgeOutput() {
     bridgeOutput = talonFX.getBridgeOutput();
     registerSignal(bridgeOutput);
   }
 
-  public void watchAncillaryDeviceTemp(){
+  public void registerDutyCycle() {
+    dutyCycle = talonFX.getDutyCycle();
+    registerSignal(dutyCycle);
+  }
+
+  public void registerMotorVoltage() {
+    motorVolt = talonFX.getMotorVoltage();
+    registerSignal(motorVolt);
+  }
+
+  public void registerSupplyVoltage() {
+    supplyVolt = talonFX.getSupplyVoltage();
+    registerSignal(supplyVolt);
+  }
+
+  public void registerPosition() {
+    position = talonFX.getPosition();
+    registerSignal(position);
+  }
+
+  public void registerRotorPosition() {
+    rotorPos = talonFX.getRotorPosition();
+    registerSignal(rotorPos);
+  }
+
+  public void registerVelocity() {
+    velocity = talonFX.getVelocity();
+    registerSignal(velocity);
+  }
+
+  public void registerRotorVelocity() {
+    rotorVelocity = talonFX.getRotorVelocity();
+    registerSignal(rotorVelocity);
+  }
+
+  public void registerAcceleration() {
+    acceleration = talonFX.getAcceleration();
+    registerSignal(acceleration);
+  }
+
+  public void registerAncillaryDeviceTemp() {
     ancillaryTemp = talonFX.getAncillaryDeviceTemp();
     registerSignal(ancillaryTemp);
   }
 
-  public void watchDeviceTemp() {
+  public void registerDeviceTemp() {
     deviceTemp = talonFX.getDeviceTemp();
     registerSignal(deviceTemp);
-
-    talonFX.getProcessorTemp();
-
-    talonFX.getDifferentialAveragePosition();
-    talonFX.getDifferentialAverageVelocity();
-    talonFX.getDifferentialDifferencePosition();
-    talonFX.getDifferentialDifferenceVelocity();
-
-    talonFX.getDutyCycle();
-    talonFX.getForwardLimit();
-    talonFX.getReverseLimit();
-    talonFX.getIsProLicensed();
-    talonFX.getMotionMagicIsRunning();
-    talonFX.getMotorVoltage();
-
-    talonFX.getPosition();
-    talonFX.getRotorPosition();
-    talonFX.getRotorVelocity();
-    talonFX.getStatorCurrent();
-    talonFX.getSupplyCurrent();
-    talonFX.getSupplyVoltage();
-    talonFX.getTorqueCurrent();
-    talonFX.getVelocity();
-
-    talonFX.getClosedLoopDerivativeOutput();
-    talonFX.getClosedLoopError();
-    talonFX.getClosedLoopFeedForward();
-    talonFX.getClosedLoopIntegratedOutput();
-    talonFX.getClosedLoopOutput();
-    talonFX.getClosedLoopProportionalOutput();
-    talonFX.getClosedLoopReference();
-    talonFX.getClosedLoopReferenceSlope();
-    talonFX.getClosedLoopSlot();
-
-    talonFX.getDifferentialClosedLoopDerivativeOutput();
-    talonFX.getDifferentialClosedLoopError();
-    talonFX.getDifferentialClosedLoopFeedForward();
-    talonFX.getDifferentialClosedLoopIntegratedOutput();
-    talonFX.getDifferentialClosedLoopOutput();
-    talonFX.getDifferentialClosedLoopProportionalOutput();
-    talonFX.getDifferentialClosedLoopReference();
-
   }
 
-  public void watch
+  public void registerProcessorTemp() {
+    processorTemp = talonFX.getProcessorTemp();
+    registerSignal(processorTemp);
+  }
 
+  public void registerDifferentialAveragePosition() {
+    diffAvgPos = talonFX.getDifferentialAveragePosition();
+    registerSignal(diffAvgPos);
+  }
+
+  public void registerDifferentialAverageVelocity() {
+    diffAvgVel = talonFX.getDifferentialAverageVelocity();
+    registerSignal(diffAvgVel);
+  }
+
+  public void registerDifferentialDifferencePosition() {
+    diffDiffPos = talonFX.getDifferentialDifferencePosition();
+    registerSignal(diffDiffPos);
+  }
+
+  public void registerDifferentialDifferenceVelocity() {
+    diffDiffVel = talonFX.getDifferentialDifferenceVelocity();
+    registerSignal(diffDiffVel);
+  }
+
+  public void registerDifferentialOutput() {
+    diffOutput = talonFX.getDifferentialOutput();
+    registerSignal(diffOutput);
+  }
+
+  public void registerForwardLimit() {
+    fwdLim = talonFX.getForwardLimit();
+    registerSignal(fwdLim);
+  }
+
+  public void registerReverseLimit() {
+    revLim = talonFX.getReverseLimit();
+    registerSignal(revLim);
+  }
+
+  public void registerStatorCurrent() {
+    statorCurrent = talonFX.getStatorCurrent();
+    registerSignal(statorCurrent);
+  }
+
+  public void registerSupplyCurrent() {
+    supplyCurrent = talonFX.getSupplyCurrent();
+    registerSignal(supplyCurrent);
+  }
+
+  public void registerTorqueCurrent() {
+    torqueCurrent = talonFX.getTorqueCurrent();
+    registerSignal(torqueCurrent);
+  }
+
+  public void registerClosedLoopError() {
+    closedLoopError = talonFX.getClosedLoopError();
+    registerSignal(closedLoopError);
+  }
+
+  public void registerClosedLoopProportionalOutput() {
+    closedLoopPout = talonFX.getClosedLoopProportionalOutput();
+    registerSignal(closedLoopPout);
+  }
+
+  public void registerClosedLoopIntegratedOutput() {
+    closedLoopIout = talonFX.getClosedLoopIntegratedOutput();
+    registerSignal(closedLoopIout);
+  }
+
+  public void registerClosedLoopDerivativeOutput() {
+    closedLoopDout = talonFX.getClosedLoopDerivativeOutput();
+    registerSignal(closedLoopDout);
+  }
+
+  public void registerClosedLoopFeedForward() {
+    closedLoopFF = talonFX.getClosedLoopFeedForward();
+    registerSignal(closedLoopFF);
+  }
+
+  public void registerClosedLoopOutput() {
+    closedLoopOut = talonFX.getClosedLoopOutput();
+    registerSignal(closedLoopOut);
+  }
+
+  public void registerClosedLoopReference() {
+    closedLoopRef = talonFX.getClosedLoopReference();
+    registerSignal(closedLoopRef);
+  }
+
+  public void registerClosedLoopReferenceSlope() {
+    closedLoopRefSlope = talonFX.getClosedLoopReferenceSlope();
+    registerSignal(closedLoopRefSlope);
+  }
+
+  public void registerClosedLoopSlot() {
+    closedLoopSlot = talonFX.getClosedLoopSlot();
+    registerSignal(closedLoopSlot);
+  }
+
+  public void registerDifferentialClosedLoopError() {
+    closedLoopDiffError = talonFX.getDifferentialClosedLoopError();
+    registerSignal(closedLoopDiffError);
+  }
+
+  public void registerDifferentialClosedLoopProportionalOutput() {
+    closedLoopDiffPout = talonFX.getDifferentialClosedLoopProportionalOutput();
+    registerSignal(closedLoopDiffPout);
+  }
+
+  public void registerDifferentialClosedLoopIntegratedOutput() {
+    closedLoopDiffIout = talonFX.getDifferentialClosedLoopIntegratedOutput();
+    registerSignal(closedLoopDiffIout);
+  }
+
+  public void registerDifferentialClosedLoopDerivativeOutput() {
+    closedLoopDiffDout = talonFX.getDifferentialClosedLoopDerivativeOutput();
+    registerSignal(closedLoopDiffDout);
+  }
+
+  public void registerDifferentialClosedLoopFeedForward() {
+    closedLoopDiffFF = talonFX.getDifferentialClosedLoopFeedForward();
+    registerSignal(closedLoopDiffFF);
+  }
+
+  public void registerDifferentialClosedLoopOutput() {
+    closedLoopDiffOut = talonFX.getDifferentialClosedLoopOutput();
+    registerSignal(closedLoopDiffOut);
+  }
+
+  public void registerDifferentialClosedLoopReference() {
+    closedLoopDiffRef = talonFX.getDifferentialClosedLoopReference();
+    registerSignal(closedLoopDiffRef);
+  }
+
+  public void registerDifferentialClosedLoopReferenceSlope() {
+    closedLoopDiffRefSlope = talonFX.getDifferentialClosedLoopReferenceSlope();
+    registerSignal(closedLoopDiffRefSlope);
+  }
+
+  public void registerDifferentialClosedLoopSlot() {
+    closedLoopDiffSlot = talonFX.getDifferentialClosedLoopSlot();
+    registerSignal(closedLoopDiffSlot);
+  }
+
+  public void registerIsProLicensed() {
+    isProLic = talonFX.getIsProLicensed();
+    registerSignal(isProLic);
+  }
+
+  public void registerMotionMagicIsRunning() {
+    mmIsRunning = talonFX.getMotionMagicIsRunning();
+    registerSignal(mmIsRunning);
+  }
+
+  public void registerControlMode() {
+    controlMode = talonFX.getControlMode();
+    registerSignal(controlMode);
+  }
+
+  public void registerDifferentialControlMode() {
+    diffControlMode = talonFX.getDifferentialControlMode();
+    registerSignal(diffControlMode);
+  }
+
+  // Getters
+  public int getBridgeOutput() {
+    return bridgeOutput.getValue().value;
+  }
+
+  public double getDutyCycle() {
+    return dutyCycle.getValue();
+  }
+
+  public double getMotorVoltage() {
+    return motorVolt.getValueAsDouble();
+  }
+
+  public double getSupplyVoltage() {
+    return supplyVolt.getValueAsDouble();
+  }
+
+  public double getPosition() {
+    return position.getValueAsDouble();
+  }
+
+  public double getRotorPosition() {
+    return rotorPos.getValueAsDouble();
+  }
+
+  public double getVelocity() {
+    return velocity.getValueAsDouble();
+  }
+
+  public double getRotorVelocity() {
+    return rotorVelocity.getValueAsDouble();
+  }
+
+  public double getAcceleration() {
+    return acceleration.getValueAsDouble();
+  }
+
+  public double getAncillaryDeviceTemp() {
+    return ancillaryTemp.getValueAsDouble();
+  }
+
+  public double getDeviceTemp() {
+    return deviceTemp.getValueAsDouble();
+  }
+
+  public double getProcessorTemp() {
+    return processorTemp.getValueAsDouble();
+  }
+
+  public double getDifferentialAvgPosition() {
+    return diffAvgPos.getValueAsDouble();
+  }
+
+  public double getDifferentialAvgVelocity() {
+    return diffAvgVel.getValueAsDouble();
+  }
+
+  public double getDifferentialDiffPosition() {
+    return diffDiffPos.getValueAsDouble();
+  }
+
+  public double getDifferentialDiffVelocity() {
+    return diffDiffVel.getValueAsDouble();
+  }
+
+  public double getDifferentialOutput() {
+    return diffOutput.getValue();
+  }
+
+  public boolean isFwdLimitTripped() {
+    return fwdLim.getValue() == ForwardLimitValue.ClosedToGround;
+  }
+
+  public boolean isRevLimitTripped() {
+    return revLim.getValue() == ReverseLimitValue.ClosedToGround;
+  }
+
+  public double getStatorCurrent() {
+    return statorCurrent.getValueAsDouble();
+  }
+
+  public double getSupplyCurrent() {
+    return supplyCurrent.getValueAsDouble();
+  }
+
+  public double getTorqueCurrent() {
+    return torqueCurrent.getValueAsDouble();
+  }
+
+  public double getClosedLoopError() {
+    return closedLoopError.getValue();
+  }
+
+  public double getClosedLoopProportionalOut() {
+    return closedLoopPout.getValue();
+  }
+
+  public double getClosedLoopIntegratedOut() {
+    return closedLoopIout.getValue();
+  }
+
+  public double getClosedLoopDerivativeOut() {
+    return closedLoopDout.getValue();
+  }
+
+  public double getClosedLoopFeedForward() {
+    return closedLoopFF.getValue();
+  }
+
+  public double getClosedLoopOutput() {
+    return closedLoopOut.getValue();
+  }
+
+  public double getClosedLoopReference() {
+    return closedLoopRef.getValue();
+  }
+
+  public double getClosedLoopReferenceSlope() {
+    return closedLoopRefSlope.getValue();
+  }
+
+  public int getClosedLoopSlot() {
+    return closedLoopSlot.getValue();
+  }
+
+  public double getDifferentialClosedLoopError() {
+    return closedLoopDiffError.getValue();
+  }
 }
-
-
