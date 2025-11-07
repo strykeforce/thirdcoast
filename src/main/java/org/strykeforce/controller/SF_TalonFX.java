@@ -17,7 +17,7 @@ import java.nio.file.Path;
 
 public class SF_TalonFX {
   private TalonFX talonFX;
-  private jsonTalonFX config;
+  private JsonTalonFX config;
   private TalonFXConfiguration talonConfig;
   private TalonFXConfigurator configurator;
   private BaseStatusSignal[] registeredStatusSignals = new BaseStatusSignal[0];
@@ -199,7 +199,7 @@ public class SF_TalonFX {
 
   public boolean loadFromJSON(String suffix) {
     Moshi moshi = new Moshi.Builder().build();
-    JsonAdapter<jsonTalonFX> jsonAdapter = moshi.adapter(jsonTalonFX.class);
+    JsonAdapter<JsonTalonFX> jsonAdapter = moshi.adapter(JsonTalonFX.class);
 
     String configPath = "home/lvuser/deploy/talonFX" + id + suffix + ".json";
     Path filePath = Path.of(configPath);
@@ -208,7 +208,7 @@ public class SF_TalonFX {
       fileParse = Files.readString(filePath);
       //            config = JsonAdapter.fromJson(fileParse);
     } catch (IOException e) {
-      config = new jsonTalonFX();
+      config = new JsonTalonFX();
       String error =
           "Error loading json file for talonFX " + id + ": default values, " + e.toString();
       DriverStation.reportWarning(error, e.getStackTrace());
@@ -218,7 +218,7 @@ public class SF_TalonFX {
       config = jsonAdapter.fromJson(fileParse);
 
     } catch (IOException e) {
-      config = new jsonTalonFX();
+      config = new JsonTalonFX();
       String error =
           "Error parsing json file for talonFX " + id + ": default values, " + e.toString();
       DriverStation.reportWarning(error, e.getStackTrace());
