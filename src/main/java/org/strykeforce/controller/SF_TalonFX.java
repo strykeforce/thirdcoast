@@ -9,6 +9,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.*;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.units.measure.*;
 import edu.wpi.first.wpilibj.DriverStation;
 import java.io.IOException;
@@ -21,6 +22,9 @@ public class SF_TalonFX {
   private TalonFXConfiguration talonConfig;
   private TalonFXConfigurator configurator;
   private BaseStatusSignal[] registeredStatusSignals = new BaseStatusSignal[0];
+  private boolean isFDBus = false;
+  private String configFileSuffix = "";
+  private double controlRequestUpdateFreq = 100.0;
 
   // Status Signals
   StatusSignal<BridgeOutputValue> bridgeOutput;
@@ -190,11 +194,19 @@ public class SF_TalonFX {
   public SF_TalonFX(int id, CANBus canbus, String configSuffix) {
     talonFX = new TalonFX(id, canbus);
     this.id = id;
+    this.configFileSuffix = configSuffix;
+    isFDBus = canbus.isNetworkFD();
+    loadFromJSON(configSuffix);
+    setupControlRequests();
   }
 
   public SF_TalonFX(int id, String canbus, String configSuffix) {
     talonFX = new TalonFX(id, canbus);
     this.id = id;
+    this.configFileSuffix = configSuffix;
+    isFDBus = canbus != "rio";
+    loadFromJSON(configSuffix);
+    setupControlRequests();
   }
 
   public boolean loadFromJSON(String suffix) {
@@ -209,6 +221,7 @@ public class SF_TalonFX {
       //            config = JsonAdapter.fromJson(fileParse);
     } catch (IOException e) {
       config = new JsonTalonFX();
+      applyJsonConfigs();
       String error =
           "Error loading json file for talonFX " + id + ": default values, " + e.toString();
       DriverStation.reportWarning(error, e.getStackTrace());
@@ -219,11 +232,13 @@ public class SF_TalonFX {
 
     } catch (IOException e) {
       config = new JsonTalonFX();
+      applyJsonConfigs();
       String error =
           "Error parsing json file for talonFX " + id + ": default values, " + e.toString();
       DriverStation.reportWarning(error, e.getStackTrace());
       return false;
     }
+    applyJsonConfigs();
     return true;
   }
 
@@ -280,6 +295,70 @@ public class SF_TalonFX {
     setupVelocityControlRequest();
     setupMotionMagicControlRequest();
     setupDifferentialControlRequest();
+  }
+
+  public void setControlRequestUpdateFreq(double updateFreq) {
+    updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); //4Hz = min updating
+    controlRequestUpdateFreq = updateFreq;
+
+    //open loop
+    dutyCycleOut.UpdateFreqHz = updateFreq;
+    voltageOut.UpdateFreqHz = updateFreq;
+    torqueCurrentFOC.UpdateFreqHz = updateFreq;
+
+    //follower
+    follower.UpdateFreqHz = updateFreq;
+    strictFollower.UpdateFreqHz = updateFreq;
+
+    //position
+    positionDutyCycle.UpdateFreqHz = updateFreq;
+    positionVoltage.UpdateFreqHz = updateFreq;
+    positionTorqueCurrentFOC.UpdateFreqHz = updateFreq;
+
+    //velocity
+    velocityDutyCycle.UpdateFreqHz = updateFreq;
+    velocityVoltage.UpdateFreqHz = updateFreq;
+    velocityTorqueCurrentFOC.UpdateFreqHz = updateFreq;
+
+    //standard motion magic
+    motionMagicDutyCycle.UpdateFreqHz = updateFreq;
+    motionMagicVoltage.UpdateFreqHz = updateFreq;
+    motionMagicTorqueCurrentFOC.UpdateFreqHz = updateFreq;
+
+    //velocity motion magic
+    motionMagicVelocityDutyCycle.UpdateFreqHz = updateFreq;
+    motionMagicVelocityVoltage.UpdateFreqHz = updateFreq;
+    motionMagicVelocityTorqueCurrentFOC.UpdateFreqHz = updateFreq;
+
+    //expo motion magic
+    motionMagicExpoDutyCycle.UpdateFreqHz = updateFreq;
+    motionMagicExpoVoltage.UpdateFreqHz = updateFreq;
+    motionMagicExpoTorqueCurrentFOC.UpdateFreqHz = updateFreq;
+
+    //dynamic motion magic
+    dynamicMotionMagicDutyCycle.UpdateFreqHz = updateFreq;
+    dynamicMotionMagicVoltage.UpdateFreqHz = updateFreq;
+    dynamicMotionMagicTorqueCurrentFOC.UpdateFreqHz = updateFreq;
+
+    //differential
+    differentialDutyCycle.UpdateFreqHz = updateFreq;
+    differentialVoltage.UpdateFreqHz = updateFreq;
+
+    //differential position
+    differentialPositionDutyCycle.UpdateFreqHz = updateFreq;
+    differentialPositionVoltage.UpdateFreqHz = updateFreq;
+
+    //differential velocity
+    differentialVelocityDutyCycle.UpdateFreqHz = updateFreq;
+    differentialVelocityVoltage.UpdateFreqHz = updateFreq;
+
+    //differential motion magic
+    differentialMotionMagicDutyCycle.UpdateFreqHz = updateFreq;
+    differentialMotionMagicVoltage.UpdateFreqHz = updateFreq;
+
+    //differential follower
+    differentialFollower.UpdateFreqHz = updateFreq;
+    differentialStrictFollower.UpdateFreqHz = updateFreq;
   }
 
   private void setupFollowerControlRequest() {
@@ -982,7 +1061,7 @@ public class SF_TalonFX {
 
   private void registerSignal(BaseStatusSignal... signals) {
     BaseStatusSignal[] newSignals =
-        new BaseStatusSignal[registeredStatusSignals.length + signals.length];
+            new BaseStatusSignal[registeredStatusSignals.length + signals.length];
     System.arraycopy(registeredStatusSignals, 0, newSignals, 0, registeredStatusSignals.length);
     System.arraycopy(signals, 0, newSignals, registeredStatusSignals.length, signals.length);
     registeredStatusSignals = newSignals;
@@ -996,222 +1075,520 @@ public class SF_TalonFX {
   }
 
   public void registerBridgeOutput() {
-    bridgeOutput = talonFX.getBridgeOutput();
+    registerBridgeOutput(100.0);
+  }
+
+  public void registerBridgeOutput(double updateFreq) {
+    updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); //4Hz = min updating
+    bridgeOutput.setUpdateFrequency(updateFreq);
+    bridgeOutput = talonFXS.getBridgeOutput();
     registerSignal(bridgeOutput);
   }
 
   public void registerDutyCycle() {
-    dutyCycle = talonFX.getDutyCycle();
+    registerDutyCycle(100.0);
+  }
+
+  public void registerDutyCycle(double updateFreq){
+    updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); //4Hz = min updating
+    dutyCycle.setUpdateFrequency(updateFreq);
+    dutyCycle = talonFXS.getDutyCycle();
     registerSignal(dutyCycle);
   }
 
   public void registerMotorVoltage() {
-    motorVolt = talonFX.getMotorVoltage();
+    registerMotorVoltage(100.0);
+  }
+
+  public void registerMotorVoltage(double updateFreq) {
+    updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); //4Hz = min updating
+    motorVolt.setUpdateFrequency(updateFreq);
+    motorVolt = talonFXS.getMotorVoltage();
     registerSignal(motorVolt);
   }
 
   public void registerSupplyVoltage() {
-    supplyVolt = talonFX.getSupplyVoltage();
+    double updateFreq = isFDBus ? 100.0 : 4.0;
+    registerSupplyVoltage(updateFreq);
+  }
+
+  public void registerSupplyVoltage(double updateFreq) {
+    updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); //4Hz = min updating
+    supplyVolt.setUpdateFrequency(updateFreq);
+    supplyVolt = talonFXS.getSupplyVoltage();
     registerSignal(supplyVolt);
   }
 
   public void registerPosition() {
-    position = talonFX.getPosition();
+    double updateFreq = isFDBus ? 100.0 : 50.0;
+    registerPosition(updateFreq);
+  }
+
+  public void registerPosition(double updateFreq) {
+    updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); //4Hz = min updating
+    position.setUpdateFrequency(updateFreq);
+    position = talonFXS.getPosition();
     registerSignal(position);
   }
 
   public void registerRotorPosition() {
-    rotorPos = talonFX.getRotorPosition();
+    double updateFreq = isFDBus ? 100.0 : 4.0;
+    registerRotorPosition(updateFreq);
+  }
+
+  public void registerRotorPosition(double updateFreq) {
+    updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); //4Hz = min updating
+    rotorPos.setUpdateFrequency(updateFreq);
+    rotorPos = talonFXS.getRotorPosition();
     registerSignal(rotorPos);
   }
 
   public void registerVelocity() {
-    velocity = talonFX.getVelocity();
+    double updateFreq = isFDBus ? 100.0 : 50.0;
+    registerVelocity(updateFreq);
+  }
+
+  public void registerVelocity(double updateFreq) {
+    updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); //4Hz = min updating
+    velocity.setUpdateFrequency(updateFreq);
+    velocity = talonFXS.getVelocity();
     registerSignal(velocity);
   }
 
   public void registerRotorVelocity() {
-    rotorVelocity = talonFX.getRotorVelocity();
+    double updateFreq = isFDBus ? 100.0 : 4.0;
+    registerRotorVelocity(updateFreq);
+  }
+
+  public void registerRotorVelocity(double updateFreq){
+    updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); //4Hz = min updating
+    rotorVelocity.setUpdateFrequency(updateFreq);
+    rotorVelocity = talonFXS.getRotorVelocity();
     registerSignal(rotorVelocity);
   }
 
   public void registerAcceleration() {
-    acceleration = talonFX.getAcceleration();
+    double updateFreq = isFDBus ? 100.0 : 50.0;
+    registerAcceleration(updateFreq);
+  }
+
+  public void registerAcceleration(double updateFreq) {
+    updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); //4Hz = min updating
+    acceleration.setUpdateFrequency(updateFreq);
+    acceleration = talonFXS.getAcceleration();
     registerSignal(acceleration);
   }
 
   public void registerAncillaryDeviceTemp() {
-    ancillaryTemp = talonFX.getAncillaryDeviceTemp();
+    double updateFreq = isFDBus ? 100.0 : 4.0;
+    registerAncillaryDeviceTemp(updateFreq);
+  }
+
+  public void registerAncillaryDeviceTemp(double updateFreq){
+    updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); //4Hz = min updating
+    ancillaryTemp.setUpdateFrequency(updateFreq);
+    ancillaryTemp = talonFXS.getAncillaryDeviceTemp();
     registerSignal(ancillaryTemp);
+
   }
 
   public void registerDeviceTemp() {
-    deviceTemp = talonFX.getDeviceTemp();
+    double updateFreq = isFDBus ? 100.0 : 4.0;
+    registerDeviceTemp(updateFreq);
+  }
+
+  public void registerDeviceTemp(double updateFreq) {
+    updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); //4Hz = min updating
+    deviceTemp.setUpdateFrequency(updateFreq);
+    deviceTemp = talonFXS.getDeviceTemp();
     registerSignal(deviceTemp);
   }
 
   public void registerProcessorTemp() {
-    processorTemp = talonFX.getProcessorTemp();
+    double updateFreq = isFDBus ? 100.0 : 4.0;
+    registerProcessorTemp(updateFreq);
+  }
+
+  public void registerProcessorTemp(double updateFreq) {
+    updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); //4Hz = min updating
+    processorTemp.setUpdateFrequency(updateFreq);
+    processorTemp = talonFXS.getProcessorTemp();
     registerSignal(processorTemp);
   }
 
   public void registerDifferentialAveragePosition() {
-    diffAvgPos = talonFX.getDifferentialAveragePosition();
+    double updateFreq = isFDBus ? 100.0 : 4.0;
+    registerDifferentialAveragePosition(updateFreq);
+  }
+
+  public void registerDifferentialAveragePosition(double updateFreq) {
+    updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); //4Hz = min updating
+    diffAvgPos.setUpdateFrequency(updateFreq);
+    diffAvgPos = talonFXS.getDifferentialAveragePosition();
     registerSignal(diffAvgPos);
   }
 
   public void registerDifferentialAverageVelocity() {
-    diffAvgVel = talonFX.getDifferentialAverageVelocity();
+    double updateFreq = isFDBus ? 100.0 : 4.0;
+    registerDifferentialAverageVelocity(updateFreq);
+  }
+
+  public void registerDifferentialAverageVelocity(double updateFreq) {
+    updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); //4Hz = min updating
+    diffAvgVel.setUpdateFrequency(updateFreq);
+    diffAvgVel = talonFXS.getDifferentialAverageVelocity();
     registerSignal(diffAvgVel);
   }
 
   public void registerDifferentialDifferencePosition() {
-    diffDiffPos = talonFX.getDifferentialDifferencePosition();
+    double updateFreq = isFDBus ? 100.0 : 4.0;
+    registerDifferentialDifferencePosition(updateFreq);
+  }
+
+  public void registerDifferentialDifferencePosition(double updateFreq) {
+    updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); //4Hz = min updating
+    diffDiffPos.setUpdateFrequency(updateFreq);
+    diffDiffPos = talonFXS.getDifferentialDifferencePosition();
     registerSignal(diffDiffPos);
   }
 
   public void registerDifferentialDifferenceVelocity() {
-    diffDiffVel = talonFX.getDifferentialDifferenceVelocity();
+    double updateFreq = isFDBus ? 100.0 : 4.0;
+    registerDifferentialDifferenceVelocity(updateFreq);
+  }
+
+  public void registerDifferentialDifferenceVelocity(double updateFreq) {
+    updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); //4Hz = min updating
+    diffDiffVel.setUpdateFrequency(updateFreq);
+    diffDiffVel = talonFXS.getDifferentialDifferenceVelocity();
     registerSignal(diffDiffVel);
   }
 
   public void registerDifferentialOutput() {
-    diffOutput = talonFX.getDifferentialOutput();
+    registerDifferentialOutput(100.0);
+  }
+
+  public void registerDifferentialOutput(double updateFreq) {
+    updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); //4Hz = min updating
+    diffOutput.setUpdateFrequency(updateFreq);
+    diffOutput = talonFXS.getDifferentialOutput();
     registerSignal(diffOutput);
   }
 
   public void registerForwardLimit() {
-    fwdLim = talonFX.getForwardLimit();
+    registerForwardLimit(100.0);
+  }
+
+  public void registerForwardLimit(double updateFreq) {
+    updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); //4Hz = min updating
+    fwdLim.setUpdateFrequency(updateFreq);
+    fwdLim = talonFXS.getForwardLimit();
     registerSignal(fwdLim);
   }
 
   public void registerReverseLimit() {
-    revLim = talonFX.getReverseLimit();
+    registerReverseLimit(100.0);
+  }
+
+  public void registerReverseLimit(double updateFreq) {
+    updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); //4Hz = min updating
+    revLim.setUpdateFrequency(updateFreq);
+    revLim = talonFXS.getReverseLimit();
     registerSignal(revLim);
   }
 
   public void registerStatorCurrent() {
-    statorCurrent = talonFX.getStatorCurrent();
+    double updateFreq = isFDBus ? 100.0 : 4.0;
+    registerStatorCurrent(updateFreq);
+  }
+
+  public void registerStatorCurrent(double updateFreq) {
+    updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); //4Hz = min updating
+    statorCurrent.setUpdateFrequency(updateFreq);
+    statorCurrent = talonFXS.getStatorCurrent();
     registerSignal(statorCurrent);
   }
 
   public void registerSupplyCurrent() {
-    supplyCurrent = talonFX.getSupplyCurrent();
+    double updateFreq = isFDBus ? 100.0 : 4.0;
+    registerSupplyCurrent(updateFreq);
+  }
+
+  public void registerSupplyCurrent(double updateFreq) {
+    updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); //4Hz = min updating
+    supplyCurrent = talonFXS.getSupplyCurrent();
+    supplyCurrent.setUpdateFrequency(updateFreq);
     registerSignal(supplyCurrent);
   }
 
   public void registerTorqueCurrent() {
-    torqueCurrent = talonFX.getTorqueCurrent();
+    registerTorqueCurrent(100.0);
+  }
+
+  public void registerTorqueCurrent(double updateFreq) {
+    updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); //4Hz = min updating
+    torqueCurrent = talonFXS.getTorqueCurrent();
+    torqueCurrent.setUpdateFrequency(updateFreq);
     registerSignal(torqueCurrent);
   }
 
   public void registerClosedLoopError() {
-    closedLoopError = talonFX.getClosedLoopError();
+    double updateFreq = isFDBus ? 100.0 : 4.0;
+    registerClosedLoopError(updateFreq);
+  }
+
+  public void registerClosedLoopError(double updateFreq) {
+    updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); //4Hz = min updating
+    closedLoopError = talonFXS.getClosedLoopError();
+    closedLoopError.setUpdateFrequency(updateFreq);
     registerSignal(closedLoopError);
   }
 
   public void registerClosedLoopProportionalOutput() {
-    closedLoopPout = talonFX.getClosedLoopProportionalOutput();
+    double updateFreq = isFDBus ? 100.0 : 4.0;
+    registerClosedLoopProportionalOutput(updateFreq);
+  }
+
+  public void registerClosedLoopProportionalOutput(double updateFreq) {
+    updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); //4Hz = min updating
+    closedLoopPout = talonFXS.getClosedLoopProportionalOutput();
+    closedLoopPout.setUpdateFrequency(updateFreq);
     registerSignal(closedLoopPout);
   }
 
   public void registerClosedLoopIntegratedOutput() {
-    closedLoopIout = talonFX.getClosedLoopIntegratedOutput();
+    double updateFreq = isFDBus ? 100.0 : 4.0;
+    registerClosedLoopIntegratedOutput(updateFreq);
+  }
+
+  public void registerClosedLoopIntegratedOutput(double updateFreq) {
+    updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); //4Hz = min updating
+    closedLoopIout = talonFXS.getClosedLoopIntegratedOutput();
+    closedLoopIout.setUpdateFrequency(updateFreq);
     registerSignal(closedLoopIout);
+
   }
 
   public void registerClosedLoopDerivativeOutput() {
-    closedLoopDout = talonFX.getClosedLoopDerivativeOutput();
+    double updateFreq = isFDBus ? 100.0 : 4.0;
+    registerClosedLoopDerivativeOutput(updateFreq);
+  }
+
+  public void registerClosedLoopDerivativeOutput(double updateFreq){
+    updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); //4Hz = min updating
+    closedLoopDout = talonFXS.getClosedLoopDerivativeOutput();
+    closedLoopDout.setUpdateFrequency(updateFreq);
     registerSignal(closedLoopDout);
   }
 
   public void registerClosedLoopFeedForward() {
-    closedLoopFF = talonFX.getClosedLoopFeedForward();
+    double updateFreq = isFDBus ? 100.0 : 4.0;
+    registerClosedLoopFeedForward(updateFreq);
+  }
+
+  public void registerClosedLoopFeedForward(double updateFreq) {
+    updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); //4Hz = min updating
+    closedLoopFF = talonFXS.getClosedLoopFeedForward();
+    closedLoopFF.setUpdateFrequency(updateFreq);
     registerSignal(closedLoopFF);
   }
 
   public void registerClosedLoopOutput() {
-    closedLoopOut = talonFX.getClosedLoopOutput();
+    double updateFreq = isFDBus ? 100.0 : 4.0;
+    registerClosedLoopOutput(updateFreq);
+  }
+
+  public void registerClosedLoopOutput(double updateFreq) {
+    updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); //4Hz = min updating
+    closedLoopOut = talonFXS.getClosedLoopOutput();
+    closedLoopOut.setUpdateFrequency(updateFreq);
     registerSignal(closedLoopOut);
   }
 
   public void registerClosedLoopReference() {
-    closedLoopRef = talonFX.getClosedLoopReference();
+    double updateFreq = isFDBus ? 100.0 : 4.0;
+    registerClosedLoopReference(updateFreq);
+  }
+
+  public void registerClosedLoopReference(double updateFreq){
+    updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); //4Hz = min updating
+    closedLoopRef = talonFXS.getClosedLoopReference();
+    closedLoopRef.setUpdateFrequency(updateFreq);
     registerSignal(closedLoopRef);
   }
 
   public void registerClosedLoopReferenceSlope() {
-    closedLoopRefSlope = talonFX.getClosedLoopReferenceSlope();
+    double updateFreq = isFDBus ? 100.0 : 4.0;
+    registerClosedLoopReferenceSlope(updateFreq);
+  }
+
+  public void registerClosedLoopReferenceSlope(double updateFreq) {
+    updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); //4Hz = min updating
+    closedLoopRefSlope = talonFXS.getClosedLoopReferenceSlope();
+    closedLoopRefSlope.setUpdateFrequency(updateFreq);
     registerSignal(closedLoopRefSlope);
   }
 
   public void registerClosedLoopSlot() {
-    closedLoopSlot = talonFX.getClosedLoopSlot();
+    double updateFreq = isFDBus ? 100.0 : 4.0;
+    registerClosedLoopSlot(updateFreq);
+  }
+
+  public void registerClosedLoopSlot(double updateFreq) {
+    updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); //4Hz = min updating
+    closedLoopSlot = talonFXS.getClosedLoopSlot();
+    closedLoopSlot.setUpdateFrequency(updateFreq);
     registerSignal(closedLoopSlot);
   }
 
   public void registerDifferentialClosedLoopError() {
-    closedLoopDiffError = talonFX.getDifferentialClosedLoopError();
+    double updateFreq = isFDBus ? 100.0 : 4.0;
+    registerDifferentialClosedLoopError(updateFreq);
+  }
+
+  public void registerDifferentialClosedLoopError(double updateFreq) {
+    updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); //4Hz = min updating
+    closedLoopDiffError = talonFXS.getDifferentialClosedLoopError();
+    closedLoopDiffError.setUpdateFrequency(updateFreq);
     registerSignal(closedLoopDiffError);
   }
 
   public void registerDifferentialClosedLoopProportionalOutput() {
-    closedLoopDiffPout = talonFX.getDifferentialClosedLoopProportionalOutput();
+    double updateFreq = isFDBus ? 100.0 : 4.0;
+    registerDifferentialClosedLoopProportionalOutput(updateFreq);
+  }
+
+  public void registerDifferentialClosedLoopProportionalOutput(double updateFreq) {
+    updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); //4Hz = min updating
+    closedLoopDiffPout = talonFXS.getDifferentialClosedLoopProportionalOutput();
+    closedLoopDiffPout.setUpdateFrequency(updateFreq);
     registerSignal(closedLoopDiffPout);
   }
 
   public void registerDifferentialClosedLoopIntegratedOutput() {
-    closedLoopDiffIout = talonFX.getDifferentialClosedLoopIntegratedOutput();
+    registerDifferentialClosedLoopIntegratedOutput(100.0);
+  }
+
+  public void registerDifferentialClosedLoopIntegratedOutput(double updateFreq) {
+    updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); //4Hz = min updating
+    closedLoopDiffIout = talonFXS.getDifferentialClosedLoopIntegratedOutput();
+    closedLoopDiffIout.setUpdateFrequency(updateFreq);
     registerSignal(closedLoopDiffIout);
   }
 
   public void registerDifferentialClosedLoopDerivativeOutput() {
-    closedLoopDiffDout = talonFX.getDifferentialClosedLoopDerivativeOutput();
+    double updateFreq = isFDBus ? 100.0 : 4.0;
+    registerDifferentialClosedLoopDerivativeOutput(updateFreq);
+  }
+
+  public void registerDifferentialClosedLoopDerivativeOutput(double updateFreq) {
+    updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); //4Hz = min updating
+    closedLoopDiffDout = talonFXS.getDifferentialClosedLoopDerivativeOutput();
+    closedLoopDiffDout.setUpdateFrequency(updateFreq);
     registerSignal(closedLoopDiffDout);
   }
 
   public void registerDifferentialClosedLoopFeedForward() {
-    closedLoopDiffFF = talonFX.getDifferentialClosedLoopFeedForward();
+    registerDifferentialClosedLoopFeedForward(100.0);
+  }
+
+  public void registerDifferentialClosedLoopFeedForward(double updateFreq) {
+    updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); //4Hz = min updating
+    closedLoopDiffFF = talonFXS.getDifferentialClosedLoopFeedForward();
+    closedLoopDiffFF.setUpdateFrequency(updateFreq);
     registerSignal(closedLoopDiffFF);
   }
 
   public void registerDifferentialClosedLoopOutput() {
-    closedLoopDiffOut = talonFX.getDifferentialClosedLoopOutput();
+    double updateFreq = isFDBus ? 100.0 : 4.0;
+    registerDifferentialClosedLoopOutput(updateFreq);
+  }
+
+  public void registerDifferentialClosedLoopOutput(double updateFreq) {
+    updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); //4Hz = min updating
+    closedLoopDiffOut = talonFXS.getDifferentialClosedLoopOutput();
+    closedLoopDiffOut.setUpdateFrequency(updateFreq);
     registerSignal(closedLoopDiffOut);
   }
 
   public void registerDifferentialClosedLoopReference() {
-    closedLoopDiffRef = talonFX.getDifferentialClosedLoopReference();
+    double updateFreq = isFDBus ? 100.0 : 4.0;
+    registerDifferentialClosedLoopReference(updateFreq);
+  }
+
+  public void registerDifferentialClosedLoopReference(double updateFreq) {
+    updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); //4Hz = min updating
+    closedLoopDiffRef = talonFXS.getDifferentialClosedLoopReference();
+    closedLoopDiffRef.setUpdateFrequency(updateFreq);
     registerSignal(closedLoopDiffRef);
   }
 
   public void registerDifferentialClosedLoopReferenceSlope() {
-    closedLoopDiffRefSlope = talonFX.getDifferentialClosedLoopReferenceSlope();
+    double updateFreq = isFDBus ? 100.0 : 4.0;
+    registerDifferentialClosedLoopReferenceSlope(updateFreq);
+  }
+
+  public void registerDifferentialClosedLoopReferenceSlope(double updateFreq) {
+    updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); //4Hz = min updating
+    closedLoopDiffRefSlope = talonFXS.getDifferentialClosedLoopReferenceSlope();
+    closedLoopDiffRefSlope.setUpdateFrequency(updateFreq);
     registerSignal(closedLoopDiffRefSlope);
   }
 
   public void registerDifferentialClosedLoopSlot() {
-    closedLoopDiffSlot = talonFX.getDifferentialClosedLoopSlot();
+    double updateFreq = isFDBus ? 100.0 : 4.0;
+    registerDifferentialClosedLoopSlot(updateFreq);
+  }
+
+  public void registerDifferentialClosedLoopSlot(double updateFreq) {
+    updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); //4Hz = min updating
+    closedLoopDiffSlot = talonFXS.getDifferentialClosedLoopSlot();
+    closedLoopDiffSlot.setUpdateFrequency(updateFreq);
     registerSignal(closedLoopDiffSlot);
   }
 
   public void registerIsProLicensed() {
-    isProLic = talonFX.getIsProLicensed();
+    registerIsProLicensed(4.0);
+  }
+
+  public void registerIsProLicensed(double updateFreq) {
+    updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); //4Hz = min updating
+    isProLic = talonFXS.getIsProLicensed();
+    isProLic.setUpdateFrequency(updateFreq);
     registerSignal(isProLic);
   }
 
   public void registerMotionMagicIsRunning() {
-    mmIsRunning = talonFX.getMotionMagicIsRunning();
+    double updateFreq = isFDBus ? 100.0 : 4.0;
+    registerMotionMagicIsRunning(updateFreq);
+  }
+
+  public void registerMotionMagicIsRunning(double updateFreq) {
+    updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); //4Hz = min updating
+    mmIsRunning = talonFXS.getMotionMagicIsRunning();
     registerSignal(mmIsRunning);
   }
 
   public void registerControlMode() {
-    controlMode = talonFX.getControlMode();
+    double updateFreq = isFDBus ? 100.0 : 4.0;
+    registerControlMode(updateFreq);
+  }
+
+  public void registerControlMode(double updateFreq) {
+    updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); //4Hz = min updating
+    controlMode = talonFXS.getControlMode();
+    controlMode.setUpdateFrequency(updateFreq);
     registerSignal(controlMode);
   }
 
   public void registerDifferentialControlMode() {
-    diffControlMode = talonFX.getDifferentialControlMode();
+    registerDifferentialControlMode(100.0);
+  }
+
+  public void registerDifferentialControlMode(double updateFreq) {
+    updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); //4Hz = min updating
+    diffControlMode = talonFXS.getDifferentialControlMode();
+    diffControlMode.setUpdateFrequency(updateFreq);
     registerSignal(diffControlMode);
   }
 

@@ -166,7 +166,7 @@ public class JsonTalonFX {
   private String followerConfig = "Standard";
   private String differentialType = "Open_Loop";
   private String closedLoopType = "Velocity";
-//  private String setpointType = "Open_Loop";
+  //  private String setpointType = "Open_Loop";
   private int leaderID = 0;
   private int activeSlot = 0;
   private int differentialSlot = 0;
@@ -181,9 +181,9 @@ public class JsonTalonFX {
 
   public AudioConfigs getAudioConfigs() {
     return new AudioConfigs()
-            .withAllowMusicDurDisable(allowMusicDuringDisable)
-            .withBeepOnBoot(beepOnBoot)
-            .withBeepOnConfig(beepOnConfig);
+        .withAllowMusicDurDisable(allowMusicDuringDisable)
+        .withBeepOnBoot(beepOnBoot)
+        .withBeepOnConfig(beepOnConfig);
   }
 
   public ClosedLoopGeneralConfigs getClosedLoopGeneralConfigs() {
@@ -193,25 +193,26 @@ public class JsonTalonFX {
   public ClosedLoopRampsConfigs getClosedLoopRampConfigs() {
     dutyCycleClosedLoopRampPeriod = MathUtil.clamp(dutyCycleClosedLoopRampPeriod, 0.0, 1.0);
     voltageClosedLoopRampPeriod = MathUtil.clamp(voltageClosedLoopRampPeriod, 0.0, 1.0);
-    torqueCurrentClosedLoopRampPeriod = MathUtil.clamp(torqueCurrentClosedLoopRampPeriod, 0.0, 10.0);
+    torqueCurrentClosedLoopRampPeriod =
+        MathUtil.clamp(torqueCurrentClosedLoopRampPeriod, 0.0, 10.0);
     return new ClosedLoopRampsConfigs()
-            .withDutyCycleClosedLoopRampPeriod(dutyCycleClosedLoopRampPeriod)
-            .withVoltageClosedLoopRampPeriod(voltageClosedLoopRampPeriod)
-            .withTorqueClosedLoopRampPeriod(torqueCurrentClosedLoopRampPeriod);
+        .withDutyCycleClosedLoopRampPeriod(dutyCycleClosedLoopRampPeriod)
+        .withVoltageClosedLoopRampPeriod(voltageClosedLoopRampPeriod)
+        .withTorqueClosedLoopRampPeriod(torqueCurrentClosedLoopRampPeriod);
   }
 
   public CurrentLimitsConfigs getCurrentLimitConfigs() {
     statorCurrentLimit = MathUtil.clamp(statorCurrentLimit, 0.0, 800.0);
     supplyCurrentLimit = MathUtil.clamp(supplyCurrentLimit, 0.0, 800.0);
-    supplyCurrentLowerLimit = MathUtil.clamp(supplyCurrentLowerLimit,.0, 500.0);
+    supplyCurrentLowerLimit = MathUtil.clamp(supplyCurrentLowerLimit, .0, 500.0);
     supplyCurrentLowerTime = MathUtil.clamp(supplyCurrentLowerTime, 0.0, 2.5);
     return new CurrentLimitsConfigs()
-            .withStatorCurrentLimit(statorCurrentLimit)
-            .withStatorCurrentLimitEnable(statorCurrentLimitEnable)
-            .withSupplyCurrentLimit(supplyCurrentLimit)
-            .withSupplyCurrentLimitEnable(supplyCurrentLimitEnable)
-            .withSupplyCurrentLowerLimit(supplyCurrentLowerLimit)
-            .withSupplyCurrentLowerTime(supplyCurrentLowerTime);
+        .withStatorCurrentLimit(statorCurrentLimit)
+        .withStatorCurrentLimitEnable(statorCurrentLimitEnable)
+        .withSupplyCurrentLimit(supplyCurrentLimit)
+        .withSupplyCurrentLimitEnable(supplyCurrentLimitEnable)
+        .withSupplyCurrentLowerLimit(supplyCurrentLowerLimit)
+        .withSupplyCurrentLowerTime(supplyCurrentLowerTime);
   }
 
   public CustomParamsConfigs getCustomParamConfigs() {
@@ -225,9 +226,9 @@ public class JsonTalonFX {
     peakDifferentialVoltage = MathUtil.clamp(peakDifferentialVoltage, 0.0, 32.0);
     peakDifferentialTorqueCurrent = MathUtil.clamp(peakDifferentialTorqueCurrent, 0.0, 1600.0);
     return new DifferentialConstantsConfigs()
-            .withPeakDifferentialDutyCycle(peakDifferentialDutyCycle)
-            .withPeakDifferentialVoltage(peakDifferentialVoltage)
-            .withPeakDifferentialTorqueCurrent(peakDifferentialTorqueCurrent);
+        .withPeakDifferentialDutyCycle(peakDifferentialDutyCycle)
+        .withPeakDifferentialVoltage(peakDifferentialVoltage)
+        .withPeakDifferentialTorqueCurrent(peakDifferentialTorqueCurrent);
   }
 
   public DifferentialSensorsConfigs getDifferentialSensorConfigs() {
@@ -247,9 +248,9 @@ public class JsonTalonFX {
     differentialRemoteSensorID = MathUtil.clamp(differentialRemoteSensorID, 0, 62);
 
     return new DifferentialSensorsConfigs()
-            .withDifferentialSensorSource(sensorSource)
-            .withDifferentialTalonFXSensorID(differentialTalonFXSensorID)
-            .withDifferentialRemoteSensorID(differentialRemoteSensorID);
+        .withDifferentialSensorSource(sensorSource)
+        .withDifferentialTalonFXSensorID(differentialTalonFXSensorID)
+        .withDifferentialRemoteSensorID(differentialRemoteSensorID);
   }
 
   public FeedbackConfigs getFeedbackConfigs() {
@@ -339,24 +340,26 @@ public class JsonTalonFX {
     ReverseLimitTypeValue revType = ReverseLimitTypeValue.NormallyOpen;
     if (reverseLimitType.equals("NormallyClosed")) revType = ReverseLimitTypeValue.NormallyClosed;
 
-    forwardLimitAutosetPositionValue = MathUtil.clamp(forwardLimitAutosetPositionValue, -3.4e38, 3.4e38);
+    forwardLimitAutosetPositionValue =
+        MathUtil.clamp(forwardLimitAutosetPositionValue, -3.4e38, 3.4e38);
     forwardLimitRemoteSensorId = MathUtil.clamp(forwardLimitRemoteSensorId, 0, 62);
-    reverseLimitAutosetPositionValue = MathUtil.clamp(reverseLimitAutosetPositionValue, -3.4e38, 3.4e38);
+    reverseLimitAutosetPositionValue =
+        MathUtil.clamp(reverseLimitAutosetPositionValue, -3.4e38, 3.4e38);
     reverseLimitRemoteSensorId = MathUtil.clamp(reverseLimitRemoteSensorId, 0, 62);
 
     return new HardwareLimitSwitchConfigs()
-            .withForwardLimitAutosetPositionEnable(forwardLimitAutosetPositionEnable)
-            .withForwardLimitAutosetPositionValue(forwardLimitAutosetPositionValue)
-            .withForwardLimitEnable(forwardLimitEnable)
-            .withForwardLimitRemoteSensorID(forwardLimitRemoteSensorId)
-            .withForwardLimitSource(fwdSource)
-            .withForwardLimitType(fwdType)
-            .withReverseLimitAutosetPositionEnable(reverseLimitAutosetPositionEnable)
-            .withReverseLimitAutosetPositionValue(reverseLimitAutosetPositionValue)
-            .withReverseLimitEnable(reverseLimitEnable)
-            .withReverseLimitRemoteSensorID(reverseLimitRemoteSensorId)
-            .withReverseLimitSource(revSource)
-            .withReverseLimitType(revType);
+        .withForwardLimitAutosetPositionEnable(forwardLimitAutosetPositionEnable)
+        .withForwardLimitAutosetPositionValue(forwardLimitAutosetPositionValue)
+        .withForwardLimitEnable(forwardLimitEnable)
+        .withForwardLimitRemoteSensorID(forwardLimitRemoteSensorId)
+        .withForwardLimitSource(fwdSource)
+        .withForwardLimitType(fwdType)
+        .withReverseLimitAutosetPositionEnable(reverseLimitAutosetPositionEnable)
+        .withReverseLimitAutosetPositionValue(reverseLimitAutosetPositionValue)
+        .withReverseLimitEnable(reverseLimitEnable)
+        .withReverseLimitRemoteSensorID(reverseLimitRemoteSensorId)
+        .withReverseLimitSource(revSource)
+        .withReverseLimitType(revType);
   }
 
   public MotionMagicConfigs getMotionMagicConfigs() {
@@ -367,11 +370,11 @@ public class JsonTalonFX {
     motionMagicExpo_kA = MathUtil.clamp(motionMagicExpo_kA, 1e-5, 100.0);
 
     return new MotionMagicConfigs()
-            .withMotionMagicAcceleration(motionMagicAcceleration)
-            .withMotionMagicCruiseVelocity(motionMagicCruiseVelocity)
-            .withMotionMagicExpo_kA(motionMagicExpo_kA)
-            .withMotionMagicExpo_kV(motionMagicExpo_kV)
-            .withMotionMagicJerk(motionMagicJerk);
+        .withMotionMagicAcceleration(motionMagicAcceleration)
+        .withMotionMagicCruiseVelocity(motionMagicCruiseVelocity)
+        .withMotionMagicExpo_kA(motionMagicExpo_kA)
+        .withMotionMagicExpo_kV(motionMagicExpo_kV)
+        .withMotionMagicJerk(motionMagicJerk);
   }
 
   public MotorOutputConfigs getMotorOutputConfigs() {
@@ -387,12 +390,12 @@ public class JsonTalonFX {
     dutyCycleNeutralDeadband = MathUtil.clamp(dutyCycleNeutralDeadband, 0.0, 0.25);
 
     return new MotorOutputConfigs()
-            .withControlTimesyncFreqHz(controlTimesyncFreqHz)
-            .withDutyCycleNeutralDeadband(dutyCycleNeutralDeadband)
-            .withInverted(isInverted)
-            .withNeutralMode(setNeutralMode)
-            .withPeakForwardDutyCycle(peakForwardDutyCycle)
-            .withPeakReverseDutyCycle(peakReverseDutyCycle);
+        .withControlTimesyncFreqHz(controlTimesyncFreqHz)
+        .withDutyCycleNeutralDeadband(dutyCycleNeutralDeadband)
+        .withInverted(isInverted)
+        .withNeutralMode(setNeutralMode)
+        .withPeakForwardDutyCycle(peakForwardDutyCycle)
+        .withPeakReverseDutyCycle(peakReverseDutyCycle);
   }
 
   public OpenLoopRampsConfigs getOpenLoopRampConfigs() {
@@ -401,9 +404,9 @@ public class JsonTalonFX {
     torqueCurrentOpenLoopRampPeriod = MathUtil.clamp(torqueCurrentOpenLoopRampPeriod, 0.0, 10.0);
 
     return new OpenLoopRampsConfigs()
-            .withDutyCycleOpenLoopRampPeriod(dutyCycleOpenLoopRampPeriod)
-            .withTorqueOpenLoopRampPeriod(torqueCurrentOpenLoopRampPeriod)
-            .withVoltageOpenLoopRampPeriod(voltageOpenLoopRampPeriod);
+        .withDutyCycleOpenLoopRampPeriod(dutyCycleOpenLoopRampPeriod)
+        .withTorqueOpenLoopRampPeriod(torqueCurrentOpenLoopRampPeriod)
+        .withVoltageOpenLoopRampPeriod(voltageOpenLoopRampPeriod);
   }
 
   public Slot0Configs getSlot0Configs() {
@@ -423,15 +426,15 @@ public class JsonTalonFX {
     slot0kP = MathUtil.clamp(slot0kP, 0.0, 3.4e38);
 
     return new Slot0Configs()
-            .withGravityType(gravityType)
-            .withKA(slot0kA)
-            .withKD(slot0kD)
-            .withKG(slot0kG)
-            .withKI(slot0kI)
-            .withKP(slot0kP)
-            .withKS(slot0kS)
-            .withKV(slot0kV)
-            .withStaticFeedforwardSign(feedFwdSign);
+        .withGravityType(gravityType)
+        .withKA(slot0kA)
+        .withKD(slot0kD)
+        .withKG(slot0kG)
+        .withKI(slot0kI)
+        .withKP(slot0kP)
+        .withKS(slot0kS)
+        .withKV(slot0kV)
+        .withStaticFeedforwardSign(feedFwdSign);
   }
 
   public Slot1Configs getSlot1Configs() {
@@ -451,15 +454,15 @@ public class JsonTalonFX {
     slot1kI = MathUtil.clamp(slot1kI, 0.0, 3.4e38);
 
     return new Slot1Configs()
-            .withGravityType(gravityType)
-            .withKA(slot1kA)
-            .withKD(slot1kD)
-            .withKG(slot1kG)
-            .withKI(slot1kI)
-            .withKP(slot1kP)
-            .withKS(slot1kS)
-            .withKV(slot1kV)
-            .withStaticFeedforwardSign(feedFwdSign);
+        .withGravityType(gravityType)
+        .withKA(slot1kA)
+        .withKD(slot1kD)
+        .withKG(slot1kG)
+        .withKI(slot1kI)
+        .withKP(slot1kP)
+        .withKS(slot1kS)
+        .withKV(slot1kV)
+        .withStaticFeedforwardSign(feedFwdSign);
   }
 
   public Slot2Configs getSlot2Configs() {
@@ -479,15 +482,15 @@ public class JsonTalonFX {
     slot2kI = MathUtil.clamp(slot2kI, 0.0, 3.4e38);
 
     return new Slot2Configs()
-            .withGravityType(gravityType)
-            .withKA(slot2kA)
-            .withKD(slot2kD)
-            .withKG(slot2kG)
-            .withKI(slot2kI)
-            .withKP(slot2kP)
-            .withKS(slot2kS)
-            .withKV(slot2kV)
-            .withStaticFeedforwardSign(feedFwdSign);
+        .withGravityType(gravityType)
+        .withKA(slot2kA)
+        .withKD(slot2kD)
+        .withKG(slot2kG)
+        .withKI(slot2kI)
+        .withKP(slot2kP)
+        .withKS(slot2kS)
+        .withKV(slot2kV)
+        .withStaticFeedforwardSign(feedFwdSign);
   }
 
   public SoftwareLimitSwitchConfigs getSoftwareLimitSwitchConfigs() {
@@ -495,10 +498,21 @@ public class JsonTalonFX {
     reverseSoftLimitThreshold = MathUtil.clamp(reverseSoftLimitThreshold, -3.4e38, 3.4e38);
 
     return new SoftwareLimitSwitchConfigs()
-            .withForwardSoftLimitEnable(forwardSoftLimitEnable)
-            .withForwardSoftLimitThreshold(forwardSoftLimitThreshold)
-            .withReverseSoftLimitEnable(reverseSoftLimitEnable)
-            .withReverseSoftLimitThreshold(reverseSoftLimitThreshold);
+        .withForwardSoftLimitEnable(forwardSoftLimitEnable)
+        .withForwardSoftLimitThreshold(forwardSoftLimitThreshold)
+        .withReverseSoftLimitEnable(reverseSoftLimitEnable)
+        .withReverseSoftLimitThreshold(reverseSoftLimitThreshold);
+  }
+
+  public TorqueCurrentConfigs getTorqueCurrentConfigs() {
+    peakForwardTorqueCurrent = MathUtil.clamp(peakForwardTorqueCurrent, -800.0, 800.0);
+    peakReverseTorqueCurrent = MathUtil.clamp(peakReverseTorqueCurrent, -800.0, 800.0);
+    torqueCurrentNeutralDeadband = MathUtil.clamp(torqueCurrentNeutralDeadband, 0.0, 25.0);
+
+    return new TorqueCurrentConfigs()
+        .withPeakForwardTorqueCurrent(peakForwardTorqueCurrent)
+        .withPeakReverseTorqueCurrent(peakReverseTorqueCurrent)
+        .withTorqueNeutralDeadband(torqueCurrentNeutralDeadband);
   }
 
   public VoltageConfigs getVoltageConfigs() {
@@ -507,9 +521,9 @@ public class JsonTalonFX {
     supplyVoltageTimeConstant = MathUtil.clamp(supplyVoltageTimeConstant, 0.0, 0.1);
 
     return new VoltageConfigs()
-            .withPeakForwardVoltage(peakForwardVoltage)
-            .withPeakReverseVoltage(peakReverseVoltage)
-            .withSupplyVoltageTimeConstant(supplyVoltageTimeConstant);
+        .withPeakForwardVoltage(peakForwardVoltage)
+        .withPeakReverseVoltage(peakReverseVoltage)
+        .withSupplyVoltageTimeConstant(supplyVoltageTimeConstant);
   }
 
   public CTRE_Units getOpenLoopUnits() {
