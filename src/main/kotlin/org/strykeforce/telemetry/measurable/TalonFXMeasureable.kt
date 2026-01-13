@@ -128,7 +128,7 @@ class TalonFXMeasureable @JvmOverloads constructor(
         Measure(TORQUE_CURRENT, "Torque Current"){talonFX.torqueCurrent.valueAsDouble},
         Measure(VELOCITY, "Velocity"){talonFX.velocity.valueAsDouble},
         Measure(VEL_SCALE, "Vel. scaled"){talonFX.velocity.valueAsDouble * scaleFactor},
-        Measure(IS_INVERTED, "Is Inverted"){talonFX.inverted.toDouble()},
+//        Measure(IS_INVERTED, "Is Inverted"){talonFX.inverted.toDouble()},
 
         Measure(CLOSED_LOOP_D_OUTPUT, "Closed Loop Derivative Output"){talonFX.closedLoopDerivativeOutput.valueAsDouble},
         Measure(CLOSED_LOOP_ERROR, "Closed Loop Error"){talonFX.closedLoopError.valueAsDouble},

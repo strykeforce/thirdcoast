@@ -1,50 +1,50 @@
 {
-    "fileName": "Phoenix5-replay-5.35.1.json",
+    "fileName": "Phoenix5-replay-5.36.0.json",
     "name": "CTRE-Phoenix (v5)",
-    "version": "5.35.1",
-    "frcYear": "2025",
+    "version": "5.36.0",
+    "frcYear": "2026",
     "uuid": "fbc886a4-2cec-40c0-9835-71086a8cc3df",
     "mavenUrls": [
         "https://maven.ctr-electronics.com/release/"
     ],
-    "jsonUrl": "https://maven.ctr-electronics.com/release/com/ctre/phoenix/Phoenix5-replay-frc2025-latest.json",
+    "jsonUrl": "https://maven.ctr-electronics.com/release/com/ctre/phoenix/Phoenix5-replay-frc2026-latest.json",
     "requires": [
         {
             "uuid": "e7900d8d-826f-4dca-a1ff-182f658e98af",
             "errorMessage": "Phoenix 5 requires low-level libraries from Phoenix 6.  Please add the Phoenix 6 vendordep before adding Phoenix 5.",
-            "offlineFileName": "Phoenix6-replay-frc2025-latest.json",
-            "onlineUrl": "https://maven.ctr-electronics.com/release/com/ctre/phoenix6/latest/Phoenix6-replay-frc2025-latest.json"
+            "offlineFileName": "Phoenix6-replay-frc2026-latest.json",
+            "onlineUrl": "https://maven.ctr-electronics.com/release/com/ctre/phoenix6/latest/Phoenix6-replay-frc2026-latest.json"
         }
     ],
     "conflictsWith": [
         {
             "uuid": "e995de00-2c64-4df5-8831-c1441420ff19",
             "errorMessage": "Users must use the regular Phoenix 5 vendordep when using the regular Phoenix 6 vendordep.",
-            "offlineFileName": "Phoenix6-frc2025-latest.json"
+            "offlineFileName": "Phoenix6-frc2026-latest.json"
         },
         {
             "uuid": "ab676553-b602-441f-a38d-f1296eff6537",
             "errorMessage": "Users cannot have both the replay and regular Phoenix 5 vendordeps in their robot program.",
-            "offlineFileName": "Phoenix5-frc2025-latest.json"
+            "offlineFileName": "Phoenix5-frc2026-latest.json"
         }
     ],
     "javaDependencies": [
         {
             "groupId": "com.ctre.phoenix",
             "artifactId": "api-java",
-            "version": "5.35.1"
+            "version": "5.36.0"
         },
         {
             "groupId": "com.ctre.phoenix",
             "artifactId": "wpiapi-java",
-            "version": "5.35.1"
+            "version": "5.36.0"
         }
     ],
     "jniDependencies": [
         {
             "groupId": "com.ctre.phoenix",
             "artifactId": "cci",
-            "version": "5.35.1",
+            "version": "5.36.0",
             "isJar": false,
             "skipInvalidPlatforms": true,
             "validPlatforms": [
@@ -55,7 +55,7 @@
         {
             "groupId": "com.ctre.phoenix.replay",
             "artifactId": "cci-replay",
-            "version": "5.35.1",
+            "version": "5.36.0",
             "isJar": false,
             "skipInvalidPlatforms": true,
             "validPlatforms": [
@@ -69,7 +69,7 @@
         {
             "groupId": "com.ctre.phoenix.sim",
             "artifactId": "cci-sim",
-            "version": "5.35.1",
+            "version": "5.36.0",
             "isJar": false,
             "skipInvalidPlatforms": true,
             "validPlatforms": [
@@ -85,7 +85,7 @@
         {
             "groupId": "com.ctre.phoenix",
             "artifactId": "wpiapi-cpp",
-            "version": "5.35.1",
+            "version": "5.36.0",
             "libName": "CTRE_Phoenix_WPI",
             "headerClassifier": "headers",
             "sharedLibrary": true,
@@ -98,7 +98,7 @@
         {
             "groupId": "com.ctre.phoenix",
             "artifactId": "api-cpp",
-            "version": "5.35.1",
+            "version": "5.36.0",
             "libName": "CTRE_Phoenix",
             "headerClassifier": "headers",
             "sharedLibrary": true,
@@ -111,7 +111,7 @@
         {
             "groupId": "com.ctre.phoenix",
             "artifactId": "cci",
-            "version": "5.35.1",
+            "version": "5.36.0",
             "libName": "CTRE_PhoenixCCI",
             "headerClassifier": "headers",
             "sharedLibrary": true,
@@ -124,7 +124,7 @@
         {
             "groupId": "com.ctre.phoenix.replay",
             "artifactId": "wpiapi-cpp-replay",
-            "version": "5.35.1",
+            "version": "5.36.0",
             "libName": "CTRE_Phoenix_WPIReplay",
             "headerClassifier": "headers",
             "sharedLibrary": true,
@@ -140,7 +140,7 @@
         {
             "groupId": "com.ctre.phoenix.replay",
             "artifactId": "api-cpp-replay",
-            "version": "5.35.1",
+            "version": "5.36.0",
             "libName": "CTRE_PhoenixReplay",
             "headerClassifier": "headers",
             "sharedLibrary": true,
@@ -156,7 +156,7 @@
         {
             "groupId": "com.ctre.phoenix.replay",
             "artifactId": "cci-replay",
-            "version": "5.35.1",
+            "version": "5.36.0",
             "libName": "CTRE_PhoenixCCIReplay",
             "headerClassifier": "headers",
             "sharedLibrary": true,
@@ -172,7 +172,7 @@
         {
             "groupId": "com.ctre.phoenix.sim",
             "artifactId": "wpiapi-cpp-sim",
-            "version": "5.35.1",
+            "version": "5.36.0",
             "libName": "CTRE_Phoenix_WPISim",
             "headerClassifier": "headers",
             "sharedLibrary": true,
@@ -188,7 +188,7 @@
         {
             "groupId": "com.ctre.phoenix.sim",
             "artifactId": "api-cpp-sim",
-            "version": "5.35.1",
+            "version": "5.36.0",
             "libName": "CTRE_PhoenixSim",
             "headerClassifier": "headers",
             "sharedLibrary": true,
@@ -204,7 +204,7 @@
         {
             "groupId": "com.ctre.phoenix.sim",
             "artifactId": "cci-sim",
-            "version": "5.35.1",
+            "version": "5.36.0",
             "libName": "CTRE_PhoenixCCISim",
             "headerClassifier": "headers",
             "sharedLibrary": true,

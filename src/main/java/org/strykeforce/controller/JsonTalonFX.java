@@ -12,6 +12,9 @@ public class JsonTalonFX {
 
   // Closed Loop Gen
   private boolean continuousWrap = false;
+  private boolean diffContinuousWrap = false;
+  private double gainSchedErrorThres = 0.0;
+  private String gainSchedKpBehavior = "Continuous";
 
   // Closed Loop Ramp
   private double dutyCycleClosedLoopRampPeriod = 0; // seconds
@@ -39,6 +42,7 @@ public class JsonTalonFX {
   private String differentialSensorSource = "Disabled";
   private int differentialTalonFXSensorID = 0;
   private int differentialRemoteSensorID = 0;
+  private double sensorToDiffRatio = 1.0;
 
   // Feedback
   private double feedbackRotorOffset = 0; // rotations
@@ -95,6 +99,8 @@ public class JsonTalonFX {
   private double slot0kS = 0;
   private double slot0kV = 0;
   private String slot0StaticFeedForwardSign = "UseVelocitySign";
+  private String slot0gainSchedBehavior = "Inactive";
+  private double slot0GravityArmPositionOffset = 0.0;
 
   // Slot 1 Configs
   private String slot1GravityType = "Elevator_Static";
@@ -106,6 +112,8 @@ public class JsonTalonFX {
   private double slot1kS = 0;
   private double slot1kV = 0;
   private String slot1StaticFeedForwardSign = "UseVelocitySign";
+  private String slot1gainSchedBehavior = "Inactive";
+  private double slot1GravityArmPositionOffset = 0.0;
 
   // Slot 2 Configs
   private String slot2GravityType = "Elevator_Static";
@@ -117,6 +125,8 @@ public class JsonTalonFX {
   private double slot2kS = 0;
   private double slot2kV = 0;
   private String slot2StaticFeedForwardSign = "UseVelocitySign";
+  private String slot2gainSchedBehavior = "Inactive";
+  private double slot2GravityArmPositionOffset = 0.0;
 
   // Software Limit Switch
   private boolean forwardSoftLimitEnable = false;
@@ -174,6 +184,7 @@ public class JsonTalonFX {
   private boolean limitFwdMotion = false;
   private boolean limitRevMotion = false;
   private boolean ignoreHwLims = false;
+  private boolean ignoreSwLims = false;
   private boolean useTimesync = false;
   private boolean opposeMain = false;
   private double torquecCurrentMax = 0;
@@ -187,7 +198,15 @@ public class JsonTalonFX {
   }
 
   public ClosedLoopGeneralConfigs getClosedLoopGeneralConfigs() {
-    return new ClosedLoopGeneralConfigs().withContinuousWrap(continuousWrap);
+    gainSchedErrorThres = MathUtil.clamp(gainSchedErrorThres, 0.0, 1.0);
+    GainSchedKpBehaviorValue kPBehavior = GainSchedKpBehaviorValue.Continuous;
+    if (gainSchedKpBehavior.equals("Discontinuous"))
+      kPBehavior = GainSchedKpBehaviorValue.Discontinuous;
+    return new ClosedLoopGeneralConfigs()
+        .withContinuousWrap(continuousWrap)
+        .withDifferentialContinuousWrap(diffContinuousWrap)
+        .withGainSchedErrorThreshold(gainSchedErrorThres)
+        .withGainSchedKpBehavior(kPBehavior);
   }
 
   public ClosedLoopRampsConfigs getClosedLoopRampConfigs() {
@@ -233,36 +252,44 @@ public class JsonTalonFX {
 
   public DifferentialSensorsConfigs getDifferentialSensorConfigs() {
     DifferentialSensorSourceValue sensorSource = DifferentialSensorSourceValue.Disabled;
-    if (differentialSensorSource.equals("RemoteTalonFX_Diff"))
-      sensorSource = DifferentialSensorSourceValue.RemoteTalonFX_Diff;
-    else if (differentialSensorSource.equals("RemotePigeon2_Yaw"))
-      sensorSource = DifferentialSensorSourceValue.RemotePigeon2_Yaw;
-    else if (differentialSensorSource.equals("RemotePigeon2_Pitch"))
-      sensorSource = DifferentialSensorSourceValue.RemotePigeon2_Pitch;
-    else if (differentialSensorSource.equals("RemotePigeon2_Roll"))
-      sensorSource = DifferentialSensorSourceValue.RemotePigeon2_Roll;
+    if (differentialSensorSource.equals("RemoteTalonFX_HalfDiff"))
+      sensorSource = DifferentialSensorSourceValue.RemoteTalonFX_HalfDiff;
+    else if (differentialSensorSource.equals("RemotePigeon2Yaw"))
+      sensorSource = DifferentialSensorSourceValue.RemotePigeon2Yaw;
+    else if (differentialSensorSource.equals("RemotePigeon2Pitch"))
+      sensorSource = DifferentialSensorSourceValue.RemotePigeon2Pitch;
+    else if (differentialSensorSource.equals("RemotePigeon2Roll"))
+      sensorSource = DifferentialSensorSourceValue.RemotePigeon2Roll;
     else if (differentialSensorSource.equals("RemoteCANcoder"))
       sensorSource = DifferentialSensorSourceValue.RemoteCANcoder;
+    else if (differentialSensorSource.equals("RemoteCANdiPWM1"))
+      sensorSource = DifferentialSensorSourceValue.RemoteCANdiPWM1;
+    else if (differentialSensorSource.equals("RemoteCANdiPWM2"))
+      sensorSource = DifferentialSensorSourceValue.RemoteCANdiPWM2;
+    else if (differentialSensorSource.equals("RemoteCANdiQuadrature"))
+      sensorSource = DifferentialSensorSourceValue.RemoteCANdiQuadrature;
 
     differentialTalonFXSensorID = MathUtil.clamp(differentialTalonFXSensorID, 0, 62);
     differentialRemoteSensorID = MathUtil.clamp(differentialRemoteSensorID, 0, 62);
+    sensorToDiffRatio = MathUtil.clamp(sensorToDiffRatio, -1000.0, 1000.0);
 
     return new DifferentialSensorsConfigs()
         .withDifferentialSensorSource(sensorSource)
         .withDifferentialTalonFXSensorID(differentialTalonFXSensorID)
-        .withDifferentialRemoteSensorID(differentialRemoteSensorID);
+        .withDifferentialRemoteSensorID(differentialRemoteSensorID)
+        .withSensorToDifferentialRatio(sensorToDiffRatio);
   }
 
   public FeedbackConfigs getFeedbackConfigs() {
     FeedbackSensorSourceValue sensorSource = FeedbackSensorSourceValue.RotorSensor;
     if (feedbackSensorSource.equals("RemoteCANcoder"))
       sensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
-    else if (feedbackSensorSource.equals("RemotePigeon2_Yaw"))
-      sensorSource = FeedbackSensorSourceValue.RemotePigeon2_Yaw;
-    else if (feedbackSensorSource.equals("RemotePigeon2_Pitch"))
-      sensorSource = FeedbackSensorSourceValue.RemotePigeon2_Pitch;
-    else if (feedbackSensorSource.equals("RemotePigeon2_Roll"))
-      sensorSource = FeedbackSensorSourceValue.RemotePigeon2_Roll;
+    else if (feedbackSensorSource.equals("RemotePigeon2Yaw"))
+      sensorSource = FeedbackSensorSourceValue.RemotePigeon2Yaw;
+    else if (feedbackSensorSource.equals("RemotePigeon2Pitch"))
+      sensorSource = FeedbackSensorSourceValue.RemotePigeon2Pitch;
+    else if (feedbackSensorSource.equals("RemotePigeon2Roll"))
+      sensorSource = FeedbackSensorSourceValue.RemotePigeon2Roll;
     else if (feedbackSensorSource.equals("FusedCANcoder"))
       sensorSource = FeedbackSensorSourceValue.FusedCANcoder;
     else if (feedbackSensorSource.equals("SyncCANcoder"))
@@ -424,6 +451,16 @@ public class JsonTalonFX {
     slot0kD = MathUtil.clamp(slot0kD, 0.0, 3.4e38);
     slot0kI = MathUtil.clamp(slot0kI, 0.0, 3.4e38);
     slot0kP = MathUtil.clamp(slot0kP, 0.0, 3.4e38);
+    slot0GravityArmPositionOffset = MathUtil.clamp(slot0GravityArmPositionOffset, -0.25, 0.25);
+
+    GainSchedBehaviorValue schedBehave = GainSchedBehaviorValue.Inactive;
+    if (slot0gainSchedBehavior.equals("UseSlot0")) schedBehave = GainSchedBehaviorValue.UseSlot0;
+    else if (slot0gainSchedBehavior.equals("UseSlot1"))
+      schedBehave = GainSchedBehaviorValue.UseSlot1;
+    else if (slot0gainSchedBehavior.equals("UseSlot2"))
+      schedBehave = GainSchedBehaviorValue.UseSlot2;
+    else if (slot0gainSchedBehavior.equals("ZeroOutput"))
+      schedBehave = GainSchedBehaviorValue.ZeroOutput;
 
     return new Slot0Configs()
         .withGravityType(gravityType)
@@ -434,7 +471,9 @@ public class JsonTalonFX {
         .withKP(slot0kP)
         .withKS(slot0kS)
         .withKV(slot0kV)
-        .withStaticFeedforwardSign(feedFwdSign);
+        .withStaticFeedforwardSign(feedFwdSign)
+        .withGravityArmPositionOffset(slot0GravityArmPositionOffset)
+        .withGainSchedBehavior(schedBehave);
   }
 
   public Slot1Configs getSlot1Configs() {
@@ -452,6 +491,16 @@ public class JsonTalonFX {
     slot1kD = MathUtil.clamp(slot1kD, 0.0, 3.4e38);
     slot1kP = MathUtil.clamp(slot1kP, 0.0, 3.4e38);
     slot1kI = MathUtil.clamp(slot1kI, 0.0, 3.4e38);
+    slot1GravityArmPositionOffset = MathUtil.clamp(slot1GravityArmPositionOffset, -0.25, 0.25);
+
+    GainSchedBehaviorValue schedBehave = GainSchedBehaviorValue.Inactive;
+    if (slot1gainSchedBehavior.equals("UseSlot0")) schedBehave = GainSchedBehaviorValue.UseSlot0;
+    else if (slot1gainSchedBehavior.equals("UseSlot1"))
+      schedBehave = GainSchedBehaviorValue.UseSlot1;
+    else if (slot1gainSchedBehavior.equals("UseSlot2"))
+      schedBehave = GainSchedBehaviorValue.UseSlot2;
+    else if (slot1gainSchedBehavior.equals("ZeroOutput"))
+      schedBehave = GainSchedBehaviorValue.ZeroOutput;
 
     return new Slot1Configs()
         .withGravityType(gravityType)
@@ -462,7 +511,9 @@ public class JsonTalonFX {
         .withKP(slot1kP)
         .withKS(slot1kS)
         .withKV(slot1kV)
-        .withStaticFeedforwardSign(feedFwdSign);
+        .withStaticFeedforwardSign(feedFwdSign)
+        .withGravityArmPositionOffset(slot1GravityArmPositionOffset)
+        .withGainSchedBehavior(schedBehave);
   }
 
   public Slot2Configs getSlot2Configs() {
@@ -480,6 +531,16 @@ public class JsonTalonFX {
     slot2kD = MathUtil.clamp(slot2kD, 0.0, 3.4e38);
     slot2kP = MathUtil.clamp(slot2kP, 0.0, 3.4e38);
     slot2kI = MathUtil.clamp(slot2kI, 0.0, 3.4e38);
+    slot2GravityArmPositionOffset = MathUtil.clamp(slot2GravityArmPositionOffset, -0.25, 0.25);
+
+    GainSchedBehaviorValue schedBehave = GainSchedBehaviorValue.Inactive;
+    if (slot2gainSchedBehavior.equals("UseSlot0")) schedBehave = GainSchedBehaviorValue.UseSlot0;
+    else if (slot2gainSchedBehavior.equals("UseSlot1"))
+      schedBehave = GainSchedBehaviorValue.UseSlot1;
+    else if (slot2gainSchedBehavior.equals("UseSlot2"))
+      schedBehave = GainSchedBehaviorValue.UseSlot2;
+    else if (slot2gainSchedBehavior.equals("ZeroOutput"))
+      schedBehave = GainSchedBehaviorValue.ZeroOutput;
 
     return new Slot2Configs()
         .withGravityType(gravityType)
@@ -490,7 +551,9 @@ public class JsonTalonFX {
         .withKP(slot2kP)
         .withKS(slot2kS)
         .withKV(slot2kV)
-        .withStaticFeedforwardSign(feedFwdSign);
+        .withStaticFeedforwardSign(feedFwdSign)
+        .withGravityArmPositionOffset(slot1GravityArmPositionOffset)
+        .withGainSchedBehavior(schedBehave);
   }
 
   public SoftwareLimitSwitchConfigs getSoftwareLimitSwitchConfigs() {
@@ -547,6 +610,7 @@ public class JsonTalonFX {
     if (mmType.equals("Velocity")) type = MotionMagicType.Velocity;
     else if (mmType.equals("Dynamic")) type = MotionMagicType.Dynamic;
     else if (mmType.equals("Exponential")) type = MotionMagicType.Exponential;
+    else if (mmType.equals("DynamicExponential")) type = MotionMagicType.DynamicExponential;
 
     return type;
   }
@@ -608,6 +672,10 @@ public class JsonTalonFX {
 
   public boolean getIgnoreHwLimits() {
     return ignoreHwLims;
+  }
+
+  public boolean getIgnoreSwLimits() {
+    return ignoreSwLims;
   }
 
   public boolean getUseTimesync() {

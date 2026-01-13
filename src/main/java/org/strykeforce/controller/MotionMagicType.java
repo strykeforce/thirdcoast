@@ -4,5 +4,6 @@ public enum MotionMagicType {
   Standard,
   Velocity,
   Dynamic,
-  Exponential
+  Exponential,
+  DynamicExponential
 }

@@ -4,6 +4,7 @@ import com.ctre.phoenix.motorcontrol.can.BaseTalon
 import com.ctre.phoenix6.controls.Follower
 import com.ctre.phoenix6.hardware.TalonFX
 import com.ctre.phoenix6.hardware.TalonFXS
+import com.ctre.phoenix6.signals.MotorAlignmentValue
 import edu.wpi.first.wpilibj2.command.Subsystem
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 import mu.KotlinLogging
@@ -360,7 +361,7 @@ class SwerveDriveHealthCheckBuilder(private val subsystem: Subsystem, private va
         requireNotNull(driveLeader) { "$subsystem: swerve drive talon with id $DRIVE_LEADER_ID not found" }
 
         azimuthFollowers.forEach { it.follow(azimuthLeader) }
-        driveFollowers.forEach { it.setControl(Follower(driveLeaderId ?: DRIVE_LEADER_ID,false) )}
+        driveFollowers.forEach { it.setControl(Follower(driveLeaderId ?: DRIVE_LEADER_ID,MotorAlignmentValue.Aligned) )}
 
         return talonHealthChecks
     }
@@ -410,7 +411,7 @@ class SwerveDriveHealthCheckIOBuilder(private val io: Checkable, private  val fi
         requireNotNull(driveLeader) { "$io: swerve drive talon with id $DRIVE_LEADER_ID not found" }
 
         azimuthFollowers.forEach { it.follow(azimuthLeader) }
-        driveFollowers.forEach { it.setControl(Follower(driveLeaderId ?: DRIVE_LEADER_ID,false) )}
+        driveFollowers.forEach { it.setControl(Follower(driveLeaderId ?: DRIVE_LEADER_ID,MotorAlignmentValue.Aligned) )}
 
         return talonHealthChecks
     }
@@ -460,8 +461,8 @@ class FXSwerveDriveHealthCheckIOBuilder(private val io: Checkable, private  val 
         requireNotNull(azimuthLeader) { "$io: swerve azimuth talon with id $AZIMUTH_LEADER_ID not found" }
         requireNotNull(driveLeader) { "$io: swerve drive talon with id $DRIVE_LEADER_ID not found" }
 
-        azimuthFollowers.forEach { it.setControl(Follower(azimuthLeaderId ?: AZIMUTH_LEADER_ID, false))}
-        driveFollowers.forEach { it.setControl(Follower(driveLeaderId ?: DRIVE_LEADER_ID,false) )}
+        azimuthFollowers.forEach { it.setControl(Follower(azimuthLeaderId ?: AZIMUTH_LEADER_ID, MotorAlignmentValue.Aligned))}
+        driveFollowers.forEach { it.setControl(Follower(driveLeaderId ?: DRIVE_LEADER_ID,MotorAlignmentValue.Aligned) )}
 
         return talonHealthChecks
     }
