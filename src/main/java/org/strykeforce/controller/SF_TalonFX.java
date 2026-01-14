@@ -193,6 +193,12 @@ public class SF_TalonFX {
   private NeutralModeValue neutralOutput;
   private int id;
 
+  /**
+   * Constructor for a custom wrapper around a CTRE TalonFX
+   *
+   * @param id the CAN id of the motor controller
+   * @param canbus the CANbus object that the controller is wired to
+   */
   public SF_TalonFX(int id, CANBus canbus) {
     this(id, canbus, "");
   }
@@ -201,6 +207,13 @@ public class SF_TalonFX {
   //    this(id, canbus, "");
   //  }
 
+  /**
+   * Constructor for a custom wrapper around a CTRE TalonFX
+   *
+   * @param id the CAN id of the motor controller
+   * @param canbus the CANBus object that the motor controller is wired to
+   * @param configSuffix the JSON config file suffix (beyond id #)
+   */
   public SF_TalonFX(int id, CANBus canbus, String configSuffix) {
     talonFX = new TalonFX(id, canbus);
     this.id = id;
@@ -219,6 +232,12 @@ public class SF_TalonFX {
   //    setupControlRequests();
   //  }
 
+  /**
+   * This loads a full TalonFX configuration from the JSON config file
+   *
+   * @param suffix the suffix on the JSON config file where the configs are stored
+   * @return true if successful
+   */
   public boolean loadFromJSON(String suffix) {
     Moshi moshi = new Moshi.Builder().build();
     JsonAdapter<JsonTalonFX> jsonAdapter = moshi.adapter(JsonTalonFX.class);
@@ -252,6 +271,7 @@ public class SF_TalonFX {
     return true;
   }
 
+  /** Applies the configs from the loaded JSON config */
   private void applyJsonConfigs() {
     talonConfig =
         new TalonFXConfiguration()
@@ -299,6 +319,7 @@ public class SF_TalonFX {
     neutralOutput = config.getMotorOutputConfigs().NeutralMode;
   }
 
+  /** Initializes the control request objects */
   private void setupControlRequests() {
     setupFollowerControlRequest();
     setupOpenLoopControlRequest();
@@ -308,6 +329,11 @@ public class SF_TalonFX {
     setupDifferentialControlRequest();
   }
 
+  /**
+   * Sets all control requests to the specified update frequency
+   *
+   * @param updateFreq update Frequency in Hz
+   */
   public void setControlRequestUpdateFreq(double updateFreq) {
     updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); // 4Hz = min updating
     controlRequestUpdateFreq = updateFreq;
@@ -377,6 +403,7 @@ public class SF_TalonFX {
     differentialStrictFollower.UpdateFreqHz = updateFreq;
   }
 
+  /** Sets up the control requests for follower modes */
   private void setupFollowerControlRequest() {
     switch (followerType) {
       case Standard -> follower = new Follower(leaderID, opposeMain);
@@ -384,6 +411,7 @@ public class SF_TalonFX {
     }
   }
 
+  /** Sets up the configured open loop control request object */
   private void setupOpenLoopControlRequest() {
     switch (openLoopUnits) {
       case Percent -> {
@@ -423,6 +451,7 @@ public class SF_TalonFX {
     }
   }
 
+  /** Sets up the configured position control request object */
   private void setupPositionControlRequest() {
     switch (closedLoopUnits) {
       case Percent -> {
@@ -463,6 +492,7 @@ public class SF_TalonFX {
     }
   }
 
+  /** Sets up the configured velocity control request object */
   private void setupVelocityControlRequest() {
     switch (closedLoopUnits) {
       case Percent -> {
@@ -503,6 +533,7 @@ public class SF_TalonFX {
     }
   }
 
+  /** Sets up the configured Motion Magic Control Request Object */
   private void setupMotionMagicControlRequest() {
     switch (motionMagicType) {
       case Standard -> {
@@ -709,6 +740,7 @@ public class SF_TalonFX {
     }
   }
 
+  /** Sets up the configured differential control request object */
   private void setupDifferentialControlRequest() {
     switch (differentialType) {
       case Follower -> {
@@ -844,6 +876,11 @@ public class SF_TalonFX {
     }
   }
 
+  /**
+   * Runs the motor controller in the configured open loop mode based on the Open Loop Units
+   *
+   * @param setpoint open loop setpoint (units depend on configured unit of %, V, A)
+   */
   public void runOpenLoop(double setpoint) {
     switch (openLoopUnits) {
       case Percent -> talonFX.setControl(
@@ -870,6 +907,12 @@ public class SF_TalonFX {
     }
   }
 
+  /**
+   * Runs the motor controller in the configured closed loop mode based on teh Closed Loop Units and
+   * Mode
+   *
+   * @param setpoint the closed-looop setpoint (units depend on configured unit %, V, A)
+   */
   public void runClosedLoop(double setpoint) {
     switch (closedLoopType) {
       case Position -> {
@@ -1077,6 +1120,14 @@ public class SF_TalonFX {
     }
   }
 
+  /**
+   * Runs the motor controller in the configured closed loop mode based on teh Closed Loop Units and
+   * Mode
+   *
+   * @param setpoint the closed-looop setpoint (units depend on configured unit %, V, A)
+   * @param secondarySetpoint the secondary closed-loop setpoint (velocity for position,
+   *     acceleration for velocity)
+   */
   public void runClosedLoop(double setpoint, double secondarySetpoint) {
     switch (closedLoopType) {
       case Position -> {
@@ -1292,6 +1343,14 @@ public class SF_TalonFX {
     }
   }
 
+  /**
+   * Runs the motor in dynamic motion magic mode
+   *
+   * @param position position in rot
+   * @param velocity velocity in rot/s
+   * @param acceleration acceleration in rot/s^2
+   * @param jerk jerk in rot/s^3
+   */
   public void runDynamicMotionMagic(
       double position, double velocity, double acceleration, double jerk) {
     switch (closedLoopUnits) {
@@ -1331,6 +1390,14 @@ public class SF_TalonFX {
     }
   }
 
+  /**
+   * Runs the motor in Dynamic Motion Magic Expo Mode
+   *
+   * @param position position in rots
+   * @param kV request kV in V/rps
+   * @param kA request kA in V/rps^2
+   * @param velocity velocity in rot/s
+   */
   public void runDynamicMotionMagicExpo(double position, double kV, double kA, double velocity) {
     switch (closedLoopUnits) {
       case Percent -> talonFX.setControl(
@@ -1369,7 +1436,13 @@ public class SF_TalonFX {
     }
   }
 
-  public void runDifferential(double target, double offset) {
+  /**
+   * Run the motor controller in differential control mode
+   *
+   * @param average the average differential target
+   * @param offset the difference differential target
+   */
+  public void runDifferential(double average, double offset) {
     switch (differentialType) {
       case Follower -> {
         switch (followerType) {
@@ -1382,7 +1455,7 @@ public class SF_TalonFX {
         switch (openLoopUnits) {
           case Percent -> talonFX.setControl(
               differentialDutyCycle
-                  .withAverageOutput(target)
+                  .withAverageOutput(average)
                   .withDifferentialPosition(offset)
                   .withDifferentialSlot(differentialSlot)
                   .withLimitReverseMotion(limitRevMotion)
@@ -1391,7 +1464,7 @@ public class SF_TalonFX {
                   .withIgnoreSoftwareLimits(ignoreSWLimits));
           case Voltage -> talonFX.setControl(
               differentialVoltage
-                  .withAverageOutput(target)
+                  .withAverageOutput(average)
                   .withDifferentialPosition(offset)
                   .withDifferentialSlot(differentialSlot)
                   .withLimitReverseMotion(limitRevMotion)
@@ -1406,7 +1479,7 @@ public class SF_TalonFX {
         switch (closedLoopUnits) {
           case Percent -> talonFX.setControl(
               differentialPositionDutyCycle
-                  .withAveragePosition(target)
+                  .withAveragePosition(average)
                   .withDifferentialPosition(offset)
                   .withDifferentialSlot(differentialSlot)
                   .withAverageSlot(activeSlot)
@@ -1416,7 +1489,7 @@ public class SF_TalonFX {
                   .withIgnoreSoftwareLimits(ignoreSWLimits));
           case Voltage -> talonFX.setControl(
               differentialPositionVoltage
-                  .withAveragePosition(target)
+                  .withAveragePosition(average)
                   .withDifferentialPosition(offset)
                   .withDifferentialSlot(differentialSlot)
                   .withAverageSlot(activeSlot)
@@ -1432,7 +1505,7 @@ public class SF_TalonFX {
         switch (openLoopUnits) {
           case Percent -> talonFX.setControl(
               differentialVelocityDutyCycle
-                  .withAverageVelocity(target)
+                  .withAverageVelocity(average)
                   .withDifferentialPosition(offset)
                   .withDifferentialSlot(differentialSlot)
                   .withAverageSlot(activeSlot)
@@ -1442,7 +1515,7 @@ public class SF_TalonFX {
                   .withIgnoreSoftwareLimits(ignoreSWLimits));
           case Voltage -> talonFX.setControl(
               differentialVelocityVoltage
-                  .withAverageVelocity(target)
+                  .withAverageVelocity(average)
                   .withDifferentialPosition(offset)
                   .withDifferentialSlot(differentialSlot)
                   .withAverageSlot(activeSlot)
@@ -1458,7 +1531,7 @@ public class SF_TalonFX {
         switch (openLoopUnits) {
           case Percent -> talonFX.setControl(
               differentialMotionMagicDutyCycle
-                  .withAveragePosition(target)
+                  .withAveragePosition(average)
                   .withDifferentialPosition(offset)
                   .withDifferentialSlot(differentialSlot)
                   .withAverageSlot(activeSlot)
@@ -1468,7 +1541,7 @@ public class SF_TalonFX {
                   .withIgnoreSoftwareLimits(ignoreSWLimits));
           case Voltage -> talonFX.setControl(
               differentialMotionMagicVoltage
-                  .withAveragePosition(target)
+                  .withAveragePosition(average)
                   .withDifferentialPosition(offset)
                   .withDifferentialSlot(differentialSlot)
                   .withAverageSlot(activeSlot)
@@ -1483,14 +1556,21 @@ public class SF_TalonFX {
     }
   }
 
+  /** Force the motor controller into coast mode */
   public void forceCoast() {
     talonFX.setControl(new CoastOut());
   }
 
+  /** Forces the motor controller into brake mode */
   public void forceBrake() {
     talonFX.setControl(new StaticBrake());
   }
 
+  /**
+   * Sets up the motor controller to follow the specified leader
+   *
+   * @param leaderID CAN id of leader talonFX
+   */
   public void setupFollower(int leaderID) {
     this.leaderID = leaderID;
     switch (followerType) {
@@ -1499,6 +1579,11 @@ public class SF_TalonFX {
     }
   }
 
+  /**
+   * Sets up the motor controller to differentially follow the specified leader
+   *
+   * @param leaderID the CAN id of the leader TalonFX
+   */
   public void setupDifferentialFollower(int leaderID) {
     this.leaderID = leaderID;
     switch (followerType) {
@@ -1507,19 +1592,41 @@ public class SF_TalonFX {
     }
   }
 
+  /**
+   * Plays an output tone at specified frequency
+   *
+   * @param freq in Hz
+   */
   public void playTone(double freq) {
     talonFX.setControl(new MusicTone(freq));
   }
 
   // Setters
+
+  /**
+   * Sets the active differential difference slot for differential control requests
+   *
+   * @param slot id 0-2
+   */
   public void setDifferentialSlot(int slot) {
     this.differentialSlot = slot;
   }
 
+  /**
+   * Sets the active slot for closed loop requests
+   *
+   * @param slot id 0-2
+   */
   public void setActiveSlot(int slot) {
     this.activeSlot = slot;
   }
 
+  /**
+   * Updates the stator current config, calls to the configurator and could cause loop overruns
+   *
+   * @param enable true if current limit is enabled
+   * @param limit in A
+   */
   public void setStatorCurrentLimit(boolean enable, double limit) {
     CurrentLimitsConfigs current = talonConfig.CurrentLimits;
     current.withStatorCurrentLimit(limit).withStatorCurrentLimitEnable(enable);
@@ -1527,6 +1634,15 @@ public class SF_TalonFX {
     configurator.apply(current);
   }
 
+  /**
+   * Updates the supply current limit config, calls to the configurator and could cause loop
+   * overruns
+   *
+   * @param enable true if limit is enabled
+   * @param limit in A
+   * @param lowerLimit in A if limit is exceeded for lower time
+   * @param lowerTime in sec
+   */
   public void setSupplyCurrentLimit(
       boolean enable, double limit, double lowerLimit, double lowerTime) {
     CurrentLimitsConfigs current = talonConfig.CurrentLimits;
@@ -1539,11 +1655,22 @@ public class SF_TalonFX {
     configurator.apply(current);
   }
 
+  /**
+   * Applies the supplied current limit config to the motor controller, can cause loop overruns
+   *
+   * @param config specified config ot apply
+   */
   public void setCurrentLimits(CurrentLimitsConfigs config) {
     talonConfig.withCurrentLimits(config);
     configurator.apply(config);
   }
 
+  /**
+   * Turns on/off the hardware limit switch causing motor output to stop, can cause loop overruns
+   *
+   * @param fwdLim true if limit switch should stop fwd output
+   * @param revLim true if limit switch should stop rev output
+   */
   public void enableHardLimits(boolean fwdLim, boolean revLim) {
     HardwareLimitSwitchConfigs config = talonConfig.HardwareLimitSwitch;
     config.withForwardLimitEnable(fwdLim).withReverseLimitEnable(revLim);
@@ -1551,27 +1678,63 @@ public class SF_TalonFX {
     configurator.apply(config);
   }
 
+  /**
+   * Update the limit fwd motion param for control requests to force a limit of fwd output No calls
+   * to configurator - no loop overrun
+   *
+   * @param enable true if should limit
+   */
   public void forceFwdLimit(boolean enable) {
     limitFwdMotion = enable;
   }
 
+  /**
+   * Update the limit rev motion param for control requests to force a limit of rev output No calls
+   * to configurator - no loop overrun
+   *
+   * @param enable true if should limit
+   */
   public void forceRevLimit(boolean enable) {
     limitRevMotion = enable;
   }
 
+  /**
+   * Updates the ignore software limits param for control requests, will cause the motor controller
+   * to ignore ALL soft limits No calls to configurator - no loop overrun
+   *
+   * @param ignore true to ignore limits
+   */
   public void dynamicIgnoreSwLimits(boolean ignore) {
     ignoreSWLimits = ignore;
   }
 
+  /**
+   * Updates the ignore hardware limits param for control requests, will cause the motor controller
+   * to ignore ALL hard limits No calls to configurator - no loop overrun
+   *
+   * @param ignore true to ignore limit
+   */
   public void dynamicIgnoreHwLimits(boolean ignore) {
     ignoreHWlimits = ignore;
   }
 
+  /**
+   * Updates to match suppplied motion magic config - calls to configurator, loop overruns
+   *
+   * @param config supplied config to update to
+   */
   public void setMotionMagicConfigs(MotionMagicConfigs config) {
     talonConfig.withMotionMagic(config);
     configurator.apply(config);
   }
 
+  /**
+   * Updates the peak FWD and peak REV output to the specified values, calls to configurator - loop
+   * overruns
+   *
+   * @param peakFwd new max fwd %
+   * @param peakRev new max rev %
+   */
   public void setPeakOutputPercent(double peakFwd, double peakRev) {
     MotorOutputConfigs motorOut = talonConfig.MotorOutput;
     motorOut.withPeakForwardDutyCycle(peakFwd).withPeakReverseDutyCycle(peakRev);
@@ -1579,6 +1742,13 @@ public class SF_TalonFX {
     configurator.apply(motorOut);
   }
 
+  /**
+   * Updates the peak FWD and peak REV output to the specified values, calls to configurator - loop
+   * overruns
+   *
+   * @param peakFwd new max fwd V
+   * @param peakRev new max rev V
+   */
   public void setPeakOutputVolt(double peakFwd, double peakRev) {
     VoltageConfigs config = talonConfig.Voltage;
     config.withPeakForwardVoltage(peakFwd).withPeakReverseVoltage(peakRev);
@@ -1586,11 +1756,24 @@ public class SF_TalonFX {
     configurator.apply(config);
   }
 
+  /**
+   * Updates the configured soft limits to the specified config, calls to configurator - loop
+   * overruns
+   *
+   * @param config new configuration
+   */
   public void setSoftLimits(SoftwareLimitSwitchConfigs config) {
     talonConfig.withSoftwareLimitSwitch(config);
     configurator.apply(config);
   }
 
+  /**
+   * Changes the enable state of the specified soft limits, calls to the configurator - loop
+   * overruns
+   *
+   * @param enableFwd true if fwd enabled
+   * @param enableRev true if rev enabled
+   */
   public void enableSoftLimits(boolean enableFwd, boolean enableRev) {
     SoftwareLimitSwitchConfigs config = talonConfig.SoftwareLimitSwitch;
     config.withForwardSoftLimitEnable(enableFwd).withReverseSoftLimitEnable(enableRev);
@@ -1598,24 +1781,56 @@ public class SF_TalonFX {
     configurator.apply(config);
   }
 
+  /**
+   * Sets the current position of the motor controller, calls to configurator
+   *
+   * @param position new position in rotations
+   */
   public void setPosition(double position) {
     talonFX.setPosition(position);
   }
 
   // Getters
+
+  /**
+   * Returns the internal TalonFX - avoid using, kept for edge case situations
+   *
+   * @return internal talonFX object
+   */
   public TalonFX getTalonFX() {
     return talonFX;
   }
 
+  /**
+   * Returns the device ID of the motor controller
+   *
+   * @return integer id
+   */
+  public int getDeviceId() {
+    return id;
+  }
+
   // Watchers
+
+  /** Refreshes all registered status signals in one CAN bus call */
   public void refreshRegisteredSignals() {
     BaseStatusSignal.refreshAll(registeredStatusSignals);
   }
 
+  /**
+   * Returns an array of registered status signals
+   *
+   * @return BaseStatusSignal[]
+   */
   public BaseStatusSignal[] getRegisteredSignals() {
     return registeredStatusSignals;
   }
 
+  /**
+   * Adds the supplied signal(s) to the registered status signals
+   *
+   * @param signals list of status signals to register
+   */
   private void registerSignal(BaseStatusSignal... signals) {
     BaseStatusSignal[] newSignals =
         new BaseStatusSignal[registeredStatusSignals.length + signals.length];
@@ -1624,6 +1839,12 @@ public class SF_TalonFX {
     registeredStatusSignals = newSignals;
   }
 
+  /**
+   * Checks if the listed status signal is registered
+   *
+   * @param signal item to check
+   * @return true if registered
+   */
   private boolean isRegistered(BaseStatusSignal signal) {
     for (int i = 0; i < registeredStatusSignals.length; i++) {
       if (registeredStatusSignals[i].getName() == signal.getName()) return true;
@@ -1631,245 +1852,379 @@ public class SF_TalonFX {
     return false;
   }
 
+  /** Adds the Bridge Output to the registered status signals, default update frequency */
   public void registerBridgeOutput() {
     registerBridgeOutput(100.0);
   }
 
+  /**
+   * Adds the Bridge Output to the registered status signals
+   *
+   * @param updateFreq in Hz
+   */
   public void registerBridgeOutput(double updateFreq) {
     updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); // 4Hz = min updating
-    bridgeOutput.setUpdateFrequency(updateFreq);
     bridgeOutput = talonFX.getBridgeOutput();
+    bridgeOutput.setUpdateFrequency(updateFreq);
     registerSignal(bridgeOutput);
   }
 
+  /** Adds the duty cycle to the registered status signals, default update frequency */
   public void registerDutyCycle() {
     registerDutyCycle(100.0);
   }
 
+  /**
+   * Adds the duty cycle to teh registered status signals
+   *
+   * @param updateFreq in Hz
+   */
   public void registerDutyCycle(double updateFreq) {
     updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); // 4Hz = min updating
-    dutyCycle.setUpdateFrequency(updateFreq);
     dutyCycle = talonFX.getDutyCycle();
+    dutyCycle.setUpdateFrequency(updateFreq);
     registerSignal(dutyCycle);
   }
 
+  /** Adds the motor voltage to the registered status signals, default update freq */
   public void registerMotorVoltage() {
     registerMotorVoltage(100.0);
   }
 
+  /**
+   * Adds the motor voltage to the registered status signals
+   *
+   * @param updateFreq in Hz
+   */
   public void registerMotorVoltage(double updateFreq) {
     updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); // 4Hz = min updating
-    motorVolt.setUpdateFrequency(updateFreq);
     motorVolt = talonFX.getMotorVoltage();
+    motorVolt.setUpdateFrequency(updateFreq);
     registerSignal(motorVolt);
   }
 
+  /** Adds the supply voltage to the registered status signals, default update freq */
   public void registerSupplyVoltage() {
     double updateFreq = isFDBus ? 100.0 : 4.0;
     registerSupplyVoltage(updateFreq);
   }
 
+  /**
+   * Adds the supply voltage to the registered status signals
+   *
+   * @param updateFreq in Hz
+   */
   public void registerSupplyVoltage(double updateFreq) {
     updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); // 4Hz = min updating
-    supplyVolt.setUpdateFrequency(updateFreq);
     supplyVolt = talonFX.getSupplyVoltage();
+    supplyVolt.setUpdateFrequency(updateFreq);
     registerSignal(supplyVolt);
   }
 
+  /** Adds the position to the registered status signals, default update freq */
   public void registerPosition() {
     double updateFreq = isFDBus ? 100.0 : 50.0;
     registerPosition(updateFreq);
   }
 
+  /**
+   * Adds the position to the registered status signals
+   *
+   * @param updateFreq in Hz
+   */
   public void registerPosition(double updateFreq) {
     updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); // 4Hz = min updating
-    position.setUpdateFrequency(updateFreq);
     position = talonFX.getPosition();
+    position.setUpdateFrequency(updateFreq);
     registerSignal(position);
   }
 
+  /** Adds the rotor position to the registered status signals, default update freq */
   public void registerRotorPosition() {
     double updateFreq = isFDBus ? 100.0 : 4.0;
     registerRotorPosition(updateFreq);
   }
 
+  /**
+   * Adds the rotor position to the registered status signals
+   *
+   * @param updateFreq in Hz
+   */
   public void registerRotorPosition(double updateFreq) {
     updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); // 4Hz = min updating
-    rotorPos.setUpdateFrequency(updateFreq);
     rotorPos = talonFX.getRotorPosition();
+    rotorPos.setUpdateFrequency(updateFreq);
     registerSignal(rotorPos);
   }
 
+  /** Adds the velocity to the registered status signals, default update freq */
   public void registerVelocity() {
     double updateFreq = isFDBus ? 100.0 : 50.0;
     registerVelocity(updateFreq);
   }
 
+  /**
+   * Adds the velocity to the registered status signals
+   *
+   * @param updateFreq in Hz
+   */
   public void registerVelocity(double updateFreq) {
     updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); // 4Hz = min updating
-    velocity.setUpdateFrequency(updateFreq);
     velocity = talonFX.getVelocity();
+    velocity.setUpdateFrequency(updateFreq);
     registerSignal(velocity);
   }
 
+  /** Adds the rotor velocity to the registered status signals, default update freq */
   public void registerRotorVelocity() {
     double updateFreq = isFDBus ? 100.0 : 4.0;
     registerRotorVelocity(updateFreq);
   }
 
+  /**
+   * Adds the rotor velocity to the registered status signals
+   *
+   * @param updateFreq in Hz
+   */
   public void registerRotorVelocity(double updateFreq) {
     updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); // 4Hz = min updating
-    rotorVelocity.setUpdateFrequency(updateFreq);
     rotorVelocity = talonFX.getRotorVelocity();
+    rotorVelocity.setUpdateFrequency(updateFreq);
     registerSignal(rotorVelocity);
   }
 
+  /** Adds the acceleration to the registered status signals, default update freq */
   public void registerAcceleration() {
     double updateFreq = isFDBus ? 100.0 : 50.0;
     registerAcceleration(updateFreq);
   }
 
+  /**
+   * Adds the acceleration to the registered status signals
+   *
+   * @param updateFreq in Hz
+   */
   public void registerAcceleration(double updateFreq) {
     updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); // 4Hz = min updating
-    acceleration.setUpdateFrequency(updateFreq);
     acceleration = talonFX.getAcceleration();
+    acceleration.setUpdateFrequency(updateFreq);
     registerSignal(acceleration);
   }
 
+  /** Adds the ancillary device temp to the registered status signals, default update freq */
   public void registerAncillaryDeviceTemp() {
     double updateFreq = isFDBus ? 100.0 : 4.0;
     registerAncillaryDeviceTemp(updateFreq);
   }
 
+  /**
+   * Adds the ancillary device temp to the registered status signals
+   *
+   * @param updateFreq in Hz
+   */
   public void registerAncillaryDeviceTemp(double updateFreq) {
     updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); // 4Hz = min updating
-    ancillaryTemp.setUpdateFrequency(updateFreq);
     ancillaryTemp = talonFX.getAncillaryDeviceTemp();
+    ancillaryTemp.setUpdateFrequency(updateFreq);
     registerSignal(ancillaryTemp);
   }
 
+  /** Adds the device temperature to the registered status signals, default update freq */
   public void registerDeviceTemp() {
     double updateFreq = isFDBus ? 100.0 : 4.0;
     registerDeviceTemp(updateFreq);
   }
 
+  /**
+   * Adds the device temperature to the registered status signals
+   *
+   * @param updateFreq in Hz
+   */
   public void registerDeviceTemp(double updateFreq) {
     updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); // 4Hz = min updating
-    deviceTemp.setUpdateFrequency(updateFreq);
     deviceTemp = talonFX.getDeviceTemp();
+    deviceTemp.setUpdateFrequency(updateFreq);
     registerSignal(deviceTemp);
   }
 
+  /** Adds the processor temp to the registered status signals, default update freq */
   public void registerProcessorTemp() {
     double updateFreq = isFDBus ? 100.0 : 4.0;
     registerProcessorTemp(updateFreq);
   }
 
+  /**
+   * Adds the processor temp to the registered status signals
+   *
+   * @param updateFreq in Hz
+   */
   public void registerProcessorTemp(double updateFreq) {
     updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); // 4Hz = min updating
-    processorTemp.setUpdateFrequency(updateFreq);
     processorTemp = talonFX.getProcessorTemp();
+    processorTemp.setUpdateFrequency(updateFreq);
     registerSignal(processorTemp);
   }
 
+  /**
+   * Adds the differential average position to the registered status signals, default update freq
+   */
   public void registerDifferentialAveragePosition() {
     double updateFreq = isFDBus ? 100.0 : 4.0;
     registerDifferentialAveragePosition(updateFreq);
   }
 
+  /**
+   * Adds the differential average position to the registered status signals
+   *
+   * @param updateFreq in Hz
+   */
   public void registerDifferentialAveragePosition(double updateFreq) {
     updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); // 4Hz = min updating
-    diffAvgPos.setUpdateFrequency(updateFreq);
     diffAvgPos = talonFX.getDifferentialAveragePosition();
+    diffAvgPos.setUpdateFrequency(updateFreq);
     registerSignal(diffAvgPos);
   }
 
+  /**
+   * Adds the differential average velocity to the registered status signals, default update freq
+   */
   public void registerDifferentialAverageVelocity() {
     double updateFreq = isFDBus ? 100.0 : 4.0;
     registerDifferentialAverageVelocity(updateFreq);
   }
 
+  /**
+   * Adds the differential average velocity to the registered status signals
+   *
+   * @param updateFreq in Hz
+   */
   public void registerDifferentialAverageVelocity(double updateFreq) {
     updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); // 4Hz = min updating
-    diffAvgVel.setUpdateFrequency(updateFreq);
     diffAvgVel = talonFX.getDifferentialAverageVelocity();
+    diffAvgVel.setUpdateFrequency(updateFreq);
     registerSignal(diffAvgVel);
   }
 
+  /**
+   * Adds the differential difference position to the registered status signals, default update freq
+   */
   public void registerDifferentialDifferencePosition() {
     double updateFreq = isFDBus ? 100.0 : 4.0;
     registerDifferentialDifferencePosition(updateFreq);
   }
 
+  /**
+   * Adds the differential difference position to the registered status signals
+   *
+   * @param updateFreq in Hz
+   */
   public void registerDifferentialDifferencePosition(double updateFreq) {
     updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); // 4Hz = min updating
-    diffDiffPos.setUpdateFrequency(updateFreq);
     diffDiffPos = talonFX.getDifferentialDifferencePosition();
+    diffDiffPos.setUpdateFrequency(updateFreq);
     registerSignal(diffDiffPos);
   }
 
+  /**
+   * Adds the differential difference velocity the registered status signals, default update freq
+   */
   public void registerDifferentialDifferenceVelocity() {
     double updateFreq = isFDBus ? 100.0 : 4.0;
     registerDifferentialDifferenceVelocity(updateFreq);
   }
 
+  /**
+   * Adds the differential difference velocity to the registered status signals
+   *
+   * @param updateFreq in Hz
+   */
   public void registerDifferentialDifferenceVelocity(double updateFreq) {
     updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); // 4Hz = min updating
-    diffDiffVel.setUpdateFrequency(updateFreq);
     diffDiffVel = talonFX.getDifferentialDifferenceVelocity();
+    diffDiffVel.setUpdateFrequency(updateFreq);
     registerSignal(diffDiffVel);
   }
 
+  /** Adds the differential output to the registered status signals, default update freq */
   public void registerDifferentialOutput() {
     registerDifferentialOutput(100.0);
   }
 
+  /**
+   * Adds the differential output to the registered status signals
+   *
+   * @param updateFreq in Hz
+   */
   public void registerDifferentialOutput(double updateFreq) {
     updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); // 4Hz = min updating
-    diffOutput.setUpdateFrequency(updateFreq);
     diffOutput = talonFX.getDifferentialOutput();
+    diffOutput.setUpdateFrequency(updateFreq);
     registerSignal(diffOutput);
   }
 
+  /** Adds the forward limit to the registered status signals, default update freq */
   public void registerForwardLimit() {
     registerForwardLimit(100.0);
   }
 
+  /**
+   * Adds the forward limit to the registered status signals
+   *
+   * @param updateFreq in Hz
+   */
   public void registerForwardLimit(double updateFreq) {
     updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); // 4Hz = min updating
-    fwdLim.setUpdateFrequency(updateFreq);
     fwdLim = talonFX.getForwardLimit();
+    fwdLim.setUpdateFrequency(updateFreq);
     registerSignal(fwdLim);
   }
 
+  /** Adds the reverse limit to the registered status signals, default update freq */
   public void registerReverseLimit() {
     registerReverseLimit(100.0);
   }
 
+  /**
+   * Adds the reverse limit to the registered status signals
+   *
+   * @param updateFreq in Hz
+   */
   public void registerReverseLimit(double updateFreq) {
     updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); // 4Hz = min updating
-    revLim.setUpdateFrequency(updateFreq);
     revLim = talonFX.getReverseLimit();
+    revLim.setUpdateFrequency(updateFreq);
     registerSignal(revLim);
   }
 
+  /** Adds the stator current to the registered status signals, default update freq */
   public void registerStatorCurrent() {
     double updateFreq = isFDBus ? 100.0 : 4.0;
     registerStatorCurrent(updateFreq);
   }
 
+  /**
+   * Adds the stator current to the registered status signals
+   *
+   * @param updateFreq in Hz
+   */
   public void registerStatorCurrent(double updateFreq) {
     updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); // 4Hz = min updating
-    statorCurrent.setUpdateFrequency(updateFreq);
     statorCurrent = talonFX.getStatorCurrent();
+    statorCurrent.setUpdateFrequency(updateFreq);
     registerSignal(statorCurrent);
   }
 
+  /** Adds the supply current to the registered status signals, default update freq */
   public void registerSupplyCurrent() {
     double updateFreq = isFDBus ? 100.0 : 4.0;
     registerSupplyCurrent(updateFreq);
   }
 
+  /**
+   * Adds the supply current to the registered status signals
+   *
+   * @param updateFreq in Hz
+   */
   public void registerSupplyCurrent(double updateFreq) {
     updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); // 4Hz = min updating
     supplyCurrent = talonFX.getSupplyCurrent();
@@ -1877,10 +2232,16 @@ public class SF_TalonFX {
     registerSignal(supplyCurrent);
   }
 
+  /** Adds the torque current to the registered status signals, default update freq */
   public void registerTorqueCurrent() {
     registerTorqueCurrent(100.0);
   }
 
+  /**
+   * Adds the torque current to the registered status signals
+   *
+   * @param updateFreq in Hz
+   */
   public void registerTorqueCurrent(double updateFreq) {
     updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); // 4Hz = min updating
     torqueCurrent = talonFX.getTorqueCurrent();
@@ -1888,11 +2249,17 @@ public class SF_TalonFX {
     registerSignal(torqueCurrent);
   }
 
+  /** Adds the closed loop error to the registered status signals, default update freq */
   public void registerClosedLoopError() {
     double updateFreq = isFDBus ? 100.0 : 4.0;
     registerClosedLoopError(updateFreq);
   }
 
+  /**
+   * Adds the closed loop error to the registered status signals
+   *
+   * @param updateFreq in Hz
+   */
   public void registerClosedLoopError(double updateFreq) {
     updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); // 4Hz = min updating
     closedLoopError = talonFX.getClosedLoopError();
@@ -1900,11 +2267,17 @@ public class SF_TalonFX {
     registerSignal(closedLoopError);
   }
 
+  /** Adds the closed loop P output to the registered status signals, default update freq */
   public void registerClosedLoopProportionalOutput() {
     double updateFreq = isFDBus ? 100.0 : 4.0;
     registerClosedLoopProportionalOutput(updateFreq);
   }
 
+  /**
+   * Adds the closed loop P output to the registered status signals
+   *
+   * @param updateFreq in Hz
+   */
   public void registerClosedLoopProportionalOutput(double updateFreq) {
     updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); // 4Hz = min updating
     closedLoopPout = talonFX.getClosedLoopProportionalOutput();
@@ -1912,11 +2285,17 @@ public class SF_TalonFX {
     registerSignal(closedLoopPout);
   }
 
+  /** Adds the closed loop I output to the registered status signals, default update freq */
   public void registerClosedLoopIntegratedOutput() {
     double updateFreq = isFDBus ? 100.0 : 4.0;
     registerClosedLoopIntegratedOutput(updateFreq);
   }
 
+  /**
+   * Adds the closed loop I output to the registered status signals
+   *
+   * @param updateFreq in Hz
+   */
   public void registerClosedLoopIntegratedOutput(double updateFreq) {
     updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); // 4Hz = min updating
     closedLoopIout = talonFX.getClosedLoopIntegratedOutput();
@@ -1924,11 +2303,17 @@ public class SF_TalonFX {
     registerSignal(closedLoopIout);
   }
 
+  /** Adds the closed loop D output to the registered status signals, default update freq */
   public void registerClosedLoopDerivativeOutput() {
     double updateFreq = isFDBus ? 100.0 : 4.0;
     registerClosedLoopDerivativeOutput(updateFreq);
   }
 
+  /**
+   * Adds the closed loop D output to the registered status signals
+   *
+   * @param updateFreq in Hz
+   */
   public void registerClosedLoopDerivativeOutput(double updateFreq) {
     updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); // 4Hz = min updating
     closedLoopDout = talonFX.getClosedLoopDerivativeOutput();
@@ -1936,11 +2321,17 @@ public class SF_TalonFX {
     registerSignal(closedLoopDout);
   }
 
+  /** Adds the closed loop feed forward to the registered status signals, default update freq */
   public void registerClosedLoopFeedForward() {
     double updateFreq = isFDBus ? 100.0 : 4.0;
     registerClosedLoopFeedForward(updateFreq);
   }
 
+  /**
+   * Adds the closed loop feed forward to the registered status signals
+   *
+   * @param updateFreq in Hz
+   */
   public void registerClosedLoopFeedForward(double updateFreq) {
     updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); // 4Hz = min updating
     closedLoopFF = talonFX.getClosedLoopFeedForward();
@@ -1948,11 +2339,17 @@ public class SF_TalonFX {
     registerSignal(closedLoopFF);
   }
 
+  /** Adds the closed loop output to the registered status signals, default update freq */
   public void registerClosedLoopOutput() {
     double updateFreq = isFDBus ? 100.0 : 4.0;
     registerClosedLoopOutput(updateFreq);
   }
 
+  /**
+   * Adds the closed loop output to the registered status signals
+   *
+   * @param updateFreq in Hz
+   */
   public void registerClosedLoopOutput(double updateFreq) {
     updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); // 4Hz = min updating
     closedLoopOut = talonFX.getClosedLoopOutput();
@@ -1960,11 +2357,19 @@ public class SF_TalonFX {
     registerSignal(closedLoopOut);
   }
 
+  /**
+   * Adds the closed loop reference (setpoint) to the registered status signals, default update freq
+   */
   public void registerClosedLoopReference() {
     double updateFreq = isFDBus ? 100.0 : 4.0;
     registerClosedLoopReference(updateFreq);
   }
 
+  /**
+   * Adds the closed loop reference (setpoint) to the registered status signals
+   *
+   * @param updateFreq in Hz
+   */
   public void registerClosedLoopReference(double updateFreq) {
     updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); // 4Hz = min updating
     closedLoopRef = talonFX.getClosedLoopReference();
@@ -1972,11 +2377,17 @@ public class SF_TalonFX {
     registerSignal(closedLoopRef);
   }
 
+  /** Adds the closed loop reference slope to the registered status signals, default update freq */
   public void registerClosedLoopReferenceSlope() {
     double updateFreq = isFDBus ? 100.0 : 4.0;
     registerClosedLoopReferenceSlope(updateFreq);
   }
 
+  /**
+   * Adds the closed loop reference slope to the registered status signals
+   *
+   * @param updateFreq in Hz
+   */
   public void registerClosedLoopReferenceSlope(double updateFreq) {
     updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); // 4Hz = min updating
     closedLoopRefSlope = talonFX.getClosedLoopReferenceSlope();
@@ -1984,11 +2395,17 @@ public class SF_TalonFX {
     registerSignal(closedLoopRefSlope);
   }
 
+  /** Adds the closed loop slot to the registered status signals, default update freq */
   public void registerClosedLoopSlot() {
     double updateFreq = isFDBus ? 100.0 : 4.0;
     registerClosedLoopSlot(updateFreq);
   }
 
+  /**
+   * Adds the closed loop slot to the registered status signals
+   *
+   * @param updateFreq in Hz
+   */
   public void registerClosedLoopSlot(double updateFreq) {
     updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); // 4Hz = min updating
     closedLoopSlot = talonFX.getClosedLoopSlot();
@@ -1996,11 +2413,19 @@ public class SF_TalonFX {
     registerSignal(closedLoopSlot);
   }
 
+  /**
+   * Adds the differential closed loop error to the registered status signals, default update freq
+   */
   public void registerDifferentialClosedLoopError() {
     double updateFreq = isFDBus ? 100.0 : 4.0;
     registerDifferentialClosedLoopError(updateFreq);
   }
 
+  /**
+   * Adds the differential closed loop error to the registered status signals
+   *
+   * @param updateFreq in Hz
+   */
   public void registerDifferentialClosedLoopError(double updateFreq) {
     updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); // 4Hz = min updating
     closedLoopDiffError = talonFX.getDifferentialClosedLoopError();
@@ -2008,11 +2433,19 @@ public class SF_TalonFX {
     registerSignal(closedLoopDiffError);
   }
 
+  /**
+   * Adds the differential closed loop P out to the registered status signals, default update freq
+   */
   public void registerDifferentialClosedLoopProportionalOutput() {
     double updateFreq = isFDBus ? 100.0 : 4.0;
     registerDifferentialClosedLoopProportionalOutput(updateFreq);
   }
 
+  /**
+   * Adds the differential closed loop P out to the registered status signals
+   *
+   * @param updateFreq in Hz
+   */
   public void registerDifferentialClosedLoopProportionalOutput(double updateFreq) {
     updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); // 4Hz = min updating
     closedLoopDiffPout = talonFX.getDifferentialClosedLoopProportionalOutput();
@@ -2020,10 +2453,18 @@ public class SF_TalonFX {
     registerSignal(closedLoopDiffPout);
   }
 
+  /**
+   * Adds the differential closed loop I out to the registered status signals, default update freq
+   */
   public void registerDifferentialClosedLoopIntegratedOutput() {
     registerDifferentialClosedLoopIntegratedOutput(100.0);
   }
 
+  /**
+   * Adds the differential closed loop I out to the registered status signals
+   *
+   * @param updateFreq in Hz
+   */
   public void registerDifferentialClosedLoopIntegratedOutput(double updateFreq) {
     updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); // 4Hz = min updating
     closedLoopDiffIout = talonFX.getDifferentialClosedLoopIntegratedOutput();
@@ -2031,11 +2472,19 @@ public class SF_TalonFX {
     registerSignal(closedLoopDiffIout);
   }
 
+  /**
+   * Adds the differential closed loop D out to the registered status signals, default update freq
+   */
   public void registerDifferentialClosedLoopDerivativeOutput() {
     double updateFreq = isFDBus ? 100.0 : 4.0;
     registerDifferentialClosedLoopDerivativeOutput(updateFreq);
   }
 
+  /**
+   * Adds the differential closed loop D out to the registered status signals
+   *
+   * @param updateFreq in Hz
+   */
   public void registerDifferentialClosedLoopDerivativeOutput(double updateFreq) {
     updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); // 4Hz = min updating
     closedLoopDiffDout = talonFX.getDifferentialClosedLoopDerivativeOutput();
@@ -2043,10 +2492,19 @@ public class SF_TalonFX {
     registerSignal(closedLoopDiffDout);
   }
 
+  /**
+   * Adds the differential closed loop feed forward to the registered status signals, default update
+   * freq
+   */
   public void registerDifferentialClosedLoopFeedForward() {
     registerDifferentialClosedLoopFeedForward(100.0);
   }
 
+  /**
+   * Adds the differential closed loop feed forward to the registered status signals
+   *
+   * @param updateFreq in Hz
+   */
   public void registerDifferentialClosedLoopFeedForward(double updateFreq) {
     updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); // 4Hz = min updating
     closedLoopDiffFF = talonFX.getDifferentialClosedLoopFeedForward();
@@ -2054,11 +2512,19 @@ public class SF_TalonFX {
     registerSignal(closedLoopDiffFF);
   }
 
+  /**
+   * Adds the differential closed loop output to the registered status signals, default update freq
+   */
   public void registerDifferentialClosedLoopOutput() {
     double updateFreq = isFDBus ? 100.0 : 4.0;
     registerDifferentialClosedLoopOutput(updateFreq);
   }
 
+  /**
+   * Adds the differential closed loop output to the registered status signals
+   *
+   * @param updateFreq in Hz
+   */
   public void registerDifferentialClosedLoopOutput(double updateFreq) {
     updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); // 4Hz = min updating
     closedLoopDiffOut = talonFX.getDifferentialClosedLoopOutput();
@@ -2066,11 +2532,20 @@ public class SF_TalonFX {
     registerSignal(closedLoopDiffOut);
   }
 
+  /**
+   * Adds the differential closed loop reference (setpoint) to the registered status signals,
+   * default update freq
+   */
   public void registerDifferentialClosedLoopReference() {
     double updateFreq = isFDBus ? 100.0 : 4.0;
     registerDifferentialClosedLoopReference(updateFreq);
   }
 
+  /**
+   * Adds the differential closed loop reference (setpoint) to the registered status signals
+   *
+   * @param updateFreq in Hz
+   */
   public void registerDifferentialClosedLoopReference(double updateFreq) {
     updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); // 4Hz = min updating
     closedLoopDiffRef = talonFX.getDifferentialClosedLoopReference();
@@ -2078,11 +2553,20 @@ public class SF_TalonFX {
     registerSignal(closedLoopDiffRef);
   }
 
+  /**
+   * Adds the differential closed loop reference slope to the registered status signals, default
+   * update freq
+   */
   public void registerDifferentialClosedLoopReferenceSlope() {
     double updateFreq = isFDBus ? 100.0 : 4.0;
     registerDifferentialClosedLoopReferenceSlope(updateFreq);
   }
 
+  /**
+   * Adds the differential closed loop reference slope to the registered status signals
+   *
+   * @param updateFreq in Hz
+   */
   public void registerDifferentialClosedLoopReferenceSlope(double updateFreq) {
     updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); // 4Hz = min updating
     closedLoopDiffRefSlope = talonFX.getDifferentialClosedLoopReferenceSlope();
@@ -2090,11 +2574,19 @@ public class SF_TalonFX {
     registerSignal(closedLoopDiffRefSlope);
   }
 
+  /**
+   * Adds the differential closed loop slot to the registered status signals, default update freq
+   */
   public void registerDifferentialClosedLoopSlot() {
     double updateFreq = isFDBus ? 100.0 : 4.0;
     registerDifferentialClosedLoopSlot(updateFreq);
   }
 
+  /**
+   * Adds the differential closed loop slot to the registered status signals
+   *
+   * @param updateFreq in Hz
+   */
   public void registerDifferentialClosedLoopSlot(double updateFreq) {
     updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); // 4Hz = min updating
     closedLoopDiffSlot = talonFX.getDifferentialClosedLoopSlot();
@@ -2102,10 +2594,16 @@ public class SF_TalonFX {
     registerSignal(closedLoopDiffSlot);
   }
 
+  /** Adds the is Pro Licensed to the registered status signals, default update freq */
   public void registerIsProLicensed() {
     registerIsProLicensed(4.0);
   }
 
+  /**
+   * Adds the is Pro Licensed to the registered status signals
+   *
+   * @param updateFreq in Hz
+   */
   public void registerIsProLicensed(double updateFreq) {
     updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); // 4Hz = min updating
     isProLic = talonFX.getIsProLicensed();
@@ -2113,22 +2611,35 @@ public class SF_TalonFX {
     registerSignal(isProLic);
   }
 
+  /** Adds the motion magic is running to the registered status signals, default update freq */
   public void registerMotionMagicIsRunning() {
     double updateFreq = isFDBus ? 100.0 : 4.0;
     registerMotionMagicIsRunning(updateFreq);
   }
 
+  /**
+   * Adds the motion magic is running to the registered status signals
+   *
+   * @param updateFreq in Hz
+   */
   public void registerMotionMagicIsRunning(double updateFreq) {
     updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); // 4Hz = min updating
     mmIsRunning = talonFX.getMotionMagicIsRunning();
+    mmIsRunning.setUpdateFrequency(updateFreq);
     registerSignal(mmIsRunning);
   }
 
+  /** Adds the control mode to the registered status signals, default update freq */
   public void registerControlMode() {
     double updateFreq = isFDBus ? 100.0 : 4.0;
     registerControlMode(updateFreq);
   }
 
+  /**
+   * Adds the control mode to the registered status signals
+   *
+   * @param updateFreq in Hz
+   */
   public void registerControlMode(double updateFreq) {
     updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); // 4Hz = min updating
     controlMode = talonFX.getControlMode();
@@ -2136,10 +2647,16 @@ public class SF_TalonFX {
     registerSignal(controlMode);
   }
 
+  /** Adds the differential control mode to the registered status signals, default update freq */
   public void registerDifferentialControlMode() {
     registerDifferentialControlMode(100.0);
   }
 
+  /**
+   * Adds the differential control mode is running to the registered status signals
+   *
+   * @param updateFreq in Hz
+   */
   public void registerDifferentialControlMode(double updateFreq) {
     updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); // 4Hz = min updating
     diffControlMode = talonFX.getDifferentialControlMode();
@@ -2148,130 +2665,234 @@ public class SF_TalonFX {
   }
 
   // Getters
+
+  /**
+   * @return current bridge output
+   */
   public int getBridgeOutput() {
     return bridgeOutput.getValue().value;
   }
 
+  /**
+   * @return current applied duty cycle in %
+   */
   public double getDutyCycle() {
     return dutyCycle.getValue();
   }
 
+  /**
+   * @return applied motor voltage in volts
+   */
   public double getMotorVoltage() {
     return motorVolt.getValueAsDouble();
   }
 
+  /**
+   * @return measured supply voltage in volts
+   */
   public double getSupplyVoltage() {
     return supplyVolt.getValueAsDouble();
   }
 
+  /**
+   * @return current position in rotations
+   */
   public double getPosition() {
     return position.getValueAsDouble();
   }
 
+  /**
+   * @return status signal for position object
+   */
+  public StatusSignal<Angle> getPositionSig() {
+    return position;
+  }
+
+  /**
+   * @return current rotor position in rotations
+   */
   public double getRotorPosition() {
     return rotorPos.getValueAsDouble();
   }
 
+  /**
+   * @return current velocity in rot/s
+   */
   public double getVelocity() {
     return velocity.getValueAsDouble();
   }
 
+  /**
+   * @return current rotor velocity in rot/s
+   */
   public double getRotorVelocity() {
     return rotorVelocity.getValueAsDouble();
   }
 
+  /**
+   * @return current acceleration in rot/sec^2
+   */
   public double getAcceleration() {
     return acceleration.getValueAsDouble();
   }
 
+  /**
+   * @return ancillary device temperature in celsius
+   */
   public double getAncillaryDeviceTemp() {
     return ancillaryTemp.getValueAsDouble();
   }
 
+  /**
+   * @return current device temp in celsius
+   */
   public double getDeviceTemp() {
     return deviceTemp.getValueAsDouble();
   }
 
+  /**
+   * @return current processor temp in celsius
+   */
   public double getProcessorTemp() {
     return processorTemp.getValueAsDouble();
   }
 
+  /**
+   * @return differential average position in rotations
+   */
   public double getDifferentialAvgPosition() {
     return diffAvgPos.getValueAsDouble();
   }
 
+  /**
+   * @return differential average velocity in rot/s
+   */
   public double getDifferentialAvgVelocity() {
     return diffAvgVel.getValueAsDouble();
   }
 
+  /**
+   * @return differential difference position in rotations
+   */
   public double getDifferentialDiffPosition() {
     return diffDiffPos.getValueAsDouble();
   }
 
+  /**
+   * @return differential difference velocity in rot/s
+   */
   public double getDifferentialDiffVelocity() {
     return diffDiffVel.getValueAsDouble();
   }
 
+  /**
+   * @return differential output in V or %
+   */
   public double getDifferentialOutput() {
     return diffOutput.getValue();
   }
 
+  /**
+   * @return if forward limit switch is closed to ground
+   */
   public boolean isFwdLimitTripped() {
     return fwdLim.getValue() == ForwardLimitValue.ClosedToGround;
   }
 
+  /**
+   * @return if reverse limit is closed to ground
+   */
   public boolean isRevLimitTripped() {
     return revLim.getValue() == ReverseLimitValue.ClosedToGround;
   }
 
+  /**
+   * @return measured stator current in A
+   */
   public double getStatorCurrent() {
     return statorCurrent.getValueAsDouble();
   }
 
+  /**
+   * @return supply current in A
+   */
   public double getSupplyCurrent() {
     return supplyCurrent.getValueAsDouble();
   }
 
+  /**
+   * @return torque current output in A
+   */
   public double getTorqueCurrent() {
     return torqueCurrent.getValueAsDouble();
   }
 
+  /**
+   * @return closed loop error in closed loop units
+   */
   public double getClosedLoopError() {
     return closedLoopError.getValue();
   }
 
+  /**
+   * @return closed loop proportional output in closed loop units
+   */
   public double getClosedLoopProportionalOut() {
     return closedLoopPout.getValue();
   }
 
+  /**
+   * @return closed loop integrated output in closed loop units
+   */
   public double getClosedLoopIntegratedOut() {
     return closedLoopIout.getValue();
   }
 
+  /**
+   * @return closed loop derivative output in closed loop units
+   */
   public double getClosedLoopDerivativeOut() {
     return closedLoopDout.getValue();
   }
 
+  /**
+   * @return closed loop feed forward in closed loop units
+   */
   public double getClosedLoopFeedForward() {
     return closedLoopFF.getValue();
   }
 
+  /**
+   * @return closed loop output in closed loop units
+   */
   public double getClosedLoopOutput() {
     return closedLoopOut.getValue();
   }
 
+  /**
+   * @return closed loop reference (setpoint) in closed loop units
+   */
   public double getClosedLoopReference() {
     return closedLoopRef.getValue();
   }
 
+  /**
+   * @return closed loop reference slope in closed loop units/sec
+   */
   public double getClosedLoopReferenceSlope() {
     return closedLoopRefSlope.getValue();
   }
 
+  /**
+   * @return closed loop slot [0,2]
+   */
   public int getClosedLoopSlot() {
     return closedLoopSlot.getValue();
   }
 
+  /**
+   * @return differential closed loop error in closed loop units
+   */
   public double getDifferentialClosedLoopError() {
     return closedLoopDiffError.getValue();
   }
