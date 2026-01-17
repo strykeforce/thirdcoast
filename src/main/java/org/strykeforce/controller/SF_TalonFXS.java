@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import org.strykeforce.json.JsonTalonFXS;
 
 public class SF_TalonFXS {
   private TalonFXS talonFXS;
@@ -280,28 +281,27 @@ public class SF_TalonFXS {
 
   /** Applies the configs loaded from the JSON file */
   private void applyJsonConfigs() {
-    talonConfig =
-        new TalonFXSConfiguration()
-            .withAudio(config.getAudioConfigs())
-            .withClosedLoopGeneral(config.getClosedLoopGeneralConfigs())
-            .withClosedLoopRamps(config.getClosedLoopRampConfigs())
-            .withCurrentLimits(config.getCurrentLimitConfigs())
-            .withCustomParams(config.getCustomParamConfigs())
-            .withDifferentialConstants(config.getDifferentialConstantsConfig())
-            .withDifferentialSensors(config.getDifferentialSensorConfigs())
-            .withExternalFeedback(config.getExternalFeedbackConfigs())
-            .withHardwareLimitSwitch(config.getHardwareLimitSwitchConfigs())
-            .withMotionMagic(config.getMotionMagicConfigs())
-            .withMotorOutput(config.getMotorOutputConfigs())
-            .withOpenLoopRamps(config.getOpenLoopRampConfigs())
-            .withSlot0(config.getSlot0Configs())
-            .withSlot1(config.getSlot1Configs())
-            .withSlot2(config.getSlot2Configs())
-            .withSoftwareLimitSwitch(config.getSoftwareLimitSwitchConfigs())
-            .withCommutation(config.getCommutationConfigs())
-            .withVoltage(config.getVoltageConfigs())
-            .withExternalTemp(config.getExternalTempConfigs())
-            .withCustomBrushlessMotor(config.getCustomBrushlessMotorConfigs());
+    talonConfig = config.getTalonFXSConfig();
+    //            .withAudio(config.getAudioConfigs())
+    //            .withClosedLoopGeneral(config.getClosedLoopGeneralConfigs())
+    //            .withClosedLoopRamps(config.getClosedLoopRampConfigs())
+    //            .withCurrentLimits(config.getCurrentLimitConfigs())
+    //            .withCustomParams(config.getCustomParamConfigs())
+    //            .withDifferentialConstants(config.getDifferentialConstantsConfig())
+    //            .withDifferentialSensors(config.getDifferentialSensorConfigs())
+    //            .withExternalFeedback(config.getExternalFeedbackConfigs())
+    //            .withHardwareLimitSwitch(config.getHardwareLimitSwitchConfigs())
+    //            .withMotionMagic(config.getMotionMagicConfigs())
+    //            .withMotorOutput(config.getMotorOutputConfigs())
+    //            .withOpenLoopRamps(config.getOpenLoopRampConfigs())
+    //            .withSlot0(config.getSlot0Configs())
+    //            .withSlot1(config.getSlot1Configs())
+    //            .withSlot2(config.getSlot2Configs())
+    //            .withSoftwareLimitSwitch(config.getSoftwareLimitSwitchConfigs())
+    //            .withCommutation(config.getCommutationConfigs())
+    //            .withVoltage(config.getVoltageConfigs())
+    //            .withExternalTemp(config.getExternalTempConfigs())
+    //            .withCustomBrushlessMotor(config.getCustomBrushlessMotorConfigs());
 
     configurator = talonFXS.getConfigurator();
     configurator.apply(talonConfig);
@@ -315,7 +315,7 @@ public class SF_TalonFXS {
     opposeMain = config.getOpposeMain() ? MotorAlignmentValue.Opposed : MotorAlignmentValue.Aligned;
     leaderID = config.getLeaderID();
     //    torqueCurrentDeadband;
-    torqueCurrentMax = config.getTorquecCurrentMax();
+    torqueCurrentMax = config.getTorqueCurrentMax();
     useFOC = config.getActiveFOC();
     closedLoopType = config.getClosedLoopType();
     differentialType = config.getDifferentialType();
@@ -323,9 +323,9 @@ public class SF_TalonFXS {
     ignoreHWlimits = config.getIgnoreHwLimits();
     ignoreSWlimits = config.getIgnoreSwLimits();
     limitFwdMotion = config.getLimitFwdMotion();
-    limitRevMotion = config.getLimRevMotion();
-    overrideNeutral = config.getOverrieNeutral();
-    neutralOutput = config.getMotorOutputConfigs().NeutralMode;
+    limitRevMotion = config.getLimitRevMotion();
+    overrideNeutral = config.getOverrideNeutral();
+    neutralOutput = config.getTalonFXSConfig().MotorOutput.NeutralMode;
   }
 
   /** Initializes all of the control request objects */
@@ -892,27 +892,30 @@ public class SF_TalonFXS {
    */
   public void runOpenLoop(double setpoint) {
     switch (openLoopUnits) {
-      case Percent -> talonFXS.setControl(
-          dutyCycleOut
-              .withOutput(setpoint)
-              .withLimitReverseMotion(limitRevMotion)
-              .withLimitForwardMotion(limitFwdMotion)
-              .withIgnoreHardwareLimits(ignoreHWlimits)
-              .withIgnoreSoftwareLimits(ignoreSWlimits));
-      case Voltage -> talonFXS.setControl(
-          voltageOut
-              .withOutput(setpoint)
-              .withLimitReverseMotion(limitRevMotion)
-              .withLimitForwardMotion(limitFwdMotion)
-              .withIgnoreHardwareLimits(ignoreHWlimits)
-              .withIgnoreSoftwareLimits(ignoreSWlimits));
-      case Torque_Current -> talonFXS.setControl(
-          torqueCurrentFOC
-              .withOutput(setpoint)
-              .withLimitReverseMotion(limitRevMotion)
-              .withLimitForwardMotion(limitFwdMotion)
-              .withIgnoreHardwareLimits(ignoreHWlimits)
-              .withIgnoreSoftwareLimits(ignoreSWlimits));
+      case Percent ->
+          talonFXS.setControl(
+              dutyCycleOut
+                  .withOutput(setpoint)
+                  .withLimitReverseMotion(limitRevMotion)
+                  .withLimitForwardMotion(limitFwdMotion)
+                  .withIgnoreHardwareLimits(ignoreHWlimits)
+                  .withIgnoreSoftwareLimits(ignoreSWlimits));
+      case Voltage ->
+          talonFXS.setControl(
+              voltageOut
+                  .withOutput(setpoint)
+                  .withLimitReverseMotion(limitRevMotion)
+                  .withLimitForwardMotion(limitFwdMotion)
+                  .withIgnoreHardwareLimits(ignoreHWlimits)
+                  .withIgnoreSoftwareLimits(ignoreSWlimits));
+      case Torque_Current ->
+          talonFXS.setControl(
+              torqueCurrentFOC
+                  .withOutput(setpoint)
+                  .withLimitReverseMotion(limitRevMotion)
+                  .withLimitForwardMotion(limitFwdMotion)
+                  .withIgnoreHardwareLimits(ignoreHWlimits)
+                  .withIgnoreSoftwareLimits(ignoreSWlimits));
     }
   }
 
@@ -926,203 +929,224 @@ public class SF_TalonFXS {
     switch (closedLoopType) {
       case Position -> {
         switch (closedLoopUnits) {
-          case Percent -> talonFXS.setControl(
-              positionDutyCycle
-                  .withPosition(setpoint)
-                  .withSlot(activeSlot)
-                  .withLimitReverseMotion(limitRevMotion)
-                  .withLimitForwardMotion(limitFwdMotion)
-                  .withIgnoreHardwareLimits(ignoreHWlimits)
-                  .withIgnoreSoftwareLimits(ignoreSWlimits));
-          case Voltage -> talonFXS.setControl(
-              positionVoltage
-                  .withPosition(setpoint)
-                  .withSlot(activeSlot)
-                  .withLimitReverseMotion(limitRevMotion)
-                  .withLimitForwardMotion(limitFwdMotion)
-                  .withIgnoreHardwareLimits(ignoreHWlimits)
-                  .withIgnoreSoftwareLimits(ignoreSWlimits));
-          case Torque_Current -> talonFXS.setControl(
-              positionTorqueCurrentFOC
-                  .withPosition(setpoint)
-                  .withSlot(activeSlot)
-                  .withLimitReverseMotion(limitRevMotion)
-                  .withLimitForwardMotion(limitFwdMotion)
-                  .withIgnoreHardwareLimits(ignoreHWlimits)
-                  .withIgnoreSoftwareLimits(ignoreSWlimits));
+          case Percent ->
+              talonFXS.setControl(
+                  positionDutyCycle
+                      .withPosition(setpoint)
+                      .withSlot(activeSlot)
+                      .withLimitReverseMotion(limitRevMotion)
+                      .withLimitForwardMotion(limitFwdMotion)
+                      .withIgnoreHardwareLimits(ignoreHWlimits)
+                      .withIgnoreSoftwareLimits(ignoreSWlimits));
+          case Voltage ->
+              talonFXS.setControl(
+                  positionVoltage
+                      .withPosition(setpoint)
+                      .withSlot(activeSlot)
+                      .withLimitReverseMotion(limitRevMotion)
+                      .withLimitForwardMotion(limitFwdMotion)
+                      .withIgnoreHardwareLimits(ignoreHWlimits)
+                      .withIgnoreSoftwareLimits(ignoreSWlimits));
+          case Torque_Current ->
+              talonFXS.setControl(
+                  positionTorqueCurrentFOC
+                      .withPosition(setpoint)
+                      .withSlot(activeSlot)
+                      .withLimitReverseMotion(limitRevMotion)
+                      .withLimitForwardMotion(limitFwdMotion)
+                      .withIgnoreHardwareLimits(ignoreHWlimits)
+                      .withIgnoreSoftwareLimits(ignoreSWlimits));
         }
       }
       case Velocity -> {
         switch (closedLoopUnits) {
-          case Percent -> talonFXS.setControl(
-              velocityDutyCycle
-                  .withVelocity(setpoint)
-                  .withSlot(activeSlot)
-                  .withLimitReverseMotion(limitRevMotion)
-                  .withLimitForwardMotion(limitFwdMotion)
-                  .withIgnoreHardwareLimits(ignoreHWlimits)
-                  .withIgnoreSoftwareLimits(ignoreSWlimits));
-          case Voltage -> talonFXS.setControl(
-              velocityVoltage
-                  .withVelocity(setpoint)
-                  .withSlot(activeSlot)
-                  .withLimitReverseMotion(limitRevMotion)
-                  .withLimitForwardMotion(limitFwdMotion)
-                  .withIgnoreHardwareLimits(ignoreHWlimits)
-                  .withIgnoreSoftwareLimits(ignoreSWlimits));
-          case Torque_Current -> talonFXS.setControl(
-              velocityTorqueCurrentFOC
-                  .withVelocity(setpoint)
-                  .withSlot(activeSlot)
-                  .withLimitReverseMotion(limitRevMotion)
-                  .withLimitForwardMotion(limitFwdMotion)
-                  .withIgnoreHardwareLimits(ignoreHWlimits)
-                  .withIgnoreSoftwareLimits(ignoreSWlimits));
+          case Percent ->
+              talonFXS.setControl(
+                  velocityDutyCycle
+                      .withVelocity(setpoint)
+                      .withSlot(activeSlot)
+                      .withLimitReverseMotion(limitRevMotion)
+                      .withLimitForwardMotion(limitFwdMotion)
+                      .withIgnoreHardwareLimits(ignoreHWlimits)
+                      .withIgnoreSoftwareLimits(ignoreSWlimits));
+          case Voltage ->
+              talonFXS.setControl(
+                  velocityVoltage
+                      .withVelocity(setpoint)
+                      .withSlot(activeSlot)
+                      .withLimitReverseMotion(limitRevMotion)
+                      .withLimitForwardMotion(limitFwdMotion)
+                      .withIgnoreHardwareLimits(ignoreHWlimits)
+                      .withIgnoreSoftwareLimits(ignoreSWlimits));
+          case Torque_Current ->
+              talonFXS.setControl(
+                  velocityTorqueCurrentFOC
+                      .withVelocity(setpoint)
+                      .withSlot(activeSlot)
+                      .withLimitReverseMotion(limitRevMotion)
+                      .withLimitForwardMotion(limitFwdMotion)
+                      .withIgnoreHardwareLimits(ignoreHWlimits)
+                      .withIgnoreSoftwareLimits(ignoreSWlimits));
         }
       }
       case Motion_Magic -> {
         switch (motionMagicType) {
           case Standard -> {
             switch (closedLoopUnits) {
-              case Percent -> talonFXS.setControl(
-                  motionMagicDutyCycle
-                      .withPosition(setpoint)
-                      .withSlot(activeSlot)
-                      .withLimitReverseMotion(limitRevMotion)
-                      .withLimitForwardMotion(limitFwdMotion)
-                      .withIgnoreHardwareLimits(ignoreHWlimits)
-                      .withIgnoreSoftwareLimits(ignoreSWlimits));
-              case Voltage -> talonFXS.setControl(
-                  motionMagicVoltage
-                      .withPosition(setpoint)
-                      .withSlot(activeSlot)
-                      .withLimitReverseMotion(limitRevMotion)
-                      .withLimitForwardMotion(limitFwdMotion)
-                      .withIgnoreHardwareLimits(ignoreHWlimits)
-                      .withIgnoreSoftwareLimits(ignoreSWlimits));
-              case Torque_Current -> talonFXS.setControl(
-                  motionMagicTorqueCurrentFOC
-                      .withPosition(setpoint)
-                      .withSlot(activeSlot)
-                      .withLimitReverseMotion(limitRevMotion)
-                      .withLimitForwardMotion(limitFwdMotion)
-                      .withIgnoreHardwareLimits(ignoreHWlimits)
-                      .withIgnoreSoftwareLimits(ignoreSWlimits));
+              case Percent ->
+                  talonFXS.setControl(
+                      motionMagicDutyCycle
+                          .withPosition(setpoint)
+                          .withSlot(activeSlot)
+                          .withLimitReverseMotion(limitRevMotion)
+                          .withLimitForwardMotion(limitFwdMotion)
+                          .withIgnoreHardwareLimits(ignoreHWlimits)
+                          .withIgnoreSoftwareLimits(ignoreSWlimits));
+              case Voltage ->
+                  talonFXS.setControl(
+                      motionMagicVoltage
+                          .withPosition(setpoint)
+                          .withSlot(activeSlot)
+                          .withLimitReverseMotion(limitRevMotion)
+                          .withLimitForwardMotion(limitFwdMotion)
+                          .withIgnoreHardwareLimits(ignoreHWlimits)
+                          .withIgnoreSoftwareLimits(ignoreSWlimits));
+              case Torque_Current ->
+                  talonFXS.setControl(
+                      motionMagicTorqueCurrentFOC
+                          .withPosition(setpoint)
+                          .withSlot(activeSlot)
+                          .withLimitReverseMotion(limitRevMotion)
+                          .withLimitForwardMotion(limitFwdMotion)
+                          .withIgnoreHardwareLimits(ignoreHWlimits)
+                          .withIgnoreSoftwareLimits(ignoreSWlimits));
             }
           }
           case Velocity -> {
             switch (closedLoopUnits) {
-              case Percent -> talonFXS.setControl(
-                  motionMagicVelocityDutyCycle
-                      .withVelocity(setpoint)
-                      .withSlot(activeSlot)
-                      .withLimitReverseMotion(limitRevMotion)
-                      .withLimitForwardMotion(limitFwdMotion)
-                      .withIgnoreHardwareLimits(ignoreHWlimits)
-                      .withIgnoreSoftwareLimits(ignoreSWlimits));
-              case Voltage -> talonFXS.setControl(
-                  motionMagicVelocityVoltage
-                      .withVelocity(setpoint)
-                      .withSlot(activeSlot)
-                      .withLimitReverseMotion(limitRevMotion)
-                      .withLimitForwardMotion(limitFwdMotion)
-                      .withIgnoreHardwareLimits(ignoreHWlimits)
-                      .withIgnoreSoftwareLimits(ignoreSWlimits));
-              case Torque_Current -> talonFXS.setControl(
-                  motionMagicVelocityTorqueCurrentFOC
-                      .withVelocity(setpoint)
-                      .withSlot(activeSlot)
-                      .withLimitReverseMotion(limitRevMotion)
-                      .withLimitForwardMotion(limitFwdMotion)
-                      .withIgnoreHardwareLimits(ignoreHWlimits)
-                      .withIgnoreSoftwareLimits(ignoreSWlimits));
+              case Percent ->
+                  talonFXS.setControl(
+                      motionMagicVelocityDutyCycle
+                          .withVelocity(setpoint)
+                          .withSlot(activeSlot)
+                          .withLimitReverseMotion(limitRevMotion)
+                          .withLimitForwardMotion(limitFwdMotion)
+                          .withIgnoreHardwareLimits(ignoreHWlimits)
+                          .withIgnoreSoftwareLimits(ignoreSWlimits));
+              case Voltage ->
+                  talonFXS.setControl(
+                      motionMagicVelocityVoltage
+                          .withVelocity(setpoint)
+                          .withSlot(activeSlot)
+                          .withLimitReverseMotion(limitRevMotion)
+                          .withLimitForwardMotion(limitFwdMotion)
+                          .withIgnoreHardwareLimits(ignoreHWlimits)
+                          .withIgnoreSoftwareLimits(ignoreSWlimits));
+              case Torque_Current ->
+                  talonFXS.setControl(
+                      motionMagicVelocityTorqueCurrentFOC
+                          .withVelocity(setpoint)
+                          .withSlot(activeSlot)
+                          .withLimitReverseMotion(limitRevMotion)
+                          .withLimitForwardMotion(limitFwdMotion)
+                          .withIgnoreHardwareLimits(ignoreHWlimits)
+                          .withIgnoreSoftwareLimits(ignoreSWlimits));
             }
           }
           case Exponential -> {
             switch (closedLoopUnits) {
-              case Percent -> talonFXS.setControl(
-                  motionMagicExpoDutyCycle
-                      .withPosition(setpoint)
-                      .withSlot(activeSlot)
-                      .withLimitReverseMotion(limitRevMotion)
-                      .withLimitForwardMotion(limitFwdMotion)
-                      .withIgnoreHardwareLimits(ignoreHWlimits)
-                      .withIgnoreSoftwareLimits(ignoreSWlimits));
-              case Voltage -> talonFXS.setControl(
-                  motionMagicExpoVoltage
-                      .withPosition(setpoint)
-                      .withSlot(activeSlot)
-                      .withLimitReverseMotion(limitRevMotion)
-                      .withLimitForwardMotion(limitFwdMotion)
-                      .withIgnoreHardwareLimits(ignoreHWlimits)
-                      .withIgnoreSoftwareLimits(ignoreSWlimits));
-              case Torque_Current -> talonFXS.setControl(
-                  motionMagicExpoTorqueCurrentFOC
-                      .withPosition(setpoint)
-                      .withSlot(activeSlot)
-                      .withLimitReverseMotion(limitRevMotion)
-                      .withLimitForwardMotion(limitFwdMotion)
-                      .withIgnoreHardwareLimits(ignoreHWlimits)
-                      .withIgnoreSoftwareLimits(ignoreSWlimits));
+              case Percent ->
+                  talonFXS.setControl(
+                      motionMagicExpoDutyCycle
+                          .withPosition(setpoint)
+                          .withSlot(activeSlot)
+                          .withLimitReverseMotion(limitRevMotion)
+                          .withLimitForwardMotion(limitFwdMotion)
+                          .withIgnoreHardwareLimits(ignoreHWlimits)
+                          .withIgnoreSoftwareLimits(ignoreSWlimits));
+              case Voltage ->
+                  talonFXS.setControl(
+                      motionMagicExpoVoltage
+                          .withPosition(setpoint)
+                          .withSlot(activeSlot)
+                          .withLimitReverseMotion(limitRevMotion)
+                          .withLimitForwardMotion(limitFwdMotion)
+                          .withIgnoreHardwareLimits(ignoreHWlimits)
+                          .withIgnoreSoftwareLimits(ignoreSWlimits));
+              case Torque_Current ->
+                  talonFXS.setControl(
+                      motionMagicExpoTorqueCurrentFOC
+                          .withPosition(setpoint)
+                          .withSlot(activeSlot)
+                          .withLimitReverseMotion(limitRevMotion)
+                          .withLimitForwardMotion(limitFwdMotion)
+                          .withIgnoreHardwareLimits(ignoreHWlimits)
+                          .withIgnoreSoftwareLimits(ignoreSWlimits));
             }
           }
           case Dynamic -> {
             DriverStation.reportWarning(
                 "Not supplying enough arguments for Dynamic Motion Magic", false);
             switch (closedLoopUnits) {
-              case Percent -> talonFXS.setControl(
-                  dynamicMotionMagicDutyCycle
-                      .withPosition(setpoint)
-                      .withSlot(activeSlot)
-                      .withLimitReverseMotion(limitRevMotion)
-                      .withLimitForwardMotion(limitFwdMotion)
-                      .withIgnoreHardwareLimits(ignoreHWlimits)
-                      .withIgnoreSoftwareLimits(ignoreSWlimits));
-              case Voltage -> talonFXS.setControl(
-                  dynamicMotionMagicVoltage
-                      .withPosition(setpoint)
-                      .withSlot(activeSlot)
-                      .withLimitReverseMotion(limitRevMotion)
-                      .withLimitForwardMotion(limitFwdMotion)
-                      .withIgnoreHardwareLimits(ignoreHWlimits)
-                      .withIgnoreSoftwareLimits(ignoreSWlimits));
-              case Torque_Current -> talonFXS.setControl(
-                  dynamicMotionMagicTorqueCurrentFOC
-                      .withPosition(setpoint)
-                      .withSlot(activeSlot)
-                      .withLimitReverseMotion(limitRevMotion)
-                      .withLimitForwardMotion(limitFwdMotion)
-                      .withIgnoreHardwareLimits(ignoreHWlimits)
-                      .withIgnoreSoftwareLimits(ignoreSWlimits));
+              case Percent ->
+                  talonFXS.setControl(
+                      dynamicMotionMagicDutyCycle
+                          .withPosition(setpoint)
+                          .withSlot(activeSlot)
+                          .withLimitReverseMotion(limitRevMotion)
+                          .withLimitForwardMotion(limitFwdMotion)
+                          .withIgnoreHardwareLimits(ignoreHWlimits)
+                          .withIgnoreSoftwareLimits(ignoreSWlimits));
+              case Voltage ->
+                  talonFXS.setControl(
+                      dynamicMotionMagicVoltage
+                          .withPosition(setpoint)
+                          .withSlot(activeSlot)
+                          .withLimitReverseMotion(limitRevMotion)
+                          .withLimitForwardMotion(limitFwdMotion)
+                          .withIgnoreHardwareLimits(ignoreHWlimits)
+                          .withIgnoreSoftwareLimits(ignoreSWlimits));
+              case Torque_Current ->
+                  talonFXS.setControl(
+                      dynamicMotionMagicTorqueCurrentFOC
+                          .withPosition(setpoint)
+                          .withSlot(activeSlot)
+                          .withLimitReverseMotion(limitRevMotion)
+                          .withLimitForwardMotion(limitFwdMotion)
+                          .withIgnoreHardwareLimits(ignoreHWlimits)
+                          .withIgnoreSoftwareLimits(ignoreSWlimits));
             }
           }
           case DynamicExponential -> {
             DriverStation.reportWarning(
                 "Not supplying enough arguments for Dynamic Motion Magic", false);
             switch (closedLoopUnits) {
-              case Percent -> talonFXS.setControl(
-                  dynamicMotionMagicExpoDutyCycle
-                      .withPosition(setpoint)
-                      .withLimitReverseMotion(limitRevMotion)
-                      .withLimitForwardMotion(limitFwdMotion)
-                      .withIgnoreHardwareLimits(ignoreHWlimits)
-                      .withIgnoreSoftwareLimits(ignoreSWlimits));
-              case Voltage -> talonFXS.setControl(
-                  dynamicMotionMagicExpoVoltage
-                      .withPosition(setpoint)
-                      .withSlot(activeSlot)
-                      .withLimitReverseMotion(limitRevMotion)
-                      .withLimitForwardMotion(limitFwdMotion)
-                      .withIgnoreHardwareLimits(ignoreHWlimits)
-                      .withIgnoreSoftwareLimits(ignoreSWlimits));
-              case Torque_Current -> talonFXS.setControl(
-                  dynamicMotionMagicExpoTorqueCurrentFOC
-                      .withPosition(setpoint)
-                      .withSlot(activeSlot)
-                      .withLimitReverseMotion(limitRevMotion)
-                      .withLimitForwardMotion(limitFwdMotion)
-                      .withIgnoreHardwareLimits(ignoreHWlimits)
-                      .withIgnoreSoftwareLimits(ignoreSWlimits));
+              case Percent ->
+                  talonFXS.setControl(
+                      dynamicMotionMagicExpoDutyCycle
+                          .withPosition(setpoint)
+                          .withLimitReverseMotion(limitRevMotion)
+                          .withLimitForwardMotion(limitFwdMotion)
+                          .withIgnoreHardwareLimits(ignoreHWlimits)
+                          .withIgnoreSoftwareLimits(ignoreSWlimits));
+              case Voltage ->
+                  talonFXS.setControl(
+                      dynamicMotionMagicExpoVoltage
+                          .withPosition(setpoint)
+                          .withSlot(activeSlot)
+                          .withLimitReverseMotion(limitRevMotion)
+                          .withLimitForwardMotion(limitFwdMotion)
+                          .withIgnoreHardwareLimits(ignoreHWlimits)
+                          .withIgnoreSoftwareLimits(ignoreSWlimits));
+              case Torque_Current ->
+                  talonFXS.setControl(
+                      dynamicMotionMagicExpoTorqueCurrentFOC
+                          .withPosition(setpoint)
+                          .withSlot(activeSlot)
+                          .withLimitReverseMotion(limitRevMotion)
+                          .withLimitForwardMotion(limitFwdMotion)
+                          .withIgnoreHardwareLimits(ignoreHWlimits)
+                          .withIgnoreSoftwareLimits(ignoreSWlimits));
             }
           }
         }
@@ -1142,209 +1166,230 @@ public class SF_TalonFXS {
     switch (closedLoopType) {
       case Position -> {
         switch (closedLoopUnits) {
-          case Percent -> talonFXS.setControl(
-              positionDutyCycle
-                  .withPosition(setpoint)
-                  .withVelocity(secondarySetpoint)
-                  .withSlot(activeSlot)
-                  .withLimitReverseMotion(limitRevMotion)
-                  .withLimitForwardMotion(limitFwdMotion)
-                  .withIgnoreHardwareLimits(ignoreHWlimits)
-                  .withIgnoreSoftwareLimits(ignoreSWlimits));
-          case Voltage -> talonFXS.setControl(
-              positionVoltage
-                  .withPosition(setpoint)
-                  .withVelocity(secondarySetpoint)
-                  .withSlot(activeSlot)
-                  .withLimitReverseMotion(limitRevMotion)
-                  .withLimitForwardMotion(limitFwdMotion)
-                  .withIgnoreHardwareLimits(ignoreHWlimits)
-                  .withIgnoreSoftwareLimits(ignoreSWlimits));
-          case Torque_Current -> talonFXS.setControl(
-              positionTorqueCurrentFOC
-                  .withPosition(setpoint)
-                  .withVelocity(secondarySetpoint)
-                  .withSlot(activeSlot)
-                  .withLimitReverseMotion(limitRevMotion)
-                  .withLimitForwardMotion(limitFwdMotion)
-                  .withIgnoreHardwareLimits(ignoreHWlimits)
-                  .withIgnoreSoftwareLimits(ignoreSWlimits));
+          case Percent ->
+              talonFXS.setControl(
+                  positionDutyCycle
+                      .withPosition(setpoint)
+                      .withVelocity(secondarySetpoint)
+                      .withSlot(activeSlot)
+                      .withLimitReverseMotion(limitRevMotion)
+                      .withLimitForwardMotion(limitFwdMotion)
+                      .withIgnoreHardwareLimits(ignoreHWlimits)
+                      .withIgnoreSoftwareLimits(ignoreSWlimits));
+          case Voltage ->
+              talonFXS.setControl(
+                  positionVoltage
+                      .withPosition(setpoint)
+                      .withVelocity(secondarySetpoint)
+                      .withSlot(activeSlot)
+                      .withLimitReverseMotion(limitRevMotion)
+                      .withLimitForwardMotion(limitFwdMotion)
+                      .withIgnoreHardwareLimits(ignoreHWlimits)
+                      .withIgnoreSoftwareLimits(ignoreSWlimits));
+          case Torque_Current ->
+              talonFXS.setControl(
+                  positionTorqueCurrentFOC
+                      .withPosition(setpoint)
+                      .withVelocity(secondarySetpoint)
+                      .withSlot(activeSlot)
+                      .withLimitReverseMotion(limitRevMotion)
+                      .withLimitForwardMotion(limitFwdMotion)
+                      .withIgnoreHardwareLimits(ignoreHWlimits)
+                      .withIgnoreSoftwareLimits(ignoreSWlimits));
         }
       }
       case Velocity -> {
         switch (closedLoopUnits) {
-          case Percent -> talonFXS.setControl(
-              velocityDutyCycle
-                  .withVelocity(setpoint)
-                  .withAcceleration(secondarySetpoint)
-                  .withSlot(activeSlot)
-                  .withLimitReverseMotion(limitRevMotion)
-                  .withLimitForwardMotion(limitFwdMotion)
-                  .withIgnoreHardwareLimits(ignoreHWlimits)
-                  .withIgnoreSoftwareLimits(ignoreSWlimits));
-          case Voltage -> talonFXS.setControl(
-              velocityVoltage
-                  .withVelocity(setpoint)
-                  .withAcceleration(secondarySetpoint)
-                  .withSlot(activeSlot)
-                  .withLimitReverseMotion(limitRevMotion)
-                  .withLimitForwardMotion(limitFwdMotion)
-                  .withIgnoreHardwareLimits(ignoreHWlimits)
-                  .withIgnoreSoftwareLimits(ignoreSWlimits));
-          case Torque_Current -> talonFXS.setControl(
-              velocityTorqueCurrentFOC
-                  .withVelocity(setpoint)
-                  .withAcceleration(secondarySetpoint)
-                  .withSlot(activeSlot)
-                  .withLimitReverseMotion(limitRevMotion)
-                  .withLimitForwardMotion(limitFwdMotion)
-                  .withIgnoreHardwareLimits(ignoreHWlimits)
-                  .withIgnoreSoftwareLimits(ignoreSWlimits));
+          case Percent ->
+              talonFXS.setControl(
+                  velocityDutyCycle
+                      .withVelocity(setpoint)
+                      .withAcceleration(secondarySetpoint)
+                      .withSlot(activeSlot)
+                      .withLimitReverseMotion(limitRevMotion)
+                      .withLimitForwardMotion(limitFwdMotion)
+                      .withIgnoreHardwareLimits(ignoreHWlimits)
+                      .withIgnoreSoftwareLimits(ignoreSWlimits));
+          case Voltage ->
+              talonFXS.setControl(
+                  velocityVoltage
+                      .withVelocity(setpoint)
+                      .withAcceleration(secondarySetpoint)
+                      .withSlot(activeSlot)
+                      .withLimitReverseMotion(limitRevMotion)
+                      .withLimitForwardMotion(limitFwdMotion)
+                      .withIgnoreHardwareLimits(ignoreHWlimits)
+                      .withIgnoreSoftwareLimits(ignoreSWlimits));
+          case Torque_Current ->
+              talonFXS.setControl(
+                  velocityTorqueCurrentFOC
+                      .withVelocity(setpoint)
+                      .withAcceleration(secondarySetpoint)
+                      .withSlot(activeSlot)
+                      .withLimitReverseMotion(limitRevMotion)
+                      .withLimitForwardMotion(limitFwdMotion)
+                      .withIgnoreHardwareLimits(ignoreHWlimits)
+                      .withIgnoreSoftwareLimits(ignoreSWlimits));
         }
       }
       case Motion_Magic -> {
         switch (motionMagicType) {
           case Standard -> {
             switch (closedLoopUnits) {
-              case Percent -> talonFXS.setControl(
-                  motionMagicDutyCycle
-                      .withPosition(setpoint)
-                      .withSlot(activeSlot)
-                      .withLimitReverseMotion(limitRevMotion)
-                      .withLimitForwardMotion(limitFwdMotion)
-                      .withIgnoreHardwareLimits(ignoreHWlimits)
-                      .withIgnoreSoftwareLimits(ignoreSWlimits));
-              case Voltage -> talonFXS.setControl(
-                  motionMagicVoltage
-                      .withPosition(setpoint)
-                      .withSlot(activeSlot)
-                      .withLimitReverseMotion(limitRevMotion)
-                      .withLimitForwardMotion(limitFwdMotion)
-                      .withIgnoreHardwareLimits(ignoreHWlimits)
-                      .withIgnoreSoftwareLimits(ignoreSWlimits));
-              case Torque_Current -> talonFXS.setControl(
-                  motionMagicTorqueCurrentFOC
-                      .withPosition(setpoint)
-                      .withSlot(activeSlot)
-                      .withLimitReverseMotion(limitRevMotion)
-                      .withLimitForwardMotion(limitFwdMotion)
-                      .withIgnoreHardwareLimits(ignoreHWlimits)
-                      .withIgnoreSoftwareLimits(ignoreSWlimits));
+              case Percent ->
+                  talonFXS.setControl(
+                      motionMagicDutyCycle
+                          .withPosition(setpoint)
+                          .withSlot(activeSlot)
+                          .withLimitReverseMotion(limitRevMotion)
+                          .withLimitForwardMotion(limitFwdMotion)
+                          .withIgnoreHardwareLimits(ignoreHWlimits)
+                          .withIgnoreSoftwareLimits(ignoreSWlimits));
+              case Voltage ->
+                  talonFXS.setControl(
+                      motionMagicVoltage
+                          .withPosition(setpoint)
+                          .withSlot(activeSlot)
+                          .withLimitReverseMotion(limitRevMotion)
+                          .withLimitForwardMotion(limitFwdMotion)
+                          .withIgnoreHardwareLimits(ignoreHWlimits)
+                          .withIgnoreSoftwareLimits(ignoreSWlimits));
+              case Torque_Current ->
+                  talonFXS.setControl(
+                      motionMagicTorqueCurrentFOC
+                          .withPosition(setpoint)
+                          .withSlot(activeSlot)
+                          .withLimitReverseMotion(limitRevMotion)
+                          .withLimitForwardMotion(limitFwdMotion)
+                          .withIgnoreHardwareLimits(ignoreHWlimits)
+                          .withIgnoreSoftwareLimits(ignoreSWlimits));
             }
           }
           case Velocity -> {
             switch (closedLoopUnits) {
-              case Percent -> talonFXS.setControl(
-                  motionMagicVelocityDutyCycle
-                      .withVelocity(setpoint)
-                      .withSlot(activeSlot)
-                      .withLimitReverseMotion(limitRevMotion)
-                      .withLimitForwardMotion(limitFwdMotion)
-                      .withIgnoreHardwareLimits(ignoreHWlimits)
-                      .withIgnoreSoftwareLimits(ignoreSWlimits));
-              case Voltage -> talonFXS.setControl(
-                  motionMagicVelocityVoltage
-                      .withVelocity(setpoint)
-                      .withSlot(activeSlot)
-                      .withLimitReverseMotion(limitRevMotion)
-                      .withLimitForwardMotion(limitFwdMotion)
-                      .withIgnoreHardwareLimits(ignoreHWlimits)
-                      .withIgnoreSoftwareLimits(ignoreSWlimits));
-              case Torque_Current -> talonFXS.setControl(
-                  motionMagicVelocityTorqueCurrentFOC
-                      .withVelocity(setpoint)
-                      .withSlot(activeSlot)
-                      .withLimitReverseMotion(limitRevMotion)
-                      .withLimitForwardMotion(limitFwdMotion)
-                      .withIgnoreHardwareLimits(ignoreHWlimits)
-                      .withIgnoreSoftwareLimits(ignoreSWlimits));
+              case Percent ->
+                  talonFXS.setControl(
+                      motionMagicVelocityDutyCycle
+                          .withVelocity(setpoint)
+                          .withSlot(activeSlot)
+                          .withLimitReverseMotion(limitRevMotion)
+                          .withLimitForwardMotion(limitFwdMotion)
+                          .withIgnoreHardwareLimits(ignoreHWlimits)
+                          .withIgnoreSoftwareLimits(ignoreSWlimits));
+              case Voltage ->
+                  talonFXS.setControl(
+                      motionMagicVelocityVoltage
+                          .withVelocity(setpoint)
+                          .withSlot(activeSlot)
+                          .withLimitReverseMotion(limitRevMotion)
+                          .withLimitForwardMotion(limitFwdMotion)
+                          .withIgnoreHardwareLimits(ignoreHWlimits)
+                          .withIgnoreSoftwareLimits(ignoreSWlimits));
+              case Torque_Current ->
+                  talonFXS.setControl(
+                      motionMagicVelocityTorqueCurrentFOC
+                          .withVelocity(setpoint)
+                          .withSlot(activeSlot)
+                          .withLimitReverseMotion(limitRevMotion)
+                          .withLimitForwardMotion(limitFwdMotion)
+                          .withIgnoreHardwareLimits(ignoreHWlimits)
+                          .withIgnoreSoftwareLimits(ignoreSWlimits));
             }
           }
           case Exponential -> {
             switch (closedLoopUnits) {
-              case Percent -> talonFXS.setControl(
-                  motionMagicExpoDutyCycle
-                      .withPosition(setpoint)
-                      .withSlot(activeSlot)
-                      .withLimitReverseMotion(limitRevMotion)
-                      .withLimitForwardMotion(limitFwdMotion)
-                      .withIgnoreHardwareLimits(ignoreHWlimits)
-                      .withIgnoreSoftwareLimits(ignoreSWlimits));
-              case Voltage -> talonFXS.setControl(
-                  motionMagicExpoVoltage
-                      .withPosition(setpoint)
-                      .withSlot(activeSlot)
-                      .withLimitReverseMotion(limitRevMotion)
-                      .withLimitForwardMotion(limitFwdMotion)
-                      .withIgnoreHardwareLimits(ignoreHWlimits)
-                      .withIgnoreSoftwareLimits(ignoreSWlimits));
-              case Torque_Current -> talonFXS.setControl(
-                  motionMagicExpoTorqueCurrentFOC
-                      .withPosition(setpoint)
-                      .withSlot(activeSlot)
-                      .withLimitReverseMotion(limitRevMotion)
-                      .withLimitForwardMotion(limitFwdMotion)
-                      .withIgnoreHardwareLimits(ignoreHWlimits)
-                      .withIgnoreSoftwareLimits(ignoreSWlimits));
+              case Percent ->
+                  talonFXS.setControl(
+                      motionMagicExpoDutyCycle
+                          .withPosition(setpoint)
+                          .withSlot(activeSlot)
+                          .withLimitReverseMotion(limitRevMotion)
+                          .withLimitForwardMotion(limitFwdMotion)
+                          .withIgnoreHardwareLimits(ignoreHWlimits)
+                          .withIgnoreSoftwareLimits(ignoreSWlimits));
+              case Voltage ->
+                  talonFXS.setControl(
+                      motionMagicExpoVoltage
+                          .withPosition(setpoint)
+                          .withSlot(activeSlot)
+                          .withLimitReverseMotion(limitRevMotion)
+                          .withLimitForwardMotion(limitFwdMotion)
+                          .withIgnoreHardwareLimits(ignoreHWlimits)
+                          .withIgnoreSoftwareLimits(ignoreSWlimits));
+              case Torque_Current ->
+                  talonFXS.setControl(
+                      motionMagicExpoTorqueCurrentFOC
+                          .withPosition(setpoint)
+                          .withSlot(activeSlot)
+                          .withLimitReverseMotion(limitRevMotion)
+                          .withLimitForwardMotion(limitFwdMotion)
+                          .withIgnoreHardwareLimits(ignoreHWlimits)
+                          .withIgnoreSoftwareLimits(ignoreSWlimits));
             }
           }
           case Dynamic -> {
             DriverStation.reportWarning(
                 "Not supplying enough arguments for Dynamic Motion Magic", false);
             switch (closedLoopUnits) {
-              case Percent -> talonFXS.setControl(
-                  dynamicMotionMagicDutyCycle
-                      .withPosition(setpoint)
-                      .withSlot(activeSlot)
-                      .withLimitReverseMotion(limitRevMotion)
-                      .withLimitForwardMotion(limitFwdMotion)
-                      .withIgnoreHardwareLimits(ignoreHWlimits)
-                      .withIgnoreSoftwareLimits(ignoreSWlimits));
-              case Voltage -> talonFXS.setControl(
-                  dynamicMotionMagicVoltage
-                      .withPosition(setpoint)
-                      .withSlot(activeSlot)
-                      .withLimitReverseMotion(limitRevMotion)
-                      .withLimitForwardMotion(limitFwdMotion)
-                      .withIgnoreHardwareLimits(ignoreHWlimits)
-                      .withIgnoreSoftwareLimits(ignoreSWlimits));
-              case Torque_Current -> talonFXS.setControl(
-                  dynamicMotionMagicTorqueCurrentFOC
-                      .withPosition(setpoint)
-                      .withSlot(activeSlot)
-                      .withLimitReverseMotion(limitRevMotion)
-                      .withLimitForwardMotion(limitFwdMotion)
-                      .withIgnoreHardwareLimits(ignoreHWlimits)
-                      .withIgnoreSoftwareLimits(ignoreSWlimits));
+              case Percent ->
+                  talonFXS.setControl(
+                      dynamicMotionMagicDutyCycle
+                          .withPosition(setpoint)
+                          .withSlot(activeSlot)
+                          .withLimitReverseMotion(limitRevMotion)
+                          .withLimitForwardMotion(limitFwdMotion)
+                          .withIgnoreHardwareLimits(ignoreHWlimits)
+                          .withIgnoreSoftwareLimits(ignoreSWlimits));
+              case Voltage ->
+                  talonFXS.setControl(
+                      dynamicMotionMagicVoltage
+                          .withPosition(setpoint)
+                          .withSlot(activeSlot)
+                          .withLimitReverseMotion(limitRevMotion)
+                          .withLimitForwardMotion(limitFwdMotion)
+                          .withIgnoreHardwareLimits(ignoreHWlimits)
+                          .withIgnoreSoftwareLimits(ignoreSWlimits));
+              case Torque_Current ->
+                  talonFXS.setControl(
+                      dynamicMotionMagicTorqueCurrentFOC
+                          .withPosition(setpoint)
+                          .withSlot(activeSlot)
+                          .withLimitReverseMotion(limitRevMotion)
+                          .withLimitForwardMotion(limitFwdMotion)
+                          .withIgnoreHardwareLimits(ignoreHWlimits)
+                          .withIgnoreSoftwareLimits(ignoreSWlimits));
             }
           }
           case DynamicExponential -> {
             DriverStation.reportWarning(
                 "Not supplying enough arguments for Dynamic Motion Magic", false);
             switch (closedLoopUnits) {
-              case Percent -> talonFXS.setControl(
-                  dynamicMotionMagicExpoDutyCycle
-                      .withPosition(setpoint)
-                      .withLimitReverseMotion(limitRevMotion)
-                      .withLimitForwardMotion(limitFwdMotion)
-                      .withIgnoreHardwareLimits(ignoreHWlimits)
-                      .withIgnoreSoftwareLimits(ignoreSWlimits));
-              case Voltage -> talonFXS.setControl(
-                  dynamicMotionMagicExpoVoltage
-                      .withPosition(setpoint)
-                      .withSlot(activeSlot)
-                      .withLimitReverseMotion(limitRevMotion)
-                      .withLimitForwardMotion(limitFwdMotion)
-                      .withIgnoreHardwareLimits(ignoreHWlimits)
-                      .withIgnoreSoftwareLimits(ignoreSWlimits));
-              case Torque_Current -> talonFXS.setControl(
-                  dynamicMotionMagicExpoTorqueCurrentFOC
-                      .withPosition(setpoint)
-                      .withSlot(activeSlot)
-                      .withLimitReverseMotion(limitRevMotion)
-                      .withLimitForwardMotion(limitFwdMotion)
-                      .withIgnoreHardwareLimits(ignoreHWlimits)
-                      .withIgnoreSoftwareLimits(ignoreSWlimits));
+              case Percent ->
+                  talonFXS.setControl(
+                      dynamicMotionMagicExpoDutyCycle
+                          .withPosition(setpoint)
+                          .withLimitReverseMotion(limitRevMotion)
+                          .withLimitForwardMotion(limitFwdMotion)
+                          .withIgnoreHardwareLimits(ignoreHWlimits)
+                          .withIgnoreSoftwareLimits(ignoreSWlimits));
+              case Voltage ->
+                  talonFXS.setControl(
+                      dynamicMotionMagicExpoVoltage
+                          .withPosition(setpoint)
+                          .withSlot(activeSlot)
+                          .withLimitReverseMotion(limitRevMotion)
+                          .withLimitForwardMotion(limitFwdMotion)
+                          .withIgnoreHardwareLimits(ignoreHWlimits)
+                          .withIgnoreSoftwareLimits(ignoreSWlimits));
+              case Torque_Current ->
+                  talonFXS.setControl(
+                      dynamicMotionMagicExpoTorqueCurrentFOC
+                          .withPosition(setpoint)
+                          .withSlot(activeSlot)
+                          .withLimitReverseMotion(limitRevMotion)
+                          .withLimitForwardMotion(limitFwdMotion)
+                          .withIgnoreHardwareLimits(ignoreHWlimits)
+                          .withIgnoreSoftwareLimits(ignoreSWlimits));
             }
           }
         }
@@ -1363,39 +1408,42 @@ public class SF_TalonFXS {
   public void runDynamicMotionMagic(
       double position, double velocity, double acceleration, double jerk) {
     switch (closedLoopUnits) {
-      case Percent -> talonFXS.setControl(
-          dynamicMotionMagicDutyCycle
-              .withPosition(position)
-              .withVelocity(velocity)
-              .withAcceleration(acceleration)
-              .withJerk(jerk)
-              .withSlot(activeSlot)
-              .withLimitReverseMotion(limitRevMotion)
-              .withLimitForwardMotion(limitFwdMotion)
-              .withIgnoreHardwareLimits(ignoreHWlimits)
-              .withIgnoreSoftwareLimits(ignoreSWlimits));
-      case Voltage -> talonFXS.setControl(
-          dynamicMotionMagicVoltage
-              .withPosition(position)
-              .withVelocity(velocity)
-              .withAcceleration(acceleration)
-              .withJerk(jerk)
-              .withSlot(activeSlot)
-              .withLimitReverseMotion(limitRevMotion)
-              .withLimitForwardMotion(limitFwdMotion)
-              .withIgnoreHardwareLimits(ignoreHWlimits)
-              .withIgnoreSoftwareLimits(ignoreSWlimits));
-      case Torque_Current -> talonFXS.setControl(
-          dynamicMotionMagicTorqueCurrentFOC
-              .withPosition(position)
-              .withVelocity(velocity)
-              .withAcceleration(acceleration)
-              .withJerk(jerk)
-              .withSlot(activeSlot)
-              .withLimitReverseMotion(limitRevMotion)
-              .withLimitForwardMotion(limitFwdMotion)
-              .withIgnoreHardwareLimits(ignoreHWlimits)
-              .withIgnoreSoftwareLimits(ignoreSWlimits));
+      case Percent ->
+          talonFXS.setControl(
+              dynamicMotionMagicDutyCycle
+                  .withPosition(position)
+                  .withVelocity(velocity)
+                  .withAcceleration(acceleration)
+                  .withJerk(jerk)
+                  .withSlot(activeSlot)
+                  .withLimitReverseMotion(limitRevMotion)
+                  .withLimitForwardMotion(limitFwdMotion)
+                  .withIgnoreHardwareLimits(ignoreHWlimits)
+                  .withIgnoreSoftwareLimits(ignoreSWlimits));
+      case Voltage ->
+          talonFXS.setControl(
+              dynamicMotionMagicVoltage
+                  .withPosition(position)
+                  .withVelocity(velocity)
+                  .withAcceleration(acceleration)
+                  .withJerk(jerk)
+                  .withSlot(activeSlot)
+                  .withLimitReverseMotion(limitRevMotion)
+                  .withLimitForwardMotion(limitFwdMotion)
+                  .withIgnoreHardwareLimits(ignoreHWlimits)
+                  .withIgnoreSoftwareLimits(ignoreSWlimits));
+      case Torque_Current ->
+          talonFXS.setControl(
+              dynamicMotionMagicTorqueCurrentFOC
+                  .withPosition(position)
+                  .withVelocity(velocity)
+                  .withAcceleration(acceleration)
+                  .withJerk(jerk)
+                  .withSlot(activeSlot)
+                  .withLimitReverseMotion(limitRevMotion)
+                  .withLimitForwardMotion(limitFwdMotion)
+                  .withIgnoreHardwareLimits(ignoreHWlimits)
+                  .withIgnoreSoftwareLimits(ignoreSWlimits));
     }
   }
 
@@ -1409,39 +1457,42 @@ public class SF_TalonFXS {
    */
   public void runDynamicMotionMagicExpo(double position, double kV, double kA, double velocity) {
     switch (closedLoopUnits) {
-      case Percent -> talonFXS.setControl(
-          dynamicMotionMagicExpoDutyCycle
-              .withPosition(position)
-              .withKV(kV)
-              .withKA(kA)
-              .withVelocity(velocity)
-              .withSlot(activeSlot)
-              .withLimitReverseMotion(limitRevMotion)
-              .withLimitForwardMotion(limitFwdMotion)
-              .withIgnoreHardwareLimits(ignoreHWlimits)
-              .withIgnoreSoftwareLimits(ignoreSWlimits));
-      case Voltage -> talonFXS.setControl(
-          dynamicMotionMagicExpoVoltage
-              .withPosition(position)
-              .withKV(kV)
-              .withKA(kA)
-              .withVelocity(velocity)
-              .withSlot(activeSlot)
-              .withLimitReverseMotion(limitRevMotion)
-              .withLimitForwardMotion(limitFwdMotion)
-              .withIgnoreHardwareLimits(ignoreHWlimits)
-              .withIgnoreSoftwareLimits(ignoreSWlimits));
-      case Torque_Current -> talonFXS.setControl(
-          dynamicMotionMagicExpoTorqueCurrentFOC
-              .withPosition(position)
-              .withKV(kV)
-              .withKA(kA)
-              .withVelocity(velocity)
-              .withSlot(activeSlot)
-              .withLimitReverseMotion(limitRevMotion)
-              .withLimitForwardMotion(limitFwdMotion)
-              .withIgnoreHardwareLimits(ignoreHWlimits)
-              .withIgnoreSoftwareLimits(ignoreSWlimits));
+      case Percent ->
+          talonFXS.setControl(
+              dynamicMotionMagicExpoDutyCycle
+                  .withPosition(position)
+                  .withKV(kV)
+                  .withKA(kA)
+                  .withVelocity(velocity)
+                  .withSlot(activeSlot)
+                  .withLimitReverseMotion(limitRevMotion)
+                  .withLimitForwardMotion(limitFwdMotion)
+                  .withIgnoreHardwareLimits(ignoreHWlimits)
+                  .withIgnoreSoftwareLimits(ignoreSWlimits));
+      case Voltage ->
+          talonFXS.setControl(
+              dynamicMotionMagicExpoVoltage
+                  .withPosition(position)
+                  .withKV(kV)
+                  .withKA(kA)
+                  .withVelocity(velocity)
+                  .withSlot(activeSlot)
+                  .withLimitReverseMotion(limitRevMotion)
+                  .withLimitForwardMotion(limitFwdMotion)
+                  .withIgnoreHardwareLimits(ignoreHWlimits)
+                  .withIgnoreSoftwareLimits(ignoreSWlimits));
+      case Torque_Current ->
+          talonFXS.setControl(
+              dynamicMotionMagicExpoTorqueCurrentFOC
+                  .withPosition(position)
+                  .withKV(kV)
+                  .withKA(kA)
+                  .withVelocity(velocity)
+                  .withSlot(activeSlot)
+                  .withLimitReverseMotion(limitRevMotion)
+                  .withLimitForwardMotion(limitFwdMotion)
+                  .withIgnoreHardwareLimits(ignoreHWlimits)
+                  .withIgnoreSoftwareLimits(ignoreSWlimits));
     }
   }
 
@@ -1455,111 +1506,124 @@ public class SF_TalonFXS {
     switch (differentialType) {
       case Follower -> {
         switch (followerType) {
-          case Standard -> talonFXS.setControl(
-              differentialFollower.withLeaderID(leaderID).withMotorAlignment(opposeMain));
+          case Standard ->
+              talonFXS.setControl(
+                  differentialFollower.withLeaderID(leaderID).withMotorAlignment(opposeMain));
           case Strict -> talonFXS.setControl(differentialStrictFollower.withLeaderID(leaderID));
         }
       }
       case Open_Loop -> {
         switch (openLoopUnits) {
-          case Percent -> talonFXS.setControl(
-              differentialDutyCycle
-                  .withAverageOutput(average)
-                  .withDifferentialPosition(offset)
-                  .withDifferentialSlot(differentialSlot)
-                  .withLimitReverseMotion(limitRevMotion)
-                  .withLimitForwardMotion(limitFwdMotion)
-                  .withIgnoreHardwareLimits(ignoreHWlimits)
-                  .withIgnoreSoftwareLimits(ignoreSWlimits));
-          case Voltage -> talonFXS.setControl(
-              differentialVoltage
-                  .withAverageOutput(average)
-                  .withDifferentialPosition(offset)
-                  .withDifferentialSlot(differentialSlot)
-                  .withLimitReverseMotion(limitRevMotion)
-                  .withLimitForwardMotion(limitFwdMotion)
-                  .withIgnoreHardwareLimits(ignoreHWlimits)
-                  .withIgnoreSoftwareLimits(ignoreSWlimits));
-          case Torque_Current -> DriverStation.reportError(
-              "Invalid Control Type: Differential Torque Current FOC", false);
+          case Percent ->
+              talonFXS.setControl(
+                  differentialDutyCycle
+                      .withAverageOutput(average)
+                      .withDifferentialPosition(offset)
+                      .withDifferentialSlot(differentialSlot)
+                      .withLimitReverseMotion(limitRevMotion)
+                      .withLimitForwardMotion(limitFwdMotion)
+                      .withIgnoreHardwareLimits(ignoreHWlimits)
+                      .withIgnoreSoftwareLimits(ignoreSWlimits));
+          case Voltage ->
+              talonFXS.setControl(
+                  differentialVoltage
+                      .withAverageOutput(average)
+                      .withDifferentialPosition(offset)
+                      .withDifferentialSlot(differentialSlot)
+                      .withLimitReverseMotion(limitRevMotion)
+                      .withLimitForwardMotion(limitFwdMotion)
+                      .withIgnoreHardwareLimits(ignoreHWlimits)
+                      .withIgnoreSoftwareLimits(ignoreSWlimits));
+          case Torque_Current ->
+              DriverStation.reportError(
+                  "Invalid Control Type: Differential Torque Current FOC", false);
         }
       }
       case Position -> {
         switch (closedLoopUnits) {
-          case Percent -> talonFXS.setControl(
-              differentialPositionDutyCycle
-                  .withAveragePosition(average)
-                  .withDifferentialPosition(offset)
-                  .withDifferentialSlot(differentialSlot)
-                  .withAverageSlot(activeSlot)
-                  .withLimitReverseMotion(limitRevMotion)
-                  .withLimitForwardMotion(limitFwdMotion)
-                  .withIgnoreHardwareLimits(ignoreHWlimits)
-                  .withIgnoreSoftwareLimits(ignoreSWlimits));
-          case Voltage -> talonFXS.setControl(
-              differentialPositionVoltage
-                  .withAveragePosition(average)
-                  .withDifferentialPosition(offset)
-                  .withDifferentialSlot(differentialSlot)
-                  .withAverageSlot(activeSlot)
-                  .withLimitReverseMotion(limitRevMotion)
-                  .withLimitForwardMotion(limitFwdMotion)
-                  .withIgnoreHardwareLimits(ignoreHWlimits)
-                  .withIgnoreSoftwareLimits(ignoreSWlimits));
-          case Torque_Current -> DriverStation.reportError(
-              "Invalid Control Type: Differential Position Torque Current FOC", false);
+          case Percent ->
+              talonFXS.setControl(
+                  differentialPositionDutyCycle
+                      .withAveragePosition(average)
+                      .withDifferentialPosition(offset)
+                      .withDifferentialSlot(differentialSlot)
+                      .withAverageSlot(activeSlot)
+                      .withLimitReverseMotion(limitRevMotion)
+                      .withLimitForwardMotion(limitFwdMotion)
+                      .withIgnoreHardwareLimits(ignoreHWlimits)
+                      .withIgnoreSoftwareLimits(ignoreSWlimits));
+          case Voltage ->
+              talonFXS.setControl(
+                  differentialPositionVoltage
+                      .withAveragePosition(average)
+                      .withDifferentialPosition(offset)
+                      .withDifferentialSlot(differentialSlot)
+                      .withAverageSlot(activeSlot)
+                      .withLimitReverseMotion(limitRevMotion)
+                      .withLimitForwardMotion(limitFwdMotion)
+                      .withIgnoreHardwareLimits(ignoreHWlimits)
+                      .withIgnoreSoftwareLimits(ignoreSWlimits));
+          case Torque_Current ->
+              DriverStation.reportError(
+                  "Invalid Control Type: Differential Position Torque Current FOC", false);
         }
       }
       case Velocity -> {
         switch (openLoopUnits) {
-          case Percent -> talonFXS.setControl(
-              differentialVelocityDutyCycle
-                  .withAverageVelocity(average)
-                  .withDifferentialPosition(offset)
-                  .withDifferentialSlot(differentialSlot)
-                  .withAverageSlot(activeSlot)
-                  .withLimitReverseMotion(limitRevMotion)
-                  .withLimitForwardMotion(limitFwdMotion)
-                  .withIgnoreHardwareLimits(ignoreHWlimits)
-                  .withIgnoreSoftwareLimits(ignoreSWlimits));
-          case Voltage -> talonFXS.setControl(
-              differentialVelocityVoltage
-                  .withAverageVelocity(average)
-                  .withDifferentialPosition(offset)
-                  .withDifferentialSlot(differentialSlot)
-                  .withAverageSlot(activeSlot)
-                  .withLimitReverseMotion(limitRevMotion)
-                  .withLimitForwardMotion(limitFwdMotion)
-                  .withIgnoreHardwareLimits(ignoreHWlimits)
-                  .withIgnoreSoftwareLimits(ignoreSWlimits));
-          case Torque_Current -> DriverStation.reportError(
-              "Invalid Control Type: Differential Velocity Torque Current FOC", false);
+          case Percent ->
+              talonFXS.setControl(
+                  differentialVelocityDutyCycle
+                      .withAverageVelocity(average)
+                      .withDifferentialPosition(offset)
+                      .withDifferentialSlot(differentialSlot)
+                      .withAverageSlot(activeSlot)
+                      .withLimitReverseMotion(limitRevMotion)
+                      .withLimitForwardMotion(limitFwdMotion)
+                      .withIgnoreHardwareLimits(ignoreHWlimits)
+                      .withIgnoreSoftwareLimits(ignoreSWlimits));
+          case Voltage ->
+              talonFXS.setControl(
+                  differentialVelocityVoltage
+                      .withAverageVelocity(average)
+                      .withDifferentialPosition(offset)
+                      .withDifferentialSlot(differentialSlot)
+                      .withAverageSlot(activeSlot)
+                      .withLimitReverseMotion(limitRevMotion)
+                      .withLimitForwardMotion(limitFwdMotion)
+                      .withIgnoreHardwareLimits(ignoreHWlimits)
+                      .withIgnoreSoftwareLimits(ignoreSWlimits));
+          case Torque_Current ->
+              DriverStation.reportError(
+                  "Invalid Control Type: Differential Velocity Torque Current FOC", false);
         }
       }
       case Motion_Magic -> {
         switch (openLoopUnits) {
-          case Percent -> talonFXS.setControl(
-              differentialMotionMagicDutyCycle
-                  .withAveragePosition(average)
-                  .withDifferentialPosition(offset)
-                  .withDifferentialSlot(differentialSlot)
-                  .withAverageSlot(activeSlot)
-                  .withLimitReverseMotion(limitRevMotion)
-                  .withLimitForwardMotion(limitFwdMotion)
-                  .withIgnoreHardwareLimits(ignoreHWlimits)
-                  .withIgnoreSoftwareLimits(ignoreSWlimits));
-          case Voltage -> talonFXS.setControl(
-              differentialMotionMagicVoltage
-                  .withAveragePosition(average)
-                  .withDifferentialPosition(offset)
-                  .withDifferentialSlot(differentialSlot)
-                  .withAverageSlot(activeSlot)
-                  .withLimitReverseMotion(limitRevMotion)
-                  .withLimitForwardMotion(limitFwdMotion)
-                  .withIgnoreHardwareLimits(ignoreHWlimits)
-                  .withIgnoreSoftwareLimits(ignoreSWlimits));
-          case Torque_Current -> DriverStation.reportError(
-              "Invalid Control Type: Differential Motion Magic Torque Current FOC", false);
+          case Percent ->
+              talonFXS.setControl(
+                  differentialMotionMagicDutyCycle
+                      .withAveragePosition(average)
+                      .withDifferentialPosition(offset)
+                      .withDifferentialSlot(differentialSlot)
+                      .withAverageSlot(activeSlot)
+                      .withLimitReverseMotion(limitRevMotion)
+                      .withLimitForwardMotion(limitFwdMotion)
+                      .withIgnoreHardwareLimits(ignoreHWlimits)
+                      .withIgnoreSoftwareLimits(ignoreSWlimits));
+          case Voltage ->
+              talonFXS.setControl(
+                  differentialMotionMagicVoltage
+                      .withAveragePosition(average)
+                      .withDifferentialPosition(offset)
+                      .withDifferentialSlot(differentialSlot)
+                      .withAverageSlot(activeSlot)
+                      .withLimitReverseMotion(limitRevMotion)
+                      .withLimitForwardMotion(limitFwdMotion)
+                      .withIgnoreHardwareLimits(ignoreHWlimits)
+                      .withIgnoreSoftwareLimits(ignoreSWlimits));
+          case Torque_Current ->
+              DriverStation.reportError(
+                  "Invalid Control Type: Differential Motion Magic Torque Current FOC", false);
         }
       }
     }

@@ -4,8 +4,7 @@ import com.ctre.phoenix6.configs.*;
 import com.ctre.phoenix6.signals.*;
 import edu.wpi.first.math.MathUtil;
 
-public class JsonTalonFXS {
-
+public class JsonTalonFX_Java {
   // Audio
   private boolean allowMusicDuringDisable = false;
   private boolean beepOnBoot = true;
@@ -22,11 +21,6 @@ public class JsonTalonFXS {
   private double voltageClosedLoopRampPeriod = 0; // seconds
   private double torqueCurrentClosedLoopRampPeriod = 0; // seconds
 
-  // Commutation
-  private boolean advancedHallSupport = false;
-  private String brushedMotorWiring = "Leads_A_and_B";
-  private String motorArrangement = "Disabled";
-
   // Current Limit
   private double statorCurrentLimit = 120; // A
   private boolean statorCurrentLimitEnable = true;
@@ -34,14 +28,6 @@ public class JsonTalonFXS {
   private boolean supplyCurrentLimitEnable = true;
   private double supplyCurrentLowerLimit = 40; // A
   private double supplyCurrentLowerTime = 1; // seconds
-
-  // Custom Brushless Motor
-  private boolean hallCCWselect = false;
-  private boolean hallDirection = false;
-  private int hallDuringAB = 0;
-  private int hallDuringAC = 0;
-  private double motorkV = 500.0;
-  private int polePairCount = 1;
 
   // Custom
   private int customParam0 = 0;
@@ -58,22 +44,13 @@ public class JsonTalonFXS {
   private int differentialRemoteSensorID = 0;
   private double sensorToDiffRatio = 1.0;
 
-  // External Feedback
-  private double absSensorDiscontinuity = 0.5;
-  private double absSensorOffset = 0;
-  private String externalFeedbackSource = "Commutation";
-  private int feedbackRemoteSensorID = 0;
-  private int quadEdgesPerRot = 4096;
-  private double rotorToSensorRatio = 1;
-  private String sensorPhase = "Aligned";
+  // Feedback
+  private double feedbackRotorOffset = 0; // rotations
   private double sensorToMechanismRatio = 1;
+  private int feedbackRemoteSensorID = 0;
+  private String feedbackSensorSource = "RotorSensor";
+  private double rotorToSensorRatio = 1;
   private double velocityFilterTimeConstant = 0; // seconds
-
-  // External Temperature
-  private String tempSensorRequired = "Required";
-  private double thermistorBeta = 0.0; // K
-  private double thermistorMaxTemperature = 0.0; // C
-  private double thermistorR0 = 0.0; // kOhm
 
   // Future Proof
   private boolean futureProofConfigs = true;
@@ -157,6 +134,11 @@ public class JsonTalonFXS {
   private boolean reverseSoftLimitEnable = false;
   private double reverseSoftLimitThreshold = 0; // rotations
 
+  // Torque Current
+  private double peakForwardTorqueCurrent = 800; // A
+  private double peakReverseTorqueCurrent = -800; // A
+  private double torqueCurrentNeutralDeadband = 0; // A
+
   // Voltage
   private double peakForwardVoltage = 16; // V
   private double peakReverseVoltage = -16; // V
@@ -238,31 +220,6 @@ public class JsonTalonFXS {
         .withTorqueClosedLoopRampPeriod(torqueCurrentClosedLoopRampPeriod);
   }
 
-  public CommutationConfigs getCommutationConfigs() {
-    AdvancedHallSupportValue hallSupport = AdvancedHallSupportValue.Disabled;
-    if (advancedHallSupport) hallSupport = AdvancedHallSupportValue.Enabled;
-
-    BrushedMotorWiringValue brushWiring = BrushedMotorWiringValue.Leads_A_and_B;
-    if (brushedMotorWiring.equals("Leads_A_and_C"))
-      brushWiring = BrushedMotorWiringValue.Leads_A_and_C;
-    else if (brushedMotorWiring.equals("Leads_B_and_C"))
-      brushWiring = BrushedMotorWiringValue.Leads_B_and_C;
-
-    MotorArrangementValue arrange = MotorArrangementValue.Disabled;
-    if (motorArrangement.equals("Minion_JST")) arrange = MotorArrangementValue.Minion_JST;
-    else if (motorArrangement.equals("Brushed_DC")) arrange = MotorArrangementValue.Brushed_DC;
-    else if (motorArrangement.equals("NEO_JST")) arrange = MotorArrangementValue.NEO_JST;
-    else if (motorArrangement.equals("NEO550_JST")) arrange = MotorArrangementValue.NEO550_JST;
-    else if (motorArrangement.equals("VORTEX_JST")) arrange = MotorArrangementValue.VORTEX_JST;
-    else if (motorArrangement.equals("CustomBrushless"))
-      arrange = MotorArrangementValue.CustomBrushless;
-
-    return new CommutationConfigs()
-        .withAdvancedHallSupport(hallSupport)
-        .withBrushedMotorWiring(brushWiring)
-        .withMotorArrangement(arrange);
-  }
-
   public CurrentLimitsConfigs getCurrentLimitConfigs() {
     statorCurrentLimit = MathUtil.clamp(statorCurrentLimit, 0.0, 800.0);
     supplyCurrentLimit = MathUtil.clamp(supplyCurrentLimit, 0.0, 800.0);
@@ -275,20 +232,6 @@ public class JsonTalonFXS {
         .withSupplyCurrentLimitEnable(supplyCurrentLimitEnable)
         .withSupplyCurrentLowerLimit(supplyCurrentLowerLimit)
         .withSupplyCurrentLowerTime(supplyCurrentLowerTime);
-  }
-
-  public CustomBrushlessMotorConfigs getCustomBrushlessMotorConfigs() {
-    hallDuringAB = MathUtil.clamp(hallDuringAB, 0, 6);
-    hallDuringAC = MathUtil.clamp(hallDuringAC, 0, 6);
-    motorkV = MathUtil.clamp(motorkV, 0.0, 2047.0);
-    polePairCount = MathUtil.clamp(polePairCount, 1, 8);
-    return new CustomBrushlessMotorConfigs()
-        .withHallCCWSelect(hallCCWselect)
-        .withHallDirection(hallDirection)
-        .withHallDuringAB(hallDuringAB)
-        .withHallDuringAC(hallDuringAC)
-        .withMotorKv(motorkV)
-        .withPolePairCount(polePairCount);
   }
 
   public CustomParamsConfigs getCustomParamConfigs() {
@@ -337,78 +280,50 @@ public class JsonTalonFXS {
         .withSensorToDifferentialRatio(sensorToDiffRatio);
   }
 
-  public ExternalFeedbackConfigs getExternalFeedbackConfigs() {
-    ExternalFeedbackSensorSourceValue sensorSource = ExternalFeedbackSensorSourceValue.Commutation;
-    if (externalFeedbackSource.equals("FusedCANcoder"))
-      sensorSource = ExternalFeedbackSensorSourceValue.FusedCANcoder;
-    else if (externalFeedbackSource.equals("FusedCANdiPWM1"))
-      sensorSource = ExternalFeedbackSensorSourceValue.FusedCANdiPWM1;
-    else if (externalFeedbackSource.equals("FusedCANdiPWM2"))
-      sensorSource = ExternalFeedbackSensorSourceValue.FusedCANdiPWM2;
-    else if (externalFeedbackSource.equals("FusedCANdiQuadrature"))
-      sensorSource = ExternalFeedbackSensorSourceValue.FusedCANdiQuadrature;
-    else if (externalFeedbackSource.equals("PulseWidth"))
-      sensorSource = ExternalFeedbackSensorSourceValue.PulseWidth;
-    else if (externalFeedbackSource.equals("Quadrature"))
-      sensorSource = ExternalFeedbackSensorSourceValue.Quadrature;
-    else if (externalFeedbackSource.equals("RemoteCANcoder"))
-      sensorSource = ExternalFeedbackSensorSourceValue.RemoteCANcoder;
-    else if (externalFeedbackSource.equals("RemoteCANdiPWM1"))
-      sensorSource = ExternalFeedbackSensorSourceValue.RemoteCANdiPWM1;
-    else if (externalFeedbackSource.equals("RemoteCANdiPWM2"))
-      sensorSource = ExternalFeedbackSensorSourceValue.RemoteCANdiPWM2;
-    else if (externalFeedbackSource.equals("RemoteCANdiQuadrature"))
-      sensorSource = ExternalFeedbackSensorSourceValue.RemoteCANdiQuadrature;
-    else if (externalFeedbackSource.equals("RemotePigeon2Roll"))
-      sensorSource = ExternalFeedbackSensorSourceValue.RemotePigeon2Roll;
-    else if (externalFeedbackSource.equals("RemotePigeon2Pitch"))
-      sensorSource = ExternalFeedbackSensorSourceValue.RemotePigeon2Pitch;
-    else if (externalFeedbackSource.equals("RemotePigeon2Yaw"))
-      sensorSource = ExternalFeedbackSensorSourceValue.RemotePigeon2Yaw;
-    else if (externalFeedbackSource.equals("SyncCANcoder"))
-      sensorSource = ExternalFeedbackSensorSourceValue.SyncCANcoder;
-    else if (externalFeedbackSource.equals("SyncCANdiPWM1"))
-      sensorSource = ExternalFeedbackSensorSourceValue.SyncCANdiPWM1;
-    else if (externalFeedbackSource.equals("SyncCANdiPWM2"))
-      sensorSource = ExternalFeedbackSensorSourceValue.SyncCANdiPWM2;
+  public FeedbackConfigs getFeedbackConfigs() {
+    FeedbackSensorSourceValue sensorSource = FeedbackSensorSourceValue.RotorSensor;
+    if (feedbackSensorSource.equals("RemoteCANcoder"))
+      sensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
+    else if (feedbackSensorSource.equals("RemotePigeon2Yaw"))
+      sensorSource = FeedbackSensorSourceValue.RemotePigeon2Yaw;
+    else if (feedbackSensorSource.equals("RemotePigeon2Pitch"))
+      sensorSource = FeedbackSensorSourceValue.RemotePigeon2Pitch;
+    else if (feedbackSensorSource.equals("RemotePigeon2Roll"))
+      sensorSource = FeedbackSensorSourceValue.RemotePigeon2Roll;
+    else if (feedbackSensorSource.equals("FusedCANcoder"))
+      sensorSource = FeedbackSensorSourceValue.FusedCANcoder;
+    else if (feedbackSensorSource.equals("SyncCANcoder"))
+      sensorSource = FeedbackSensorSourceValue.SyncCANcoder;
+    else if (feedbackSensorSource.equals("RemoteCANdiPWM1"))
+      sensorSource = FeedbackSensorSourceValue.RemoteCANdiPWM1;
+    else if (feedbackSensorSource.equals("RemoteCANdiPWM2"))
+      sensorSource = FeedbackSensorSourceValue.RemoteCANdiPWM2;
+    else if (feedbackSensorSource.equals("RemoteCANdiQuadrature"))
+      sensorSource = FeedbackSensorSourceValue.RemoteCANdiQuadrature;
+    else if (feedbackSensorSource.equals("FusedCANdiPWM1"))
+      sensorSource = FeedbackSensorSourceValue.FusedCANdiPWM1;
+    else if (feedbackSensorSource.equals("FusedCANdiPWM2"))
+      sensorSource = FeedbackSensorSourceValue.FusedCANdiPWM2;
+    else if (feedbackSensorSource.equals("FusedCANdiQuadrature"))
+      sensorSource = FeedbackSensorSourceValue.FusedCANdiQuadrature;
+    else if (feedbackSensorSource.equals("SyncCANdiPWM1"))
+      sensorSource = FeedbackSensorSourceValue.SyncCANdiPWM1;
+    else if (feedbackSensorSource.equals("SyncCANdiPWM2"))
+      sensorSource = FeedbackSensorSourceValue.SyncCANdiPWM2;
 
-    SensorPhaseValue phase = SensorPhaseValue.Aligned;
-    if (sensorPhase.equals("Opposed")) phase = SensorPhaseValue.Opposed;
-
-    absSensorDiscontinuity = MathUtil.clamp(absSensorDiscontinuity, 0.0, 1.0);
-    quadEdgesPerRot = MathUtil.clamp(quadEdgesPerRot, 1, 1000000);
-    absSensorOffset = MathUtil.clamp(absSensorOffset, -1.0, 1.0);
-    velocityFilterTimeConstant = MathUtil.clamp(velocityFilterTimeConstant, 0.0, 1.0);
-    feedbackRemoteSensorID = MathUtil.clamp(feedbackRemoteSensorID, 0, 62);
-    rotorToSensorRatio = MathUtil.clamp(rotorToSensorRatio, -1000.0, 1000.0);
+    feedbackRotorOffset = MathUtil.clamp(feedbackRotorOffset, -1.0, 1.0);
     sensorToMechanismRatio = MathUtil.clamp(sensorToMechanismRatio, -1000.0, 1000.0);
+    rotorToSensorRatio = MathUtil.clamp(rotorToSensorRatio, -1000.0, 1000.0);
+    feedbackRemoteSensorID = MathUtil.clamp(feedbackRemoteSensorID, 0, 62);
+    velocityFilterTimeConstant = MathUtil.clamp(velocityFilterTimeConstant, 0.0, 1.0);
 
-    return new ExternalFeedbackConfigs()
-        .withAbsoluteSensorDiscontinuityPoint(absSensorDiscontinuity)
-        .withAbsoluteSensorOffset(absSensorOffset)
-        .withExternalFeedbackSensorSource(sensorSource)
-        .withFeedbackRemoteSensorID(feedbackRemoteSensorID)
-        .withQuadratureEdgesPerRotation(quadEdgesPerRot)
-        .withRotorToSensorRatio(rotorToSensorRatio)
-        .withSensorPhase(phase)
+    return new FeedbackConfigs()
+        .withFeedbackRotorOffset(feedbackRotorOffset)
         .withSensorToMechanismRatio(sensorToMechanismRatio)
+        .withFeedbackRemoteSensorID(feedbackRemoteSensorID)
+        .withFeedbackSensorSource(sensorSource)
+        .withRotorToSensorRatio(rotorToSensorRatio)
         .withVelocityFilterTimeConstant(velocityFilterTimeConstant);
-  }
-
-  public ExternalTempConfigs getExternalTempConfigs() {
-    TempSensorRequiredValue sensorNeeded = TempSensorRequiredValue.Required;
-    if (tempSensorRequired.equals("Not_Required"))
-      sensorNeeded = TempSensorRequiredValue.Not_Required;
-
-    thermistorBeta = MathUtil.clamp(thermistorBeta, 0.0, 8000.0);
-    thermistorMaxTemperature = MathUtil.clamp(thermistorMaxTemperature, 0.0, 150.0);
-    thermistorR0 = MathUtil.clamp(thermistorR0, 0.0, 400.0);
-
-    return new ExternalTempConfigs()
-        .withTempSensorRequired(sensorNeeded)
-        .withThermistorBeta(thermistorBeta)
-        .withThermistorMaxTemperature(thermistorMaxTemperature)
-        .withThermistorR0(thermistorR0);
   }
 
   public boolean getFutureProofConfigs() {
@@ -637,7 +552,7 @@ public class JsonTalonFXS {
         .withKS(slot2kS)
         .withKV(slot2kV)
         .withStaticFeedforwardSign(feedFwdSign)
-        .withGravityArmPositionOffset(slot2GravityArmPositionOffset)
+        .withGravityArmPositionOffset(slot1GravityArmPositionOffset)
         .withGainSchedBehavior(schedBehave);
   }
 
@@ -650,6 +565,17 @@ public class JsonTalonFXS {
         .withForwardSoftLimitThreshold(forwardSoftLimitThreshold)
         .withReverseSoftLimitEnable(reverseSoftLimitEnable)
         .withReverseSoftLimitThreshold(reverseSoftLimitThreshold);
+  }
+
+  public TorqueCurrentConfigs getTorqueCurrentConfigs() {
+    peakForwardTorqueCurrent = MathUtil.clamp(peakForwardTorqueCurrent, -800.0, 800.0);
+    peakReverseTorqueCurrent = MathUtil.clamp(peakReverseTorqueCurrent, -800.0, 800.0);
+    torqueCurrentNeutralDeadband = MathUtil.clamp(torqueCurrentNeutralDeadband, 0.0, 25.0);
+
+    return new TorqueCurrentConfigs()
+        .withPeakForwardTorqueCurrent(peakForwardTorqueCurrent)
+        .withPeakReverseTorqueCurrent(peakReverseTorqueCurrent)
+        .withTorqueNeutralDeadband(torqueCurrentNeutralDeadband);
   }
 
   public VoltageConfigs getVoltageConfigs() {

@@ -6,9 +6,9 @@ import okio.BufferedSource
 
 interface Postable {
 
-    fun endpoint(baseUrl: String): HttpUrl
+  fun endpoint(baseUrl: String): HttpUrl
 
-    fun asRequestBody(): RequestBody
+  fun asRequestBody(): RequestBody
 
-    fun <T : Postable> fromJson(source: BufferedSource): T
+  fun <T : Postable> fromJson(source: BufferedSource): T
 }

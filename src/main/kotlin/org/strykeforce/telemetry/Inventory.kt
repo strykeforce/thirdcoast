@@ -1,15 +1,16 @@
 package org.strykeforce.telemetry
 
+import java.io.IOException
 import okio.BufferedSink
 import org.strykeforce.telemetry.measurable.Measurable
-import java.io.IOException
 
-/** Represents the inventory of robot hardware and subsystems that can have telemetry streaming.  */
+/** Represents the inventory of robot hardware and subsystems that can have telemetry streaming. */
 interface Inventory {
 
   /**
-   * Gets a measurable item by its inventory ID. The inventory ID is an index to a measurable item in inventory and
-   * should **not** be confused with the device ID of the underlying device the `Measurable` represents.
+   * Gets a measurable item by its inventory ID. The inventory ID is an index to a measurable item
+   * in inventory and should **not** be confused with the device ID of the underlying device the
+   * `Measurable` represents.
    *
    * @param index the inventory ID to look up.
    * @return the found Measurable item.
@@ -22,7 +23,5 @@ interface Inventory {
    * @param sink the sink to write to.
    * @throws IOException if an IO error occurs during writing.
    */
-  @Throws(IOException::class)
-  fun writeInventory(sink: BufferedSink)
-
+  @Throws(IOException::class) fun writeInventory(sink: BufferedSink)
 }

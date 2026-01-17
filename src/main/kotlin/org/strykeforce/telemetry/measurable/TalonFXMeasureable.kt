@@ -4,9 +4,8 @@ import com.ctre.phoenix6.hardware.TalonFX
 import org.strykeforce.telemetry.measurable.Measurable
 import org.strykeforce.telemetry.measurable.Measure
 import org.strykeforce.telemetry.measurable.toDouble
-import kotlin.concurrent.timerTask
 
-//Device Status
+// Device Status
 internal const val ACCELERATION = "ACCELERATION"
 internal const val ACCEL_SCALE = "ACCEL_SCALE"
 internal const val BRIDGE_OUTPUT = "BRIDGE_OUTPUT"
@@ -40,7 +39,7 @@ internal const val TORQUE_CURRENT = "TORQUE_CURRENT"
 internal const val VELOCITY = "VELOCITY"
 internal const val VEL_SCALE = "VEL_SCALE"
 
-//PID
+// PID
 internal const val CLOSED_LOOP_D_OUTPUT = "CLOSED_LOOP_D_OUTPUT"
 internal const val CLOSED_LOOP_ERROR = "CLOSED_LOOP_ERROR"
 internal const val CLOSED_LOOP_FEED_FWD = "CLOSED_LOOP_FEED_FWD"
@@ -60,7 +59,6 @@ internal const val DIFF_CLOSED_LOOP_REF = "DIFF_CLOSED_LOOP_REF"
 internal const val DIFF_CLOSED_LOOP_REF_SLOPE = "DIFF_CLOSED_LOOP_REF_SLOPE"
 internal const val DIFF_CLOSED_LOOP_SLOT = "DIFF_CLOSED_LOOP_SLOT"
 
-
 internal const val APPLIED_ROTOR_POLARITY = "APPLIED_ROTOR_POLARITY"
 internal const val BRIDGE_OUTPUT_COAST = "BRIDGE_OUTPUT_COAST"
 internal const val BRIDGE_OUTPUT_BRAKE = "BRIDGE_OUTPUT_BRAKE"
@@ -72,7 +70,6 @@ internal const val BRIDGE_OUTPUT_FAULT_BRAKE = "BRIDGE_OUTPUT_FAULT_BRAKE"
 internal const val BRIDGE_OUTPUT_FAULT_COAST = "BRIDGE_OUTPUT_FAULT_COAST"
 internal const val CONTROL_MODE = "CONTROL_MODE"
 internal const val DEVICE_ENABLE = "DEVICE_ENABLE"
-
 
 internal const val SIM_STATE = "SIM_STATE"
 internal const val VERSION = "VERSION"
@@ -86,78 +83,130 @@ internal const val IS_ALIVE = "IS_ALIVE"
 internal const val IS_SAFETY_ENABLED = "IS_SAFETY_ENABLED"
 internal const val CLOSED_LOOP_TARGET = "CLOSED_LOOP_TARGET"
 
+class TalonFXMeasureable
+@JvmOverloads
+constructor(
+  private val talonFX: TalonFX,
+  override val description: String = "TalonFX ${talonFX.deviceID}",
+) : Measurable {
 
+  val scaleFactor = 1000.0
 
-class TalonFXMeasureable @JvmOverloads constructor(
-    private val talonFX: TalonFX,
-    override val description: String = "TalonFX ${talonFX.deviceID}"
-): Measurable {
+  override val deviceId = talonFX.deviceID
+  override val measures =
+    setOf(
+      Measure(ACCELERATION, "Acceleration") { talonFX.acceleration.valueAsDouble },
+      Measure(ACCEL_SCALE, "Accel. scaled") { talonFX.acceleration.valueAsDouble * scaleFactor },
+      Measure(BRIDGE_OUTPUT, "Bridge Output") { talonFX.bridgeOutput.valueAsDouble },
+      Measure(DEVICE_TEMP, "Device Temperature C") { talonFX.deviceTemp.valueAsDouble },
+      Measure(DIFF_AVG_POS, "Differential Avg Position") {
+        talonFX.differentialAveragePosition.valueAsDouble
+      },
+      Measure(DIFF_AVG_POS_SCALE, "Diff Avg Pos scaled") {
+        talonFX.differentialAveragePosition.valueAsDouble * scaleFactor
+      },
+      Measure(DIFF_AVG_VEL, "Differential Avg Velocity") {
+        talonFX.differentialAverageVelocity.valueAsDouble
+      },
+      Measure(DIFF_AVG_VEL_SCALE, "Diff Avg Vel scaled") {
+        talonFX.differentialAverageVelocity.valueAsDouble * scaleFactor
+      },
+      Measure(DIFF_DIFF_POS, "Differential Difference Position") {
+        talonFX.differentialDifferencePosition.valueAsDouble
+      },
+      Measure(DIFF_DIFF_POS_SCALE, "Diff Diff Pos scaled") {
+        talonFX.differentialDifferencePosition.valueAsDouble * scaleFactor
+      },
+      Measure(DIFF_DIFF_VEL, "Differential Difference Velocity") {
+        talonFX.differentialDifferenceVelocity.valueAsDouble
+      },
+      Measure(DIFF_DIFF_VEL_SCALE, "Diff Diff Vel scale") {
+        talonFX.differentialDifferenceVelocity.valueAsDouble * scaleFactor
+      },
+      Measure(DUTY_CYCLE, "Applied Duty Cycle") { talonFX.dutyCycle.value },
+      Measure(FWD_LIM, "Forward Limit Switch Closed") { talonFX.forwardLimit.valueAsDouble },
+      Measure(IS_PRO_LIC, "Is Pro Licensed") { talonFX.isProLicensed.valueAsDouble },
+      Measure(IS_MM_RUNNING, "Motion Magic Running") { talonFX.motionMagicIsRunning.valueAsDouble },
+      Measure(MOTOR_VOLTAGE, "Motor Voltage") { talonFX.motorVoltage.valueAsDouble },
+      Measure(POSITION, "Position") { talonFX.position.valueAsDouble },
+      Measure(POS_SCALE, "Pos. scaled") { talonFX.position.valueAsDouble * scaleFactor },
+      Measure(PROCESSOR_TEMP, "Processor Temp") { talonFX.processorTemp.valueAsDouble },
+      Measure(HAS_RESET_OCCURRED, "Has Reset Occurred") { talonFX.hasResetOccurred().toDouble() },
+      Measure(REV_LIM, "Reverse Limit Switch Closed") { talonFX.reverseLimit.valueAsDouble },
+      Measure(ROTOR_POS, "Rotor Position") { talonFX.rotorPosition.valueAsDouble },
+      Measure(ROTOR_POS_SCALE, "Rotor Pos scaled") {
+        talonFX.rotorPosition.valueAsDouble * scaleFactor
+      },
+      Measure(ROTOR_VEL, "Rotor Velocity") { talonFX.rotorVelocity.valueAsDouble },
+      Measure(ROTOR_VEL_SCALE, "Rotor Vel scaled") {
+        talonFX.rotorVelocity.valueAsDouble * scaleFactor
+      },
+      Measure(STATOR_CURRENT, "Stator Current") { talonFX.statorCurrent.valueAsDouble },
+      Measure(SUPPLY_CURRENT, "Supply Current") { talonFX.supplyCurrent.valueAsDouble },
+      Measure(SUPPLY_VOLTAGE, "Supply Voltage") { talonFX.supplyVoltage.valueAsDouble },
+      Measure(TORQUE_CURRENT, "Torque Current") { talonFX.torqueCurrent.valueAsDouble },
+      Measure(VELOCITY, "Velocity") { talonFX.velocity.valueAsDouble },
+      Measure(VEL_SCALE, "Vel. scaled") { talonFX.velocity.valueAsDouble * scaleFactor },
+      //        Measure(IS_INVERTED, "Is Inverted"){talonFX.inverted.toDouble()},
 
-    val scaleFactor = 1000.0;
-    override val deviceId = talonFX.deviceID
-    override val measures = setOf(
-        Measure(ACCELERATION, "Acceleration") {talonFX.acceleration.valueAsDouble},
-        Measure(ACCEL_SCALE, "Accel. scaled") {talonFX.acceleration.valueAsDouble  * scaleFactor},
-        Measure(BRIDGE_OUTPUT, "Bridge Output") {talonFX.bridgeOutput.valueAsDouble},
-        Measure(DEVICE_TEMP, "Device Temperature C"){talonFX.deviceTemp.valueAsDouble},
-        Measure(DIFF_AVG_POS, "Differential Avg Position") {talonFX.differentialAveragePosition.valueAsDouble},
-        Measure(DIFF_AVG_POS_SCALE,"Diff Avg Pos scaled"){talonFX.differentialAveragePosition.valueAsDouble * scaleFactor},
-        Measure(DIFF_AVG_VEL, "Differential Avg Velocity") {talonFX.differentialAverageVelocity.valueAsDouble},
-        Measure(DIFF_AVG_VEL_SCALE, "Diff Avg Vel scaled"){talonFX.differentialAverageVelocity.valueAsDouble * scaleFactor},
-        Measure(DIFF_DIFF_POS, "Differential Difference Position"){talonFX.differentialDifferencePosition.valueAsDouble},
-        Measure(DIFF_DIFF_POS_SCALE, "Diff Diff Pos scaled"){talonFX.differentialDifferencePosition.valueAsDouble * scaleFactor},
-        Measure(DIFF_DIFF_VEL, "Differential Difference Velocity"){talonFX.differentialDifferenceVelocity.valueAsDouble},
-        Measure(DIFF_DIFF_VEL_SCALE, "Diff Diff Vel scale"){talonFX.differentialDifferenceVelocity.valueAsDouble * scaleFactor},
-        Measure(DUTY_CYCLE, "Applied Duty Cycle"){talonFX.dutyCycle.value},
-        Measure(FWD_LIM, "Forward Limit Switch Closed"){talonFX.forwardLimit.valueAsDouble},
-        Measure(IS_PRO_LIC, "Is Pro Licensed"){talonFX.isProLicensed.valueAsDouble},
-        Measure(IS_MM_RUNNING, "Motion Magic Running"){talonFX.motionMagicIsRunning.valueAsDouble},
-        Measure(MOTOR_VOLTAGE, "Motor Voltage"){talonFX.motorVoltage.valueAsDouble},
-        Measure(POSITION, "Position"){talonFX.position.valueAsDouble},
-        Measure(POS_SCALE, "Pos. scaled"){talonFX.position.valueAsDouble * scaleFactor},
-        Measure(PROCESSOR_TEMP, "Processor Temp"){talonFX.processorTemp.valueAsDouble},
-        Measure(HAS_RESET_OCCURRED, "Has Reset Occurred"){talonFX.hasResetOccurred().toDouble()},
-        Measure(REV_LIM, "Reverse Limit Switch Closed"){talonFX.reverseLimit.valueAsDouble},
-        Measure(ROTOR_POS, "Rotor Position"){talonFX.rotorPosition.valueAsDouble},
-        Measure(ROTOR_POS_SCALE, "Rotor Pos scaled"){ talonFX.rotorPosition.valueAsDouble * scaleFactor},
-        Measure(ROTOR_VEL, "Rotor Velocity"){talonFX.rotorVelocity.valueAsDouble},
-        Measure(ROTOR_VEL_SCALE, "Rotor Vel scaled"){talonFX.rotorVelocity.valueAsDouble * scaleFactor},
-        Measure(STATOR_CURRENT, "Stator Current"){talonFX.statorCurrent.valueAsDouble},
-        Measure(SUPPLY_CURRENT, "Supply Current"){talonFX.supplyCurrent.valueAsDouble},
-        Measure(SUPPLY_VOLTAGE, "Supply Voltage"){talonFX.supplyVoltage.valueAsDouble},
-        Measure(TORQUE_CURRENT, "Torque Current"){talonFX.torqueCurrent.valueAsDouble},
-        Measure(VELOCITY, "Velocity"){talonFX.velocity.valueAsDouble},
-        Measure(VEL_SCALE, "Vel. scaled"){talonFX.velocity.valueAsDouble * scaleFactor},
-//        Measure(IS_INVERTED, "Is Inverted"){talonFX.inverted.toDouble()},
-
-        Measure(CLOSED_LOOP_D_OUTPUT, "Closed Loop Derivative Output"){talonFX.closedLoopDerivativeOutput.valueAsDouble},
-        Measure(CLOSED_LOOP_ERROR, "Closed Loop Error"){talonFX.closedLoopError.valueAsDouble},
-        Measure(CLOSED_LOOP_FEED_FWD, "Closed Loop Feed Forward"){talonFX.closedLoopFeedForward.valueAsDouble},
-        Measure(CLOSED_LOOP_I_OUTPUT, "Closed Loop Integrated Output"){talonFX.closedLoopIntegratedOutput.valueAsDouble},
-        Measure(CLOSED_LOOP_OUTPUT, "Closed Loop Output"){talonFX.closedLoopError.valueAsDouble},
-        Measure(CLOSED_LOOP_P_OUTPUT, "Closed Loop Proportional Output"){talonFX.closedLoopProportionalOutput.valueAsDouble},
-        Measure(CLOSED_LOOP_REFERENCE, "Closed Loop Reference"){talonFX.closedLoopReference.valueAsDouble},
-        Measure(CLOSED_LOOP_REFERENCE_SLOPE, "Closed Loop Reference Slope"){talonFX.closedLoopReferenceSlope.value},
-        Measure(CLOSED_LOOP_SLOT, "Closed Loop Slot"){talonFX.closedLoopSlot.value.toDouble()},
-        Measure(DIFF_CLOSED_LOOP_D_OUTPUT, "Differential Closed Loop D Output"){talonFX.differentialClosedLoopDerivativeOutput.valueAsDouble},
-        Measure(DIFF_CLOSED_LOOP_ERR, "Differential Closed Loop Error"){talonFX.differentialClosedLoopError.valueAsDouble},
-        Measure(DIFF_CLOSED_LOOP_FEED_FWD, "Differential Closed Loop Feed Fwd"){talonFX.differentialClosedLoopFeedForward.valueAsDouble},
-        Measure(DIFF_CLOSED_LOOP_I_OUT, "Differential Closed Loop I Output"){talonFX.differentialClosedLoopIntegratedOutput.valueAsDouble},
-        Measure(DIFF_CLOSED_LOOP_OUT, "Differential Closed Loop Output"){talonFX.differentialClosedLoopOutput.valueAsDouble},
-        Measure(DIFF_CLOSED_LOOP_P_OUT, "Differential Closed Loop P Output"){talonFX.differentialClosedLoopProportionalOutput.valueAsDouble},
-        Measure(DIFF_CLOSED_LOOP_REF, "Differential Closed Loop Reference"){talonFX.differentialClosedLoopReference.valueAsDouble},
-        Measure(DIFF_CLOSED_LOOP_REF_SLOPE, "Differential Closed Loop Reference Slope"){talonFX.differentialClosedLoopReferenceSlope.valueAsDouble},
-        Measure(DIFF_CLOSED_LOOP_SLOT, "Differential Closed Loop Slot"){talonFX.differentialClosedLoopSlot.valueAsDouble},
+      Measure(CLOSED_LOOP_D_OUTPUT, "Closed Loop Derivative Output") {
+        talonFX.closedLoopDerivativeOutput.valueAsDouble
+      },
+      Measure(CLOSED_LOOP_ERROR, "Closed Loop Error") { talonFX.closedLoopError.valueAsDouble },
+      Measure(CLOSED_LOOP_FEED_FWD, "Closed Loop Feed Forward") {
+        talonFX.closedLoopFeedForward.valueAsDouble
+      },
+      Measure(CLOSED_LOOP_I_OUTPUT, "Closed Loop Integrated Output") {
+        talonFX.closedLoopIntegratedOutput.valueAsDouble
+      },
+      Measure(CLOSED_LOOP_OUTPUT, "Closed Loop Output") { talonFX.closedLoopError.valueAsDouble },
+      Measure(CLOSED_LOOP_P_OUTPUT, "Closed Loop Proportional Output") {
+        talonFX.closedLoopProportionalOutput.valueAsDouble
+      },
+      Measure(CLOSED_LOOP_REFERENCE, "Closed Loop Reference") {
+        talonFX.closedLoopReference.valueAsDouble
+      },
+      Measure(CLOSED_LOOP_REFERENCE_SLOPE, "Closed Loop Reference Slope") {
+        talonFX.closedLoopReferenceSlope.value
+      },
+      Measure(CLOSED_LOOP_SLOT, "Closed Loop Slot") { talonFX.closedLoopSlot.value.toDouble() },
+      Measure(DIFF_CLOSED_LOOP_D_OUTPUT, "Differential Closed Loop D Output") {
+        talonFX.differentialClosedLoopDerivativeOutput.valueAsDouble
+      },
+      Measure(DIFF_CLOSED_LOOP_ERR, "Differential Closed Loop Error") {
+        talonFX.differentialClosedLoopError.valueAsDouble
+      },
+      Measure(DIFF_CLOSED_LOOP_FEED_FWD, "Differential Closed Loop Feed Fwd") {
+        talonFX.differentialClosedLoopFeedForward.valueAsDouble
+      },
+      Measure(DIFF_CLOSED_LOOP_I_OUT, "Differential Closed Loop I Output") {
+        talonFX.differentialClosedLoopIntegratedOutput.valueAsDouble
+      },
+      Measure(DIFF_CLOSED_LOOP_OUT, "Differential Closed Loop Output") {
+        talonFX.differentialClosedLoopOutput.valueAsDouble
+      },
+      Measure(DIFF_CLOSED_LOOP_P_OUT, "Differential Closed Loop P Output") {
+        talonFX.differentialClosedLoopProportionalOutput.valueAsDouble
+      },
+      Measure(DIFF_CLOSED_LOOP_REF, "Differential Closed Loop Reference") {
+        talonFX.differentialClosedLoopReference.valueAsDouble
+      },
+      Measure(DIFF_CLOSED_LOOP_REF_SLOPE, "Differential Closed Loop Reference Slope") {
+        talonFX.differentialClosedLoopReferenceSlope.valueAsDouble
+      },
+      Measure(DIFF_CLOSED_LOOP_SLOT, "Differential Closed Loop Slot") {
+        talonFX.differentialClosedLoopSlot.valueAsDouble
+      },
     )
 
-    override fun equals(other: Any?) : Boolean {
-        if(this === other) return  true
-        if(javaClass != other?.javaClass) return  false
+  override fun equals(other: Any?): Boolean {
+    if (this === other) return true
+    if (javaClass != other?.javaClass) return false
 
-        other as TalonFXMeasureable
-        if(deviceId != other.deviceId) return false
-        return true
-    }
+    other as TalonFXMeasureable
+    if (deviceId != other.deviceId) return false
+    return true
+  }
 
-    override fun hashCode() = deviceId
+  override fun hashCode() = deviceId
 }

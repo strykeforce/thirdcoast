@@ -11,91 +11,90 @@ private val logger = KotlinLogging.logger {}
 
 class HealthCheckCommand(vararg subsystems: Subsystem) : Command() {
 
-    companion object {
-        @JvmField
-        val BUTTON = InternalButton()
+  companion object {
+    @JvmField val BUTTON = InternalButton()
+  }
+
+  private val robotHealthCheckBuilder = RobotHealthCheckBuilder(*subsystems)
+  private lateinit var robotHealthCheck: RobotHealthCheck
+
+  private var isFinished: Boolean = false
+
+  private var reportServer: ReportServer? = null
+
+  private val subsystemSet = subsystems.toSet()
+
+  override fun getRequirements() = subsystemSet
+
+  override fun initialize() {
+    robotHealthCheck = robotHealthCheckBuilder.build()
+    robotHealthCheck.initialize()
+    BUTTON.setPressed(false)
+  }
+
+  override fun execute() {
+    if (robotHealthCheck.isFinished) {
+      isFinished = true
+      return
     }
+    robotHealthCheck.execute()
+  }
 
-    private val robotHealthCheckBuilder = RobotHealthCheckBuilder(*subsystems)
-    private lateinit var robotHealthCheck: RobotHealthCheck
+  override fun isFinished() = isFinished
 
-    private var isFinished: Boolean = false
+  override fun end(interrupted: Boolean) {
+    reportServer?.stop()
+    reportServer = ReportServer(robotHealthCheck)
 
-    private var reportServer: ReportServer? = null
+    DumpVisitor().visit(robotHealthCheck)
+    isFinished = false
+  }
 
-    private val subsystemSet = subsystems.toSet()
-    override fun getRequirements() = subsystemSet
-
-    override fun initialize() {
-        robotHealthCheck = robotHealthCheckBuilder.build()
-        robotHealthCheck.initialize()
-        BUTTON.setPressed(false)
-    }
-
-    override fun execute() {
-        if (robotHealthCheck.isFinished) {
-            isFinished = true
-            return
-        }
-        robotHealthCheck.execute()
-    }
-
-    override fun isFinished() = isFinished
-
-    override fun end(interrupted: Boolean) {
-        reportServer?.stop()
-        reportServer = ReportServer(robotHealthCheck)
-
-        DumpVisitor().visit(robotHealthCheck)
-        isFinished = false
-    }
-
-    override fun runsWhenDisabled() = true
+  override fun runsWhenDisabled() = true
 }
 
-class IOHealthCheckCommand(var requirements: List<Subsystem>, vararg ios: Checkable): Command() {
+class IOHealthCheckCommand(var requirements: List<Subsystem>, vararg ios: Checkable) : Command() {
 
-    companion object {
-        @JvmField
-        val BUTTON = InternalButton()
+  companion object {
+    @JvmField val BUTTON = InternalButton()
+  }
+
+  private val robotHealthCheckBuilder = RobotHealCheckIOBuilder(*ios)
+  private lateinit var robotHealthCheck: RobotIOHealthCheck
+
+  private var isFinished: Boolean = false
+
+  private var reportServer: ReportServerIO? = null
+
+  private val ioSet = ios.toSet()
+
+  private val requirementsSet = requirements.toSet()
+
+  override fun getRequirements() = requirementsSet
+
+  override fun initialize() {
+    robotHealthCheck = robotHealthCheckBuilder.build()
+    robotHealthCheck.initialize()
+    BUTTON.setPressed(false)
+  }
+
+  override fun execute() {
+    if (robotHealthCheck.isFinished) {
+      isFinished = true
+      return
     }
+    robotHealthCheck.execute()
+  }
 
-    private val robotHealthCheckBuilder = RobotHealCheckIOBuilder(*ios)
-    private lateinit var robotHealthCheck: RobotIOHealthCheck
+  override fun isFinished() = isFinished
 
-    private  var isFinished: Boolean = false
+  override fun end(interrupted: Boolean) {
+    reportServer?.stop()
+    reportServer = ReportServerIO(robotHealthCheck)
 
-    private var reportServer: ReportServerIO? = null
+    DumpVisitor().visit(robotHealthCheck)
+    isFinished = false
+  }
 
-    private val ioSet = ios.toSet()
-
-    private val requirementsSet = requirements.toSet()
-
-    override fun getRequirements() = requirementsSet
-
-    override fun initialize() {
-        robotHealthCheck = robotHealthCheckBuilder.build()
-        robotHealthCheck.initialize()
-        BUTTON.setPressed(false)
-    }
-
-    override fun execute() {
-        if(robotHealthCheck.isFinished) {
-            isFinished = true
-            return
-        }
-        robotHealthCheck.execute()
-    }
-
-    override fun isFinished() = isFinished
-
-    override fun end(interrupted: Boolean) {
-        reportServer?.stop()
-        reportServer = ReportServerIO(robotHealthCheck)
-
-        DumpVisitor().visit(robotHealthCheck)
-        isFinished = false
-    }
-
-    override fun runsWhenDisabled() = true
+  override fun runsWhenDisabled() = true
 }
