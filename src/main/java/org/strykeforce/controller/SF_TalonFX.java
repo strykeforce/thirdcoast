@@ -243,7 +243,7 @@ public class SF_TalonFX {
     Moshi moshi = new Moshi.Builder().build();
     JsonAdapter<JsonTalonFX> jsonAdapter = moshi.adapter(JsonTalonFX.class);
 
-    String configPath = "home/lvuser/deploy/talonFX" + id + suffix + ".json";
+    String configPath = "/home/lvuser/deploy/motorConfigs/" + id + "_FX" + suffix + ".json";
     Path filePath = Path.of(configPath);
     String fileParse = "";
     try {
@@ -1687,6 +1687,28 @@ public class SF_TalonFX {
   }
 
   /**
+   * Sets the units used for open-loop requests
+   * @param units %, V, A
+   */
+  public void setOpenLoopUnits(CTRE_Units units) {this.openLoopUnits = units;}
+
+  /**
+   * Sets the units used for closed-loop requests
+   * @param units %, V, A
+   */
+  public void setClosedLoopUnits(CTRE_Units units) {this.closedLoopUnits = units;}
+
+  public void setClosedLoopType(CTRE_ClosedLoopType type) {this.closedLoopType = type;}
+
+  public void setDifferentialType(CTRE_DifferentialType type) {differentialType = type;}
+
+  public void setFollowerConfig(CTRE_FollowerConfig config) {followerConfig = config;}
+
+  public void setFollowerType(CTRE_FollowerType type) {followerType = type;}
+
+  public void setMotionMagicType(MotionMagicType type) {motionMagicType = type;}
+
+  /**
    * Updates the stator current config, calls to the configurator and could cause loop overruns
    *
    * @param enable true if current limit is enabled
@@ -1874,6 +1896,36 @@ public class SF_TalonFX {
   public int getDeviceId() {
     return id;
   }
+
+  /**
+   * @return integer active slot
+   */
+  public int getActiveSlot() {return activeSlot;}
+
+  /**
+   * @return integer differential slot
+   */
+  public int getDifferentialSlot() {return differentialSlot;}
+
+  /**
+   * @return open loop units %, V, A
+   */
+  public CTRE_Units getOpenLoopUnits() {return openLoopUnits;}
+
+  /**
+   * @return closed loop units %, V, A
+   */
+  public CTRE_Units getClosedLoopUnits() {return closedLoopUnits;}
+
+  public CTRE_ClosedLoopType getClosedLoopType() { return closedLoopType;}
+
+  public CTRE_DifferentialType getDifferentialType() {return  differentialType;}
+
+  public CTRE_FollowerConfig getFollowerConfig() {return followerConfig;}
+
+  public CTRE_FollowerType getFollowerType() {return followerType;}
+
+  public MotionMagicType getMotionMagicType() {return motionMagicType;}
 
   // Watchers
 

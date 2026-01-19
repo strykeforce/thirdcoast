@@ -9,7 +9,7 @@ import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 class Commutation(
-  @Json val advancedHallSupport: Boolean = false,
+  @Json val advancedHallSupport: Int = 0,
   @Json val brushedMotorWiring: String = "Leads_A_and_B",
   @Json val motorArrangement: String = "Disabled",
 ) {
@@ -28,7 +28,7 @@ class Commutation(
       arrangement = MotorArrangementValue.CustomBrushless
 
     var support: AdvancedHallSupportValue = AdvancedHallSupportValue.Disabled
-    if (advancedHallSupport) support = AdvancedHallSupportValue.Enabled
+    if (advancedHallSupport == 1) support = AdvancedHallSupportValue.Enabled
 
     return CommutationConfigs()
       .withAdvancedHallSupport(support)

@@ -98,31 +98,31 @@ class JsonTalonFX(
   }
 
   fun getActiveFOC(): Boolean {
-    return tct.activeFOC
+    return tct.getFOCActive()
   }
 
   fun getLimitFwdMotion(): Boolean {
-    return tct.limitFwdMotion
+    return tct.getLimFwdMotion()
   }
 
   fun getLimitRevMotion(): Boolean {
-    return tct.limitRevMotion
+    return tct.getLimRevMotion()
   }
 
   fun getIgnoreHwLimits(): Boolean {
-    return tct.ignoreHwLims
+    return tct.getIgnoreHwLims()
   }
 
   fun getIgnoreSwLimits(): Boolean {
-    return tct.ignoreSwLims
+    return tct.getIgnoreSwLims()
   }
 
   fun getUseTimesync(): Boolean {
-    return tct.useTimesync
+    return tct.getUseTimesync()
   }
 
   fun getOpposeMain(): Boolean {
-    return tct.opposeMain
+    return tct.getOpposeMain()
   }
 
   fun getTorqueCurrentMax(): Double {
@@ -130,6 +130,6 @@ class JsonTalonFX(
   }
 
   fun getOverrideNeutral(): Boolean {
-    return tct.overrideNeutral
+    return tct.getOverrideNeutral()
   }
 }

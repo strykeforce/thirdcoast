@@ -21,15 +21,15 @@ class TCT(
   @Json val leaderID: Int = 0,
   @Json val activeSlot: Int = 0,
   @Json val differentialSlot: Int = 0,
-  @Json val activeFOC: Boolean = false,
-  @Json val limitFwdMotion: Boolean = false,
-  @Json val limitRevMotion: Boolean = false,
-  @Json val ignoreHwLims: Boolean = false,
-  @Json val ignoreSwLims: Boolean = false,
-  @Json val useTimesync: Boolean = false,
-  @Json val opposeMain: Boolean = false,
+  @Json val activeFOC: Int = 0,
+  @Json val limitFwdMotion: Int = 0,
+  @Json val limitRevMotion: Int = 0,
+  @Json val ignoreHwLims: Int = 0,
+  @Json val ignoreSwLims: Int = 0,
+  @Json val useTimesync: Int = 0,
+  @Json val opposeMain: Int = 0,
   @Json val torqueCurrentMax: Double = 0.0,
-  @Json val overrideNeutral: Boolean = false,
+  @Json val overrideNeutral: Int = 0,
 ) {
 
   fun getOpenLoopUnits(): CTRE_Units {
@@ -81,5 +81,37 @@ class TCT(
     if (closedLoopType == "Position") type = CTRE_ClosedLoopType.Position
     else if (closedLoopType == "Motion_Magic") type = CTRE_ClosedLoopType.Motion_Magic
     return type
+  }
+
+  fun getFOCActive(): Boolean {
+    if (activeFOC == 1) return true else return false
+  }
+
+  fun getLimFwdMotion(): Boolean {
+    if (limitFwdMotion == 1) return true else return false
+  }
+
+  fun getLimRevMotion(): Boolean {
+    if (limitRevMotion == 1) return true else return false
+  }
+
+  fun getIgnoreHwLims(): Boolean {
+    if (ignoreHwLims == 1) return true else return false
+  }
+
+  fun getIgnoreSwLims(): Boolean {
+    if (ignoreSwLims == 1) return true else return false
+  }
+
+  fun getUseTimesync(): Boolean {
+    if (useTimesync == 1) return true else return false
+  }
+
+  fun getOpposeMain(): Boolean {
+    if (opposeMain == 1) return true else return false
+  }
+
+  fun getOverrideNeutral(): Boolean {
+    if (overrideNeutral == 1) return true else return false
   }
 }

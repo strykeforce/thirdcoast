@@ -250,7 +250,7 @@ public class SF_TalonFXS {
     Moshi moshi = new Moshi.Builder().build();
     JsonAdapter<JsonTalonFXS> jsonAdapter = moshi.adapter(JsonTalonFXS.class);
 
-    String configPath = "home/lvuser/deploy/talonFX" + id + suffix + ".json";
+    String configPath = "home/lvuser/deploy/motorConfigs/" + id + "_FXS" + suffix + ".json";
     Path filePath = Path.of(configPath);
     String fileParse = "";
     try {
@@ -1694,6 +1694,28 @@ public class SF_TalonFXS {
   }
 
   /**
+   * Sets the open loop units used
+   * @param units %, V, A
+   */
+  public void setOpenLoopUnits(CTRE_Units units) {this.openLoopUnits = units;}
+
+  /**
+   * Sets the closed loop units used
+   * @param units %, V, A
+   */
+  public void setClosedLoopUnits(CTRE_Units units) {this.closedLoopUnits = units;}
+
+  public void setClosedLoopType(CTRE_ClosedLoopType type) {this.closedLoopType = type;}
+
+  public void setDifferentialType(CTRE_DifferentialType type) {differentialType = type;}
+
+  public void setFollowerConfig(CTRE_FollowerConfig config) {followerConfig = config;}
+
+  public void setFollowerType(CTRE_FollowerType type) {followerType = type;}
+
+  public void setMotionMagicType(MotionMagicType type) {motionMagicType = type;}
+
+  /**
    * Updates the stator current config, calls to the configurator and could cause loop overruns
    *
    * @param enable true if current limit is enabled
@@ -1880,6 +1902,36 @@ public class SF_TalonFXS {
   public int getDeviceID() {
     return id;
   }
+
+  /**
+   * @return active slot integer [0,2]
+   */
+  public int getActiveSlot() { return activeSlot;}
+
+  /**
+   * @return differential slot [0,2]
+   */
+  public int getDifferentialSlot() {return differentialSlot;}
+
+  /**
+   * @return openLoop Units %, V, A
+   */
+  public CTRE_Units getOpenLoopUnits() {return openLoopUnits;}
+
+  /**
+   * @return closed loop units %, V, A
+   */
+  public CTRE_Units getClosedLoopUnits() {return getClosedLoopUnits();}
+
+  public CTRE_ClosedLoopType getClosedLoopType() { return closedLoopType;}
+
+  public CTRE_DifferentialType getDifferentialType() {return  differentialType;}
+
+  public CTRE_FollowerConfig getFollowerConfig() {return followerConfig;}
+
+  public CTRE_FollowerType getFollowerType() {return followerType;}
+
+  public MotionMagicType getMotionMagicType() {return motionMagicType;}
 
   // Watchers
   /** Refreshes all registered status signals in one CAN bus call */
@@ -2354,7 +2406,7 @@ public class SF_TalonFXS {
    *
    * @param updateFreq in Hz
    */
-  public void registerRawQuadratureWidthPosition(double updateFreq) {
+  public void registerRawQuadraturePosition(double updateFreq) {
     updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0);
     rawQuadraturePosition = talonFXS.getRawQuadraturePosition();
     rawQuadraturePosition.setUpdateFrequency(updateFreq);

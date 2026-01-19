@@ -6,17 +6,19 @@ import com.ctre.phoenix6.signals.ForwardLimitTypeValue
 import com.ctre.phoenix6.signals.ReverseLimitSourceValue
 import com.ctre.phoenix6.signals.ReverseLimitTypeValue
 import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 
+@JsonClass(generateAdapter = true)
 class HardwareLimitSwitch(
-  @Json val forwardLimitAutosetPositionEnable: Boolean = false,
+  @Json val forwardLimitAutosetPositionEnable: Int = 0,
   @Json val forwardLimitAutosetPositionValue: Double = 0.0,
-  @Json val forwardLimitEnable: Boolean = true,
+  @Json val forwardLimitEnable: Int = 1,
   @Json val forwardLimitRemoteSensorID: Int = 0,
   @Json val forwardLimitSource: String = "LimitSwitchPin",
   @Json val forwardLimitType: String = "NormallyOpen",
-  @Json val reverseLimitAutosetPositionEnable: Boolean = false,
+  @Json val reverseLimitAutosetPositionEnable: Int = 0,
   @Json val reverseLimitAutosetPositionValue: Double = 0.0,
-  @Json val reverseLimitEnable: Boolean = true,
+  @Json val reverseLimitEnable: Int = 1,
   @Json val reverseLimitRemoteSensorID: Int = 0,
   @Json val reverseLimitSource: String = "LimitSwitchPin",
   @Json val reverseLimitType: String = "NormallyOpen",
@@ -55,16 +57,28 @@ class HardwareLimitSwitch(
     var revLimType: ReverseLimitTypeValue = ReverseLimitTypeValue.NormallyOpen
     if (forwardLimitType == "NormallyClosed") revLimType = ReverseLimitTypeValue.NormallyClosed
 
+    var fwdEn: Boolean = true
+    if (forwardLimitEnable == 0) fwdEn = false
+
+    var revEn: Boolean = true
+    if (reverseLimitEnable == 0) revEn = false
+
+    var fwdAutoSetEn: Boolean = false
+    if (forwardLimitAutosetPositionEnable == 1) fwdAutoSetEn = true
+
+    var revAutoSetEn: Boolean = false
+    if (reverseLimitAutosetPositionEnable == 1) revAutoSetEn = true
+
     return HardwareLimitSwitchConfigs()
-      .withForwardLimitAutosetPositionEnable(forwardLimitAutosetPositionEnable)
+      .withForwardLimitAutosetPositionEnable(fwdAutoSetEn)
       .withForwardLimitAutosetPositionValue(forwardLimitAutosetPositionValue)
-      .withForwardLimitEnable(forwardLimitEnable)
+      .withForwardLimitEnable(fwdEn)
       .withForwardLimitRemoteSensorID(forwardLimitRemoteSensorID)
       .withForwardLimitSource(fwdLimSource)
       .withForwardLimitType(fwdLimType)
-      .withReverseLimitAutosetPositionEnable(reverseLimitAutosetPositionEnable)
+      .withReverseLimitAutosetPositionEnable(revAutoSetEn)
       .withReverseLimitAutosetPositionValue(reverseLimitAutosetPositionValue)
-      .withReverseLimitEnable(reverseLimitEnable)
+      .withReverseLimitEnable(revEn)
       .withReverseLimitRemoteSensorID(reverseLimitRemoteSensorID)
       .withReverseLimitSource(revLimSource)
       .withReverseLimitType(revLimType)

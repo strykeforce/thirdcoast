@@ -7,8 +7,8 @@ import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 class ClosedLoopGeneral(
-  @Json(name = "continuousWrap") val continuousWrap: Boolean = false,
-  @Json(name = "diffContinuousWrap") val diffContinuousWrap: Boolean = false,
+  @Json(name = "continuousWrap") val continuousWrap: Int = 0,
+  @Json(name = "diffContinuousWrap") val diffContinuousWrap: Int = 0,
   @Json(name = "gainSchedErrorThres") val gainSchedErrorThres: Double = 0.0,
   @Json(name = "gainSchedKpBehavior") val gainSchedKpBehavior: String = "Continuous",
 ) {
@@ -16,9 +16,16 @@ class ClosedLoopGeneral(
   fun getClosedLoopGenConfigs(): ClosedLoopGeneralConfigs {
     var kPBehave = GainSchedKpBehaviorValue.Continuous
     if (gainSchedKpBehavior == "Discontinuous") kPBehave = GainSchedKpBehaviorValue.Discontinuous
+
+    var contWrap: Boolean = false
+    if (continuousWrap == 1) contWrap = true
+
+    var diffContWrap: Boolean = false
+    if (diffContinuousWrap == 1) diffContWrap = true
+
     return ClosedLoopGeneralConfigs()
-      .withContinuousWrap(continuousWrap)
-      .withDifferentialContinuousWrap(diffContinuousWrap)
+      .withContinuousWrap(contWrap)
+      .withDifferentialContinuousWrap(diffContWrap)
       .withGainSchedErrorThreshold(gainSchedErrorThres)
       .withGainSchedKpBehavior(kPBehave)
   }
