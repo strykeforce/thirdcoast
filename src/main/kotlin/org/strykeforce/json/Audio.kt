@@ -19,7 +19,7 @@ class Audio(
     if (beepOnBoot == 0) beepBoot = false
 
     var beepConfig: Boolean = true
-    if (beepOnConfig == 0) beepBoot = false
+    if (beepOnConfig == 0) beepConfig = false
 
     return AudioConfigs()
       .withAllowMusicDurDisable(disableMusic)

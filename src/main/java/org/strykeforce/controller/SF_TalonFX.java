@@ -1708,6 +1708,15 @@ public class SF_TalonFX {
 
   public void setMotionMagicType(MotionMagicType type) {motionMagicType = type;}
 
+  public void setUseFOC(Boolean useFOC) {this.useFOC = useFOC;}
+
+  public void setOpposeMain(Boolean oppose) {
+    if(oppose) opposeMain = MotorAlignmentValue.Opposed;
+    else opposeMain = MotorAlignmentValue.Aligned;
+  }
+
+  public void setOverrideNeutral(Boolean override) {overrideNeutral = override;}
+
   /**
    * Updates the stator current config, calls to the configurator and could cause loop overruns
    *
@@ -1926,6 +1935,20 @@ public class SF_TalonFX {
   public CTRE_FollowerType getFollowerType() {return followerType;}
 
   public MotionMagicType getMotionMagicType() {return motionMagicType;}
+
+  public Boolean getActiveFOC() {return  useFOC;}
+
+  public Boolean getLimitFwdMotion() {return  limitFwdMotion;}
+
+  public Boolean getLimitRevMotion() {return  limitRevMotion;}
+
+  public Boolean getIgnoreHwLimits() {return  ignoreHWlimits;}
+
+  public Boolean getIgnoreSwLimits() {return  ignoreSWLimits;}
+
+  public Boolean getOpposeMain() {return opposeMain == MotorAlignmentValue.Opposed;}
+
+  public Boolean getOverrideNeutral() {return  overrideNeutral;}
 
   // Watchers
 

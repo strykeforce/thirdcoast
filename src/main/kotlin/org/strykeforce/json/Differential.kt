@@ -6,9 +6,9 @@ import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 class Differential(
-  @Json(name = "peakDifferentialDutyCycle") val peakDifferentialDutyCycle: Double = 2.0,
-  @Json(name = "peakDifferentialVoltage") val peakDifferentialVoltage: Double = 32.0,
-  @Json(name = "peakDifferentialTorqueCurrent") val peakDifferentialTorqueCurrent: Double = 1600.0,
+  @Json(name = "peakDifferentialDutyCycle") val peakDifferentialDutyCycle: Double = 1.0,
+  @Json(name = "peakDifferentialVoltage") val peakDifferentialVoltage: Double = 16.0,
+  @Json(name = "peakDifferentialTorqueCurrent") val peakDifferentialTorqueCurrent: Double = 800.0,
 ) {
 
   fun getDifferentialConfigs(): DifferentialConstantsConfigs {

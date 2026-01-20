@@ -10,7 +10,7 @@ class CurrentLimit(
   @Json(name = "statorCurrentLimitEnable") val statorCurrentLimitEnable: Int = 1,
   @Json(name = "supplyCurrentLimit") val supplyCurrentLimit: Double = 70.0,
   @Json(name = "supplyCurrentLimitEnable") val supplyCurrentLimitEnable: Int = 1,
-  @Json(name = "supplyCurrentLowerLimit") val supplyCurrentLowerLimit: Double = 70.0,
+  @Json(name = "supplyCurrentLowerLimit") val supplyCurrentLowerLimit: Double = 40.0,
   @Json(name = "supplyCurrentLowerTime") val supplyCurrentLowerTime: Double = 1.0,
 ) {
 

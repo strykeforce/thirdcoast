@@ -39,23 +39,23 @@ class HardwareLimitSwitch(
       fwdLimSource = ForwardLimitSourceValue.RemoteCANdiS2
 
     var revLimSource: ReverseLimitSourceValue = ReverseLimitSourceValue.LimitSwitchPin
-    if (forwardLimitSource == "RemoteTalonFX") revLimSource = ReverseLimitSourceValue.RemoteTalonFX
-    else if (forwardLimitSource == "RemoteCANifier")
+    if (reverseLimitSource == "RemoteTalonFX") revLimSource = ReverseLimitSourceValue.RemoteTalonFX
+    else if (reverseLimitSource == "RemoteCANifier")
       revLimSource = ReverseLimitSourceValue.RemoteCANifier
-    else if (forwardLimitSource == "RemoteCANcoder")
+    else if (reverseLimitSource == "RemoteCANcoder")
       revLimSource = ReverseLimitSourceValue.RemoteCANcoder
-    else if (forwardLimitSource == "RemoteCANrange")
+    else if (reverseLimitSource == "RemoteCANrange")
       revLimSource = ReverseLimitSourceValue.RemoteCANrange
-    else if (forwardLimitSource == "RemoteCANdiS1")
+    else if (reverseLimitSource == "RemoteCANdiS1")
       revLimSource = ReverseLimitSourceValue.RemoteCANdiS1
-    else if (forwardLimitSource == "RemoteCANdiS2")
+    else if (reverseLimitSource == "RemoteCANdiS2")
       revLimSource = ReverseLimitSourceValue.RemoteCANdiS2
 
     var fwdLimType: ForwardLimitTypeValue = ForwardLimitTypeValue.NormallyOpen
     if (forwardLimitType == "NormallyClosed") fwdLimType = ForwardLimitTypeValue.NormallyClosed
 
     var revLimType: ReverseLimitTypeValue = ReverseLimitTypeValue.NormallyOpen
-    if (forwardLimitType == "NormallyClosed") revLimType = ReverseLimitTypeValue.NormallyClosed
+    if (reverseLimitType == "NormallyClosed") revLimType = ReverseLimitTypeValue.NormallyClosed
 
     var fwdEn: Boolean = true
     if (forwardLimitEnable == 0) fwdEn = false

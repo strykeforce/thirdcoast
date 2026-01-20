@@ -13,7 +13,7 @@ import org.strykeforce.controller.MotionMagicType
 @JsonClass(generateAdapter = true)
 class JsonTalonFX(
   @Json(name = "Audio") var audio: Audio = Audio(),
-  @Json(name = "ClosedLoopGeneral") var closedLoopGen: ClosedLoopGeneral = ClosedLoopGeneral(),
+  @Json(name = "ClosedLoopGen") var closedLoopGen: ClosedLoopGeneral = ClosedLoopGeneral(),
   @Json(name = "ClosedLoopRamp") var closedLoopRamp: ClosedLoopRamp = ClosedLoopRamp(),
   @Json(name = "CurrentLimit") var currentLimit: CurrentLimit = CurrentLimit(),
   @Json(name = "Custom") var custom: Custom = Custom(),

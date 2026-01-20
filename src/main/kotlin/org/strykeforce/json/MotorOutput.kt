@@ -18,7 +18,7 @@ class MotorOutput(
 
   fun getMotorOutputConfigs(): MotorOutputConfigs {
     var invertValue: InvertedValue = InvertedValue.CounterClockwise_Positive
-    if (inverted == "Clockwise_Positive") invertValue = InvertedValue.CounterClockwise_Positive
+    if (inverted == "Clockwise_Positive") invertValue = InvertedValue.Clockwise_Positive
 
     var neutralType: NeutralModeValue = NeutralModeValue.Coast
     if (neutralMode == "Brake") neutralType = NeutralModeValue.Brake

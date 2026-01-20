@@ -8,7 +8,7 @@ import org.strykeforce.controller.*
 @JsonClass(generateAdapter = true)
 class JsonTalonFXS(
   @Json(name = "Audio") var audio: Audio = Audio(),
-  @Json(name = "ClosedLoopGeneral") var closedLoopGen: ClosedLoopGeneral = ClosedLoopGeneral(),
+  @Json(name = "ClosedLoopGen") var closedLoopGen: ClosedLoopGeneral = ClosedLoopGeneral(),
   @Json(name = "ClosedLoopRamp") var closedLoopRamp: ClosedLoopRamp = ClosedLoopRamp(),
   @Json(name = "Commutation") var commutation: Commutation = Commutation(),
   @Json(name = "CurrentLimit") var currentLimit: CurrentLimit = CurrentLimit(),
