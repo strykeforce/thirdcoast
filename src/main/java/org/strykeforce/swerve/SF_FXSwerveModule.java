@@ -138,6 +138,23 @@ public class SF_FXSwerveModule implements SwerveModule {
   }
 
   @Override
+  public void setDesiredState(
+      SwerveModuleState desiredState, boolean isDriveOpenLoop, double accel) {
+    assert desiredState.speedMetersPerSecond >= 0.0;
+
+    if (desiredState.speedMetersPerSecond < driveDeadbandMetersPerSecond) {
+      desiredState = new SwerveModuleState(0.0, previousAngle);
+    }
+
+    SwerveModuleState optimizedState = setAzimuthOptimizedState(desiredState);
+
+    if (isDriveOpenLoop) setDriveOpenLoopMetersPerSecond(optimizedState.speedMetersPerSecond);
+    else
+      setDriveClosedLoopMetersPerSecond(
+          MetersPerSecond.of(optimizedState.speedMetersPerSecond), accel);
+  }
+
+  @Override
   public void resetDriveEncoder() {
     StatusCode error = driveTalon.getTalonFX().setPosition(0.0);
     if (error != StatusCode.OK) {

@@ -313,6 +313,25 @@ public class SwerveDrive implements Registrable {
     return new SwerveDriveStates(swerveModuleStates, currStates);
   }
 
+  public SwerveDriveStates move(
+      double vxMetersPerSecond,
+      double vyMetersPerSecond,
+      double omegaRadiansPerSecond,
+      boolean isFieldOriented,
+      double[] moduleAccels) {
+
+    SwerveModuleState[] currStates = new SwerveModuleState[4];
+    SwerveModuleState[] swerveModuleStates =
+        getSwerveModuleStates(
+            vxMetersPerSecond, vyMetersPerSecond, omegaRadiansPerSecond, isFieldOriented);
+    for (int i = 0; i < 4; i++) {
+      currStates[i] = swerveModules[i].getState();
+      swerveModules[i].setDesiredState(swerveModuleStates[i], false, moduleAccels[i]);
+    }
+
+    return new SwerveDriveStates(swerveModuleStates, currStates);
+  }
+
   @NotNull
   private SwerveModuleState[] getSwerveModuleStates(
       double vxMetersPerSecond,

@@ -133,6 +133,23 @@ public class FXSwerveModule implements SwerveModule {
   }
 
   @Override
+  public void setDesiredState(
+      SwerveModuleState desiredState, boolean isDriveOpenLoop, double accel) {
+    assert desiredState.speedMetersPerSecond >= 0.0;
+
+    if (desiredState.speedMetersPerSecond < driveDeadbandMetersPerSecond) {
+      desiredState = new SwerveModuleState(0.0, previousAngle);
+    }
+
+    SwerveModuleState optimizedState = setAzimuthOptimizedState(desiredState);
+
+    if (isDriveOpenLoop) setDriveOpenLoopMetersPerSecond(optimizedState.speedMetersPerSecond);
+    else
+      setDriveClosedLoopMetersPerSecond(
+          MetersPerSecond.of(optimizedState.speedMetersPerSecond), accel);
+  }
+
+  @Override
   public void resetDriveEncoder() {
     StatusCode error = driveTalon.setPosition(0.0);
     if (error != StatusCode.OK) {
@@ -312,6 +329,34 @@ public class FXSwerveModule implements SwerveModule {
     } else {
       VelocityTorqueCurrentFOC controlRequest =
           new VelocityTorqueCurrentFOC(encoderCountsPerSecond).withSlot(closedLoopSlot);
+      driveTalon.setControl(controlRequest);
+    }
+  }
+
+  private void setDriveClosedLoopMetersPerSecond(
+      LinearVelocity metersPerSecond, double metersPerSecondSquared) {
+    double wheelRotationsPerSecond = metersPerSecond.in(MetersPerSecond) / wheelCircumferenceMeters;
+    double motorRotationsPerSecond = wheelRotationsPerSecond / driveGearRatio;
+    double encoderCountsPerSecond = motorRotationsPerSecond * driveCountsPerRev;
+    if (units == V6TalonSwerveModule.ClosedLoopUnits.DUTY_CYCLE) {
+      VelocityDutyCycle controlRequest =
+          new VelocityDutyCycle(encoderCountsPerSecond)
+              .withEnableFOC(enableFOC)
+              .withSlot(closedLoopSlot)
+              .withAcceleration(metersPerSecondSquared);
+      driveTalon.setControl(controlRequest);
+    } else if (units == V6TalonSwerveModule.ClosedLoopUnits.VOLTAGE) {
+      VelocityVoltage controlRequest =
+          new VelocityVoltage(encoderCountsPerSecond)
+              .withEnableFOC(enableFOC)
+              .withSlot(closedLoopSlot)
+              .withAcceleration(metersPerSecondSquared);
+      driveTalon.setControl(controlRequest);
+    } else {
+      VelocityTorqueCurrentFOC controlRequest =
+          new VelocityTorqueCurrentFOC(encoderCountsPerSecond)
+              .withSlot(closedLoopSlot)
+              .withAcceleration(metersPerSecondSquared);
       driveTalon.setControl(controlRequest);
     }
   }
