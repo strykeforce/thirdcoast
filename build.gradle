@@ -6,12 +6,12 @@ plugins {
     id "maven-publish"
     id "org.jetbrains.kotlin.jvm" version "1.9.0" //1.7.21
     id "com.google.devtools.ksp" version "1.9.0-1.0.13" //1.7.21-1.0.8
-    id "edu.wpi.first.GradleRIO" version "2025.2.1"
-    id "com.diffplug.spotless" version "6.12.1"
+    id "edu.wpi.first.GradleRIO" version "2026.2.1"
+    id "com.diffplug.spotless" version "8.1.0" //6.12.1
 }
 
 group = "org.strykeforce"
-version = "25.0.11"
+version = "26.0.0"
 
 java {
     targetCompatibility = JavaVersion.VERSION_17
@@ -153,6 +153,15 @@ spotless {
         toggleOffOn()
         googleJavaFormat()
         removeUnusedImports()
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
+    kotlin {
+        target fileTree('src') {
+            include '**/*.kt'
+            exclude '**/build/', '**/build-*/'
+        }
+        ktfmt().googleStyle()
         trimTrailingWhitespace()
         endWithNewline()
     }

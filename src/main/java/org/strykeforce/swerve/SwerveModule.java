@@ -55,6 +55,16 @@ public interface SwerveModule extends Registrable {
   }
 
   /**
+   * Commands the swerve module to the desired state with the set acceleration using closed-loop
+   * speed control.
+   *
+   * @param desiredState the desired swerve module speed and angle
+   * @param isDriveOpenLoop false if drive should set speed using closed-loop velocity
+   * @param accel the desired acceleration for the closed-loop control
+   */
+  void setDesiredState(SwerveModuleState desiredState, boolean isDriveOpenLoop, double accel);
+
+  /**
    * Command the swerve module azimuth rotation to the desired angle with a drive speed of zero. If
    * setting the module to an angle with a non-zero drive speed, use {@link
    * SwerveModule#setDesiredState(SwerveModuleState)} or {@link
