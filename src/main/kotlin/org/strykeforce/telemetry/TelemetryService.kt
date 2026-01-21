@@ -11,8 +11,8 @@ import com.ctre.phoenix6.hardware.TalonFXS
 import java.util.*
 import java.util.function.Function
 import mu.KotlinLogging
-import org.strykeforce.controller.SF_TalonFX
-import org.strykeforce.controller.SF_TalonFXS
+import org.strykeforce.controller.motorControl.SF_TalonFX
+import org.strykeforce.controller.motorControl.SF_TalonFXS
 import org.strykeforce.telemetry.measurable.*
 import org.strykeforce.telemetry.talon.TalonFXFaultMeasureable
 import org.strykeforce.telemetry.talon.TalonFXMeasureable

@@ -1,4 +1,4 @@
-package org.strykeforce.controller;
+package org.strykeforce.controller.motorControl;
 
 public enum CTRE_Units {
   Percent,

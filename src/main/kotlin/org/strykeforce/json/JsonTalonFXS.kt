@@ -3,7 +3,7 @@ package org.strykeforce.json
 import com.ctre.phoenix6.configs.TalonFXSConfiguration
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
-import org.strykeforce.controller.*
+import org.strykeforce.controller.motorControl.*
 
 @JsonClass(generateAdapter = true)
 class JsonTalonFXS(

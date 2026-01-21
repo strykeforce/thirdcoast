@@ -18,8 +18,8 @@ import edu.wpi.first.wpilibj.Preferences;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.strykeforce.controller.SF_TalonFX;
-import org.strykeforce.controller.SF_TalonFXS;
+import org.strykeforce.controller.motorControl.SF_TalonFX;
+import org.strykeforce.controller.motorControl.SF_TalonFXS;
 import org.strykeforce.telemetry.TelemetryService;
 
 /**

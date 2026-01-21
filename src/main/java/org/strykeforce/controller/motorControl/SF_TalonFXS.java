@@ -1,4 +1,4 @@
-package org.strykeforce.controller;
+package org.strykeforce.controller.motorControl;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.CANBus;
@@ -250,7 +250,7 @@ public class SF_TalonFXS {
     Moshi moshi = new Moshi.Builder().build();
     JsonAdapter<JsonTalonFXS> jsonAdapter = moshi.adapter(JsonTalonFXS.class);
 
-    String configPath = "home/lvuser/deploy/motorConfigs/" + id + "_FXS" + suffix + ".json";
+    String configPath = "/home/lvuser/deploy/motorConfigs/" + id + "_FXS" + suffix + ".json";
     Path filePath = Path.of(configPath);
     String fileParse = "";
     try {
@@ -1695,36 +1695,54 @@ public class SF_TalonFXS {
 
   /**
    * Sets the open loop units used
+   *
    * @param units %, V, A
    */
-  public void setOpenLoopUnits(CTRE_Units units) {this.openLoopUnits = units;}
+  public void setOpenLoopUnits(CTRE_Units units) {
+    this.openLoopUnits = units;
+  }
 
   /**
    * Sets the closed loop units used
+   *
    * @param units %, V, A
    */
-  public void setClosedLoopUnits(CTRE_Units units) {this.closedLoopUnits = units;}
+  public void setClosedLoopUnits(CTRE_Units units) {
+    this.closedLoopUnits = units;
+  }
 
-  public void setClosedLoopType(CTRE_ClosedLoopType type) {this.closedLoopType = type;}
+  public void setClosedLoopType(CTRE_ClosedLoopType type) {
+    this.closedLoopType = type;
+  }
 
-  public void setDifferentialType(CTRE_DifferentialType type) {differentialType = type;}
+  public void setDifferentialType(CTRE_DifferentialType type) {
+    differentialType = type;
+  }
 
-  public void setFollowerConfig(CTRE_FollowerConfig config) {followerConfig = config;}
+  public void setFollowerConfig(CTRE_FollowerConfig config) {
+    followerConfig = config;
+  }
 
-  public void setFollowerType(CTRE_FollowerType type) {followerType = type;}
+  public void setFollowerType(CTRE_FollowerType type) {
+    followerType = type;
+  }
 
-  public void setMotionMagicType(MotionMagicType type) {motionMagicType = type;}
+  public void setMotionMagicType(MotionMagicType type) {
+    motionMagicType = type;
+  }
 
-  public void setUseFOC(Boolean useFOC) {this.useFOC = useFOC;}
+  public void setUseFOC(Boolean useFOC) {
+    this.useFOC = useFOC;
+  }
 
   public void setOpposeMain(Boolean oppose) {
-    if(oppose) opposeMain = MotorAlignmentValue.Opposed;
+    if (oppose) opposeMain = MotorAlignmentValue.Opposed;
     else opposeMain = MotorAlignmentValue.Aligned;
   }
 
-  public void setOverrideNeutral(Boolean override) {overrideNeutral = override;}
-
-
+  public void setOverrideNeutral(Boolean override) {
+    overrideNeutral = override;
+  }
 
   /**
    * Updates the stator current config, calls to the configurator and could cause loop overruns
@@ -1917,46 +1935,78 @@ public class SF_TalonFXS {
   /**
    * @return active slot integer [0,2]
    */
-  public int getActiveSlot() { return activeSlot;}
+  public int getActiveSlot() {
+    return activeSlot;
+  }
 
   /**
    * @return differential slot [0,2]
    */
-  public int getDifferentialSlot() {return differentialSlot;}
+  public int getDifferentialSlot() {
+    return differentialSlot;
+  }
 
   /**
    * @return openLoop Units %, V, A
    */
-  public CTRE_Units getOpenLoopUnits() {return openLoopUnits;}
+  public CTRE_Units getOpenLoopUnits() {
+    return openLoopUnits;
+  }
 
   /**
    * @return closed loop units %, V, A
    */
-  public CTRE_Units getClosedLoopUnits() {return getClosedLoopUnits();}
+  public CTRE_Units getClosedLoopUnits() {
+    return closedLoopUnits;
+  }
 
-  public CTRE_ClosedLoopType getClosedLoopType() { return closedLoopType;}
+  public CTRE_ClosedLoopType getClosedLoopType() {
+    return closedLoopType;
+  }
 
-  public CTRE_DifferentialType getDifferentialType() {return  differentialType;}
+  public CTRE_DifferentialType getDifferentialType() {
+    return differentialType;
+  }
 
-  public CTRE_FollowerConfig getFollowerConfig() {return followerConfig;}
+  public CTRE_FollowerConfig getFollowerConfig() {
+    return followerConfig;
+  }
 
-  public CTRE_FollowerType getFollowerType() {return followerType;}
+  public CTRE_FollowerType getFollowerType() {
+    return followerType;
+  }
 
-  public MotionMagicType getMotionMagicType() {return motionMagicType;}
+  public MotionMagicType getMotionMagicType() {
+    return motionMagicType;
+  }
 
-  public Boolean getActiveFOC() {return  useFOC;}
+  public Boolean getActiveFOC() {
+    return useFOC;
+  }
 
-  public Boolean getLimitFwdMotion() {return  limitFwdMotion;}
+  public Boolean getLimitFwdMotion() {
+    return limitFwdMotion;
+  }
 
-  public Boolean getLimitRevMotion() {return  limitRevMotion;}
+  public Boolean getLimitRevMotion() {
+    return limitRevMotion;
+  }
 
-  public Boolean getIgnoreHwLimits() {return  ignoreHWlimits;}
+  public Boolean getIgnoreHwLimits() {
+    return ignoreHWlimits;
+  }
 
-  public Boolean getIgnoreSwLimits() {return  ignoreSWlimits;}
+  public Boolean getIgnoreSwLimits() {
+    return ignoreSWlimits;
+  }
 
-  public Boolean getOpposeMain() {return opposeMain == MotorAlignmentValue.Opposed;}
+  public Boolean getOpposeMain() {
+    return opposeMain == MotorAlignmentValue.Opposed;
+  }
 
-  public Boolean getOverrideNeutral() {return  overrideNeutral;}
+  public Boolean getOverrideNeutral() {
+    return overrideNeutral;
+  }
 
   // Watchers
   /** Refreshes all registered status signals in one CAN bus call */

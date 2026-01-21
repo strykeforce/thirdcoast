@@ -1,4 +1,4 @@
-package org.strykeforce.controller;
+package org.strykeforce.controller.motorControl;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.CANBus;
@@ -1688,34 +1688,54 @@ public class SF_TalonFX {
 
   /**
    * Sets the units used for open-loop requests
+   *
    * @param units %, V, A
    */
-  public void setOpenLoopUnits(CTRE_Units units) {this.openLoopUnits = units;}
+  public void setOpenLoopUnits(CTRE_Units units) {
+    this.openLoopUnits = units;
+  }
 
   /**
    * Sets the units used for closed-loop requests
+   *
    * @param units %, V, A
    */
-  public void setClosedLoopUnits(CTRE_Units units) {this.closedLoopUnits = units;}
+  public void setClosedLoopUnits(CTRE_Units units) {
+    this.closedLoopUnits = units;
+  }
 
-  public void setClosedLoopType(CTRE_ClosedLoopType type) {this.closedLoopType = type;}
+  public void setClosedLoopType(CTRE_ClosedLoopType type) {
+    this.closedLoopType = type;
+  }
 
-  public void setDifferentialType(CTRE_DifferentialType type) {differentialType = type;}
+  public void setDifferentialType(CTRE_DifferentialType type) {
+    differentialType = type;
+  }
 
-  public void setFollowerConfig(CTRE_FollowerConfig config) {followerConfig = config;}
+  public void setFollowerConfig(CTRE_FollowerConfig config) {
+    followerConfig = config;
+  }
 
-  public void setFollowerType(CTRE_FollowerType type) {followerType = type;}
+  public void setFollowerType(CTRE_FollowerType type) {
+    followerType = type;
+  }
 
-  public void setMotionMagicType(MotionMagicType type) {motionMagicType = type;}
+  public void setMotionMagicType(MotionMagicType type) {
+    motionMagicType = type;
+  }
 
-  public void setUseFOC(Boolean useFOC) {this.useFOC = useFOC;}
+  public void setUseFOC(Boolean useFOC) {
+    this.useFOC = useFOC;
+  }
 
   public void setOpposeMain(Boolean oppose) {
-    if(oppose) opposeMain = MotorAlignmentValue.Opposed;
+    if (oppose) opposeMain = MotorAlignmentValue.Opposed;
     else opposeMain = MotorAlignmentValue.Aligned;
   }
 
-  public void setOverrideNeutral(Boolean override) {overrideNeutral = override;}
+  public void setOverrideNeutral(Boolean override) {
+    overrideNeutral = override;
+  }
 
   /**
    * Updates the stator current config, calls to the configurator and could cause loop overruns
@@ -1909,46 +1929,78 @@ public class SF_TalonFX {
   /**
    * @return integer active slot
    */
-  public int getActiveSlot() {return activeSlot;}
+  public int getActiveSlot() {
+    return activeSlot;
+  }
 
   /**
    * @return integer differential slot
    */
-  public int getDifferentialSlot() {return differentialSlot;}
+  public int getDifferentialSlot() {
+    return differentialSlot;
+  }
 
   /**
    * @return open loop units %, V, A
    */
-  public CTRE_Units getOpenLoopUnits() {return openLoopUnits;}
+  public CTRE_Units getOpenLoopUnits() {
+    return openLoopUnits;
+  }
 
   /**
    * @return closed loop units %, V, A
    */
-  public CTRE_Units getClosedLoopUnits() {return closedLoopUnits;}
+  public CTRE_Units getClosedLoopUnits() {
+    return closedLoopUnits;
+  }
 
-  public CTRE_ClosedLoopType getClosedLoopType() { return closedLoopType;}
+  public CTRE_ClosedLoopType getClosedLoopType() {
+    return closedLoopType;
+  }
 
-  public CTRE_DifferentialType getDifferentialType() {return  differentialType;}
+  public CTRE_DifferentialType getDifferentialType() {
+    return differentialType;
+  }
 
-  public CTRE_FollowerConfig getFollowerConfig() {return followerConfig;}
+  public CTRE_FollowerConfig getFollowerConfig() {
+    return followerConfig;
+  }
 
-  public CTRE_FollowerType getFollowerType() {return followerType;}
+  public CTRE_FollowerType getFollowerType() {
+    return followerType;
+  }
 
-  public MotionMagicType getMotionMagicType() {return motionMagicType;}
+  public MotionMagicType getMotionMagicType() {
+    return motionMagicType;
+  }
 
-  public Boolean getActiveFOC() {return  useFOC;}
+  public Boolean getActiveFOC() {
+    return useFOC;
+  }
 
-  public Boolean getLimitFwdMotion() {return  limitFwdMotion;}
+  public Boolean getLimitFwdMotion() {
+    return limitFwdMotion;
+  }
 
-  public Boolean getLimitRevMotion() {return  limitRevMotion;}
+  public Boolean getLimitRevMotion() {
+    return limitRevMotion;
+  }
 
-  public Boolean getIgnoreHwLimits() {return  ignoreHWlimits;}
+  public Boolean getIgnoreHwLimits() {
+    return ignoreHWlimits;
+  }
 
-  public Boolean getIgnoreSwLimits() {return  ignoreSWLimits;}
+  public Boolean getIgnoreSwLimits() {
+    return ignoreSWLimits;
+  }
 
-  public Boolean getOpposeMain() {return opposeMain == MotorAlignmentValue.Opposed;}
+  public Boolean getOpposeMain() {
+    return opposeMain == MotorAlignmentValue.Opposed;
+  }
 
-  public Boolean getOverrideNeutral() {return  overrideNeutral;}
+  public Boolean getOverrideNeutral() {
+    return overrideNeutral;
+  }
 
   // Watchers
 

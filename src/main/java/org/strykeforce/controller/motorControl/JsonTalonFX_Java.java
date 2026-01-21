@@ -1,4 +1,4 @@
-package org.strykeforce.controller;
+package org.strykeforce.controller.motorControl;
 
 import com.ctre.phoenix6.configs.*;
 import com.ctre.phoenix6.signals.*;

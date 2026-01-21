@@ -30,7 +30,7 @@ class Slot2Configs(
       FFsign = StaticFeedforwardSignValue.UseClosedLoopSign
 
     var gainSched: GainSchedBehaviorValue = GainSchedBehaviorValue.Inactive
-    if (slot2GainSchedBehavior == "Useslot0") gainSched = GainSchedBehaviorValue.UseSlot0
+    if (slot2GainSchedBehavior == "UseSlot0") gainSched = GainSchedBehaviorValue.UseSlot0
     else if (slot2GainSchedBehavior == "UseSlot1") gainSched = GainSchedBehaviorValue.UseSlot1
     else if (slot2GainSchedBehavior == "UseSlot2") gainSched = GainSchedBehaviorValue.UseSlot2
     else if (slot2GainSchedBehavior == "ZeroOutput") gainSched = GainSchedBehaviorValue.ZeroOutput

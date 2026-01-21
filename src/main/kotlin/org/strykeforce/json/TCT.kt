@@ -2,12 +2,12 @@ package org.strykeforce.json
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
-import org.strykeforce.controller.CTRE_ClosedLoopType
-import org.strykeforce.controller.CTRE_DifferentialType
-import org.strykeforce.controller.CTRE_FollowerConfig
-import org.strykeforce.controller.CTRE_FollowerType
-import org.strykeforce.controller.CTRE_Units
-import org.strykeforce.controller.MotionMagicType
+import org.strykeforce.controller.motorControl.CTRE_ClosedLoopType
+import org.strykeforce.controller.motorControl.CTRE_DifferentialType
+import org.strykeforce.controller.motorControl.CTRE_FollowerConfig
+import org.strykeforce.controller.motorControl.CTRE_FollowerType
+import org.strykeforce.controller.motorControl.CTRE_Units
+import org.strykeforce.controller.motorControl.MotionMagicType
 
 @JsonClass(generateAdapter = true)
 class TCT(
