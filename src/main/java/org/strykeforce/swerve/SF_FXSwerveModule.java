@@ -1,10 +1,9 @@
 package org.strykeforce.swerve;
 
-import static com.ctre.phoenix6.BaseStatusSignal.refreshAll;
 import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.StatusCode;
-import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.StatusSignalCollection;
 import com.ctre.phoenix6.controls.*;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.hardware.TalonFXS;
@@ -55,11 +54,12 @@ public class SF_FXSwerveModule implements SwerveModule {
   private int azimuthSlot;
   private boolean compensateLatency;
   private boolean encoderOpposed;
+  StatusSignalCollection signals = new StatusSignalCollection();
 
   // Status Signals
-  private StatusSignal<Angle> drivePosition;
-  private StatusSignal<AngularVelocity> driveVelocity;
-  private StatusSignal<Angle> azimuthPosition;
+  //  private StatusSignal<Angle> drivePosition;
+  //  private StatusSignal<AngularVelocity> driveVelocity;
+  //  private StatusSignal<Angle> azimuthPosition;
 
   private SF_FXSwerveModule(SF_FXSwerveModule.SF_FXBuilder builder) {
     azimuthTalon = builder.azimuthTalon;
@@ -85,6 +85,8 @@ public class SF_FXSwerveModule implements SwerveModule {
     driveTalon.registerVelocity();
     azimuthTalon.registerPosition();
     azimuthTalon.registerRawPulseWidthPosition(50.0);
+    signals.addSignals(driveTalon.getRegisteredSignals());
+    signals.addSignals(azimuthTalon.getRegisteredSignals());
     //        drivePosition = driveTalon.getTalonFX().getPosition();
     //        driveVelocity = driveTalon.getTalonFX().getVelocity();
     //        azimuthPosition = azimuthTalon.getTalonFXS().getPosition();
@@ -92,7 +94,7 @@ public class SF_FXSwerveModule implements SwerveModule {
 
   @Override
   public void refreshMotorControllers() {
-    refreshAll(drivePosition, driveVelocity, azimuthPosition);
+    signals.refreshAll();
   }
 
   @Override
@@ -246,7 +248,7 @@ public class SF_FXSwerveModule implements SwerveModule {
   }
 
   private double getAzimuthEncoderPosition() {
-    return azimuthPosition.getValueAsDouble();
+    return azimuthTalon.getPosition();
   }
 
   @Override
@@ -284,7 +286,7 @@ public class SF_FXSwerveModule implements SwerveModule {
   }
 
   private LinearVelocity getDriveMetersPerSecond() {
-    double shaftVelocity = driveVelocity.getValueAsDouble(); // rotations per second
+    double shaftVelocity = driveTalon.getVelocity(); // rotations per second
     double motorRotations = shaftVelocity / driveCountsPerRev; // default = 1.0 for counts
     double wheelRotations = motorRotations * driveGearRatio;
     double metersPerSecond = wheelRotations * wheelCircumferenceMeters;
@@ -318,7 +320,8 @@ public class SF_FXSwerveModule implements SwerveModule {
   }
 
   private void setDriveOpenLoopMetersPerSecond(double metersPerSecond) {
-    DutyCycleOut controlRequest = new DutyCycleOut(metersPerSecond / driveMaximumMetersPerSecond);
+    //    DutyCycleOut controlRequest = new DutyCycleOut(metersPerSecond /
+    // driveMaximumMetersPerSecond);
     driveTalon.runOpenLoop(metersPerSecond / driveMaximumMetersPerSecond);
   }
 
