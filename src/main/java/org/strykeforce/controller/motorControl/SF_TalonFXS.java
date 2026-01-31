@@ -2008,6 +2008,10 @@ public class SF_TalonFXS {
     return overrideNeutral;
   }
 
+  public double getControlRequestUpdateFreq() {
+    return controlRequestUpdateFreq;
+  }
+
   // Watchers
   /** Refreshes all registered status signals in one CAN bus call */
   public void refreshRegisteredSignals() {

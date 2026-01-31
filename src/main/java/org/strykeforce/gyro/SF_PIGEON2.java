@@ -1,5 +1,6 @@
 package org.strykeforce.gyro;
 
+import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.configs.Pigeon2Configurator;
@@ -24,6 +25,13 @@ public class SF_PIGEON2 implements Gyro {
 
   public SF_PIGEON2(int deviceId, String canbus) {
     pigeon2 = new Pigeon2(deviceId, canbus);
+    configurator = pigeon2.getConfigurator();
+    yawGetter = pigeon2.getYaw();
+    yawRateGetter = pigeon2.getAngularVelocityZWorld();
+  }
+
+  public SF_PIGEON2(int deviceID, CANBus canBus) {
+    pigeon2 = new Pigeon2(deviceID, canBus);
     configurator = pigeon2.getConfigurator();
     yawGetter = pigeon2.getYaw();
     yawRateGetter = pigeon2.getAngularVelocityZWorld();
