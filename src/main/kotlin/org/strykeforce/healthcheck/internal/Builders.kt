@@ -11,8 +11,10 @@ import java.lang.reflect.Field
 import java.lang.reflect.Method
 import mu.KotlinLogging
 import okhttp3.internal.toImmutableList
+import org.strykeforce.controller.motorControl.SF_TalonFX
+import org.strykeforce.controller.motorControl.SF_TalonFXS
 import org.strykeforce.healthcheck.*
-import org.strykeforce.swerve.FXSwerveModule
+import org.strykeforce.swerve.SF_FXSwerveModule
 import org.strykeforce.swerve.SwerveDrive
 import org.strykeforce.swerve.V6TalonSwerveModule
 
@@ -220,6 +222,10 @@ class IOHealthCheckBuilder(private val io: Checkable) {
         healthChecks.add(P6TalonHealthCheckIOBuilder(io, it).build())
       } else if (it.type == TalonFXS::class.java) {
         healthChecks.add(FXSTalonHealthCheckIOBuilder(io, it).build())
+      } else if (it.type == SF_TalonFX::class.java) {
+        healthChecks.add(SF_TalonFXHealthCheckIOBuilder(io, it).build())
+      } else if (it.type == SF_TalonFXS::class.java) {
+        healthChecks.add(SF_TalonFXSHealthCheckIOBuilder(io, it).build())
       } else {
         healthChecks.add(TalonHealthCheckIOBuilder(io, it).build())
       }
@@ -502,8 +508,8 @@ class FXSwerveDriveHealthCheckIOBuilder(private val io: Checkable, private val f
     // follow associated leaders
     swerveDrive.swerveModules.forEach {
       val module =
-        it as? FXSwerveModule
-          ?: throw IllegalArgumentException("$io: $it is not FXTalonSwerveModule")
+        it as? SF_FXSwerveModule
+          ?: throw IllegalArgumentException("$io: $it is not SF_FXTalonSwerveModule")
       val azimuth = module.azimuthTalon
       val drive = module.driveTalon
 
@@ -702,6 +708,49 @@ class P6TalonHealthCheckIOBuilder(private val io: Checkable, private val field: 
   }
 }
 
+class SF_TalonFXHealthCheckIOBuilder(private val io: Checkable, private val field: Field) {
+  val talonFxWrapper =
+    field.get(io) as? SF_TalonFX
+      ?: throw java.lang.IllegalArgumentException(
+        "$io: field '${field.name}' is not subclass of SF_TalonFX"
+      )
+
+  val talonFX = talonFxWrapper.talonFX
+
+  fun build(): P6TalonHealthCheck {
+    val timedAnnotation = field.getAnnotation(Timed::class.java)
+    val positionAnnotation = field.getAnnotation(Position::class.java)
+    val followAnnotation = field.getAnnotation(Follow::class.java)
+
+    if (
+      arrayListOf(timedAnnotation, positionAnnotation, followAnnotation).filterNotNull().count() > 1
+    )
+      throw IllegalArgumentException(
+        "$io: only one of @Timed, @Position, or @Follow may be specified."
+      )
+
+    if (timedAnnotation != null) {
+      val builder = P6TalonTimedHealthCheckBuilder(talonFX)
+      builder.percentOutput = timedAnnotation.percentOutput
+      builder.duration = timedAnnotation.duration
+      return builder.build()
+    }
+
+    if (positionAnnotation != null) {
+      val builder = P6TalonPositionHealthCheckBuilder(talonFX)
+      builder.percentOutput = positionAnnotation.percentOutput
+      builder.encoderChange = positionAnnotation.encoderChange
+      return builder.build()
+    }
+
+    if (followAnnotation != null)
+      return P6TalonFollowerHealthCheck(talonFX, followAnnotation.leader)
+
+    // Default to timed if not specified
+    return P6TalonTimedHealthCheckBuilder(talonFX).build()
+  }
+}
+
 class FXSTalonHealthCheckIOBuilder(private val io: Checkable, private val field: Field) {
   val talonFxs =
     field.get(io) as? TalonFXS
@@ -740,6 +789,49 @@ class FXSTalonHealthCheckIOBuilder(private val io: Checkable, private val field:
 
     // Default to timed if not specified
     return FXSTalonTimedHealthCheckBuilder(talonFxs).build()
+  }
+}
+
+class SF_TalonFXSHealthCheckIOBuilder(private val io: Checkable, private val field: Field) {
+  val talonFxsWrapper =
+    field.get(io) as? SF_TalonFXS
+      ?: throw java.lang.IllegalArgumentException(
+        "$io: field '${field.name}' is not subclass of TalonFXS"
+      )
+
+  val talonFXS = talonFxsWrapper.talonFXS
+
+  fun build(): FXSTalonHealthCheck {
+    val timedAnnotation = field.getAnnotation(Timed::class.java)
+    val positionAnnotation = field.getAnnotation(Position::class.java)
+    val followAnnotation = field.getAnnotation(Follow::class.java)
+
+    if (
+      arrayListOf(timedAnnotation, positionAnnotation, followAnnotation).filterNotNull().count() > 1
+    )
+      throw IllegalArgumentException(
+        "$io: only one of @Timed, @Position, or @Follow may be specified."
+      )
+
+    if (timedAnnotation != null) {
+      val builder = FXSTalonTimedHealthCheckBuilder(talonFXS)
+      builder.percentOutput = timedAnnotation.percentOutput
+      builder.duration = timedAnnotation.duration
+      return builder.build()
+    }
+
+    if (positionAnnotation != null) {
+      val builder = FXSTalonPositionHealthCheckBuilder(talonFXS)
+      builder.percentOutput = positionAnnotation.percentOutput
+      builder.encoderChange = positionAnnotation.encoderChange
+      return builder.build()
+    }
+
+    if (followAnnotation != null)
+      return FXSTalonFollowerHealthCheck(talonFXS, followAnnotation.leader)
+
+    // Default to timed if not specified
+    return FXSTalonTimedHealthCheckBuilder(talonFXS).build()
   }
 }
 

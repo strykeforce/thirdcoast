@@ -80,6 +80,7 @@ class TCT(
     var type: CTRE_ClosedLoopType = CTRE_ClosedLoopType.Velocity
     if (closedLoopType == "Position") type = CTRE_ClosedLoopType.Position
     else if (closedLoopType == "Motion_Magic") type = CTRE_ClosedLoopType.Motion_Magic
+    else if (closedLoopType == "Follower") type = CTRE_ClosedLoopType.Follower
     return type
   }
 

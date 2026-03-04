@@ -222,6 +222,7 @@ public class SF_TalonFX {
     isFDBus = canbus.isNetworkFD();
     loadFromJSON(configSuffix);
     setupControlRequests();
+    if (closedLoopType == CTRE_ClosedLoopType.Follower) setupFollower(leaderID);
   }
 
   //  public SF_TalonFX(int id, String canbus, String configSuffix) {
@@ -339,76 +340,78 @@ public class SF_TalonFX {
     updateFreq = MathUtil.clamp(updateFreq, 0.0, 1000.0); // 4Hz = min updating
     controlRequestUpdateFreq = updateFreq;
 
-    // open loop
-    dutyCycleOut.UpdateFreqHz = updateFreq;
-    voltageOut.UpdateFreqHz = updateFreq;
-    torqueCurrentFOC.UpdateFreqHz = updateFreq;
-
-    // follower
-    follower.UpdateFreqHz = updateFreq;
-    strictFollower.UpdateFreqHz = updateFreq;
-
-    // position
-    positionDutyCycle.UpdateFreqHz = updateFreq;
-    positionVoltage.UpdateFreqHz = updateFreq;
-    positionTorqueCurrentFOC.UpdateFreqHz = updateFreq;
-
-    // velocity
-    velocityDutyCycle.UpdateFreqHz = updateFreq;
-    velocityVoltage.UpdateFreqHz = updateFreq;
-    velocityTorqueCurrentFOC.UpdateFreqHz = updateFreq;
-
-    // standard motion magic
-    motionMagicDutyCycle.UpdateFreqHz = updateFreq;
-    motionMagicVoltage.UpdateFreqHz = updateFreq;
-    motionMagicTorqueCurrentFOC.UpdateFreqHz = updateFreq;
-
-    // velocity motion magic
-    motionMagicVelocityDutyCycle.UpdateFreqHz = updateFreq;
-    motionMagicVelocityVoltage.UpdateFreqHz = updateFreq;
-    motionMagicVelocityTorqueCurrentFOC.UpdateFreqHz = updateFreq;
-
-    // expo motion magic
-    motionMagicExpoDutyCycle.UpdateFreqHz = updateFreq;
-    motionMagicExpoVoltage.UpdateFreqHz = updateFreq;
-    motionMagicExpoTorqueCurrentFOC.UpdateFreqHz = updateFreq;
-
-    // dynamic motion magic
-    dynamicMotionMagicDutyCycle.UpdateFreqHz = updateFreq;
-    dynamicMotionMagicVoltage.UpdateFreqHz = updateFreq;
-    dynamicMotionMagicTorqueCurrentFOC.UpdateFreqHz = updateFreq;
-
-    // dynamic motion magic expo
-    dynamicMotionMagicExpoDutyCycle.UpdateFreqHz = updateFreq;
-    dynamicMotionMagicExpoVoltage.UpdateFreqHz = updateFreq;
-    dynamicMotionMagicExpoTorqueCurrentFOC.UpdateFreqHz = updateFreq;
-
-    // differential
-    differentialDutyCycle.UpdateFreqHz = updateFreq;
-    differentialVoltage.UpdateFreqHz = updateFreq;
-
-    // differential position
-    differentialPositionDutyCycle.UpdateFreqHz = updateFreq;
-    differentialPositionVoltage.UpdateFreqHz = updateFreq;
-
-    // differential velocity
-    differentialVelocityDutyCycle.UpdateFreqHz = updateFreq;
-    differentialVelocityVoltage.UpdateFreqHz = updateFreq;
-
-    // differential motion magic
-    differentialMotionMagicDutyCycle.UpdateFreqHz = updateFreq;
-    differentialMotionMagicVoltage.UpdateFreqHz = updateFreq;
-
-    // differential follower
-    differentialFollower.UpdateFreqHz = updateFreq;
-    differentialStrictFollower.UpdateFreqHz = updateFreq;
+    //    // open loop
+    //    dutyCycleOut.UpdateFreqHz = updateFreq;
+    //    voltageOut.UpdateFreqHz = updateFreq;
+    //    torqueCurrentFOC.UpdateFreqHz = updateFreq;
+    //
+    //    // follower
+    //    follower.UpdateFreqHz = updateFreq;
+    //    strictFollower.UpdateFreqHz = updateFreq;
+    //
+    //    // position
+    //    positionDutyCycle.UpdateFreqHz = updateFreq;
+    //    positionVoltage.UpdateFreqHz = updateFreq;
+    //    positionTorqueCurrentFOC.UpdateFreqHz = updateFreq;
+    //
+    //    // velocity
+    //    velocityDutyCycle.UpdateFreqHz = updateFreq;
+    //    velocityVoltage.UpdateFreqHz = updateFreq;
+    //    velocityTorqueCurrentFOC.UpdateFreqHz = updateFreq;
+    //
+    //    // standard motion magic
+    //    motionMagicDutyCycle.UpdateFreqHz = updateFreq;
+    //    motionMagicVoltage.UpdateFreqHz = updateFreq;
+    //    motionMagicTorqueCurrentFOC.UpdateFreqHz = updateFreq;
+    //
+    //    // velocity motion magic
+    //    motionMagicVelocityDutyCycle.UpdateFreqHz = updateFreq;
+    //    motionMagicVelocityVoltage.UpdateFreqHz = updateFreq;
+    //    motionMagicVelocityTorqueCurrentFOC.UpdateFreqHz = updateFreq;
+    //
+    //    // expo motion magic
+    //    motionMagicExpoDutyCycle.UpdateFreqHz = updateFreq;
+    //    motionMagicExpoVoltage.UpdateFreqHz = updateFreq;
+    //    motionMagicExpoTorqueCurrentFOC.UpdateFreqHz = updateFreq;
+    //
+    //    // dynamic motion magic
+    //    dynamicMotionMagicDutyCycle.UpdateFreqHz = updateFreq;
+    //    dynamicMotionMagicVoltage.UpdateFreqHz = updateFreq;
+    //    dynamicMotionMagicTorqueCurrentFOC.UpdateFreqHz = updateFreq;
+    //
+    //    // dynamic motion magic expo
+    //    dynamicMotionMagicExpoDutyCycle.UpdateFreqHz = updateFreq;
+    //    dynamicMotionMagicExpoVoltage.UpdateFreqHz = updateFreq;
+    //    dynamicMotionMagicExpoTorqueCurrentFOC.UpdateFreqHz = updateFreq;
+    //
+    //    // differential
+    //    differentialDutyCycle.UpdateFreqHz = updateFreq;
+    //    differentialVoltage.UpdateFreqHz = updateFreq;
+    //
+    //    // differential position
+    //    differentialPositionDutyCycle.UpdateFreqHz = updateFreq;
+    //    differentialPositionVoltage.UpdateFreqHz = updateFreq;
+    //
+    //    // differential velocity
+    //    differentialVelocityDutyCycle.UpdateFreqHz = updateFreq;
+    //    differentialVelocityVoltage.UpdateFreqHz = updateFreq;
+    //
+    //    // differential motion magic
+    //    differentialMotionMagicDutyCycle.UpdateFreqHz = updateFreq;
+    //    differentialMotionMagicVoltage.UpdateFreqHz = updateFreq;
+    //
+    //    // differential follower
+    //    differentialFollower.UpdateFreqHz = updateFreq;
+    //    differentialStrictFollower.UpdateFreqHz = updateFreq;
   }
 
   /** Sets up the control requests for follower modes */
   private void setupFollowerControlRequest() {
     switch (followerType) {
-      case Standard -> follower = new Follower(leaderID, opposeMain);
-      case Strict -> strictFollower = new StrictFollower(leaderID);
+      case Standard ->
+          follower = new Follower(leaderID, opposeMain).withUpdateFreqHz(controlRequestUpdateFreq);
+      case Strict ->
+          strictFollower = new StrictFollower(leaderID).withUpdateFreqHz(controlRequestUpdateFreq);
     }
   }
 
@@ -424,7 +427,8 @@ public class SF_TalonFX {
                 .withIgnoreSoftwareLimits(ignoreSWLimits)
                 .withLimitForwardMotion(limitFwdMotion)
                 .withLimitReverseMotion(limitRevMotion)
-                .withOverrideBrakeDurNeutral(overrideNeutral);
+                .withOverrideBrakeDurNeutral(overrideNeutral)
+                .withUpdateFreqHz(controlRequestUpdateFreq);
       }
       case Voltage -> {
         voltageOut =
@@ -435,7 +439,8 @@ public class SF_TalonFX {
                 .withIgnoreSoftwareLimits(ignoreSWLimits)
                 .withLimitForwardMotion(limitFwdMotion)
                 .withLimitReverseMotion(limitRevMotion)
-                .withOverrideBrakeDurNeutral(overrideNeutral);
+                .withOverrideBrakeDurNeutral(overrideNeutral)
+                .withUpdateFreqHz(controlRequestUpdateFreq);
       }
       case Torque_Current -> {
         torqueCurrentFOC =
@@ -447,7 +452,8 @@ public class SF_TalonFX {
                 .withLimitReverseMotion(limitRevMotion)
                 .withOverrideCoastDurNeutral(overrideNeutral)
                 .withMaxAbsDutyCycle(torqueCurrentMax)
-                .withDeadband(torqueCurrentDeadband);
+                .withDeadband(torqueCurrentDeadband)
+                .withUpdateFreqHz(controlRequestUpdateFreq);
       }
     }
   }
@@ -465,7 +471,8 @@ public class SF_TalonFX {
                 .withLimitForwardMotion(limitFwdMotion)
                 .withLimitReverseMotion(limitRevMotion)
                 .withOverrideBrakeDurNeutral(overrideNeutral)
-                .withSlot(activeSlot);
+                .withSlot(activeSlot)
+                .withUpdateFreqHz(controlRequestUpdateFreq);
       }
       case Voltage -> {
         positionVoltage =
@@ -477,7 +484,8 @@ public class SF_TalonFX {
                 .withLimitForwardMotion(limitFwdMotion)
                 .withLimitReverseMotion(limitRevMotion)
                 .withOverrideBrakeDurNeutral(overrideNeutral)
-                .withSlot(activeSlot);
+                .withSlot(activeSlot)
+                .withUpdateFreqHz(controlRequestUpdateFreq);
       }
       case Torque_Current -> {
         positionTorqueCurrentFOC =
@@ -488,7 +496,8 @@ public class SF_TalonFX {
                 .withLimitForwardMotion(limitFwdMotion)
                 .withLimitReverseMotion(limitRevMotion)
                 .withOverrideCoastDurNeutral(overrideNeutral)
-                .withSlot(activeSlot);
+                .withSlot(activeSlot)
+                .withUpdateFreqHz(controlRequestUpdateFreq);
       }
     }
   }
@@ -506,7 +515,8 @@ public class SF_TalonFX {
                 .withLimitForwardMotion(limitFwdMotion)
                 .withLimitReverseMotion(limitRevMotion)
                 .withOverrideBrakeDurNeutral(overrideNeutral)
-                .withSlot(activeSlot);
+                .withSlot(activeSlot)
+                .withUpdateFreqHz(controlRequestUpdateFreq);
       }
       case Voltage -> {
         velocityVoltage =
@@ -518,7 +528,8 @@ public class SF_TalonFX {
                 .withLimitForwardMotion(limitFwdMotion)
                 .withLimitReverseMotion(limitRevMotion)
                 .withOverrideBrakeDurNeutral(overrideNeutral)
-                .withSlot(activeSlot);
+                .withSlot(activeSlot)
+                .withUpdateFreqHz(controlRequestUpdateFreq);
       }
       case Torque_Current -> {
         velocityTorqueCurrentFOC =
@@ -529,7 +540,8 @@ public class SF_TalonFX {
                 .withLimitForwardMotion(limitFwdMotion)
                 .withLimitReverseMotion(limitRevMotion)
                 .withOverrideCoastDurNeutral(overrideNeutral)
-                .withSlot(activeSlot);
+                .withSlot(activeSlot)
+                .withUpdateFreqHz(controlRequestUpdateFreq);
       }
     }
   }
@@ -549,7 +561,8 @@ public class SF_TalonFX {
                     .withLimitForwardMotion(limitFwdMotion)
                     .withLimitReverseMotion(limitRevMotion)
                     .withOverrideBrakeDurNeutral(overrideNeutral)
-                    .withSlot(activeSlot);
+                    .withSlot(activeSlot)
+                    .withUpdateFreqHz(controlRequestUpdateFreq);
           }
           case Voltage -> {
             motionMagicVoltage =
@@ -561,7 +574,8 @@ public class SF_TalonFX {
                     .withLimitForwardMotion(limitFwdMotion)
                     .withLimitReverseMotion(limitRevMotion)
                     .withOverrideBrakeDurNeutral(overrideNeutral)
-                    .withSlot(activeSlot);
+                    .withSlot(activeSlot)
+                    .withUpdateFreqHz(controlRequestUpdateFreq);
           }
           case Torque_Current -> {
             motionMagicTorqueCurrentFOC =
@@ -572,7 +586,8 @@ public class SF_TalonFX {
                     .withLimitForwardMotion(limitFwdMotion)
                     .withLimitReverseMotion(limitRevMotion)
                     .withOverrideCoastDurNeutral(overrideNeutral)
-                    .withSlot(activeSlot);
+                    .withSlot(activeSlot)
+                    .withUpdateFreqHz(controlRequestUpdateFreq);
           }
         }
       }
@@ -588,7 +603,8 @@ public class SF_TalonFX {
                     .withLimitForwardMotion(limitFwdMotion)
                     .withLimitReverseMotion(limitRevMotion)
                     .withOverrideBrakeDurNeutral(overrideNeutral)
-                    .withSlot(activeSlot);
+                    .withSlot(activeSlot)
+                    .withUpdateFreqHz(controlRequestUpdateFreq);
           }
           case Voltage -> {
             motionMagicVelocityVoltage =
@@ -600,7 +616,8 @@ public class SF_TalonFX {
                     .withLimitForwardMotion(limitFwdMotion)
                     .withLimitReverseMotion(limitRevMotion)
                     .withOverrideBrakeDurNeutral(overrideNeutral)
-                    .withSlot(activeSlot);
+                    .withSlot(activeSlot)
+                    .withUpdateFreqHz(controlRequestUpdateFreq);
           }
           case Torque_Current -> {
             motionMagicVelocityTorqueCurrentFOC =
@@ -611,7 +628,8 @@ public class SF_TalonFX {
                     .withLimitForwardMotion(limitFwdMotion)
                     .withLimitReverseMotion(limitRevMotion)
                     .withOverrideCoastDurNeutral(overrideNeutral)
-                    .withSlot(activeSlot);
+                    .withSlot(activeSlot)
+                    .withUpdateFreqHz(controlRequestUpdateFreq);
           }
         }
       }
@@ -627,7 +645,8 @@ public class SF_TalonFX {
                     .withLimitForwardMotion(limitFwdMotion)
                     .withLimitReverseMotion(limitRevMotion)
                     .withOverrideBrakeDurNeutral(overrideNeutral)
-                    .withSlot(activeSlot);
+                    .withSlot(activeSlot)
+                    .withUpdateFreqHz(controlRequestUpdateFreq);
           }
           case Voltage -> {
             motionMagicExpoVoltage =
@@ -639,7 +658,8 @@ public class SF_TalonFX {
                     .withLimitForwardMotion(limitFwdMotion)
                     .withLimitReverseMotion(limitRevMotion)
                     .withOverrideBrakeDurNeutral(overrideNeutral)
-                    .withSlot(activeSlot);
+                    .withSlot(activeSlot)
+                    .withUpdateFreqHz(controlRequestUpdateFreq);
           }
           case Torque_Current -> {
             motionMagicExpoTorqueCurrentFOC =
@@ -650,7 +670,8 @@ public class SF_TalonFX {
                     .withLimitForwardMotion(limitFwdMotion)
                     .withLimitReverseMotion(limitRevMotion)
                     .withOverrideCoastDurNeutral(overrideNeutral)
-                    .withSlot(activeSlot);
+                    .withSlot(activeSlot)
+                    .withUpdateFreqHz(controlRequestUpdateFreq);
           }
         }
       }
@@ -667,7 +688,8 @@ public class SF_TalonFX {
                     .withLimitForwardMotion(limitFwdMotion)
                     .withLimitReverseMotion(limitRevMotion)
                     .withOverrideBrakeDurNeutral(overrideNeutral)
-                    .withSlot(activeSlot);
+                    .withSlot(activeSlot)
+                    .withUpdateFreqHz(controlRequestUpdateFreq);
           }
           case Voltage -> {
             dynamicMotionMagicVoltage =
@@ -680,7 +702,8 @@ public class SF_TalonFX {
                     .withLimitForwardMotion(limitFwdMotion)
                     .withLimitReverseMotion(limitRevMotion)
                     .withOverrideBrakeDurNeutral(overrideNeutral)
-                    .withSlot(activeSlot);
+                    .withSlot(activeSlot)
+                    .withUpdateFreqHz(controlRequestUpdateFreq);
           }
           case Torque_Current -> {
             dynamicMotionMagicTorqueCurrentFOC =
@@ -692,7 +715,8 @@ public class SF_TalonFX {
                     .withLimitForwardMotion(limitFwdMotion)
                     .withLimitReverseMotion(limitRevMotion)
                     .withOverrideCoastDurNeutral(overrideNeutral)
-                    .withSlot(activeSlot);
+                    .withSlot(activeSlot)
+                    .withUpdateFreqHz(controlRequestUpdateFreq);
           }
         }
       }
@@ -709,7 +733,8 @@ public class SF_TalonFX {
                     .withLimitForwardMotion(limitFwdMotion)
                     .withLimitReverseMotion(limitRevMotion)
                     .withOverrideBrakeDurNeutral(overrideNeutral)
-                    .withSlot(activeSlot);
+                    .withSlot(activeSlot)
+                    .withUpdateFreqHz(controlRequestUpdateFreq);
           }
           case Voltage -> {
             dynamicMotionMagicExpoVoltage =
@@ -722,7 +747,8 @@ public class SF_TalonFX {
                     .withLimitForwardMotion(limitFwdMotion)
                     .withLimitReverseMotion(limitRevMotion)
                     .withOverrideBrakeDurNeutral(overrideNeutral)
-                    .withSlot(activeSlot);
+                    .withSlot(activeSlot)
+                    .withUpdateFreqHz(controlRequestUpdateFreq);
           }
           case Torque_Current -> {
             dynamicMotionMagicExpoTorqueCurrentFOC =
@@ -734,7 +760,8 @@ public class SF_TalonFX {
                     .withLimitForwardMotion(limitFwdMotion)
                     .withLimitReverseMotion(limitRevMotion)
                     .withOverrideCoastDurNeutral(overrideNeutral)
-                    .withSlot(activeSlot);
+                    .withSlot(activeSlot)
+                    .withUpdateFreqHz(controlRequestUpdateFreq);
           }
         }
       }
@@ -747,10 +774,13 @@ public class SF_TalonFX {
       case Follower -> {
         switch (followerType) {
           case Standard -> {
-            differentialFollower = new DifferentialFollower(leaderID, opposeMain);
+            differentialFollower =
+                new DifferentialFollower(leaderID, opposeMain)
+                    .withUpdateFreqHz(controlRequestUpdateFreq);
           }
           case Strict -> {
-            differentialStrictFollower = new DifferentialStrictFollower(leaderID);
+            differentialStrictFollower =
+                new DifferentialStrictFollower(leaderID).withUpdateFreqHz(controlRequestUpdateFreq);
           }
         }
       }
@@ -765,7 +795,8 @@ public class SF_TalonFX {
                     .withIgnoreSoftwareLimits(ignoreSWLimits)
                     .withLimitForwardMotion(limitFwdMotion)
                     .withLimitReverseMotion(limitRevMotion)
-                    .withOverrideBrakeDurNeutral(overrideNeutral);
+                    .withOverrideBrakeDurNeutral(overrideNeutral)
+                    .withUpdateFreqHz(controlRequestUpdateFreq);
           }
           case Voltage -> {
             differentialVoltage =
@@ -776,7 +807,8 @@ public class SF_TalonFX {
                     .withIgnoreSoftwareLimits(ignoreSWLimits)
                     .withLimitForwardMotion(limitFwdMotion)
                     .withLimitReverseMotion(limitRevMotion)
-                    .withOverrideBrakeDurNeutral(overrideNeutral);
+                    .withOverrideBrakeDurNeutral(overrideNeutral)
+                    .withUpdateFreqHz(controlRequestUpdateFreq);
           }
           case Torque_Current -> {
             DriverStation.reportError(
@@ -795,7 +827,8 @@ public class SF_TalonFX {
                     .withIgnoreSoftwareLimits(ignoreSWLimits)
                     .withLimitForwardMotion(limitFwdMotion)
                     .withLimitReverseMotion(limitRevMotion)
-                    .withOverrideBrakeDurNeutral(overrideNeutral);
+                    .withOverrideBrakeDurNeutral(overrideNeutral)
+                    .withUpdateFreqHz(controlRequestUpdateFreq);
           }
           case Voltage -> {
             differentialPositionVoltage =
@@ -806,7 +839,8 @@ public class SF_TalonFX {
                     .withIgnoreSoftwareLimits(ignoreSWLimits)
                     .withLimitForwardMotion(limitFwdMotion)
                     .withLimitReverseMotion(limitRevMotion)
-                    .withOverrideBrakeDurNeutral(overrideNeutral);
+                    .withOverrideBrakeDurNeutral(overrideNeutral)
+                    .withUpdateFreqHz(controlRequestUpdateFreq);
           }
           case Torque_Current -> {
             DriverStation.reportError(
@@ -825,7 +859,8 @@ public class SF_TalonFX {
                     .withIgnoreSoftwareLimits(ignoreSWLimits)
                     .withLimitForwardMotion(limitFwdMotion)
                     .withLimitReverseMotion(limitRevMotion)
-                    .withOverrideBrakeDurNeutral(overrideNeutral);
+                    .withOverrideBrakeDurNeutral(overrideNeutral)
+                    .withUpdateFreqHz(controlRequestUpdateFreq);
           }
           case Voltage -> {
             differentialVelocityVoltage =
@@ -836,7 +871,8 @@ public class SF_TalonFX {
                     .withIgnoreSoftwareLimits(ignoreSWLimits)
                     .withLimitForwardMotion(limitFwdMotion)
                     .withLimitReverseMotion(limitRevMotion)
-                    .withOverrideBrakeDurNeutral(overrideNeutral);
+                    .withOverrideBrakeDurNeutral(overrideNeutral)
+                    .withUpdateFreqHz(controlRequestUpdateFreq);
           }
           case Torque_Current -> {
             DriverStation.reportError(
@@ -855,7 +891,8 @@ public class SF_TalonFX {
                     .withIgnoreSoftwareLimits(ignoreSWLimits)
                     .withLimitForwardMotion(limitFwdMotion)
                     .withLimitReverseMotion(limitRevMotion)
-                    .withOverrideBrakeDurNeutral(overrideNeutral);
+                    .withOverrideBrakeDurNeutral(overrideNeutral)
+                    .withUpdateFreqHz(controlRequestUpdateFreq);
           }
           case Voltage -> {
             differentialMotionMagicVoltage =
@@ -866,7 +903,8 @@ public class SF_TalonFX {
                     .withIgnoreSoftwareLimits(ignoreSWLimits)
                     .withLimitForwardMotion(limitFwdMotion)
                     .withLimitReverseMotion(limitRevMotion)
-                    .withOverrideBrakeDurNeutral(overrideNeutral);
+                    .withOverrideBrakeDurNeutral(overrideNeutral)
+                    .withUpdateFreqHz(controlRequestUpdateFreq);
           }
           case Torque_Current -> {
             DriverStation.reportError(
@@ -891,7 +929,8 @@ public class SF_TalonFX {
                   .withLimitReverseMotion(limitRevMotion)
                   .withLimitForwardMotion(limitFwdMotion)
                   .withIgnoreHardwareLimits(ignoreHWlimits)
-                  .withIgnoreSoftwareLimits(ignoreSWLimits));
+                  .withIgnoreSoftwareLimits(ignoreSWLimits)
+                  .withUpdateFreqHz(controlRequestUpdateFreq));
       case Voltage ->
           talonFX.setControl(
               voltageOut
@@ -899,7 +938,8 @@ public class SF_TalonFX {
                   .withLimitReverseMotion(limitRevMotion)
                   .withLimitForwardMotion(limitFwdMotion)
                   .withIgnoreHardwareLimits(ignoreHWlimits)
-                  .withIgnoreSoftwareLimits(ignoreSWLimits));
+                  .withIgnoreSoftwareLimits(ignoreSWLimits)
+                  .withUpdateFreqHz(controlRequestUpdateFreq));
       case Torque_Current ->
           talonFX.setControl(
               torqueCurrentFOC
@@ -907,7 +947,8 @@ public class SF_TalonFX {
                   .withLimitReverseMotion(limitRevMotion)
                   .withLimitForwardMotion(limitFwdMotion)
                   .withIgnoreHardwareLimits(ignoreHWlimits)
-                  .withIgnoreSoftwareLimits(ignoreSWLimits));
+                  .withIgnoreSoftwareLimits(ignoreSWLimits)
+                  .withUpdateFreqHz(controlRequestUpdateFreq));
     }
   }
 
@@ -929,7 +970,8 @@ public class SF_TalonFX {
                       .withLimitReverseMotion(limitRevMotion)
                       .withLimitForwardMotion(limitFwdMotion)
                       .withIgnoreHardwareLimits(ignoreHWlimits)
-                      .withIgnoreSoftwareLimits(ignoreSWLimits));
+                      .withIgnoreSoftwareLimits(ignoreSWLimits)
+                      .withUpdateFreqHz(controlRequestUpdateFreq));
           case Voltage ->
               talonFX.setControl(
                   positionVoltage
@@ -938,7 +980,8 @@ public class SF_TalonFX {
                       .withLimitReverseMotion(limitRevMotion)
                       .withLimitForwardMotion(limitFwdMotion)
                       .withIgnoreHardwareLimits(ignoreHWlimits)
-                      .withIgnoreSoftwareLimits(ignoreSWLimits));
+                      .withIgnoreSoftwareLimits(ignoreSWLimits)
+                      .withUpdateFreqHz(controlRequestUpdateFreq));
           case Torque_Current ->
               talonFX.setControl(
                   positionTorqueCurrentFOC
@@ -947,7 +990,8 @@ public class SF_TalonFX {
                       .withLimitReverseMotion(limitRevMotion)
                       .withLimitForwardMotion(limitFwdMotion)
                       .withIgnoreHardwareLimits(ignoreHWlimits)
-                      .withIgnoreSoftwareLimits(ignoreSWLimits));
+                      .withIgnoreSoftwareLimits(ignoreSWLimits)
+                      .withUpdateFreqHz(controlRequestUpdateFreq));
         }
       }
       case Velocity -> {
@@ -960,7 +1004,8 @@ public class SF_TalonFX {
                       .withLimitReverseMotion(limitRevMotion)
                       .withLimitForwardMotion(limitFwdMotion)
                       .withIgnoreHardwareLimits(ignoreHWlimits)
-                      .withIgnoreSoftwareLimits(ignoreSWLimits));
+                      .withIgnoreSoftwareLimits(ignoreSWLimits)
+                      .withUpdateFreqHz(controlRequestUpdateFreq));
           case Voltage ->
               talonFX.setControl(
                   velocityVoltage
@@ -969,7 +1014,8 @@ public class SF_TalonFX {
                       .withLimitReverseMotion(limitRevMotion)
                       .withLimitForwardMotion(limitFwdMotion)
                       .withIgnoreHardwareLimits(ignoreHWlimits)
-                      .withIgnoreSoftwareLimits(ignoreSWLimits));
+                      .withIgnoreSoftwareLimits(ignoreSWLimits)
+                      .withUpdateFreqHz(controlRequestUpdateFreq));
           case Torque_Current ->
               talonFX.setControl(
                   velocityTorqueCurrentFOC
@@ -978,7 +1024,8 @@ public class SF_TalonFX {
                       .withLimitReverseMotion(limitRevMotion)
                       .withLimitForwardMotion(limitFwdMotion)
                       .withIgnoreHardwareLimits(ignoreHWlimits)
-                      .withIgnoreSoftwareLimits(ignoreSWLimits));
+                      .withIgnoreSoftwareLimits(ignoreSWLimits)
+                      .withUpdateFreqHz(controlRequestUpdateFreq));
         }
       }
       case Motion_Magic -> {
@@ -993,7 +1040,8 @@ public class SF_TalonFX {
                           .withLimitReverseMotion(limitRevMotion)
                           .withLimitForwardMotion(limitFwdMotion)
                           .withIgnoreHardwareLimits(ignoreHWlimits)
-                          .withIgnoreSoftwareLimits(ignoreSWLimits));
+                          .withIgnoreSoftwareLimits(ignoreSWLimits)
+                          .withUpdateFreqHz(controlRequestUpdateFreq));
               case Voltage ->
                   talonFX.setControl(
                       motionMagicVoltage
@@ -1002,7 +1050,8 @@ public class SF_TalonFX {
                           .withLimitReverseMotion(limitRevMotion)
                           .withLimitForwardMotion(limitFwdMotion)
                           .withIgnoreHardwareLimits(ignoreHWlimits)
-                          .withIgnoreSoftwareLimits(ignoreSWLimits));
+                          .withIgnoreSoftwareLimits(ignoreSWLimits)
+                          .withUpdateFreqHz(controlRequestUpdateFreq));
               case Torque_Current ->
                   talonFX.setControl(
                       motionMagicTorqueCurrentFOC
@@ -1011,7 +1060,8 @@ public class SF_TalonFX {
                           .withLimitReverseMotion(limitRevMotion)
                           .withLimitForwardMotion(limitFwdMotion)
                           .withIgnoreHardwareLimits(ignoreHWlimits)
-                          .withIgnoreSoftwareLimits(ignoreSWLimits));
+                          .withIgnoreSoftwareLimits(ignoreSWLimits)
+                          .withUpdateFreqHz(controlRequestUpdateFreq));
             }
           }
           case Velocity -> {
@@ -1024,7 +1074,8 @@ public class SF_TalonFX {
                           .withLimitReverseMotion(limitRevMotion)
                           .withLimitForwardMotion(limitFwdMotion)
                           .withIgnoreHardwareLimits(ignoreHWlimits)
-                          .withIgnoreSoftwareLimits(ignoreSWLimits));
+                          .withIgnoreSoftwareLimits(ignoreSWLimits)
+                          .withUpdateFreqHz(controlRequestUpdateFreq));
               case Voltage ->
                   talonFX.setControl(
                       motionMagicVelocityVoltage
@@ -1033,7 +1084,8 @@ public class SF_TalonFX {
                           .withLimitReverseMotion(limitRevMotion)
                           .withLimitForwardMotion(limitFwdMotion)
                           .withIgnoreHardwareLimits(ignoreHWlimits)
-                          .withIgnoreSoftwareLimits(ignoreSWLimits));
+                          .withIgnoreSoftwareLimits(ignoreSWLimits)
+                          .withUpdateFreqHz(controlRequestUpdateFreq));
               case Torque_Current ->
                   talonFX.setControl(
                       motionMagicVelocityTorqueCurrentFOC
@@ -1042,7 +1094,8 @@ public class SF_TalonFX {
                           .withLimitReverseMotion(limitRevMotion)
                           .withLimitForwardMotion(limitFwdMotion)
                           .withIgnoreHardwareLimits(ignoreHWlimits)
-                          .withIgnoreSoftwareLimits(ignoreSWLimits));
+                          .withIgnoreSoftwareLimits(ignoreSWLimits)
+                          .withUpdateFreqHz(controlRequestUpdateFreq));
             }
           }
           case Exponential -> {
@@ -1055,7 +1108,8 @@ public class SF_TalonFX {
                           .withLimitReverseMotion(limitRevMotion)
                           .withLimitForwardMotion(limitFwdMotion)
                           .withIgnoreHardwareLimits(ignoreHWlimits)
-                          .withIgnoreSoftwareLimits(ignoreSWLimits));
+                          .withIgnoreSoftwareLimits(ignoreSWLimits)
+                          .withUpdateFreqHz(controlRequestUpdateFreq));
               case Voltage ->
                   talonFX.setControl(
                       motionMagicExpoVoltage
@@ -1064,7 +1118,8 @@ public class SF_TalonFX {
                           .withLimitReverseMotion(limitRevMotion)
                           .withLimitForwardMotion(limitFwdMotion)
                           .withIgnoreHardwareLimits(ignoreHWlimits)
-                          .withIgnoreSoftwareLimits(ignoreSWLimits));
+                          .withIgnoreSoftwareLimits(ignoreSWLimits)
+                          .withUpdateFreqHz(controlRequestUpdateFreq));
               case Torque_Current ->
                   talonFX.setControl(
                       motionMagicExpoTorqueCurrentFOC
@@ -1073,7 +1128,8 @@ public class SF_TalonFX {
                           .withLimitReverseMotion(limitRevMotion)
                           .withLimitForwardMotion(limitFwdMotion)
                           .withIgnoreHardwareLimits(ignoreHWlimits)
-                          .withIgnoreSoftwareLimits(ignoreSWLimits));
+                          .withIgnoreSoftwareLimits(ignoreSWLimits)
+                          .withUpdateFreqHz(controlRequestUpdateFreq));
             }
           }
           case Dynamic -> {
@@ -1087,7 +1143,8 @@ public class SF_TalonFX {
                           .withLimitReverseMotion(limitRevMotion)
                           .withLimitForwardMotion(limitFwdMotion)
                           .withIgnoreHardwareLimits(ignoreHWlimits)
-                          .withIgnoreSoftwareLimits(ignoreSWLimits));
+                          .withIgnoreSoftwareLimits(ignoreSWLimits)
+                          .withUpdateFreqHz(controlRequestUpdateFreq));
               case Voltage ->
                   talonFX.setControl(
                       dynamicMotionMagicVoltage
@@ -1096,7 +1153,8 @@ public class SF_TalonFX {
                           .withLimitReverseMotion(limitRevMotion)
                           .withLimitForwardMotion(limitFwdMotion)
                           .withIgnoreHardwareLimits(ignoreHWlimits)
-                          .withIgnoreSoftwareLimits(ignoreSWLimits));
+                          .withIgnoreSoftwareLimits(ignoreSWLimits)
+                          .withUpdateFreqHz(controlRequestUpdateFreq));
               case Torque_Current ->
                   talonFX.setControl(
                       dynamicMotionMagicTorqueCurrentFOC
@@ -1105,7 +1163,8 @@ public class SF_TalonFX {
                           .withLimitReverseMotion(limitRevMotion)
                           .withLimitForwardMotion(limitFwdMotion)
                           .withIgnoreHardwareLimits(ignoreHWlimits)
-                          .withIgnoreSoftwareLimits(ignoreSWLimits));
+                          .withIgnoreSoftwareLimits(ignoreSWLimits)
+                          .withUpdateFreqHz(controlRequestUpdateFreq));
             }
           }
           case DynamicExponential -> {
@@ -1119,7 +1178,8 @@ public class SF_TalonFX {
                           .withLimitReverseMotion(limitRevMotion)
                           .withLimitForwardMotion(limitFwdMotion)
                           .withIgnoreHardwareLimits(ignoreHWlimits)
-                          .withIgnoreSoftwareLimits(ignoreSWLimits));
+                          .withIgnoreSoftwareLimits(ignoreSWLimits)
+                          .withUpdateFreqHz(controlRequestUpdateFreq));
               case Voltage ->
                   talonFX.setControl(
                       dynamicMotionMagicExpoVoltage
@@ -1128,7 +1188,8 @@ public class SF_TalonFX {
                           .withLimitReverseMotion(limitRevMotion)
                           .withLimitForwardMotion(limitFwdMotion)
                           .withIgnoreHardwareLimits(ignoreHWlimits)
-                          .withIgnoreSoftwareLimits(ignoreSWLimits));
+                          .withIgnoreSoftwareLimits(ignoreSWLimits)
+                          .withUpdateFreqHz(controlRequestUpdateFreq));
               case Torque_Current ->
                   talonFX.setControl(
                       dynamicMotionMagicExpoTorqueCurrentFOC
@@ -1137,10 +1198,14 @@ public class SF_TalonFX {
                           .withLimitReverseMotion(limitRevMotion)
                           .withLimitForwardMotion(limitFwdMotion)
                           .withIgnoreHardwareLimits(ignoreHWlimits)
-                          .withIgnoreSoftwareLimits(ignoreSWLimits));
+                          .withIgnoreSoftwareLimits(ignoreSWLimits)
+                          .withUpdateFreqHz(controlRequestUpdateFreq));
             }
           }
         }
+      }
+      case Follower -> {
+        setupFollower(leaderID);
       }
     }
   }
@@ -1166,7 +1231,8 @@ public class SF_TalonFX {
                       .withLimitReverseMotion(limitRevMotion)
                       .withLimitForwardMotion(limitFwdMotion)
                       .withIgnoreHardwareLimits(ignoreHWlimits)
-                      .withIgnoreSoftwareLimits(ignoreSWLimits));
+                      .withIgnoreSoftwareLimits(ignoreSWLimits)
+                      .withUpdateFreqHz(controlRequestUpdateFreq));
           case Voltage ->
               talonFX.setControl(
                   positionVoltage
@@ -1176,7 +1242,8 @@ public class SF_TalonFX {
                       .withLimitReverseMotion(limitRevMotion)
                       .withLimitForwardMotion(limitFwdMotion)
                       .withIgnoreHardwareLimits(ignoreHWlimits)
-                      .withIgnoreSoftwareLimits(ignoreSWLimits));
+                      .withIgnoreSoftwareLimits(ignoreSWLimits)
+                      .withUpdateFreqHz(controlRequestUpdateFreq));
           case Torque_Current ->
               talonFX.setControl(
                   positionTorqueCurrentFOC
@@ -1186,7 +1253,8 @@ public class SF_TalonFX {
                       .withLimitReverseMotion(limitRevMotion)
                       .withLimitForwardMotion(limitFwdMotion)
                       .withIgnoreHardwareLimits(ignoreHWlimits)
-                      .withIgnoreSoftwareLimits(ignoreSWLimits));
+                      .withIgnoreSoftwareLimits(ignoreSWLimits)
+                      .withUpdateFreqHz(controlRequestUpdateFreq));
         }
       }
       case Velocity -> {
@@ -1200,7 +1268,8 @@ public class SF_TalonFX {
                       .withLimitReverseMotion(limitRevMotion)
                       .withLimitForwardMotion(limitFwdMotion)
                       .withIgnoreHardwareLimits(ignoreHWlimits)
-                      .withIgnoreSoftwareLimits(ignoreSWLimits));
+                      .withIgnoreSoftwareLimits(ignoreSWLimits)
+                      .withUpdateFreqHz(controlRequestUpdateFreq));
           case Voltage ->
               talonFX.setControl(
                   velocityVoltage
@@ -1210,7 +1279,8 @@ public class SF_TalonFX {
                       .withLimitReverseMotion(limitRevMotion)
                       .withLimitForwardMotion(limitFwdMotion)
                       .withIgnoreHardwareLimits(ignoreHWlimits)
-                      .withIgnoreSoftwareLimits(ignoreSWLimits));
+                      .withIgnoreSoftwareLimits(ignoreSWLimits)
+                      .withUpdateFreqHz(controlRequestUpdateFreq));
           case Torque_Current ->
               talonFX.setControl(
                   velocityTorqueCurrentFOC
@@ -1220,7 +1290,8 @@ public class SF_TalonFX {
                       .withLimitReverseMotion(limitRevMotion)
                       .withLimitForwardMotion(limitFwdMotion)
                       .withIgnoreHardwareLimits(ignoreHWlimits)
-                      .withIgnoreSoftwareLimits(ignoreSWLimits));
+                      .withIgnoreSoftwareLimits(ignoreSWLimits)
+                      .withUpdateFreqHz(controlRequestUpdateFreq));
         }
       }
       case Motion_Magic -> {
@@ -1235,7 +1306,8 @@ public class SF_TalonFX {
                           .withLimitReverseMotion(limitRevMotion)
                           .withLimitForwardMotion(limitFwdMotion)
                           .withIgnoreHardwareLimits(ignoreHWlimits)
-                          .withIgnoreSoftwareLimits(ignoreSWLimits));
+                          .withIgnoreSoftwareLimits(ignoreSWLimits)
+                          .withUpdateFreqHz(controlRequestUpdateFreq));
               case Voltage ->
                   talonFX.setControl(
                       motionMagicVoltage
@@ -1244,7 +1316,8 @@ public class SF_TalonFX {
                           .withLimitReverseMotion(limitRevMotion)
                           .withLimitForwardMotion(limitFwdMotion)
                           .withIgnoreHardwareLimits(ignoreHWlimits)
-                          .withIgnoreSoftwareLimits(ignoreSWLimits));
+                          .withIgnoreSoftwareLimits(ignoreSWLimits)
+                          .withUpdateFreqHz(controlRequestUpdateFreq));
               case Torque_Current ->
                   talonFX.setControl(
                       motionMagicTorqueCurrentFOC
@@ -1253,7 +1326,8 @@ public class SF_TalonFX {
                           .withLimitReverseMotion(limitRevMotion)
                           .withLimitForwardMotion(limitFwdMotion)
                           .withIgnoreHardwareLimits(ignoreHWlimits)
-                          .withIgnoreSoftwareLimits(ignoreSWLimits));
+                          .withIgnoreSoftwareLimits(ignoreSWLimits)
+                          .withUpdateFreqHz(controlRequestUpdateFreq));
             }
           }
           case Velocity -> {
@@ -1266,7 +1340,8 @@ public class SF_TalonFX {
                           .withLimitReverseMotion(limitRevMotion)
                           .withLimitForwardMotion(limitFwdMotion)
                           .withIgnoreHardwareLimits(ignoreHWlimits)
-                          .withIgnoreSoftwareLimits(ignoreSWLimits));
+                          .withIgnoreSoftwareLimits(ignoreSWLimits)
+                          .withUpdateFreqHz(controlRequestUpdateFreq));
               case Voltage ->
                   talonFX.setControl(
                       motionMagicVelocityVoltage
@@ -1275,7 +1350,8 @@ public class SF_TalonFX {
                           .withLimitReverseMotion(limitRevMotion)
                           .withLimitForwardMotion(limitFwdMotion)
                           .withIgnoreHardwareLimits(ignoreHWlimits)
-                          .withIgnoreSoftwareLimits(ignoreSWLimits));
+                          .withIgnoreSoftwareLimits(ignoreSWLimits)
+                          .withUpdateFreqHz(controlRequestUpdateFreq));
               case Torque_Current ->
                   talonFX.setControl(
                       motionMagicVelocityTorqueCurrentFOC
@@ -1284,7 +1360,8 @@ public class SF_TalonFX {
                           .withLimitReverseMotion(limitRevMotion)
                           .withLimitForwardMotion(limitFwdMotion)
                           .withIgnoreHardwareLimits(ignoreHWlimits)
-                          .withIgnoreSoftwareLimits(ignoreSWLimits));
+                          .withIgnoreSoftwareLimits(ignoreSWLimits)
+                          .withUpdateFreqHz(controlRequestUpdateFreq));
             }
           }
           case Exponential -> {
@@ -1297,7 +1374,8 @@ public class SF_TalonFX {
                           .withLimitReverseMotion(limitRevMotion)
                           .withLimitForwardMotion(limitFwdMotion)
                           .withIgnoreHardwareLimits(ignoreHWlimits)
-                          .withIgnoreSoftwareLimits(ignoreSWLimits));
+                          .withIgnoreSoftwareLimits(ignoreSWLimits)
+                          .withUpdateFreqHz(controlRequestUpdateFreq));
               case Voltage ->
                   talonFX.setControl(
                       motionMagicExpoVoltage
@@ -1306,7 +1384,8 @@ public class SF_TalonFX {
                           .withLimitReverseMotion(limitRevMotion)
                           .withLimitForwardMotion(limitFwdMotion)
                           .withIgnoreHardwareLimits(ignoreHWlimits)
-                          .withIgnoreSoftwareLimits(ignoreSWLimits));
+                          .withIgnoreSoftwareLimits(ignoreSWLimits)
+                          .withUpdateFreqHz(controlRequestUpdateFreq));
               case Torque_Current ->
                   talonFX.setControl(
                       motionMagicExpoTorqueCurrentFOC
@@ -1315,7 +1394,8 @@ public class SF_TalonFX {
                           .withLimitReverseMotion(limitRevMotion)
                           .withLimitForwardMotion(limitFwdMotion)
                           .withIgnoreHardwareLimits(ignoreHWlimits)
-                          .withIgnoreSoftwareLimits(ignoreSWLimits));
+                          .withIgnoreSoftwareLimits(ignoreSWLimits)
+                          .withUpdateFreqHz(controlRequestUpdateFreq));
             }
           }
           case Dynamic -> {
@@ -1330,7 +1410,8 @@ public class SF_TalonFX {
                           .withLimitReverseMotion(limitRevMotion)
                           .withLimitForwardMotion(limitFwdMotion)
                           .withIgnoreHardwareLimits(ignoreHWlimits)
-                          .withIgnoreSoftwareLimits(ignoreSWLimits));
+                          .withIgnoreSoftwareLimits(ignoreSWLimits)
+                          .withUpdateFreqHz(controlRequestUpdateFreq));
               case Voltage ->
                   talonFX.setControl(
                       dynamicMotionMagicVoltage
@@ -1339,7 +1420,8 @@ public class SF_TalonFX {
                           .withLimitReverseMotion(limitRevMotion)
                           .withLimitForwardMotion(limitFwdMotion)
                           .withIgnoreHardwareLimits(ignoreHWlimits)
-                          .withIgnoreSoftwareLimits(ignoreSWLimits));
+                          .withIgnoreSoftwareLimits(ignoreSWLimits)
+                          .withUpdateFreqHz(controlRequestUpdateFreq));
               case Torque_Current ->
                   talonFX.setControl(
                       dynamicMotionMagicTorqueCurrentFOC
@@ -1348,7 +1430,8 @@ public class SF_TalonFX {
                           .withLimitReverseMotion(limitRevMotion)
                           .withLimitForwardMotion(limitFwdMotion)
                           .withIgnoreHardwareLimits(ignoreHWlimits)
-                          .withIgnoreSoftwareLimits(ignoreSWLimits));
+                          .withIgnoreSoftwareLimits(ignoreSWLimits)
+                          .withUpdateFreqHz(controlRequestUpdateFreq));
             }
           }
           case DynamicExponential -> {
@@ -1363,7 +1446,8 @@ public class SF_TalonFX {
                           .withLimitReverseMotion(limitRevMotion)
                           .withLimitForwardMotion(limitFwdMotion)
                           .withIgnoreHardwareLimits(ignoreHWlimits)
-                          .withIgnoreSoftwareLimits(ignoreSWLimits));
+                          .withIgnoreSoftwareLimits(ignoreSWLimits)
+                          .withUpdateFreqHz(controlRequestUpdateFreq));
               case Voltage ->
                   talonFX.setControl(
                       dynamicMotionMagicExpoVoltage
@@ -1372,7 +1456,8 @@ public class SF_TalonFX {
                           .withLimitReverseMotion(limitRevMotion)
                           .withLimitForwardMotion(limitFwdMotion)
                           .withIgnoreHardwareLimits(ignoreHWlimits)
-                          .withIgnoreSoftwareLimits(ignoreSWLimits));
+                          .withIgnoreSoftwareLimits(ignoreSWLimits)
+                          .withUpdateFreqHz(controlRequestUpdateFreq));
               case Torque_Current ->
                   talonFX.setControl(
                       dynamicMotionMagicExpoTorqueCurrentFOC
@@ -1381,10 +1466,14 @@ public class SF_TalonFX {
                           .withLimitReverseMotion(limitRevMotion)
                           .withLimitForwardMotion(limitFwdMotion)
                           .withIgnoreHardwareLimits(ignoreHWlimits)
-                          .withIgnoreSoftwareLimits(ignoreSWLimits));
+                          .withIgnoreSoftwareLimits(ignoreSWLimits)
+                          .withUpdateFreqHz(controlRequestUpdateFreq));
             }
           }
         }
+      }
+      case Follower -> {
+        setupFollower(leaderID);
       }
     }
   }
@@ -1411,7 +1500,8 @@ public class SF_TalonFX {
                   .withLimitReverseMotion(limitRevMotion)
                   .withLimitForwardMotion(limitFwdMotion)
                   .withIgnoreHardwareLimits(ignoreHWlimits)
-                  .withIgnoreSoftwareLimits(ignoreSWLimits));
+                  .withIgnoreSoftwareLimits(ignoreSWLimits)
+                  .withUpdateFreqHz(controlRequestUpdateFreq));
       case Voltage ->
           talonFX.setControl(
               dynamicMotionMagicVoltage
@@ -1423,7 +1513,8 @@ public class SF_TalonFX {
                   .withLimitReverseMotion(limitRevMotion)
                   .withLimitForwardMotion(limitFwdMotion)
                   .withIgnoreHardwareLimits(ignoreHWlimits)
-                  .withIgnoreSoftwareLimits(ignoreSWLimits));
+                  .withIgnoreSoftwareLimits(ignoreSWLimits)
+                  .withUpdateFreqHz(controlRequestUpdateFreq));
       case Torque_Current ->
           talonFX.setControl(
               dynamicMotionMagicTorqueCurrentFOC
@@ -1435,7 +1526,8 @@ public class SF_TalonFX {
                   .withLimitReverseMotion(limitRevMotion)
                   .withLimitForwardMotion(limitFwdMotion)
                   .withIgnoreHardwareLimits(ignoreHWlimits)
-                  .withIgnoreSoftwareLimits(ignoreSWLimits));
+                  .withIgnoreSoftwareLimits(ignoreSWLimits)
+                  .withUpdateFreqHz(controlRequestUpdateFreq));
     }
   }
 
@@ -1460,7 +1552,8 @@ public class SF_TalonFX {
                   .withLimitReverseMotion(limitRevMotion)
                   .withLimitForwardMotion(limitFwdMotion)
                   .withIgnoreHardwareLimits(ignoreHWlimits)
-                  .withIgnoreSoftwareLimits(ignoreSWLimits));
+                  .withIgnoreSoftwareLimits(ignoreSWLimits)
+                  .withUpdateFreqHz(controlRequestUpdateFreq));
       case Voltage ->
           talonFX.setControl(
               dynamicMotionMagicExpoVoltage
@@ -1472,7 +1565,8 @@ public class SF_TalonFX {
                   .withLimitReverseMotion(limitRevMotion)
                   .withLimitForwardMotion(limitFwdMotion)
                   .withIgnoreHardwareLimits(ignoreHWlimits)
-                  .withIgnoreSoftwareLimits(ignoreSWLimits));
+                  .withIgnoreSoftwareLimits(ignoreSWLimits)
+                  .withUpdateFreqHz(controlRequestUpdateFreq));
       case Torque_Current ->
           talonFX.setControl(
               dynamicMotionMagicExpoTorqueCurrentFOC
@@ -1484,7 +1578,8 @@ public class SF_TalonFX {
                   .withLimitReverseMotion(limitRevMotion)
                   .withLimitForwardMotion(limitFwdMotion)
                   .withIgnoreHardwareLimits(ignoreHWlimits)
-                  .withIgnoreSoftwareLimits(ignoreSWLimits));
+                  .withIgnoreSoftwareLimits(ignoreSWLimits)
+                  .withUpdateFreqHz(controlRequestUpdateFreq));
     }
   }
 
@@ -1500,8 +1595,15 @@ public class SF_TalonFX {
         switch (followerType) {
           case Standard ->
               talonFX.setControl(
-                  differentialFollower.withLeaderID(leaderID).withMotorAlignment(opposeMain));
-          case Strict -> talonFX.setControl(differentialStrictFollower.withLeaderID(leaderID));
+                  differentialFollower
+                      .withLeaderID(leaderID)
+                      .withMotorAlignment(opposeMain)
+                      .withUpdateFreqHz(controlRequestUpdateFreq));
+          case Strict ->
+              talonFX.setControl(
+                  differentialStrictFollower
+                      .withLeaderID(leaderID)
+                      .withUpdateFreqHz(controlRequestUpdateFreq));
         }
       }
       case Open_Loop -> {
@@ -1515,7 +1617,8 @@ public class SF_TalonFX {
                       .withLimitReverseMotion(limitRevMotion)
                       .withLimitForwardMotion(limitFwdMotion)
                       .withIgnoreHardwareLimits(ignoreHWlimits)
-                      .withIgnoreSoftwareLimits(ignoreSWLimits));
+                      .withIgnoreSoftwareLimits(ignoreSWLimits)
+                      .withUpdateFreqHz(controlRequestUpdateFreq));
           case Voltage ->
               talonFX.setControl(
                   differentialVoltage
@@ -1525,7 +1628,8 @@ public class SF_TalonFX {
                       .withLimitReverseMotion(limitRevMotion)
                       .withLimitForwardMotion(limitFwdMotion)
                       .withIgnoreHardwareLimits(ignoreHWlimits)
-                      .withIgnoreSoftwareLimits(ignoreSWLimits));
+                      .withIgnoreSoftwareLimits(ignoreSWLimits)
+                      .withUpdateFreqHz(controlRequestUpdateFreq));
           case Torque_Current ->
               DriverStation.reportError(
                   "Invalid Control Type: Differential Torque Current FOC", false);
@@ -1543,7 +1647,8 @@ public class SF_TalonFX {
                       .withLimitReverseMotion(limitRevMotion)
                       .withLimitForwardMotion(limitFwdMotion)
                       .withIgnoreHardwareLimits(ignoreHWlimits)
-                      .withIgnoreSoftwareLimits(ignoreSWLimits));
+                      .withIgnoreSoftwareLimits(ignoreSWLimits)
+                      .withUpdateFreqHz(controlRequestUpdateFreq));
           case Voltage ->
               talonFX.setControl(
                   differentialPositionVoltage
@@ -1554,7 +1659,8 @@ public class SF_TalonFX {
                       .withLimitReverseMotion(limitRevMotion)
                       .withLimitForwardMotion(limitFwdMotion)
                       .withIgnoreHardwareLimits(ignoreHWlimits)
-                      .withIgnoreSoftwareLimits(ignoreSWLimits));
+                      .withIgnoreSoftwareLimits(ignoreSWLimits)
+                      .withUpdateFreqHz(controlRequestUpdateFreq));
           case Torque_Current ->
               DriverStation.reportError(
                   "Invalid Control Type: Differential Position Torque Current FOC", false);
@@ -1572,7 +1678,8 @@ public class SF_TalonFX {
                       .withLimitReverseMotion(limitRevMotion)
                       .withLimitForwardMotion(limitFwdMotion)
                       .withIgnoreHardwareLimits(ignoreHWlimits)
-                      .withIgnoreSoftwareLimits(ignoreSWLimits));
+                      .withIgnoreSoftwareLimits(ignoreSWLimits)
+                      .withUpdateFreqHz(controlRequestUpdateFreq));
           case Voltage ->
               talonFX.setControl(
                   differentialVelocityVoltage
@@ -1583,7 +1690,8 @@ public class SF_TalonFX {
                       .withLimitReverseMotion(limitRevMotion)
                       .withLimitForwardMotion(limitFwdMotion)
                       .withIgnoreHardwareLimits(ignoreHWlimits)
-                      .withIgnoreSoftwareLimits(ignoreSWLimits));
+                      .withIgnoreSoftwareLimits(ignoreSWLimits)
+                      .withUpdateFreqHz(controlRequestUpdateFreq));
           case Torque_Current ->
               DriverStation.reportError(
                   "Invalid Control Type: Differential Velocity Torque Current FOC", false);
@@ -1601,7 +1709,8 @@ public class SF_TalonFX {
                       .withLimitReverseMotion(limitRevMotion)
                       .withLimitForwardMotion(limitFwdMotion)
                       .withIgnoreHardwareLimits(ignoreHWlimits)
-                      .withIgnoreSoftwareLimits(ignoreSWLimits));
+                      .withIgnoreSoftwareLimits(ignoreSWLimits)
+                      .withUpdateFreqHz(controlRequestUpdateFreq));
           case Voltage ->
               talonFX.setControl(
                   differentialMotionMagicVoltage
@@ -1612,7 +1721,8 @@ public class SF_TalonFX {
                       .withLimitReverseMotion(limitRevMotion)
                       .withLimitForwardMotion(limitFwdMotion)
                       .withIgnoreHardwareLimits(ignoreHWlimits)
-                      .withIgnoreSoftwareLimits(ignoreSWLimits));
+                      .withIgnoreSoftwareLimits(ignoreSWLimits)
+                      .withUpdateFreqHz(controlRequestUpdateFreq));
           case Torque_Current ->
               DriverStation.reportError(
                   "Invalid Control Type: Differential Motion Magic Torque Current FOC", false);
@@ -1639,8 +1749,12 @@ public class SF_TalonFX {
   public void setupFollower(int leaderID) {
     this.leaderID = leaderID;
     switch (followerType) {
-      case Standard -> talonFX.setControl(follower.withLeaderID(leaderID));
-      case Strict -> talonFX.setControl(strictFollower.withLeaderID(leaderID));
+      case Standard ->
+          talonFX.setControl(
+              follower.withLeaderID(leaderID).withUpdateFreqHz(controlRequestUpdateFreq));
+      case Strict ->
+          talonFX.setControl(
+              strictFollower.withLeaderID(leaderID).withUpdateFreqHz(controlRequestUpdateFreq));
     }
   }
 
@@ -1652,8 +1766,16 @@ public class SF_TalonFX {
   public void setupDifferentialFollower(int leaderID) {
     this.leaderID = leaderID;
     switch (followerType) {
-      case Standard -> talonFX.setControl(differentialFollower.withLeaderID(leaderID));
-      case Strict -> talonFX.setControl(differentialStrictFollower.withLeaderID(leaderID));
+      case Standard ->
+          talonFX.setControl(
+              differentialFollower
+                  .withLeaderID(leaderID)
+                  .withUpdateFreqHz(controlRequestUpdateFreq));
+      case Strict ->
+          talonFX.setControl(
+              differentialStrictFollower
+                  .withLeaderID(leaderID)
+                  .withUpdateFreqHz(controlRequestUpdateFreq));
     }
   }
 
