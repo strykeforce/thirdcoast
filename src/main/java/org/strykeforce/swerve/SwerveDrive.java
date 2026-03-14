@@ -221,7 +221,8 @@ public class SwerveDrive implements Registrable {
     }
     odometry.resetPosition(
         pose,
-        gyro.getRotation2d().rotateBy(gyroOffset),
+        pose.getRotation(),
+        /*gyro.getRotation2d().rotateBy(gyroOffset),*/
         swerveModules[0].getPosition(),
         swerveModules[1].getPosition(),
         swerveModules[2].getPosition(),

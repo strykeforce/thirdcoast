@@ -261,7 +261,7 @@ public class SF_FXSwerveModule implements SwerveModule {
   @Override
   public void setAzimuthRotation2d(Rotation2d angle) {
     setAzimuthOptimizedState(new SwerveModuleState(0.0, angle));
-    logger.info("azimuth {}: set rotation to: {}", azimuthTalon.getDeviceID(), angle);
+    //    logger.info("azimuth {}: set rotation to: {}", azimuthTalon.getDeviceID(), angle);
   }
 
   @NotNull

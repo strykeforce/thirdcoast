@@ -11,7 +11,7 @@ plugins {
 }
 
 group = "org.strykeforce"
-version = "26.0.3"
+version = "26.0.4"
 
 java {
     targetCompatibility = JavaVersion.VERSION_17

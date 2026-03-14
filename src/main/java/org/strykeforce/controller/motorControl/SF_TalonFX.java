@@ -19,12 +19,14 @@ import org.strykeforce.json.JsonTalonFX;
 
 public class SF_TalonFX {
   private TalonFX talonFX;
-  private JsonTalonFX config;
-  private TalonFXConfiguration talonConfig;
+  private JsonTalonFX runConfig;
+  private JsonTalonFX zeroConfig;
+  private TalonFXConfiguration activeTalonConfig;
   private TalonFXConfigurator configurator;
   private BaseStatusSignal[] registeredStatusSignals = new BaseStatusSignal[0];
   private boolean isFDBus = false;
-  private String configFileSuffix = "";
+  private String runConfigFileSuffix = "";
+  private String zeroConfigFileSuffix = "";
   private double controlRequestUpdateFreq = 100.0;
 
   // Status Signals
@@ -198,51 +200,60 @@ public class SF_TalonFX {
    * Constructor for a custom wrapper around a CTRE TalonFX
    *
    * @param id the CAN id of the motor controller
-   * @param canbus the CANbus object that the controller is wired to
+   * @param canBus the CANbus object that the controller is wired to
    */
-  public SF_TalonFX(int id, CANBus canbus) {
-    this(id, canbus, "");
+  public SF_TalonFX(int id, CANBus canBus) {
+    this(id, canBus, "");
   }
-
-  //  public SF_TalonFX(int id, String canbus) {
-  //    this(id, canbus, "");
-  //  }
 
   /**
    * Constructor for a custom wrapper around a CTRE TalonFX
    *
    * @param id the CAN id of the motor controller
-   * @param canbus the CANBus object that the motor controller is wired to
+   * @param canBus the CANBus object that the motor controller is wired to
    * @param configSuffix the JSON config file suffix (beyond id #)
    */
-  public SF_TalonFX(int id, CANBus canbus, String configSuffix) {
-    talonFX = new TalonFX(id, canbus);
+  public SF_TalonFX(int id, CANBus canBus, String configSuffix) {
+    this(id, canBus, configSuffix, configSuffix);
+  }
+
+  /**
+   * Constructor fo ra wrapper around a CTRE TalonFX
+   *
+   * @param id CAN id of the motor controller
+   * @param canBus CANBus object the motor controller is wired to
+   * @param runConfigFileSuffix JSON config suffix to use for running
+   * @param zeroConfigFileSuffix JSON config file suffix to use for zeroing (initially loaded)
+   */
+  public SF_TalonFX(
+      int id, CANBus canBus, String runConfigFileSuffix, String zeroConfigFileSuffix) {
+    talonFX = new TalonFX(id, canBus);
     this.id = id;
-    this.configFileSuffix = configSuffix;
-    isFDBus = canbus.isNetworkFD();
-    loadFromJSON(configSuffix);
+    this.runConfigFileSuffix = runConfigFileSuffix;
+    this.zeroConfigFileSuffix = zeroConfigFileSuffix;
+    isFDBus = canBus.isNetworkFD();
+    this.runConfig = saveJsonConfig(runConfigFileSuffix);
+    this.zeroConfig = saveJsonConfig(zeroConfigFileSuffix);
+
+    applyZeroConfig();
     setupControlRequests();
     if (closedLoopType == CTRE_ClosedLoopType.Follower) setupFollower(leaderID);
   }
 
-  //  public SF_TalonFX(int id, String canbus, String configSuffix) {
-  //    talonFX = new TalonFX(id, canbus);
-  //    this.id = id;
-  //    this.configFileSuffix = configSuffix;
-  //    isFDBus = canbus != "rio";
-  //    loadFromJSON(configSuffix);
-  //    setupControlRequests();
-  //  }
+  /** Applies the previously loaded zero config */
+  public void applyZeroConfig() {
+    applyJsonConfigs(zeroConfig);
+  }
 
-  /**
-   * This loads a full TalonFX configuration from the JSON config file
-   *
-   * @param suffix the suffix on the JSON config file where the configs are stored
-   * @return true if successful
-   */
-  public boolean loadFromJSON(String suffix) {
+  /** Applies the previously loaded run config */
+  public void applyRunConfig() {
+    applyJsonConfigs(runConfig);
+  }
+
+  private JsonTalonFX saveJsonConfig(String suffix) {
     Moshi moshi = new Moshi.Builder().build();
     JsonAdapter<JsonTalonFX> jsonAdapter = moshi.adapter(JsonTalonFX.class);
+    JsonTalonFX config = new JsonTalonFX();
 
     String configPath = "/home/lvuser/deploy/motorConfigs/" + id + "_FX" + suffix + ".json";
     Path filePath = Path.of(configPath);
@@ -252,30 +263,38 @@ public class SF_TalonFX {
       //            config = JsonAdapter.fromJson(fileParse);
     } catch (IOException e) {
       config = new JsonTalonFX();
-      applyJsonConfigs();
       String error =
           "Error loading json file for talonFX " + id + ": default values, " + e.toString();
       DriverStation.reportWarning(error, e.getStackTrace());
-      return false;
+      return config;
     }
     try {
       config = jsonAdapter.fromJson(fileParse);
 
     } catch (IOException e) {
       config = new JsonTalonFX();
-      applyJsonConfigs();
       String error =
           "Error parsing json file for talonFX " + id + ": default values, " + e.toString();
       DriverStation.reportWarning(error, e.getStackTrace());
-      return false;
+      return config;
     }
-    applyJsonConfigs();
-    return true;
+    return config;
+  }
+
+  /**
+   * This loads a full TalonFX configuration from the JSON config file
+   *
+   * @param suffix the suffix on the JSON config file where the configs are stored
+   */
+  public void loadFromJSON(String suffix) {
+    zeroConfig = saveJsonConfig(suffix);
+    runConfig = zeroConfig;
+    applyJsonConfigs(zeroConfig);
   }
 
   /** Applies the configs from the loaded JSON config */
-  private void applyJsonConfigs() {
-    talonConfig = config.getTalonFXConfig();
+  private void applyJsonConfigs(JsonTalonFX config) {
+    activeTalonConfig = config.getTalonFXConfig();
 
     //            .withAudio(config.getAudioConfigs())
     //            .withClosedLoopGeneral(config.getClosedLoopGeneralConfigs())
@@ -297,7 +316,7 @@ public class SF_TalonFX {
     //            .withVoltage(config.getVoltageConfigs());
 
     configurator = talonFX.getConfigurator();
-    configurator.apply(talonConfig);
+    configurator.apply(activeTalonConfig);
     openLoopUnits = config.getOpenLoopUnits();
     closedLoopUnits = config.getClosedLoopUnits();
     activeSlot = config.getActiveSlot();
@@ -1866,9 +1885,9 @@ public class SF_TalonFX {
    * @param limit in A
    */
   public void setStatorCurrentLimit(boolean enable, double limit) {
-    CurrentLimitsConfigs current = talonConfig.CurrentLimits;
+    CurrentLimitsConfigs current = activeTalonConfig.CurrentLimits;
     current.withStatorCurrentLimit(limit).withStatorCurrentLimitEnable(enable);
-    talonConfig.withCurrentLimits(current);
+    activeTalonConfig.withCurrentLimits(current);
     configurator.apply(current);
   }
 
@@ -1883,13 +1902,13 @@ public class SF_TalonFX {
    */
   public void setSupplyCurrentLimit(
       boolean enable, double limit, double lowerLimit, double lowerTime) {
-    CurrentLimitsConfigs current = talonConfig.CurrentLimits;
+    CurrentLimitsConfigs current = activeTalonConfig.CurrentLimits;
     current
         .withSupplyCurrentLimit(limit)
         .withSupplyCurrentLimitEnable(enable)
         .withSupplyCurrentLowerLimit(lowerLimit)
         .withSupplyCurrentLowerTime(lowerTime);
-    talonConfig.withCurrentLimits(current);
+    activeTalonConfig.withCurrentLimits(current);
     configurator.apply(current);
   }
 
@@ -1899,7 +1918,7 @@ public class SF_TalonFX {
    * @param config specified config ot apply
    */
   public void setCurrentLimits(CurrentLimitsConfigs config) {
-    talonConfig.withCurrentLimits(config);
+    activeTalonConfig.withCurrentLimits(config);
     configurator.apply(config);
   }
 
@@ -1910,9 +1929,9 @@ public class SF_TalonFX {
    * @param revLim true if limit switch should stop rev output
    */
   public void enableHardLimits(boolean fwdLim, boolean revLim) {
-    HardwareLimitSwitchConfigs config = talonConfig.HardwareLimitSwitch;
+    HardwareLimitSwitchConfigs config = activeTalonConfig.HardwareLimitSwitch;
     config.withForwardLimitEnable(fwdLim).withReverseLimitEnable(revLim);
-    talonConfig.withHardwareLimitSwitch(config);
+    activeTalonConfig.withHardwareLimitSwitch(config);
     configurator.apply(config);
   }
 
@@ -1962,7 +1981,7 @@ public class SF_TalonFX {
    * @param config supplied config to update to
    */
   public void setMotionMagicConfigs(MotionMagicConfigs config) {
-    talonConfig.withMotionMagic(config);
+    activeTalonConfig.withMotionMagic(config);
     configurator.apply(config);
   }
 
@@ -1974,9 +1993,9 @@ public class SF_TalonFX {
    * @param peakRev new max rev %
    */
   public void setPeakOutputPercent(double peakFwd, double peakRev) {
-    MotorOutputConfigs motorOut = talonConfig.MotorOutput;
+    MotorOutputConfigs motorOut = activeTalonConfig.MotorOutput;
     motorOut.withPeakForwardDutyCycle(peakFwd).withPeakReverseDutyCycle(peakRev);
-    talonConfig.withMotorOutput(motorOut);
+    activeTalonConfig.withMotorOutput(motorOut);
     configurator.apply(motorOut);
   }
 
@@ -1988,9 +2007,9 @@ public class SF_TalonFX {
    * @param peakRev new max rev V
    */
   public void setPeakOutputVolt(double peakFwd, double peakRev) {
-    VoltageConfigs config = talonConfig.Voltage;
+    VoltageConfigs config = activeTalonConfig.Voltage;
     config.withPeakForwardVoltage(peakFwd).withPeakReverseVoltage(peakRev);
-    talonConfig.withVoltage(config);
+    activeTalonConfig.withVoltage(config);
     configurator.apply(config);
   }
 
@@ -2001,7 +2020,7 @@ public class SF_TalonFX {
    * @param config new configuration
    */
   public void setSoftLimits(SoftwareLimitSwitchConfigs config) {
-    talonConfig.withSoftwareLimitSwitch(config);
+    activeTalonConfig.withSoftwareLimitSwitch(config);
     configurator.apply(config);
   }
 
@@ -2013,9 +2032,9 @@ public class SF_TalonFX {
    * @param enableRev true if rev enabled
    */
   public void enableSoftLimits(boolean enableFwd, boolean enableRev) {
-    SoftwareLimitSwitchConfigs config = talonConfig.SoftwareLimitSwitch;
+    SoftwareLimitSwitchConfigs config = activeTalonConfig.SoftwareLimitSwitch;
     config.withForwardSoftLimitEnable(enableFwd).withReverseSoftLimitEnable(enableRev);
-    talonConfig.withSoftwareLimitSwitch(config);
+    activeTalonConfig.withSoftwareLimitSwitch(config);
     configurator.apply(config);
   }
 
