@@ -77,6 +77,18 @@ public class SF_PIGEON2 implements Gyro {
     return pigeon2.getYaw().getValueAsDouble();
   }
 
+  public Double getAccelerationX() {
+    return pigeon2.getAccelerationX().getValueAsDouble();
+  }
+
+  public Double getAccelerationY() {
+    return pigeon2.getAccelerationY().getValueAsDouble();
+  }
+
+  public Double getAccelerationZ() {
+    return pigeon2.getAccelerationZ().getValueAsDouble();
+  }
+
   public void registerWith(TelemetryService telemetryService) {
     telemetryService.register(pigeon2);
   }
