@@ -44,4 +44,29 @@ public class SF_AHRS implements Gyro {
   public Rotation2d getRotation2d() {
     return ahrs.getRotation2d();
   }
+
+  // Returns roll in degrees
+  public double getRoll() {
+    return ahrs.getRoll();
+  }
+
+  // Returns pitch in degrees
+  public double getPitch() {
+    return ahrs.getPitch();
+  }
+
+  // Returns x-axis acceleration
+  public double getAccelerationX() {
+    return ahrs.getWorldLinearAccelX();
+  }
+
+  // Returns y-axis acceleration
+  public double getAccelerationY() {
+    return ahrs.getWorldLinearAccelY();
+  }
+
+  // Returns the z-axis acceleration
+  public double getAccelerationZ() {
+    return ahrs.getWorldLinearAccelZ();
+  }
 }
