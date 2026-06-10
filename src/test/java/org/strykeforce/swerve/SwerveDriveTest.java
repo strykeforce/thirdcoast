@@ -73,6 +73,7 @@ class SwerveDriveTest {
 
     when(gyro.getRotation2d()).thenReturn(Rotation2d.fromDegrees(gyroAngle));
     SwerveDrive swerveDrive = new SwerveDrive(gyro, swerveModules);
+    swerveDrive.resetOdometry(new Pose2d(0, 0, Rotation2d.fromDegrees(gyroAngle)));
 
     swerveDrive.drive(vxMetersPerSecond, vyMetersPerSecond, omegaRadiansPerSecond, isFieldOriented);
     verify(swerveModules[0]).setDesiredState(captor.capture(), eq(true));

@@ -346,7 +346,7 @@ public class SwerveDrive implements Registrable {
                 vxMetersPerSecond,
                 vyMetersPerSecond,
                 omegaRadiansPerSecond,
-                hasGyroOffset ? gyro.getRotation2d().rotateBy(gyroOffset) : gyro.getRotation2d())
+                odometry.getPoseMeters().getRotation())
             : new ChassisSpeeds(vxMetersPerSecond, vyMetersPerSecond, omegaRadiansPerSecond);
 
     ChassisSpeeds discreteSpeeds = ChassisSpeeds.discretize(chassisSpeeds, timestep);
